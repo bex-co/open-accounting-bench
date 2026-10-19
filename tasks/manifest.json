@@ -1,0 +1,46 @@
+{
+  "dataset": "open-accounting-bench/open-accounting-bench",
+  "version": "0.1.0",
+  "tasks": [
+    {
+      "task_id": "bank-recon-missing-fee",
+      "family": "bank-reconciliation",
+      "seed": 102,
+      "generator_version": "0.1.0",
+      "track": "stable",
+      "standard": "core",
+      "jurisdiction": "none",
+      "digest": "sha256:99699e7a00a69be7d234e859a5512e81b74309eec7f70e6a2f954f2295a216cb"
+    },
+    {
+      "task_id": "classify-operating-expense",
+      "family": "transaction-classification",
+      "seed": 101,
+      "generator_version": "0.1.0",
+      "track": "stable",
+      "standard": "core",
+      "jurisdiction": "none",
+      "digest": "sha256:e5029090acd9936c2734a670b3f514ca2e49aa15a5a5b66dbbc1ba29276bab8a"
+    },
+    {
+      "task_id": "correct-misclassification",
+      "family": "ledger-integrity-reporting",
+      "seed": 104,
+      "generator_version": "0.1.0",
+      "track": "stable",
+      "standard": "core",
+      "jurisdiction": "none",
+      "digest": "sha256:74981e86f060c500b90cbec87af2a5b4e3cb1b6a558cdf87de32b7c1dc44d4e8"
+    },
+    {
+      "task_id": "prepaid-insurance-adjustment",
+      "family": "adjustments-corrections",
+      "seed": 103,
+      "generator_version": "0.1.0",
+      "track": "stable",
+      "standard": "core",
+      "jurisdiction": "none",
+      "digest": "sha256:4d3bd06c95de91e823d38ae60d862c7330ab80d038cfce00f851536b966b3b0d"
+    }
+  ]
+}

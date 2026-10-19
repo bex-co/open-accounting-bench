@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Lint
+        run: |
+          uv run ruff check src tests
+          uv run ruff format --check src tests
+      - name: Unit tests
+        run: uv run pytest
+      - name: Task validation (structure, grader sync, oracle vs nop)
+        run: uv run oab validate --tasks tasks
+      - name: Generated tasks are up to date
+        run: |
+          uv run oab generate --all --out tasks
+          git diff --exit-code -- tasks
+
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build agent + verifier images for one task
+        run: |
+          docker build -t oab-agent-smoke tasks/classify-operating-expense/environment
+          docker build -t oab-verifier-smoke tasks/classify-operating-expense/tests
+      - name: Grade oracle ledger inside verifier image
+        run: |
+          docker run --rm -v "$PWD/tasks/classify-operating-expense/solution:/solution:ro" \
+            oab-verifier-smoke bash -c \
+            'cp /solution/ledger.beancount /app/ledger.beancount && /tests/test.sh && grep -q "\"reward\": 1" /logs/verifier/reward.json'

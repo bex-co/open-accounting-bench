@@ -1,0 +1,25 @@
+{
+  "task_id": "correct-misclassification",
+  "family": "ledger-integrity-reporting",
+  "seed": 104,
+  "generator_version": "0.1.0",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Equipment": "2100.00",
+    "Expenses:Repairs": "-2100.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Equipment": "2100.00"
+  },
+  "forbid_new_accounts": true
+}

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "Open Accounting Bench: The Open, Living, and Executable Benchmark for AI Accounting Agents"
+message: "If you use Open Accounting Bench, please cite it as below."
+version: 0.1.0
+date-released: 2026-10-19
+license: Apache-2.0
+repository-code: "https://github.com/bex-co/open-accounting-bench"
+authors:
+  - name: "Open Accounting Bench contributors"
+abstract: >-
+  A dynamically generated, executably verified benchmark that evaluates
+  AI agents on real accounting work over Beancount ledgers in Harbor
+  task environments, with deterministic five-layer verification.
+keywords:
+  - benchmark
+  - accounting
+  - beancount
+  - ai-agents
+  - harbor

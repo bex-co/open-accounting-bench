@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Open Accounting Bench dataset manifest",
+  "type": "object",
+  "required": ["dataset", "version", "tasks"],
+  "properties": {
+    "dataset": {"type": "string"},
+    "version": {"type": "string"},
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task_id", "family", "seed", "generator_version",
+          "track", "standard", "jurisdiction", "digest"
+        ],
+        "properties": {
+          "task_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "family": {"type": "string"},
+          "seed": {"type": "integer"},
+          "generator_version": {"type": "string"},
+          "track": {"enum": ["stable", "dynamic", "holdout"]},
+          "standard": {"enum": ["core", "ifrs", "us-gaap"]},
+          "jurisdiction": {"type": "string"},
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

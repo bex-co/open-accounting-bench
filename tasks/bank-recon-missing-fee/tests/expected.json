@@ -1,0 +1,30 @@
+{
+  "task_id": "bank-recon-missing-fee",
+  "family": "bank-reconciliation",
+  "seed": 102,
+  "generator_version": "0.1.0",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Bank:Checking": "1010.50",
+    "Expenses:Utilities": "-1030.00",
+    "Expenses:BankFees": "19.50"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Bank:Checking": "8950.50"
+  },
+  "forbid_new_accounts": true,
+  "reconciliation": {
+    "account": "Assets:Bank:Checking",
+    "statement_balance": "8950.50"
+  }
+}

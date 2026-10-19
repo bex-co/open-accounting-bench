@@ -1,0 +1,41 @@
+schema_version = "1.3"
+artifacts = ["/app/ledger.beancount"]
+
+[task]
+name = "open-accounting-bench/bank-recon-missing-fee"
+description = "Reconcile the bank account (missing fee, duplicate import)"
+authors = []
+keywords = ["bank-reconciliation", "duplicate", "bank-fees"]
+
+[metadata]
+task_id = "bank-recon-missing-fee"
+family = "bank-reconciliation"
+difficulty = "medium"
+category = "accounting"
+track = "stable"
+seed = 102
+generator_version = "0.1.0"
+ledger_engine = "beancount"
+standard = "core"
+jurisdiction = "none"
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 300.0
+
+[verifier.environment]
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 1800.0
+
+[environment]
+network_mode = "no-network"
+os = "linux"
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120
