@@ -1,5 +1,12 @@
 # Open Accounting Bench
 
+> **Status: under active development (pre-alpha).** This repository is
+> an early v0.1 work in progress, not a stable benchmark release. Task
+> families, generators, verifiers, and scoring may change without
+> notice, and results produced today are not comparable across
+> revisions and should not be cited. See
+> [docs/roadmap.md](docs/roadmap.md) for what is done and what is next.
+
 **The open, living, and executable benchmark for AI accounting agents.**
 
 Open Accounting Bench (OAB) measures whether an AI agent can *do*

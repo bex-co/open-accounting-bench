@@ -1,6 +1,6 @@
 # 90-day roadmap (from memo §12)
 
-## Days 1–30 — Verification foundation ✅ (this initialization)
+## Days 1–30 — Verification foundation (done in this initialization)
 
 - [x] Harbor integration: task format, separate verifier, artifacts.
 - [x] Five-layer deterministic verifier; balanced-but-wrong entries fail.
