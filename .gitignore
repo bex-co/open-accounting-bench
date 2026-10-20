@@ -9,3 +9,6 @@ jobs/
 generated/
 .DS_Store
 .env
+
+# AI agent scratch (see .agents/AGENTS.md)
+.agents/tmp/

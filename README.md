@@ -118,6 +118,9 @@ tasks/          Stable-track Harbor dataset (+ dataset.toml, manifest, metric.py
 tests/          Repo tests: verifier layers, generator determinism, task health
 docs/           Methodology, verification, metrics, governance, roadmap
 memo.md         Founding strategy proposal
+AGENTS.md       Guide for coding agents (Codex, Claude Code)
+.agents/skills/ Development skills: /pm, /pm-brainstorm, /loopx, /ship
+.pm/            Public roadmap board
 ```
 
 ## Contributing

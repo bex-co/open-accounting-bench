@@ -17,6 +17,8 @@ jobs:
           uv run ruff format --check src tests
       - name: Unit tests
         run: uv run pytest
+      - name: Agent guidance (AGENTS.md, skills, .claude/skills link)
+        run: python3 scripts/check-agent-guidance.py
       - name: Task validation (structure, grader sync, oracle vs nop)
         run: uv run oab validate --tasks tasks
       - name: Generated tasks are up to date

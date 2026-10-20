@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship"
+  short_description: "Ship master to origin"
+  default_prompt: "Use $ship to commit and push master."
