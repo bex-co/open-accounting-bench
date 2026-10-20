@@ -380,11 +380,111 @@ def correct_misclassification(seed: int) -> TaskInstance:
     )
 
 
+def mc_capitalization_treatment(seed: int) -> TaskInstance:
+    """Answer-file shape example: select all correct treatments (MC)."""
+    rng = random.Random(seed)
+    amount = Decimal(rng.randrange(200000, 600001, 500)) / 100
+    vendor = rng.choice(["Dell", "Lenovo", "HP"])
+    life = rng.choice([3, 4, 5])
+    amt = money(amount)
+    statements: list[tuple[str, bool]] = [
+        (
+            f"Debit Assets:Equipment {amt} USD and credit Assets:Bank:Checking "
+            f"{amt} USD on the purchase date.",
+            True,
+        ),
+        (
+            "The purchase does not reduce profit on the acquisition date; "
+            "cost is recognized over the useful life.",
+            True,
+        ),
+        (
+            f"Debit Expenses:Repairs {amt} USD and credit Assets:Bank:Checking "
+            f"{amt} USD, expensing the full cost immediately.",
+            False,
+        ),
+        (
+            f"Debit Assets:Bank:Checking {amt} USD and credit Income:Sales "
+            f"{amt} USD on the purchase date.",
+            False,
+        ),
+        (
+            f"Debit Assets:Equipment {amt} USD and credit Expenses:Repairs "
+            f"{amt} USD, with no cash movement on the purchase date.",
+            False,
+        ),
+    ]
+    rng.shuffle(statements)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = sorted(oid for oid, (_, ok) in zip(option_ids, statements, strict=True) if ok)
+    options_md = "\n".join(
+        f"- {oid}. {text}" for oid, (text, _) in zip(option_ids, statements, strict=True)
+    )
+    question = f"""# Question — capitalization treatment
+
+On 2026-01-12 the company bought a laptop from {vendor} for USD {amt},
+paid from checking. The laptop has a useful life of {life} years.
+Accounting policy: see `/app/policy.md` (items with a useful life over
+one year are capitalized; consumables are expensed).
+
+Select **all** statements that correctly describe the required
+accounting treatment on the purchase date.
+
+{options_md}
+
+## Answer format
+
+Write `/app/answer.json` as a JSON object, for example:
+
+```json
+{{"final_answer": ["A", "C"], "confidence": 80}}
+```
+
+`final_answer` lists the selected option ids; `confidence` is your
+self-assessed probability (0-100) that the selection is fully correct.
+Incorrect selections are penalized, so select only statements you
+believe are correct.
+"""
+    return TaskInstance(
+        task_id="mc-capitalization-treatment",
+        family="transaction-classification",
+        title="Select the correct capitalization treatments",
+        instruction=(
+            "Answer the multiple-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": POLICY,
+            "chart_of_accounts.md": _chart_md(),
+            "answer.example.json": '{\n  "final_answer": ["A"],\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "mc-capitalization-treatment",
+            "transaction-classification",
+            seed,
+            format="multiple-choice",
+            scenario_amount=amt,
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["multiple-choice", "capitalization"],
+        format="multiple-choice",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
     "prepaid-insurance-adjustment": prepaid_insurance_adjustment,
     "correct-misclassification": correct_misclassification,
+    "mc-capitalization-treatment": mc_capitalization_treatment,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -393,4 +493,5 @@ STABLE_SEEDS = {
     "bank-recon-missing-fee": 102,
     "prepaid-insurance-adjustment": 103,
     "correct-misclassification": 104,
+    "mc-capitalization-treatment": 105,
 }

@@ -63,6 +63,21 @@ set -euo pipefail
 cp /solution/ledger.beancount /app/ledger.beancount
 """
 
+TEST_SH_ANSWER = TEST_SH.replace(
+    "  --ledger /app/ledger.beancount \\\n  --initial /tests/initial.beancount \\",
+    "  --answer /app/answer.json \\",
+)
+
+SOLVE_SH_ANSWER = """#!/bin/bash
+set -euo pipefail
+cp /solution/answer.json /app/answer.json
+"""
+
+
+def artifact_path(instance: TaskInstance) -> str:
+    """The single graded output file, by task shape."""
+    return "/app/ledger.beancount" if instance.format == "journal-entry" else "/app/answer.json"
+
 
 def _toml_str(value: str) -> str:
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
@@ -72,7 +87,7 @@ def render_task_toml(instance: TaskInstance, track: str = "stable") -> str:
     keywords = ", ".join(_toml_str(k) for k in instance.keywords)
     seed = instance.expected["seed"]
     return f"""schema_version = "1.3"
-artifacts = ["/app/ledger.beancount"]
+artifacts = [{_toml_str(artifact_path(instance))}]
 
 [task]
 name = {_toml_str(f"{ORG}/{instance.task_id}")}
@@ -139,9 +154,10 @@ def write_task(instance: TaskInstance, out_dir: Path, track: str = "stable") -> 
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
 
+    is_journal = instance.format == "journal-entry"
     tests = task_dir / "tests"
     (tests / "Dockerfile").write_text(TESTS_DOCKERFILE, encoding="utf-8")
-    (tests / "test.sh").write_text(TEST_SH, encoding="utf-8")
+    (tests / "test.sh").write_text(TEST_SH if is_journal else TEST_SH_ANSWER, encoding="utf-8")
     (tests / "grader.py").write_text(_grader_source(), encoding="utf-8")
     expected_out = {
         **instance.expected,
@@ -153,12 +169,21 @@ def write_task(instance: TaskInstance, out_dir: Path, track: str = "stable") -> 
     (tests / "expected.json").write_text(
         json.dumps(expected_out, indent=2) + "\n", encoding="utf-8"
     )
-    (tests / "initial.beancount").write_text(instance.initial_ledger, encoding="utf-8")
+    if is_journal:
+        (tests / "initial.beancount").write_text(instance.initial_ledger, encoding="utf-8")
 
-    (task_dir / "solution" / "solve.sh").write_text(SOLVE_SH, encoding="utf-8")
-    (task_dir / "solution" / "ledger.beancount").write_text(
-        instance.solution_ledger, encoding="utf-8"
-    )
+    if is_journal:
+        (task_dir / "solution" / "solve.sh").write_text(SOLVE_SH, encoding="utf-8")
+        (task_dir / "solution" / "ledger.beancount").write_text(
+            instance.solution_ledger, encoding="utf-8"
+        )
+    else:
+        if instance.solution_answer is None:
+            raise ValueError(f"{instance.task_id}: answer-file task needs solution_answer")
+        (task_dir / "solution" / "solve.sh").write_text(SOLVE_SH_ANSWER, encoding="utf-8")
+        (task_dir / "solution" / "answer.json").write_text(
+            json.dumps(instance.solution_answer, indent=2) + "\n", encoding="utf-8"
+        )
     for script in (tests / "test.sh", task_dir / "solution" / "solve.sh"):
         script.chmod(0o755)
     return task_dir

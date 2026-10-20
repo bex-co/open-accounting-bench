@@ -5,8 +5,10 @@ import pytest
 from oab.families import FAMILIES
 from oab.verify import parse_ledger, verify
 
+JOURNAL_FAMILIES = [tid for tid in sorted(FAMILIES) if FAMILIES[tid](1).format == "journal-entry"]
 
-@pytest.mark.parametrize("task_id", sorted(FAMILIES))
+
+@pytest.mark.parametrize("task_id", JOURNAL_FAMILIES)
 @pytest.mark.parametrize("seed", [1, 7, 42, 2026])
 def test_oracle_passes_and_nop_fails(task_id, seed):
     instance = FAMILIES[task_id](seed)

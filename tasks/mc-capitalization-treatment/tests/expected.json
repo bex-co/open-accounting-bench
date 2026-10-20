@@ -1,0 +1,30 @@
+{
+  "task_id": "mc-capitalization-treatment",
+  "family": "transaction-classification",
+  "seed": 105,
+  "generator_version": "0.2.0",
+  "format": "multiple-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "scenario_amount": "5025.00",
+  "gold": [
+    "C",
+    "E"
+  ],
+  "options": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university"
+}

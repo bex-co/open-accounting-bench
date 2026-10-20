@@ -185,6 +185,7 @@ class LayerResult:
 @dataclass
 class Report:
     layers: dict[str, LayerResult]
+    extras: dict[str, float] = field(default_factory=dict)
 
     @property
     def reward(self) -> int:
@@ -197,6 +198,8 @@ class Report:
         rewards["partial"] = round(
             sum(layer.score for layer in self.layers.values()) / len(self.layers), 6
         )
+        for name, value in self.extras.items():
+            rewards[name] = round(float(value), 6)
         return rewards
 
     def to_report_json(self) -> dict:
@@ -210,6 +213,7 @@ class Report:
                 }
                 for name, layer in self.layers.items()
             },
+            "extras": self.extras,
         }
 
 
@@ -363,10 +367,121 @@ def _added_transactions(initial: Ledger, final: Ledger) -> list[Transaction]:
     return added
 
 
+def grade_answer(expected: dict, answer_text: str | None) -> Report:
+    """Grade an answer-file task (single/multiple choice, numeric).
+
+    Answer contract: a JSON object with `final_answer` (option id,
+    list of option ids, or number) and optional `confidence` (0-100).
+    Anything unparseable scores 0 with parse_failure=1 and stays in
+    the denominator. Multiple-choice accuracy uses the penalized
+    formula (correct - incorrect marks) / |gold|, which may be
+    negative; reward requires exact set equality.
+    """
+    fmt = expected.get("format", "")
+    failures: list[str] = []
+    extras: dict[str, float] = {"parse_failure": 0.0}
+    answer: dict | None = None
+    if not answer_text or not answer_text.strip():
+        failures.append("answer file missing or empty")
+    else:
+        try:
+            parsed = json.loads(answer_text)
+            if not isinstance(parsed, dict) or "final_answer" not in parsed:
+                failures.append("answer JSON must be an object with final_answer")
+            else:
+                answer = parsed
+        except (json.JSONDecodeError, ValueError) as exc:
+            failures.append(f"answer is not valid JSON: {exc}")
+    if answer is not None:
+        confidence = answer.get("confidence")
+        if isinstance(confidence, int | float) and 0 <= float(confidence) <= 100:
+            extras["confidence"] = float(confidence)
+        elif confidence is not None:
+            failures.append("confidence ignored: must be a number in 0..100")
+    format_layer = LayerResult(
+        score=1.0 if answer is not None else 0.0,
+        passed=answer is not None,
+        failures=failures,
+    )
+    if answer is None:
+        extras["parse_failure"] = 1.0
+        accuracy = LayerResult(score=0.0, passed=False, failures=["no parseable answer"])
+        return Report(
+            layers={"format_validity": format_layer, "answer_accuracy": accuracy},
+            extras=extras,
+        )
+
+    final = answer["final_answer"]
+    acc_failures: list[str] = []
+    score = 0.0
+    passed = False
+    if fmt == "single-choice":
+        gold = str(expected.get("gold", ""))
+        if not isinstance(final, str):
+            acc_failures.append("final_answer must be a single option id string")
+            extras["parse_failure"] = 1.0
+            format_layer.passed = False
+            format_layer.score = 0.0
+            format_layer.failures.append("final_answer has wrong type for single-choice")
+        else:
+            score = 1.0 if final == gold else 0.0
+            passed = score == 1.0
+            if not passed:
+                acc_failures.append(f"expected option {gold}, got {final}")
+    elif fmt == "multiple-choice":
+        gold_set = {str(g) for g in expected.get("gold", [])}
+        if not isinstance(final, list) or not all(isinstance(x, str) for x in final):
+            acc_failures.append("final_answer must be a list of option id strings")
+            extras["parse_failure"] = 1.0
+            format_layer.passed = False
+            format_layer.score = 0.0
+            format_layer.failures.append("final_answer has wrong type for multiple-choice")
+        elif not gold_set:
+            acc_failures.append("expected.json has empty gold set")
+        else:
+            chosen = set(final)
+            correct = len(chosen & gold_set)
+            wrong = len(chosen - gold_set)
+            score = (correct - wrong) / len(gold_set)
+            passed = chosen == gold_set
+            if not passed:
+                acc_failures.append(
+                    f"expected options {sorted(gold_set)}, got {sorted(chosen)} "
+                    f"(correct {correct}, incorrect {wrong})"
+                )
+    elif fmt == "numeric":
+        try:
+            got = Decimal(str(final))
+            gold = Decimal(str(expected.get("gold")))
+            abs_tol = Decimal(str(expected.get("abs_tolerance", "0")))
+            rel_tol = Decimal(str(expected.get("rel_tolerance", "0")))
+            within = abs(got - gold) <= abs_tol + rel_tol * abs(gold)
+            score = 1.0 if within else 0.0
+            passed = within
+            if not within:
+                acc_failures.append(
+                    f"expected {gold} (+/- {abs_tol} + {rel_tol}*|gold|), got {got}"
+                )
+        except (InvalidOperation, ValueError, TypeError):
+            acc_failures.append("final_answer must be a number for numeric tasks")
+            extras["parse_failure"] = 1.0
+            format_layer.passed = False
+            format_layer.score = 0.0
+            format_layer.failures.append("final_answer has wrong type for numeric")
+    else:
+        acc_failures.append(f"format {fmt!r} is not deterministically gradable")
+    accuracy = LayerResult(score=score, passed=passed, failures=acc_failures)
+    return Report(
+        layers={"format_validity": format_layer, "answer_accuracy": accuracy},
+        extras=extras,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="OAB ledger verifier")
-    parser.add_argument("--ledger", required=True, help="final ledger path")
-    parser.add_argument("--initial", required=True, help="initial ledger path")
+    parser.add_argument("--ledger", help="final ledger path (journal-entry tasks)")
+    parser.add_argument("--initial", help="initial ledger path (journal-entry tasks)")
+    parser.add_argument("--answer", help="answer.json path (answer-file tasks)")
     parser.add_argument("--expected", required=True, help="expected.json path")
     parser.add_argument(
         "--out",
@@ -378,9 +493,18 @@ def main(argv: list[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     try:
         expected = json.loads(Path(args.expected).read_text(encoding="utf-8"))
-        initial_text = Path(args.initial).read_text(encoding="utf-8")
-        final_text = Path(args.ledger).read_text(encoding="utf-8")
-        report = verify(initial_text, final_text, expected)
+        if expected.get("format", "journal-entry") == "journal-entry":
+            initial_text = Path(args.initial).read_text(encoding="utf-8")
+            final_text = Path(args.ledger).read_text(encoding="utf-8")
+            report = verify(initial_text, final_text, expected)
+        else:
+            answer_path = Path(args.answer) if args.answer else None
+            answer_text = (
+                answer_path.read_text(encoding="utf-8")
+                if answer_path is not None and answer_path.exists()
+                else None
+            )
+            report = grade_answer(expected, answer_text)
     except Exception as exc:  # verifier crash: no reward.json, test.sh sentinel fires
         print(f"[verifier] ERROR: {exc}", file=sys.stderr)
         return 2
