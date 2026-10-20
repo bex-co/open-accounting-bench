@@ -80,6 +80,33 @@ def _cmd_generate(args) -> int:
     return 0
 
 
+def _expected_shape_failures(name: str, fmt: str, expected: dict) -> list[str]:
+    """Format-specific expectations must be present and well-typed."""
+    from decimal import Decimal, InvalidOperation
+
+    failures: list[str] = []
+    if fmt == "journal-entry":
+        if not expected.get("expected_deltas"):
+            failures.append(f"{name}: journal-entry expected_deltas must be non-empty")
+    elif fmt == "single-choice":
+        if not isinstance(expected.get("gold"), str) or not expected["gold"]:
+            failures.append(f"{name}: single-choice gold must be an option id string")
+    elif fmt == "multiple-choice":
+        gold = expected.get("gold")
+        if not isinstance(gold, list) or not gold:
+            failures.append(f"{name}: multiple-choice gold must be a non-empty list")
+        elif "options" in expected and not set(gold) <= set(expected["options"]):
+            failures.append(f"{name}: multiple-choice gold must be subset of options")
+    elif fmt == "numeric":
+        try:
+            Decimal(str(expected.get("gold")))
+        except (InvalidOperation, ValueError, TypeError):
+            failures.append(f"{name}: numeric gold must be a number")
+    elif fmt == "open-text":
+        failures.append(f"{name}: open-text has no deterministic grader yet")
+    return failures
+
+
 def _grade(task_dir: Path, artifact: Path | None) -> dict:
     expected = json.loads((task_dir / "tests" / "expected.json").read_text())
     if expected.get("format", "journal-entry") == "journal-entry":
@@ -136,6 +163,13 @@ def validate_tasks(tasks_root: Path) -> list[str]:
         instruction = (task_dir / "instruction.md").read_text()
         if artifact_for_format(fmt) not in instruction:
             failures.append(f"{name}: instruction must name {artifact_for_format(fmt)}")
+        if metadata.get("task_id") != name:
+            failures.append(f"{name}: metadata.task_id must equal directory name")
+        if metadata.get("seed") != expected.get("seed"):
+            failures.append(f"{name}: metadata.seed != expected.json seed")
+        if not (task_dir / "environment" / "app" / "policy.md").is_file():
+            failures.append(f"{name}: environment/app/policy.md is required")
+        failures += _expected_shape_failures(name, fmt, expected)
         if (task_dir / "tests" / "grader.py").read_text() != core:
             failures.append(f"{name}: tests/grader.py drifted from oab._verifier_core")
         if fmt == "journal-entry":

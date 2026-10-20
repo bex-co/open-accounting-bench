@@ -14,6 +14,10 @@ are needed only to execute tasks end-to-end.
 
 ## Adding a task family
 
+Fill in [docs/task-family-template.md](docs/task-family-template.md)
+(scenario, oracle derivation, trap, equivalents, review) as part of
+the PR, then:
+
 1. Implement `family_fn(seed) -> TaskInstance` in `src/oab/families.py`
    (copy an existing family). Use `random.Random(seed)` only — same
    seed must give a byte-identical instance.
