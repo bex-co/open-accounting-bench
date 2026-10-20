@@ -1,20 +1,46 @@
 # Task families
 
 A family is a validated, parameterized accounting scenario:
-`(family, seed, generator_version)` → instruction, initial ledger,
+`(family, seed, generator_version)` → instruction, initial state,
 source documents, policy, expectations, reference solution. Authoring
-guide: [CONTRIBUTING.md](../CONTRIBUTING.md).
+guide: [CONTRIBUTING.md](../CONTRIBUTING.md) and
+[task-family-template.md](task-family-template.md).
 
-## v0.1 (implemented)
+Every task carries a four-axis taxonomy (`task.toml [metadata]`,
+`manifest.json`; vocabularies in `oab.families.TAXONOMY`):
 
-| Task ID | Family | Scenario | Trap |
-|---|---|---|---|
-| `classify-operating-expense` | transaction-classification | Record a consumables receipt paid from checking | Capitalize as equipment |
-| `bank-recon-missing-fee` | bank-reconciliation | Reconcile to statement: duplicate import + missing service charge | Delete the duplicate line; ignore the fee |
-| `prepaid-insurance-adjustment` | adjustments-corrections | One month of a 12-month prepayment | Expense all 12 months |
-| `correct-misclassification` | ledger-integrity-reporting | Laptop expensed as repairs; capitalize via correcting entry | Edit the original entry in place |
+- `category`: financial-accounting / management-accounting / tax
+- `framework`: core / ifrs / us-gaap (jurisdiction packs add values)
+- `level`: vocational / university / professional
+- `format`: journal-entry / single-choice / multiple-choice / numeric /
+  open-text (open-text has no deterministic grader yet)
 
-Stable seeds: 101–104 (`STABLE_SEEDS` in `src/oab/families.py`).
+## Implemented
+
+| Task ID | Family | Format | Framework | Trap |
+|---|---|---|---|---|
+| `classify-operating-expense` | transaction-classification | journal-entry | core | Capitalize a consumable |
+| `bank-recon-missing-fee` | bank-reconciliation | journal-entry | core | Delete duplicate; ignore fee |
+| `prepaid-insurance-adjustment` | adjustments-corrections | journal-entry | core | Expense all 12 months |
+| `correct-misclassification` | ledger-integrity-reporting | journal-entry | core | Edit history in place |
+| `mc-capitalization-treatment` | transaction-classification | multiple-choice | core | Expense-it distractor |
+
+Stable seeds: 101–105 (`STABLE_SEEDS` in `src/oab/families.py`).
+
+## Coverage matrix (category × framework)
+
+Cell values: number of Stable tasks; `planned` cells are roadmap
+placeholders tracked as issues, not directories.
+
+| Category | core | ifrs | us-gaap | jurisdiction pack |
+|---|---:|---:|---:|---|
+| financial-accounting | 5 | planned | planned | planned |
+| management-accounting | planned | planned | planned | planned |
+| tax | planned | — | — | planned |
+
+Format coverage: journal-entry ×4, multiple-choice ×1;
+single-choice grader exists without a committed family; open-text is
+deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
 
@@ -33,10 +59,11 @@ documents, period-boundary dates.
 
 Every generated task must satisfy, before merge:
 
-- Oracle (solution ledger) scores `reward = 1`; untouched initial
-  ledger scores 0. (`oab validate`, CI.)
-- At least one plausible wrong-but-balanced attempt fails on a
-  non-structural layer.
+- Oracle solution scores `reward = 1`; untouched initial state (or a
+  missing answer file) scores 0. (`oab validate`, CI.)
+- At least one plausible wrong attempt fails on a non-structural
+  dimension (trap test under `tests/`).
 - Same seed → byte-identical task directory (digest in manifest).
-- Instruction states paths, output file, append-only rule, and period;
-  policy in `/app/policy.md` removes accounting ambiguity.
+- Instruction states absolute paths and the single output file
+  (`/app/ledger.beancount` or `/app/answer.json`); policy in
+  `/app/policy.md` removes accounting ambiguity.

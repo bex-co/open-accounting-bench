@@ -58,6 +58,39 @@ trajectories. Beancount is the reference ledger engine, but the graded
 contract is the accounting state (account balances/deltas), so agents
 are not rewarded for Beancount trivia beyond producing a valid ledger.
 
+## Relation to WU AccountingBench
+
+[AccountingBench](https://www.boardservice.center/research/methodology.html)
+(WU Vienna; Kaburek et al., RWK 4/2026) evaluates LLMs on 520 curated
+examination tasks (Financial/Management/Tax; single/multiple choice,
+numeric, journal entries, open text), three runs per question,
+penalized choice scoring, an LLM judge for entries and open text, and
+stratified reporting with cost and confidence analysis. OAB replicates
+that measurement structure — four-axis taxonomy (category, framework,
+level, format), multi-attempt aggregation (`oab report`, majority
+vote for choice formats), interpretation bands, cost and confidence
+reporting — with four deliberate deviations:
+
+1. **Generated instances, not curated exam items**: seed-parameterized
+   families with rule-derived oracles avoid copyright, contamination,
+   and static-snapshot limits (Stable seeds stay comparable; Dynamic
+   seeds resist overfitting).
+2. **Deterministic journal-entry grading, no LLM judge**: entries are
+   graded by resulting ledger state in five layers, so equivalent
+   entries pass and balanced-but-wrong entries fail — the judge
+   reliability caveat WU lists does not apply to this format.
+3. **Unparseable answers stay in the denominator** (`parse_failure`
+   is reported separately) instead of being excluded from totals.
+4. **Open-text is deferred**: it needs a judge design (verifier
+   network/secrets policy plus a human-agreement study) and will be
+   reported as a separate track when it lands.
+
+WU's central empirical lesson also shapes our roadmap: globally
+documented standards (their IFRS items score 96–100%) saturate
+quickly, while jurisdiction-specific rules discriminate. Core
+bookkeeping here is therefore a sanity gate; discriminative weight
+will come from standards/jurisdiction packs and multi-step workflows.
+
 ## Known limits (v0.1)
 
 - Single-currency, single-period, small-chart scenarios.

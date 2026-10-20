@@ -6,7 +6,10 @@
 - [x] Five-layer deterministic verifier; balanced-but-wrong entries fail.
 - [x] First 4 task families (one per v0.1 category) + oracles.
 - [x] Seed-deterministic generation; Stable instances committed.
-- [ ] Run first agents end-to-end via Harbor; record baseline job.
+- [x] Four-axis taxonomy (category/framework/level/format), answer-file
+      formats (choice/numeric) with an MC example, `oab report`
+      multi-attempt aggregation with cost/confidence (WU learnings).
+- [ ] Run first real agents end-to-end via Harbor; record baseline job.
 - [ ] Optional `bean-check` cross-validation of the ledger subset.
 
 ## Days 31–60 — Dynamic evaluation pipeline

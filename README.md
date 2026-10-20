@@ -40,8 +40,9 @@ tests/            Separate-verifier image, grader, held-out expectations
 solution/         Reference final ledger (held out from the agent)
 ```
 
-The agent works in an isolated, no-network container and edits
-`/app/ledger.beancount`. Grading uses Harbor's separate verifier
+The agent works in an isolated, no-network container and produces one
+graded file (`/app/ledger.beancount`, or `/app/answer.json` for
+choice/numeric formats). Grading uses Harbor's separate verifier
 environment: the ledger is declared as an artifact in `task.toml`,
 copied into a pristine verifier container, and graded there. The
 reference ledger in `solution/` is never used at grading time; it exists
@@ -66,19 +67,21 @@ pass). See [docs/metrics.md](docs/metrics.md).
 | Dynamic | Fresh instances from the same families | `oab generate --family F --seed N` |
 | Holdout | Generalization check vs. generator overfitting | Unpublished families/seeds; governance in [docs/governance.md](docs/governance.md) |
 
-## v0.1 task families
+## Task families
 
-Four families, one frozen Stable instance each; each generator yields
-hundreds of reproducible instances. The 90-day target is 12–15 validated
-generators (see [docs/task-families.md](docs/task-families.md) and
-[docs/roadmap.md](docs/roadmap.md)).
+Five frozen Stable instances so far; each generator yields hundreds of
+reproducible instances. Tasks are tagged by category, framework,
+level, and format; the 90-day target is 12–15 validated generators
+(see [docs/task-families.md](docs/task-families.md) for the coverage
+matrix and [docs/roadmap.md](docs/roadmap.md)).
 
-| Task | Family | Trap it catches |
+| Task | Format | Trap it catches |
 |---|---|---|
-| `classify-operating-expense` | Transaction classification | Capitalizing a consumable as an asset |
-| `bank-recon-missing-fee` | Bank reconciliation | Duplicate import; missing bank fee |
-| `prepaid-insurance-adjustment` | Adjustments & corrections | Expensing a full 12-month prepayment |
-| `correct-misclassification` | Ledger integrity & reporting | Rewriting history instead of correcting entries |
+| `classify-operating-expense` | journal-entry | Capitalizing a consumable as an asset |
+| `bank-recon-missing-fee` | journal-entry | Duplicate import; missing bank fee |
+| `prepaid-insurance-adjustment` | journal-entry | Expensing a full 12-month prepayment |
+| `correct-misclassification` | journal-entry | Rewriting history instead of correcting entries |
+| `mc-capitalization-treatment` | multiple-choice | Selecting the expense-it-now distractor |
 
 ## Quickstart
 
@@ -92,9 +95,10 @@ cd open-accounting-bench
 # Sanity-check solvability with the Oracle agent (no API key needed)
 harbor run -p tasks/classify-operating-expense -a oracle
 
-# Evaluate an agent on the Stable track
+# Evaluate an agent on the Stable track (3 attempts per task), then aggregate
 export ANTHROPIC_API_KEY=...
-harbor run -p tasks -a "<agent>" -m "anthropic/<model>"
+harbor run -p tasks -a "<agent>" -m "anthropic/<model>" -k 3 -o jobs --job-name eval-1
+uv run oab report --job jobs/eval-1   # writes runs.jsonl + leaderboard.md
 ```
 
 Generate fresh Dynamic-track instances and grade locally without Harbor:
@@ -113,7 +117,8 @@ src/oab/        Generator + verifier package (stdlib only)
   families.py   Parameterized task families (seed -> instance)
   generate.py   Instance -> Harbor task directory, dataset files
   _verifier_core.py  Five-layer grader; copied verbatim into each task
-  cli.py        oab generate / verify / validate / list
+  cli.py        oab generate / verify / validate / report / list
+  report.py     Harbor job -> runs.jsonl + stratified leaderboard.md
 tasks/          Stable-track Harbor dataset (+ dataset.toml, manifest, metric.py)
 tests/          Repo tests: verifier layers, generator determinism, task health
 docs/           Methodology, verification, metrics, governance, roadmap
