@@ -74,3 +74,16 @@ def test_mc_family_oracle_nop_and_trap(seed):
     question = instance.app_files["question.md"]
     for oid in ["A", "B", "C", "D", "E"]:
         assert f"- {oid}." in question
+
+
+@pytest.mark.parametrize("seed", [1, 7, 42, 106])
+def test_mgmt_family_oracle_and_wrong_formula_trap(seed):
+    from decimal import Decimal
+
+    instance = FAMILIES["mgmt-break-even-units"](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    gold = Decimal(expected["gold"])
+    # Trap scale: answering with current volume (gold + offset) fails.
+    assert grade_answer(expected, ans(float(gold) + 500)).reward == 0

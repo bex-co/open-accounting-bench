@@ -10,20 +10,28 @@ keywords = ["accounting", "beancount", "agents"]
 
 [[tasks]]
 name = "open-accounting-bench/bank-recon-missing-fee"
-digest = "sha256:e25ddb91d00e3357dd8891b31a4dafaab2176967842da390eaaf273d930bbaf0"
+digest = "sha256:7f123b4dc75f7fb2fba3f17f1de19b10ef674f971b51c7320095bb70168d46e3"
 
 [[tasks]]
 name = "open-accounting-bench/classify-operating-expense"
-digest = "sha256:d15fe301019b299f810015ce3dff75dcdd5c927bda9c60ea3e81367f29e956b0"
+digest = "sha256:2f80660c069e97024b9178ed0b8802d8f3357f0505609061b1d30666cb589174"
 
 [[tasks]]
 name = "open-accounting-bench/correct-misclassification"
-digest = "sha256:e49dcd6c70f4887988b4ab0648567726ada8e73a58d2c666a89141507f670b6a"
+digest = "sha256:b281fc49db9e1f4e490dcf541d6e9f733200a5774957d4678339a419e252674c"
+
+[[tasks]]
+name = "open-accounting-bench/ifrs-capitalize-borrowing-costs"
+digest = "sha256:1f0ed7ba79bc6b93e3937d30254b00e604659b57cb2e30dfa4f34793058e29fb"
 
 [[tasks]]
 name = "open-accounting-bench/mc-capitalization-treatment"
-digest = "sha256:70f2ca1ce82b015a4c571deeebb3849488cd4e955da836b988f11f41f8d80cea"
+digest = "sha256:508f5cb1d7d3565124ccc4b0a4bdfde2d46d9dcc53a1335a1d5465a2d1272310"
+
+[[tasks]]
+name = "open-accounting-bench/mgmt-break-even-units"
+digest = "sha256:1c28bd0d53abedacb120a172a341f34839ef2966c9a38323e2c9cef52cdfd1fa"
 
 [[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
-digest = "sha256:93e77a6a195a1e0f9d1adbdb3eb0d9f565c95355fd240fba305fcf42f2345823"
+digest = "sha256:a6775975dbc4ecae704855b2b007c8adace0a6ace42c449562c4424cd8de277d"

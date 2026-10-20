@@ -41,6 +41,7 @@ CHART = [
     ("Income:Sales", "Sales revenue"),
     ("Expenses:BankFees", "Bank service charges"),
     ("Expenses:Insurance", "Insurance expense for the current period"),
+    ("Expenses:Interest", "Interest expense (non-capitalized borrowing costs)"),
     ("Expenses:OfficeSupplies", "Consumable office supplies"),
     ("Expenses:Rent", "Office rent"),
     ("Expenses:Repairs", "Repairs and maintenance"),
@@ -479,12 +480,174 @@ believe are correct.
     )
 
 
+MGMT_POLICY = """# Management accounting conventions (applies to this task)
+
+- Break-even units = total fixed costs / contribution margin per unit.
+- Contribution margin per unit = selling price - variable cost per unit.
+- Ignore taxes and financing. Current sales volume is context only.
+- Answer with the exact unit count in `/app/answer.json`.
+"""
+
+
+def mgmt_break_even_units(seed: int) -> TaskInstance:
+    """Numeric shape example: cost-volume-profit break-even units."""
+    rng = random.Random(seed)
+    units = rng.randrange(400, 3001, 25)
+    margin = Decimal(rng.randrange(500, 5001, 50)) / 100
+    variable = Decimal(rng.randrange(1000, 8001, 50)) / 100
+    price = variable + margin
+    fixed = margin * units
+    current_volume = units + rng.randrange(100, 901, 50)
+    question = f"""# Question — break-even units
+
+A product line has the following monthly data (see also
+`/app/documents/cost_data.md`):
+
+- Selling price: USD {money(price)} per unit
+- Variable cost: USD {money(variable)} per unit
+- Total fixed costs: USD {money(fixed)} per month
+- Current sales volume: {current_volume} units per month
+
+Using the conventions in `/app/policy.md`, compute the monthly
+**break-even volume in units**.
+
+## Answer format
+
+Write `/app/answer.json` as a JSON object, for example:
+
+```json
+{{"final_answer": 1200, "confidence": 80}}
+```
+
+`final_answer` is the unit count (a number); `confidence` is your
+self-assessed probability (0-100) that the value is correct.
+"""
+    cost_data = (
+        "# Cost data (monthly)\n\n"
+        f"| Item | Value |\n|---|---|\n"
+        f"| Selling price / unit | USD {money(price)} |\n"
+        f"| Variable cost / unit | USD {money(variable)} |\n"
+        f"| Total fixed costs | USD {money(fixed)} |\n"
+        f"| Current volume | {current_volume} units |\n"
+    )
+    return TaskInstance(
+        task_id="mgmt-break-even-units",
+        family="cost-volume-profit",
+        title="Compute monthly break-even units",
+        instruction=(
+            "Compute the break-even volume asked in `/app/question.md` "
+            "using `/app/documents/cost_data.md` and `/app/policy.md`. "
+            "Write the result to `/app/answer.json` in the exact format "
+            "shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": MGMT_POLICY,
+            "documents/cost_data.md": cost_data,
+            "answer.example.json": '{\n  "final_answer": 1000,\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "mgmt-break-even-units",
+            "cost-volume-profit",
+            seed,
+            format="numeric",
+            gold=str(units),
+            abs_tolerance="1",
+            rel_tolerance="0",
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": units, "confidence": 100},
+        keywords=["numeric", "break-even", "cvp"],
+        category="management-accounting",
+        format="numeric",
+    )
+
+
+IFRS_POLICY = (
+    POLICY
+    + """
+## IFRS policy for this task (IAS 23)
+
+Borrowing costs directly attributable to acquiring or constructing a
+qualifying asset (one that necessarily takes a substantial period to
+get ready for use) are capitalized as part of the asset's cost during
+construction. Other borrowing costs are expensed as interest.
+"""
+)
+
+
+def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
+    """IFRS framework example: capitalize qualifying borrowing costs."""
+    rng = random.Random(seed)
+    interest = Decimal(rng.randrange(80000, 300001, 250)) / 100
+    construction = Decimal(rng.randrange(2000000, 4000001, 10000)) / 100
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening) + _txn(
+        "2026-01-05",
+        "BuildCo",
+        "Equipment construction costs (qualifying asset, in progress)",
+        [("Assets:Equipment", construction), (BANK, -construction)],
+    )
+    statement = (
+        "# Construction loan statement — January 2026\n\n"
+        "The loan finances only the equipment under construction above "
+        "(completion expected 2026-09). Interest for January, paid from "
+        f"checking on 2026-01-20: USD {money(interest)}.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-20",
+        "Bank",
+        "Capitalize borrowing costs on qualifying asset (IAS 23)",
+        [("Assets:Equipment", interest), (BANK, -interest)],
+    )
+    return TaskInstance(
+        task_id="ifrs-capitalize-borrowing-costs",
+        family="adjustments-corrections",
+        title="Capitalize borrowing costs on a qualifying asset (IFRS)",
+        instruction=(
+            "Record the January construction-loan interest in "
+            "`/app/documents/loan_statement.md` in `/app/ledger.beancount` "
+            "under IFRS as stated in `/app/policy.md`. Append exactly one "
+            "balanced transaction; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": IFRS_POLICY,
+            "chart_of_accounts.md": _chart_md(),
+            "documents/loan_statement.md": statement,
+        },
+        expected=_expected(
+            "ifrs-capitalize-borrowing-costs",
+            "adjustments-corrections",
+            seed,
+            expected_deltas={
+                "Assets:Equipment": money(interest),
+                BANK: money(-interest),
+            },
+            required_final_balances={
+                BANK: money(opening - construction - interest),
+                "Assets:Equipment": money(construction + interest),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["ifrs", "ias-23", "borrowing-costs"],
+        framework="ifrs",
+        level="professional",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
     "prepaid-insurance-adjustment": prepaid_insurance_adjustment,
     "correct-misclassification": correct_misclassification,
     "mc-capitalization-treatment": mc_capitalization_treatment,
+    "mgmt-break-even-units": mgmt_break_even_units,
+    "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -494,4 +657,6 @@ STABLE_SEEDS = {
     "prepaid-insurance-adjustment": 103,
     "correct-misclassification": 104,
     "mc-capitalization-treatment": 105,
+    "mgmt-break-even-units": 106,
+    "ifrs-capitalize-borrowing-costs": 107,
 }

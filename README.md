@@ -69,7 +69,7 @@ pass). See [docs/metrics.md](docs/metrics.md).
 
 ## Task families
 
-Five frozen Stable instances so far; each generator yields hundreds of
+Seven frozen Stable instances so far; each generator yields hundreds of
 reproducible instances. Tasks are tagged by category, framework,
 level, and format; the 90-day target is 12–15 validated generators
 (see [docs/task-families.md](docs/task-families.md) for the coverage
@@ -82,6 +82,8 @@ matrix and [docs/roadmap.md](docs/roadmap.md)).
 | `prepaid-insurance-adjustment` | journal-entry | Expensing a full 12-month prepayment |
 | `correct-misclassification` | journal-entry | Rewriting history instead of correcting entries |
 | `mc-capitalization-treatment` | multiple-choice | Selecting the expense-it-now distractor |
+| `mgmt-break-even-units` | numeric | Answering current volume instead of break-even |
+| `ifrs-capitalize-borrowing-costs` | journal-entry (IFRS) | Expensing qualifying borrowing costs |
 
 ## Quickstart
 

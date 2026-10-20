@@ -1,0 +1,27 @@
+{
+  "task_id": "ifrs-capitalize-borrowing-costs",
+  "family": "adjustments-corrections",
+  "seed": 107,
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Equipment": "1430.00",
+    "Assets:Bank:Checking": "-1430.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Bank:Checking": "12770.00",
+    "Assets:Equipment": "37230.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "ifrs",
+  "level": "professional"
+}

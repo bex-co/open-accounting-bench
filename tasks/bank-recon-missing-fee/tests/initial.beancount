@@ -8,6 +8,7 @@ option "operating_currency" "USD"
 2026-01-01 open Income:Sales USD
 2026-01-01 open Expenses:BankFees USD
 2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
 2026-01-01 open Expenses:OfficeSupplies USD
 2026-01-01 open Expenses:Rent USD
 2026-01-01 open Expenses:Repairs USD

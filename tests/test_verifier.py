@@ -110,6 +110,16 @@ def test_combined_bank_recon_entry_is_accepted_as_equivalent():
     assert verify(instance.initial_ledger, equivalent, instance.expected).reward == 1
 
 
+def test_ifrs_expensing_qualifying_interest_fails_semantics():
+    instance = FAMILIES["ifrs-capitalize-borrowing-costs"](107)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace("  Assets:Equipment", "  Expenses:Interest")
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
 def test_parser_rejects_unknown_directives():
     ledger = parse_ledger("2026-01-01 open Assets:Cash USD\nfrobnicate x\n")
     assert ledger.errors

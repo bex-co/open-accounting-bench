@@ -24,8 +24,10 @@ Every task carries a four-axis taxonomy (`task.toml [metadata]`,
 | `prepaid-insurance-adjustment` | adjustments-corrections | journal-entry | core | Expense all 12 months |
 | `correct-misclassification` | ledger-integrity-reporting | journal-entry | core | Edit history in place |
 | `mc-capitalization-treatment` | transaction-classification | multiple-choice | core | Expense-it distractor |
+| `mgmt-break-even-units` | cost-volume-profit | numeric | core | Answer current volume |
+| `ifrs-capitalize-borrowing-costs` | adjustments-corrections | journal-entry | ifrs | Expense qualifying interest |
 
-Stable seeds: 101–105 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–107 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -34,11 +36,11 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 5 | planned | planned | planned |
-| management-accounting | planned | planned | planned | planned |
+| financial-accounting | 5 | 1 | planned | planned |
+| management-accounting | 1 | planned | planned | planned |
 | tax | planned | — | — | planned |
 
-Format coverage: journal-entry ×4, multiple-choice ×1;
+Format coverage: journal-entry ×5, multiple-choice ×1, numeric ×1;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 

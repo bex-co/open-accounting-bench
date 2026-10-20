@@ -7,6 +7,7 @@
 - `Income:Sales` — Sales revenue
 - `Expenses:BankFees` — Bank service charges
 - `Expenses:Insurance` — Insurance expense for the current period
+- `Expenses:Interest` — Interest expense (non-capitalized borrowing costs)
 - `Expenses:OfficeSupplies` — Consumable office supplies
 - `Expenses:Rent` — Office rent
 - `Expenses:Repairs` — Repairs and maintenance
