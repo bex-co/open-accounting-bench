@@ -21,6 +21,16 @@ def test_manifest_matches_task_dirs():
     assert [entry["task_id"] for entry in manifest["tasks"]] == on_disk
 
 
+def test_manifest_taxonomy_within_vocabulary():
+    from oab.families import TAXONOMY
+
+    manifest = json.loads((TASKS / "manifest.json").read_text())
+    assert manifest["tasks"]
+    for entry in manifest["tasks"]:
+        for axis, allowed in TAXONOMY.items():
+            assert entry[axis] in allowed, entry
+
+
 def test_metric_aggregation(tmp_path: Path):
     rewards = tmp_path / "rewards.jsonl"
     rewards.write_text(

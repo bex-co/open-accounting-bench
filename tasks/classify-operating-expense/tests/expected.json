@@ -2,7 +2,8 @@
   "task_id": "classify-operating-expense",
   "family": "transaction-classification",
   "seed": 101,
-  "generator_version": "0.1.0",
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
@@ -18,5 +19,8 @@
   "required_final_balances": {
     "Assets:Bank:Checking": "9225.00"
   },
-  "forbid_new_accounts": true
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational"
 }

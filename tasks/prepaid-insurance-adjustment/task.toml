@@ -11,13 +11,14 @@ keywords = ["prepayment", "adjusting-entry", "accrual"]
 task_id = "prepaid-insurance-adjustment"
 family = "adjustments-corrections"
 difficulty = "easy"
-category = "accounting"
+category = "financial-accounting"
+framework = "core"
+level = "university"
+format = "journal-entry"
 track = "stable"
 seed = 103
-generator_version = "0.1.0"
+generator_version = "0.2.0"
 ledger_engine = "beancount"
-standard = "core"
-jurisdiction = "none"
 
 [verifier]
 environment_mode = "separate"

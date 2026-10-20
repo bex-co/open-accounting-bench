@@ -12,7 +12,7 @@
         "type": "object",
         "required": [
           "task_id", "family", "seed", "generator_version",
-          "track", "standard", "jurisdiction", "digest"
+          "track", "category", "framework", "level", "format", "digest"
         ],
         "properties": {
           "task_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
@@ -20,8 +20,10 @@
           "seed": {"type": "integer"},
           "generator_version": {"type": "string"},
           "track": {"enum": ["stable", "dynamic", "holdout"]},
-          "standard": {"enum": ["core", "ifrs", "us-gaap"]},
-          "jurisdiction": {"type": "string"},
+          "category": {"enum": ["financial-accounting", "management-accounting", "tax"]},
+          "framework": {"enum": ["core", "ifrs", "us-gaap"]},
+          "level": {"enum": ["vocational", "university", "professional"]},
+          "format": {"enum": ["journal-entry", "single-choice", "multiple-choice", "numeric", "open-text"]},
           "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
         },
         "additionalProperties": false

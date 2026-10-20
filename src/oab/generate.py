@@ -84,13 +84,14 @@ keywords = [{keywords}]
 task_id = {_toml_str(instance.task_id)}
 family = {_toml_str(instance.family)}
 difficulty = {_toml_str(instance.difficulty)}
-category = "accounting"
+category = {_toml_str(instance.category)}
+framework = {_toml_str(instance.framework)}
+level = {_toml_str(instance.level)}
+format = {_toml_str(instance.format)}
 track = {_toml_str(track)}
 seed = {seed}
 generator_version = {_toml_str(GENERATOR_VERSION)}
 ledger_engine = "beancount"
-standard = "core"
-jurisdiction = "none"
 
 [verifier]
 environment_mode = "separate"
@@ -142,8 +143,15 @@ def write_task(instance: TaskInstance, out_dir: Path, track: str = "stable") -> 
     (tests / "Dockerfile").write_text(TESTS_DOCKERFILE, encoding="utf-8")
     (tests / "test.sh").write_text(TEST_SH, encoding="utf-8")
     (tests / "grader.py").write_text(_grader_source(), encoding="utf-8")
+    expected_out = {
+        **instance.expected,
+        "category": instance.category,
+        "framework": instance.framework,
+        "level": instance.level,
+        "format": instance.format,
+    }
     (tests / "expected.json").write_text(
-        json.dumps(instance.expected, indent=2) + "\n", encoding="utf-8"
+        json.dumps(expected_out, indent=2) + "\n", encoding="utf-8"
     )
     (tests / "initial.beancount").write_text(instance.initial_ledger, encoding="utf-8")
 
@@ -214,8 +222,10 @@ def build_manifest(task_dirs: list[Path]) -> dict:
                 "seed": expected["seed"],
                 "generator_version": expected["generator_version"],
                 "track": "stable",
-                "standard": "core",
-                "jurisdiction": "none",
+                "category": expected["category"],
+                "framework": expected["framework"],
+                "level": expected["level"],
+                "format": expected["format"],
                 "digest": task_digest(task_dir),
             }
         )

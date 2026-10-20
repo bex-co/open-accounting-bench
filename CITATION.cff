@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: "Open Accounting Bench: The Open, Living, and Executable Benchmark for AI Accounting Agents"
 message: "If you use Open Accounting Bench, please cite it as below."
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-10-19
 license: Apache-2.0
 repository-code: "https://github.com/bex-co/open-accounting-bench"

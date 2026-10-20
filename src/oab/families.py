@@ -17,6 +17,22 @@ from oab import GENERATOR_VERSION
 CENT = Decimal("0.01")
 BANK = "Assets:Bank:Checking"
 
+# Closed vocabularies for the four-axis taxonomy. Extend here (and in
+# tasks/manifest.schema.json) before using a new value; never invent
+# per-task spellings.
+TAXONOMY: dict[str, tuple[str, ...]] = {
+    "category": ("financial-accounting", "management-accounting", "tax"),
+    "framework": ("core", "ifrs", "us-gaap"),
+    "level": ("vocational", "university", "professional"),
+    "format": (
+        "journal-entry",
+        "single-choice",
+        "multiple-choice",
+        "numeric",
+        "open-text",
+    ),
+}
+
 CHART = [
     ("Assets:Bank:Checking", "Operating bank account"),
     ("Assets:Equipment", "Capitalized equipment (multi-year useful life)"),
@@ -86,6 +102,15 @@ class TaskInstance:
     solution_ledger: str
     difficulty: str = "easy"
     keywords: list[str] = field(default_factory=list)
+    # Four-axis taxonomy (docs/task-families.md). Values must stay within
+    # TAXONOMY; `oab validate` enforces it.
+    category: str = "financial-accounting"
+    framework: str = "core"
+    level: str = "university"
+    format: str = "journal-entry"
+    # Answer-file shape (format != "journal-entry"): reference answer
+    # object written to solution/answer.json; solution_ledger unused.
+    solution_answer: dict | None = None
 
     @property
     def initial_ledger(self) -> str:
@@ -98,6 +123,7 @@ def _expected(task_id: str, family: str, seed: int, **overrides) -> dict:
         "family": family,
         "seed": seed,
         "generator_version": GENERATOR_VERSION,
+        "format": "journal-entry",
         "currency": "USD",
         "tolerance": "0.01",
         "expected_deltas": {},
@@ -159,6 +185,7 @@ def classify_operating_expense(seed: int) -> TaskInstance:
         ),
         solution_ledger=solution,
         keywords=["expense", "classification", "journal-entry"],
+        level="vocational",
     )
 
 

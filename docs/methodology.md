@@ -39,11 +39,16 @@ Scores are reported per capability and regulatory context, never as one
 opaque global number:
 
 1. **Accounting Core** — double-entry, classification, reconciliation,
-   ledger integrity. (All v0.1 tasks.)
-2. **Standards** — IFRS / US GAAP policy-specific tasks (`standard`
+   ledger integrity (`framework = "core"`).
+2. **Standards** — IFRS / US GAAP policy-specific tasks (`framework`
    metadata field).
 3. **Jurisdiction packs** — local tax/statutory tasks with effective
-   dates (`jurisdiction` metadata field).
+   dates (new `framework` values, added to the taxonomy first).
+
+Every task is also tagged by `category` (financial/management/tax),
+`level` (vocational/university/professional), and `format`
+(journal-entry, choice, numeric, open-text); see
+[task-families.md](task-families.md) for the coverage matrix.
 
 ## Environment & execution
 

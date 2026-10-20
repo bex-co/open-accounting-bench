@@ -11,13 +11,14 @@ keywords = ["bank-reconciliation", "duplicate", "bank-fees"]
 task_id = "bank-recon-missing-fee"
 family = "bank-reconciliation"
 difficulty = "medium"
-category = "accounting"
+category = "financial-accounting"
+framework = "core"
+level = "university"
+format = "journal-entry"
 track = "stable"
 seed = 102
-generator_version = "0.1.0"
+generator_version = "0.2.0"
 ledger_engine = "beancount"
-standard = "core"
-jurisdiction = "none"
 
 [verifier]
 environment_mode = "separate"
