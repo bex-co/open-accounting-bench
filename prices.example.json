@@ -1,0 +1,8 @@
+{
+  "as_of": "2026-10-19",
+  "note": "Sample only - copy to prices.json and fill in current list prices for the exact model_name strings in your Harbor job.",
+  "models": {
+    "anthropic/<model>": {"input_per_1m": 0.0, "output_per_1m": 0.0},
+    "openai/<model>": {"input_per_1m": 0.0, "output_per_1m": 0.0}
+  }
+}

@@ -192,6 +192,24 @@ def validate_tasks(tasks_root: Path) -> list[str]:
     return failures
 
 
+def _cmd_report(args) -> int:
+    from oab.report import write_report
+
+    prices = json.loads(Path(args.prices).read_text()) if args.prices else None
+    try:
+        runs, board = write_report(
+            Path(args.job),
+            Path(args.manifest),
+            prices=prices,
+            out_dir=Path(args.out) if args.out else None,
+        )
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(f"wrote {runs} and {board}")
+    return 0
+
+
 def _cmd_validate(args) -> int:
     failures = validate_tasks(Path(args.tasks))
     for failure in failures:
@@ -215,6 +233,12 @@ def main(argv: list[str] | None = None) -> int:
     ver.add_argument("--ledger", help="defaults to the task's solution ledger")
     ver.add_argument("--answer", help="defaults to the task's solution answer")
     ver.set_defaults(fn=_cmd_verify)
+    rep = sub.add_parser("report")
+    rep.add_argument("--job", required=True, help="Harbor job directory")
+    rep.add_argument("--manifest", default="tasks/manifest.json")
+    rep.add_argument("--prices", help="JSON price table (see prices.example.json)")
+    rep.add_argument("--out", help="output directory (default: the job directory)")
+    rep.set_defaults(fn=_cmd_report)
     val = sub.add_parser("validate")
     val.add_argument("--tasks", default="tasks")
     val.set_defaults(fn=_cmd_validate)
