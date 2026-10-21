@@ -35,6 +35,12 @@ separately.
   `rewards`, `answer`, `confidence`, `parse_failure`, token counts,
   `cost_usd`, `task_checksum`, job timestamp. This is the auditable
   run registry; archive it with any published result.
+  Trials with an exception and no reward (infrastructure failures
+  before grading) are marked `graded: false` with their
+  `exception` type: excluded from every score denominator in
+  `oab report`, but counted and listed. (Harbor's own dataset
+  metric still averages missing rewards as 0; cite `oab report`
+  numbers for capability claims.)
 - `leaderboard.md` — overall completion with interpretation band
   (>=90% Excellent, 75-90% Strong, 60-75% Moderate, 50-60% Weak,
   <50% Poor), per-task scores (majority vote across attempts for

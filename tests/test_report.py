@@ -63,14 +63,33 @@ def make_job(tmp_path: Path) -> Path:
     _trial(job, "mc-x__b", "mc-x", {"reward": 1, "confidence": 90}, {"final_answer": ["A"]})
     _trial(job, "mc-x__c", "mc-x", {"reward": 0, "confidence": 40}, {"final_answer": ["B"]})
     _trial(job, "je-y__a", "je-y", {"reward": 0}, cost=0.02)
+    # Infrastructure error: exception, no reward file. Must not dilute.
+    err = job / "mc-x__err"
+    err.mkdir(exist_ok=True)
+    (err / "result.json").write_text(
+        json.dumps(
+            {
+                "task_name": "open-accounting-bench/mc-x",
+                "config": {"agent": {"name": "test-agent", "model_name": "m/test"}},
+                "agent_result": {},
+                "exception_info": {"exception_type": "NetworkConnectionError"},
+            }
+        )
+    )
+    (err / "verifier").mkdir(exist_ok=True)
     return job
 
 
 def test_majority_vote_and_grouping(tmp_path: Path):
     rows = load_runs(make_job(tmp_path), MANIFEST)
+    errored = [r for r in rows if not r["graded"]]
+    assert len(errored) == 1
+    assert errored[0]["exception"] == "NetworkConnectionError"
     tasks = aggregate_tasks(rows)
     assert tasks["mc-x"]["score"] == 1.0  # modal answer A was rewarded
     assert tasks["mc-x"]["agreement"] == 2 / 3
+    assert tasks["mc-x"]["n_trials"] == 3
+    assert tasks["mc-x"]["n_errored"] == 1
     assert tasks["je-y"]["score"] == 0.0
 
 
@@ -91,11 +110,12 @@ def test_write_report_outputs(tmp_path: Path):
     }
     runs_path, board_path = write_report(job, manifest, prices=prices, out_dir=tmp_path / "out")
     rows = [json.loads(line) for line in runs_path.read_text().splitlines()]
-    assert len(rows) == 4
+    assert len(rows) == 5
     # 1000 in @1 + 500 out @2 per 1M = 0.002 for priced trials.
     mc_row = next(r for r in rows if r["trial"] == "mc-x__a")
     assert mc_row["cost_usd"] == 0.002
     board = board_path.read_text()
     assert "Overall verified completion: **50.0%**" in board
+    assert "Excluded as infrastructure errors: 1 trial(s)" in board
     assert "## By framework" in board
     assert "## Confidence calibration" in board
