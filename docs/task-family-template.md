@@ -11,7 +11,8 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   statement, statute excerpt). Every fact the oracle needs must appear
   in evidence or in `/app/policy.md` — nothing may hinge on unstated
   assumptions.
-- Taxonomy: `category`, `framework`, `level`, `format`, `skill` (closed
+- Taxonomy: `category`, `framework`, `level` (scored with the
+  [level rubric](task-families.md#assigning-level)), `format`, `skill` (closed
   vocabularies in `oab.families.TAXONOMY`; extend the vocabulary in
   the same PR if a new value is genuinely needed), plus `standards`
   references (`asc:606`, `ias:23`, …) when a standard governs the

@@ -14,7 +14,7 @@ Every task carries a five-axis taxonomy (`task.toml [metadata]`,
   errors; no family yet)
 - `framework`: core / ifrs / us-gaap (jurisdiction packs add values)
 - `level`: vocational / university / professional — who is expected
-  to do the work
+  to do the work ([rubric](#assigning-level))
 - `format`: journal-entry / single-choice / multiple-choice / numeric /
   open-text (open-text has no deterministic grader yet)
 - `skill`: remembering-understanding / application / analysis /
@@ -31,6 +31,30 @@ through. Core tasks that rest on no single standard leave it empty.
 The primary taxonomy is OAB-owned and changes only through this file.
 External curricula (CPA blueprint, ACCA syllabus) are never taxonomy
 values; they are linked through [crosswalks](#crosswalks-to-external-frameworks).
+
+### Assigning `level`
+
+Level is set by how much of the problem the task hands the solver, not
+by topic: the same topic (a bank reconciliation, a prepayment) can be
+vocational or professional. Score the task as delivered — instruction,
+`policy.md`, and documents — on seven dimensions, each V / U / P:
+
+| Dimension | V (vocational) | U (university) | P (professional) |
+|---|---|---|---|
+| Rule provision | The decisive rule or formula is stated | The principle is given; mechanics must be known | Solver must identify the governing standard, its scope and exceptions |
+| Dependent steps | One or two; amounts read off a document | Three or more, with derived intermediates | Long chains across topics (measure → tax effect → presentation) |
+| Problem identification | Exact transaction and action named | A goal is given; solver finds the items | Solver must notice something is wrong, often in prior work |
+| Evidence quality | One clean document | Several documents, with distractors a plausible mistake uses | Incomplete or conflicting evidence; solver decides what to rely on |
+| Judgement | One admissible treatment | Choose among defined methods or classify against stated criteria | Estimates, materiality, substance over form; the task fixes one defensible answer by construction |
+| Scope | One transaction, period, entity | Several periods or linked accounts | Several entities, restatement, cross-period effects |
+| Standards depth | Bookkeeping conventions | The main rule of one standard | Boundaries, exceptions, interacting standards |
+
+Rule: **professional** if at least two dimensions score P and one of
+them is problem identification, evidence quality, or judgement;
+otherwise **university** if at least two score U or higher; otherwise
+**vocational**. A `policy.md` that states the decisive rule, or an
+instruction that names the problem, scores V on that dimension however
+advanced the topic.
 
 ## Implemented
 
