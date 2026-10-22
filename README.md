@@ -1,7 +1,15 @@
 # Open Accounting Bench
 
+[![CI](https://github.com/bex-co/open-accounting-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/bex-co/open-accounting-bench/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+[![GitHub stars](https://img.shields.io/github/stars/bex-co/open-accounting-bench?style=social)](https://github.com/bex-co/open-accounting-bench/stargazers)
+
+> ⭐ If this looks useful, please star the repo — it helps other agent
+> and accounting builders find it.
+
 > **Status: under active development (pre-alpha).** This repository is
-> an early v0.1 work in progress, not a stable benchmark release. Task
+> an early v0.2 work in progress, not a stable benchmark release. Task
 > families, generators, verifiers, and scoring may change without
 > notice, and results produced today are not comparable across
 > revisions and should not be cited. See

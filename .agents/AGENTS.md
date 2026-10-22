@@ -11,7 +11,7 @@ The canonical implementations live in the real directory `.agents/skills/` relat
 | `pm` | Maintain the public `.pm` board; canonical board conventions and the only workflow that writes board state (create, close, block, drop). |
 | `pm-brainstorm` | Propose roadmap milestones and tasks as text for `/pm` to materialize. |
 | `loopx` | Drain a workstream item by item — triage every pending milestone, task, and inbox note, then work and ship it, close it as already done, block it with an unblock condition, or delete it as invalid. |
-| `ship` | Rebase, commit, and push the current `master` branch. |
+| `ship` | Rebase, commit, and push the current `main` branch. |
 | `dont-code-but-answer` | Answer or investigate a question with read-only inspection; no edits, builds, or commits. |
 
 ## Conventions

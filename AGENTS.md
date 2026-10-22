@@ -56,4 +56,4 @@ CI (`.github/workflows/ci.yml`) runs lint, tests, validation, the agent-guidance
 
 `.pm/` is the public roadmap board for making OAB the trusted, neutral standard for evaluating AI accounting agents (workstreams → milestones → tasks). Conventions live canonically in `.agents/skills/pm/SKILL.md`; `/pm` is the **only** skill that writes to `.pm/`, `/pm-brainstorm` proposes work as text, and `/loopx <wN>` drains a workstream item by item — triaging each item, then shipping it, closing it as already done, blocking it with an unblock condition, or dropping it as invalid, one `/ship` per outcome. Read `.pm/DO_NOT_DO.md` before proposing roadmap work. The board is public — no secrets, no private-repo references, no holdout material.
 
-Work lands on `master`. `/ship` rebases onto and pushes to `origin/master`; it has no test gate of its own, so run the checks above first.
+Work lands on `main`. `/ship` rebases onto and pushes to `origin/main`; it has no test gate of its own, so run the checks above first.

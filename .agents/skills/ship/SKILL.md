@@ -1,15 +1,15 @@
 ---
 name: ship
-description: Ship pending changes on master by pulling with rebase, committing intentionally, and pushing to origin/master. Use only when the user explicitly invokes $ship or asks to ship or publish the current master branch.
+description: Ship pending changes on main by pulling with rebase, committing intentionally, and pushing to origin/main. Use only when the user explicitly invokes $ship or asks to ship or publish the current main branch.
 allowed-tools: Bash(git status:*), Bash(git pull:*), Bash(git fetch:*), Bash(git diff:*), Bash(git show:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git rebase:*)
 metadata: {"internal": true}
 ---
 
-# Task: Ship the current master branch
+# Task: Ship the current main branch
 
 Usage: `/ship [optional commit message context...]`
 
-Bring the local `master` up to date, commit any pending work, and push to `origin/master`.
+Bring the local `main` up to date, commit any pending work, and push to `origin/main`.
 
 ## Session-aware mode
 
@@ -27,7 +27,7 @@ Use the full Step 2 inspection when the working tree contains unfamiliar changes
 git branch --show-current
 ```
 
-If not on `master`, **STOP** and ask the user whether to switch or abort.
+If not on `main`, **STOP** and ask the user whether to switch or abort.
 
 ## Step 2 — Inspect state
 
@@ -50,7 +50,7 @@ If the working tree is clean, skip Step 4 but still pull and push.
 ## Step 3 — Pull latest with rebase
 
 ```bash
-git pull --rebase origin master
+git pull --rebase origin main
 ```
 
 If the pull/rebase has conflicts, resolve them proactively and continue shipping.
@@ -83,7 +83,7 @@ If a pre-commit hook fails, fix the underlying issue and create a new commit.
 ## Step 5 — Push
 
 ```bash
-git push origin master
+git push origin main
 ```
 
 If the push is rejected as non-fast-forward, re-run Step 3, resolve conflicts using its procedure, and retry.

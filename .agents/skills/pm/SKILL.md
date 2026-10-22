@@ -91,7 +91,7 @@ Create the next `tNNN.md` from the task template and add its row to the mileston
 
 ### `done <wN/mN/tNNN or wN/NNN>`
 
-1. Set the task's frontmatter `status: done`. If the task is being closed because its work already landed outside it (a triage close — the acceptance criteria hold on `master` through another milestone or commit, not through work done for this task), append a `## Closed by triage` section to the task with the evidence — commit SHA, paths, test names — so the public record shows why it closed without work.
+1. Set the task's frontmatter `status: done`. If the task is being closed because its work already landed outside it (a triage close — the acceptance criteria hold on `main` through another milestone or commit, not through work done for this task), append a `## Closed by triage` section to the task with the evidence — commit SHA, paths, test names — so the public record shows why it closed without work.
 2. In the milestone `README.md`: mark the row `— **DONE**` and update the `**Status:**` line (e.g. `todo (t001 done)`).
 3. **Move** the file to `wN/mN/done/tNNN.md`.
 4. If no open tasks remain in the milestone, **move the whole milestone** to `wN/done/mN/` and check its box (`- [x]`) in the workstream `README.md`.
