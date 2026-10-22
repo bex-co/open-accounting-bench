@@ -22,5 +22,7 @@
   "forbid_new_accounts": true,
   "category": "financial-accounting",
   "framework": "core",
-  "level": "vocational"
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
 }

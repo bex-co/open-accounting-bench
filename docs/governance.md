@@ -13,6 +13,13 @@ reproducible from `(family, seed, generator_version)`.
   tied to their generator/scoring versions and are never rewritten.
 - Changing a family's accounting semantics or expectations bumps
   `GENERATOR_VERSION` and regenerates Stable tasks in the same PR.
+- Taxonomy metadata (new vocabulary values, `skill`, `standards`)
+  changes task digests but not accounting semantics or expectations:
+  regenerate Stable tasks in the same PR, no `GENERATOR_VERSION`
+  bump.
+- Crosswalks (`crosswalks/`) are versioned per external edition and
+  never rewritten; a new edition is a new file. They do not touch
+  tasks or scores.
 - Verifier changes require the full oracle/nop/adversarial test suite
   to pass; scoring disputes are settled by failing-test-first PRs.
 

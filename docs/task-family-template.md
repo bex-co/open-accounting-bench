@@ -11,9 +11,14 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   statement, statute excerpt). Every fact the oracle needs must appear
   in evidence or in `/app/policy.md` — nothing may hinge on unstated
   assumptions.
-- Taxonomy: `category`, `framework`, `level`, `format` (closed
+- Taxonomy: `category`, `framework`, `level`, `format`, `skill` (closed
   vocabularies in `oab.families.TAXONOMY`; extend the vocabulary in
-  the same PR if a new value is genuinely needed).
+  the same PR if a new value is genuinely needed), plus `standards`
+  references (`asc:606`, `ias:23`, …) when a standard governs the
+  answer.
+- Crosswalk: proposed `[[mapping]]` records in `crosswalks/` for the
+  blueprint/syllabus items the generator touches (or a note that none
+  apply).
 
 ## 2. Oracle derivation
 
@@ -52,3 +57,4 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [ ] `uv run oab generate --all` leaves no uncommitted diff
 - [ ] `harbor run -p tasks/<task-id> -a oracle` passes; `-a nop` fails
 - [ ] Coverage matrix row updated in `docs/task-families.md`
+- [ ] `uv run oab crosswalk` passes with the new mappings

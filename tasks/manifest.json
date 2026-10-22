@@ -12,7 +12,9 @@
       "framework": "core",
       "level": "university",
       "format": "journal-entry",
-      "digest": "sha256:7f123b4dc75f7fb2fba3f17f1de19b10ef674f971b51c7320095bb70168d46e3"
+      "skill": "analysis",
+      "standards": [],
+      "digest": "sha256:ec5eb3e30f04468ce96c6548a92d90ea8df93435f04372e1bac04a3c45f2e7e9"
     },
     {
       "task_id": "classify-operating-expense",
@@ -24,7 +26,9 @@
       "framework": "core",
       "level": "vocational",
       "format": "journal-entry",
-      "digest": "sha256:2f80660c069e97024b9178ed0b8802d8f3357f0505609061b1d30666cb589174"
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:010a0d662f7090ab0082ac487ab32a13771b7b0ed68fe24ce14bec5bdd00028c"
     },
     {
       "task_id": "correct-misclassification",
@@ -36,7 +40,9 @@
       "framework": "core",
       "level": "university",
       "format": "journal-entry",
-      "digest": "sha256:b281fc49db9e1f4e490dcf541d6e9f733200a5774957d4678339a419e252674c"
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:f4a4ece311e2574ba8a0c49791a96f92f6e3b18e5324e5a7a0f11e3b506859da"
     },
     {
       "task_id": "ifrs-capitalize-borrowing-costs",
@@ -48,7 +54,11 @@
       "framework": "ifrs",
       "level": "professional",
       "format": "journal-entry",
-      "digest": "sha256:1f0ed7ba79bc6b93e3937d30254b00e604659b57cb2e30dfa4f34793058e29fb"
+      "skill": "application",
+      "standards": [
+        "ias:23"
+      ],
+      "digest": "sha256:46583296c71625330ff3a27771baf0d1474d80df04545c6dd1d00b3aa5a6c4ab"
     },
     {
       "task_id": "mc-capitalization-treatment",
@@ -60,7 +70,9 @@
       "framework": "core",
       "level": "university",
       "format": "multiple-choice",
-      "digest": "sha256:508f5cb1d7d3565124ccc4b0a4bdfde2d46d9dcc53a1335a1d5465a2d1272310"
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9d6262a6fdf43a31f488aa1b97dbe27e4bc3959a54474e614b8752d69e6052d4"
     },
     {
       "task_id": "mgmt-break-even-units",
@@ -72,7 +84,9 @@
       "framework": "core",
       "level": "university",
       "format": "numeric",
-      "digest": "sha256:1c28bd0d53abedacb120a172a341f34839ef2966c9a38323e2c9cef52cdfd1fa"
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e17a7cf2dda0f3d06403b237307c4587d2071895f7b09a335c3dd2cc3d941aeb"
     },
     {
       "task_id": "prepaid-insurance-adjustment",
@@ -84,7 +98,9 @@
       "framework": "core",
       "level": "university",
       "format": "journal-entry",
-      "digest": "sha256:a6775975dbc4ecae704855b2b007c8adace0a6ace42c449562c4424cd8de277d"
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
     }
   ]
 }

@@ -5,7 +5,7 @@ reward.json, collected artifacts) joined with the dataset manifest
 for taxonomy. Outputs (into the job dir by default):
 
 - runs.jsonl      one row per trial (the auditable run registry)
-- leaderboard.md  overall + per category/framework/level/format,
+- leaderboard.md  overall + per category/framework/level/format/skill,
                   interpretation bands, cost, confidence calibration
 
 Choice formats aggregate by majority vote over attempts (use -k 3);
@@ -18,7 +18,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-AXES = ("category", "framework", "level", "format")
+AXES = ("category", "framework", "level", "format", "skill")
 CHOICE_FORMATS = ("single-choice", "multiple-choice")
 BANDS = [
     (90, "Excellent (near-expert)"),

@@ -36,3 +36,11 @@ def test_validate_catches_empty_multiple_choice_gold(tmp_path: Path):
     expected.write_text(expected.read_text().replace('"gold": [', '"gold": [], "unused": ['))
     failures = validate_tasks(tmp_path)
     assert any("gold" in f for f in failures)
+
+
+def test_validate_catches_malformed_standard_reference(tmp_path: Path):
+    task = _copy_task(tmp_path, "ifrs-capitalize-borrowing-costs")
+    toml = task / "task.toml"
+    toml.write_text(toml.read_text().replace('standards = ["ias:23"]', 'standards = ["IAS 23"]'))
+    failures = validate_tasks(tmp_path)
+    assert any("metadata.standards" in f for f in failures)

@@ -45,10 +45,19 @@ opaque global number:
 3. **Jurisdiction packs** — local tax/statutory tasks with effective
    dates (new `framework` values, added to the taxonomy first).
 
-Every task is also tagged by `category` (financial/management/tax),
-`level` (vocational/university/professional), and `format`
-(journal-entry, choice, numeric, open-text); see
-[task-families.md](task-families.md) for the coverage matrix.
+Every task is also tagged by `category` (financial/management/tax/
+audit-assurance), `level` (vocational/university/professional),
+`format` (journal-entry, choice, numeric, open-text), `skill`
+(revised-Bloom: remembering-understanding … evaluation), and the
+`standards` it rests on; see [task-families.md](task-families.md) for
+the coverage matrix.
+
+Professional curricula are linked, not adopted: OAB's taxonomy stays
+framework-neutral (the CPA blueprint is US-only and re-edited yearly),
+and typed crosswalks to the AICPA blueprint and ACCA syllabus support
+claims like "N of 113 FAR representative tasks covered" — the same
+separation HELM, MedHELM, and LegalBench keep between their own
+taxonomy and external exam outlines.
 
 ## Environment & execution
 
@@ -66,8 +75,8 @@ examination tasks (Financial/Management/Tax; single/multiple choice,
 numeric, journal entries, open text), three runs per question,
 penalized choice scoring, an LLM judge for entries and open text, and
 stratified reporting with cost and confidence analysis. OAB replicates
-that measurement structure — four-axis taxonomy (category, framework,
-level, format), multi-attempt aggregation (`oab report`, majority
+that measurement structure — five-axis taxonomy (category, framework,
+level, format, skill), multi-attempt aggregation (`oab report`, majority
 vote for choice formats), interpretation bands, cost and confidence
 reporting — with four deliberate deviations:
 

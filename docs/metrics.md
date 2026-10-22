@@ -30,7 +30,7 @@ separately.
 `tasks/manifest.json` and writes, into the job directory:
 
 - `runs.jsonl` — one row per trial: `task_id`, taxonomy
-  (`category`/`framework`/`level`/`format`), `family`, `seed`,
+  (`category`/`framework`/`level`/`format`/`skill`), `family`, `seed`,
   `generator_version`, `track`, `agent`, `model`, `reward` + full
   `rewards`, `answer`, `confidence`, `parse_failure`, token counts,
   `cost_usd`, `task_checksum`, job timestamp. This is the auditable
@@ -57,3 +57,25 @@ and numeric (within absolute + relative tolerance), and
 negative; `reward` still requires the exact gold set).
 `format_validity` / `parse_failure` expose output-format sensitivity
 without removing failures from any denominator.
+
+## Framework coverage
+
+`oab crosswalk` reports, per crosswalk edition and section, how many
+distinct external items OAB reaches, each counted once by its
+strongest link ([task-families.md](task-families.md#crosswalks-to-external-frameworks)):
+
+- **Covered** — some generator is `equal` to or a `superset-of` the
+  item with strength >= 7. Only this tier supports "OAB covers the
+  item".
+- **Partial** — best link is `subset-of`: OAB tests a slice of the item.
+- **Touched** — best link is `intersects-with`, or a weak superset.
+- **Unreviewed** — items whose best link is still `proposed`.
+
+Cite coverage with its basis, e.g. "covers 0 of 113 FAR representative
+tasks (AICPA blueprint 2027; equal/superset-of, strength >= 7); 2
+partial, 2 touched; 4 unreviewed". Never merge partial or touched into
+covered, and do not publish a coverage claim while its counted links
+are unreviewed. The denominator is every item in the section; items
+that cannot be agent-graded are not yet excluded (that split needs
+reviewer classification).
+

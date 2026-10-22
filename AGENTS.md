@@ -21,6 +21,7 @@ Scoped guides:
 | --- | --- |
 | `src/oab/` | Generator + verifier package, stdlib only: `families.py` (seed → instance), `generate.py` (instance → Harbor task), `_verifier_core.py` (five-layer grader), `cli.py` |
 | `tasks/` | Stable-track Harbor dataset — **generated**, never hand-edited |
+| `crosswalks/` | Typed mappings from generators to external curricula (AICPA blueprint, ACCA syllabus), one file per edition — IDs only, never their text |
 | `tests/` | Verifier layers, generator determinism, task health |
 | `docs/` | Methodology, verification, metrics, governance, roadmap |
 | `scripts/` | Agent tooling: `check-agent-guidance.py`, `loopx-guard.py` |
@@ -45,12 +46,13 @@ From the repository root:
 make lint        # ruff check + ruff format --check over src and tests
 make test        # pytest
 make validate    # oab validate: structure, grader sync, oracle vs nop
+make crosswalk   # oab crosswalk: mapping records valid; prints coverage
 make generate    # regenerate tasks/; any diff belongs in the same commit as its source change
 make oracle      # needs Harbor + Docker: every Stable task scores reward 1
 python3 scripts/check-agent-guidance.py   # after instruction, skill, or symlink changes
 ```
 
-CI (`.github/workflows/ci.yml`) runs lint, tests, validation, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
+CI (`.github/workflows/ci.yml`) runs lint, tests, validation, crosswalk checks, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
 
 ## Roadmap board and shipping
 

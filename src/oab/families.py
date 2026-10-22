@@ -9,6 +9,7 @@ generates fresh seeds at evaluation time. See docs/task-families.md.
 from __future__ import annotations
 
 import random
+import re
 from dataclasses import dataclass, field
 from decimal import Decimal
 
@@ -17,11 +18,17 @@ from oab import GENERATOR_VERSION
 CENT = Decimal("0.01")
 BANK = "Assets:Bank:Checking"
 
-# Closed vocabularies for the four-axis taxonomy. Extend here (and in
+# Closed vocabularies for the five-axis taxonomy. Extend here (and in
 # tasks/manifest.schema.json) before using a new value; never invent
-# per-task spellings.
+# per-task spellings. `skill` mirrors the AICPA blueprint's revised-Bloom
+# levels so crosswalks compare like with like.
 TAXONOMY: dict[str, tuple[str, ...]] = {
-    "category": ("financial-accounting", "management-accounting", "tax"),
+    "category": (
+        "financial-accounting",
+        "management-accounting",
+        "tax",
+        "audit-assurance",
+    ),
     "framework": ("core", "ifrs", "us-gaap"),
     "level": ("vocational", "university", "professional"),
     "format": (
@@ -31,7 +38,13 @@ TAXONOMY: dict[str, tuple[str, ...]] = {
         "numeric",
         "open-text",
     ),
+    "skill": ("remembering-understanding", "application", "analysis", "evaluation"),
 }
+
+# Authoritative-standard references (open vocabulary, fixed shape): the
+# stable content anchor that exam crosswalks pivot through.
+# e.g. "asc:230", "asc:606-10-25", "ias:23", "ifrs:16".
+STANDARD_REF = re.compile(r"^(asc|ias|ifrs|ifric):[0-9]+(-[0-9]+)*$")
 
 CHART = [
     ("Assets:Bank:Checking", "Operating bank account"),
@@ -103,12 +116,16 @@ class TaskInstance:
     solution_ledger: str
     difficulty: str = "easy"
     keywords: list[str] = field(default_factory=list)
-    # Four-axis taxonomy (docs/task-families.md). Values must stay within
+    # Five-axis taxonomy (docs/task-families.md). Values must stay within
     # TAXONOMY; `oab validate` enforces it.
     category: str = "financial-accounting"
     framework: str = "core"
     level: str = "university"
     format: str = "journal-entry"
+    skill: str = "application"
+    # Standard references matching STANDARD_REF; empty for core tasks
+    # that rest on no single standard.
+    standards: list[str] = field(default_factory=list)
     # Answer-file shape (format != "journal-entry"): reference answer
     # object written to solution/answer.json; solution_ledger unused.
     solution_answer: dict | None = None
@@ -263,6 +280,7 @@ def bank_recon_missing_fee(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["bank-reconciliation", "duplicate", "bank-fees"],
+        skill="analysis",
     )
 
 
@@ -637,6 +655,7 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
         keywords=["ifrs", "ias-23", "borrowing-costs"],
         framework="ifrs",
         level="professional",
+        standards=["ias:23"],
     )
 
 

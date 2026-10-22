@@ -85,6 +85,7 @@ def _toml_str(value: str) -> str:
 
 def render_task_toml(instance: TaskInstance, track: str = "stable") -> str:
     keywords = ", ".join(_toml_str(k) for k in instance.keywords)
+    standards = ", ".join(_toml_str(ref) for ref in instance.standards)
     seed = instance.expected["seed"]
     return f"""schema_version = "1.3"
 artifacts = [{_toml_str(artifact_path(instance))}]
@@ -103,6 +104,8 @@ category = {_toml_str(instance.category)}
 framework = {_toml_str(instance.framework)}
 level = {_toml_str(instance.level)}
 format = {_toml_str(instance.format)}
+skill = {_toml_str(instance.skill)}
+standards = [{standards}]
 track = {_toml_str(track)}
 seed = {seed}
 generator_version = {_toml_str(GENERATOR_VERSION)}
@@ -165,6 +168,8 @@ def write_task(instance: TaskInstance, out_dir: Path, track: str = "stable") -> 
         "framework": instance.framework,
         "level": instance.level,
         "format": instance.format,
+        "skill": instance.skill,
+        "standards": instance.standards,
     }
     (tests / "expected.json").write_text(
         json.dumps(expected_out, indent=2) + "\n", encoding="utf-8"
@@ -251,6 +256,8 @@ def build_manifest(task_dirs: list[Path]) -> dict:
                 "framework": expected["framework"],
                 "level": expected["level"],
                 "format": expected["format"],
+                "skill": expected["skill"],
+                "standards": expected["standards"],
                 "digest": task_digest(task_dir),
             }
         )

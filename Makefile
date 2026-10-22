@@ -1,4 +1,4 @@
-.PHONY: test lint validate generate check-generated oracle
+.PHONY: test lint validate crosswalk generate check-generated oracle
 
 test:
 	uv run pytest
@@ -9,6 +9,10 @@ lint:
 
 validate:
 	uv run oab validate --tasks tasks
+
+# Crosswalk records validate; prints framework coverage.
+crosswalk:
+	uv run oab crosswalk --dir crosswalks
 
 generate:
 	uv run oab generate --all --out tasks

@@ -21,6 +21,8 @@ jobs:
         run: python3 scripts/check-agent-guidance.py
       - name: Task validation (structure, grader sync, oracle vs nop)
         run: uv run oab validate --tasks tasks
+      - name: Crosswalks (typed mappings to external frameworks)
+        run: uv run oab crosswalk --dir crosswalks
       - name: Generated tasks are up to date
         run: |
           uv run oab generate --all --out tasks

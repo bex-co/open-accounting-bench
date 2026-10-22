@@ -79,7 +79,8 @@ pass). See [docs/metrics.md](docs/metrics.md).
 
 Seven frozen Stable instances so far; each generator yields hundreds of
 reproducible instances. Tasks are tagged by category, framework,
-level, and format; the 90-day target is 12–15 validated generators
+level, format, and skill, and crosswalked to the AICPA CPA blueprint
+and ACCA syllabus (`crosswalks/`); the 90-day target is 12–15 validated generators
 (see [docs/task-families.md](docs/task-families.md) for the coverage
 matrix and [docs/roadmap.md](docs/roadmap.md)).
 

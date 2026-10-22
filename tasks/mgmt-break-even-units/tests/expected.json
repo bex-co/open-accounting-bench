@@ -17,5 +17,7 @@
   "rel_tolerance": "0",
   "category": "management-accounting",
   "framework": "core",
-  "level": "university"
+  "level": "university",
+  "skill": "application",
+  "standards": []
 }

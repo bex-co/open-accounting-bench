@@ -23,5 +23,9 @@
   "forbid_new_accounts": true,
   "category": "financial-accounting",
   "framework": "ifrs",
-  "level": "professional"
+  "level": "professional",
+  "skill": "application",
+  "standards": [
+    "ias:23"
+  ]
 }

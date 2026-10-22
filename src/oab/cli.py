@@ -6,6 +6,7 @@ oab generate --family F --seed N --out DIR generate one instance
 oab verify --task-dir DIR [--ledger/--answer PATH] grade locally
 oab validate [--tasks tasks]               structure + oracle/nop checks
 oab report --job DIR [--prices FILE]       aggregate a Harbor job
+oab crosswalk [--dir crosswalks]           validate crosswalks + coverage
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-from oab.families import FAMILIES, STABLE_SEEDS, TAXONOMY
+from oab.families import FAMILIES, STABLE_SEEDS, STANDARD_REF, TAXONOMY
 from oab.generate import write_dataset_files, write_task
 from oab.verify import grade_answer, verify
 
@@ -157,6 +158,11 @@ def validate_tasks(tasks_root: Path) -> list[str]:
         for axis, allowed in TAXONOMY.items():
             if metadata.get(axis) not in allowed:
                 failures.append(f"{name}: metadata.{axis}={metadata.get(axis)!r} not in {allowed}")
+        standards = metadata.get("standards")
+        if not isinstance(standards, list) or not all(
+            isinstance(ref, str) and STANDARD_REF.match(ref) for ref in standards
+        ):
+            failures.append(f"{name}: metadata.standards={standards!r} must be asc/ias/ifrs refs")
         expected = json.loads((task_dir / "tests" / "expected.json").read_text())
         if metadata.get("format") != expected.get("format"):
             failures.append(f"{name}: task.toml format != expected.json format")
@@ -210,6 +216,20 @@ def _cmd_report(args) -> int:
     return 0
 
 
+def _cmd_crosswalk(args) -> int:
+    from oab.crosswalk import format_coverage, load_crosswalks, validate_crosswalk
+
+    crosswalks = load_crosswalks(Path(args.dir))
+    failures = [f for cw in crosswalks for f in validate_crosswalk(cw)]
+    for failure in failures:
+        print(f"FAIL {failure}")
+    if failures:
+        print(f"{len(failures)} failure(s)")
+        return 1
+    print(format_coverage(crosswalks))
+    return 0
+
+
 def _cmd_validate(args) -> int:
     failures = validate_tasks(Path(args.tasks))
     for failure in failures:
@@ -239,6 +259,9 @@ def main(argv: list[str] | None = None) -> int:
     rep.add_argument("--prices", help="JSON price table (see prices.example.json)")
     rep.add_argument("--out", help="output directory (default: the job directory)")
     rep.set_defaults(fn=_cmd_report)
+    cw = sub.add_parser("crosswalk")
+    cw.add_argument("--dir", default="crosswalks")
+    cw.set_defaults(fn=_cmd_crosswalk)
     val = sub.add_parser("validate")
     val.add_argument("--tasks", default="tasks")
     val.set_defaults(fn=_cmd_validate)

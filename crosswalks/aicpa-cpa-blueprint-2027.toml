@@ -1,0 +1,123 @@
+# Crosswalk: OAB generators -> AICPA Uniform CPA Examination Blueprints
+# (effective 2027-01-01). IDs, digests, and OAB-written summaries only;
+# the blueprint text is AICPA copyright and is not reproduced here.
+# Format and counting rules: docs/metrics.md#framework-coverage.
+#
+# target_id   Section.Area.Group[.Topic], as numbered in the blueprint.
+# target_item 1-based row of the representative task within target_id
+#             (OAB-assigned; the blueprint does not number tasks).
+
+[framework]
+id = "aicpa-cpa-blueprint"
+version = "2027"
+title = "Uniform CPA Examination Blueprints"
+publisher = "AICPA"
+effective = "2027-01-01"
+source = "https://www.aicpa-cima.com/resources/download/learn-what-is-tested-on-the-cpa-exam"
+
+# Representative tasks per section (denominators for coverage).
+[framework.denominators]
+AUD = 147
+FAR = 113
+REG = 105
+BAR = 112
+ISC = 95
+TCP = 98
+
+[[mapping]]
+generator = "bank-recon-missing-fee"
+target_id = "FAR.II.A"
+target_item = 2
+target_skill = "analysis"
+target_text_sha256 = "sha256:19066817bac6669ebe83deadadd3083df78a234251897a50ca3bca0f841a5e17"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Brings the GL cash balance to the statement balance; no reconciliation schedule is prepared."
+
+[[mapping]]
+generator = "bank-recon-missing-fee"
+target_id = "FAR.II.A"
+target_item = 3
+target_skill = "analysis"
+target_text_sha256 = "sha256:7f8c1ee80a4cf0a533178c332ff1f3abcd5f6222766b70b645cfdc94cd3476ad"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Diagnoses a duplicate import and an unrecorded bank fee, then books the adjustments."
+
+[[mapping]]
+generator = "classify-operating-expense"
+target_id = "FAR.II.D"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 3
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Capitalize-versus-expense decision at purchase; PP&E balances and depreciation are not tested."
+
+[[mapping]]
+generator = "mc-capitalization-treatment"
+target_id = "FAR.II.D"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 3
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Selects which expenditures to capitalize; no balances or journal entries."
+
+[[mapping]]
+generator = "correct-misclassification"
+target_id = "FAR.II.D"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 3
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Moves an expensed capital purchase into equipment via journal entries."
+
+[[mapping]]
+generator = "correct-misclassification"
+target_id = "FAR.III.A"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:e70cbe487fb262b410fa90183ea75259e52c0316d4e6fed0bc24ca8217147832"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Current-period error correction by appended entries; no prospective/retrospective determination."
+
+[[mapping]]
+generator = "mgmt-break-even-units"
+target_id = "BAR.I.B.1"
+target_item = 4
+target_skill = "analysis"
+target_text_sha256 = "sha256:28139f05103ff04b79c49bd663549998e2d61247483d8411f21ca38a4e40b306"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Computes break-even units only; no sensitivity analysis or interpretation."

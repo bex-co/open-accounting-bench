@@ -18,5 +18,15 @@ relicense third-party software referenced at runtime:
 | [DeepSWE](https://github.com/datacurve-ai/deep-swe) | Repository-layout precedent (no code copied; layout conventions adapted) | Apache-2.0 |
 | Python 3.12 slim images | Task/verifier containers | PSF + image terms |
 
+Crosswalks (`crosswalks/`) reference external curricula by their own
+item numbers, with OAB-written summaries and SHA-256 digests of the
+item wording; no external text is reproduced, and no task is derived
+from these documents:
+
+| Framework | Use | Rights |
+|---|---|---|
+| AICPA Uniform CPA Examination Blueprints | Item IDs for coverage mapping | © AICPA; referenced, not reproduced |
+| ACCA syllabus and study guides (FA, FR, SBR) | Outcome IDs for coverage mapping | © ACCA; referenced, not reproduced |
+
 If a future task family builds on external material, add a row here
 with its source and license before merging.

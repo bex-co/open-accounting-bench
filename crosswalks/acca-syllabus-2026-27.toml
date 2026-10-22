@@ -1,0 +1,131 @@
+# Crosswalk: OAB generators -> ACCA syllabus and study guides, exam
+# period September 2026 to June 2027 (FA/FFA, FR, SBR-INT). IDs, digests,
+# and OAB-written summaries only; the syllabus text is ACCA copyright.
+# Format and counting rules: docs/metrics.md#framework-coverage.
+#
+# target_id   Exam.<capability letter><section number>(<outcome letter>),
+#             as numbered in the study guide, e.g. FA.E1(c).
+
+[framework]
+id = "acca-syllabus"
+version = "2026-27"
+title = "ACCA syllabus and study guides (FA/FFA, FR, SBR-INT)"
+publisher = "ACCA"
+effective = "2026-09-01"
+source = "https://www.accaglobal.com/"
+documents = [
+  "https://www.accaglobal.com/content/dam/acca/global/PDF-students/fia/studyguides/fa_ffa_s26_j27_syllabus_and_study_guide.pdf",
+  "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/f7/studyguides/fr_s26_j27_syllabus_and_study_guide.pdf",
+  "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/SBR/sbr_int_s26_j27_syllabus_and_study_guide.pdf",
+]
+
+# Study-guide outcomes carrying a level marker per exam
+# (FA: [K]/[S]; FR, SBR: intellectual levels [1]-[3]).
+[framework.denominators]
+FA = 154
+FR = 108
+SBR = 75
+
+[[mapping]]
+generator = "classify-operating-expense"
+target_id = "FA.D4(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7eccb450c508972f"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Classifies one receipt as an expense rather than an asset and records it."
+
+[[mapping]]
+generator = "mc-capitalization-treatment"
+target_id = "FA.D4(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7eccb450c508972f"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Chooses the capitalizable items from a list of expenditures."
+
+[[mapping]]
+generator = "prepaid-insurance-adjustment"
+target_id = "FA.D7(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:777ea1575c1a0689eed446e21a54d3d530dc3a25425c5a4b0e000eba9c573ae2"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Month-end release of a prepayment; accruals, accrued and deferred income, and reversals are not tested."
+
+[[mapping]]
+generator = "bank-recon-missing-fee"
+target_id = "FA.E1(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:e16ccf6413464618103505f97fb9fdf4cb0bb926e55bfc7ac23056562a450634"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Corrects a duplicate import and an omitted bank fee in the bank ledger account."
+
+[[mapping]]
+generator = "bank-recon-missing-fee"
+target_id = "FA.E1(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:c21435502c5ba7a7def3c0fd65c0f69a501c892002dfdb003f44a19379e56203"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Ends with ledger and statement in agreement, but no reconciliation statement is prepared."
+
+[[mapping]]
+generator = "correct-misclassification"
+target_id = "FA.F2(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:ad29b5491ab72cd7d3e60120cda3e6653d8df5021313ff8168d7af641db99acf"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Correcting journal entries for an error of principle (expensed capital item)."
+
+[[mapping]]
+generator = "correct-misclassification"
+target_id = "FA.D4(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7eccb450c508972f"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Reclassifies an expensed laptop as equipment."
+
+[[mapping]]
+generator = "ifrs-capitalize-borrowing-costs"
+target_id = "FR.B1(a)"
+target_skill = "2"
+target_text_sha256 = "sha256:a76e6f0b67b1c205fb2c708104ebe5707c85690463d26e80c835ba921e8dec17"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
