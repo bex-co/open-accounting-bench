@@ -79,7 +79,8 @@ documents, period-boundary dates.
 
 `crosswalks/<framework>-<version>.toml` maps OAB generators to items
 of an external curriculum: the AICPA CPA Exam Blueprint
-(`aicpa-cpa-blueprint-2027.toml`; AUD/FAR/REG/BAR/ISC/TCP) and the
+(`aicpa-cpa-blueprint-2026.toml`, in force through 2026, and
+`aicpa-cpa-blueprint-2027.toml`; AUD/FAR/REG/BAR/ISC/TCP) and the
 ACCA syllabus (`acca-syllabus-2026-27.toml`; FA/FR/SBR). Each record
 follows NIST IR 8278A Rev.1 set-theory mapping — the OAB generator is
 the focal element:
