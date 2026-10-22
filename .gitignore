@@ -12,3 +12,5 @@ generated/
 
 # AI agent scratch (see .agents/AGENTS.md)
 .agents/tmp/
+
+.internal
