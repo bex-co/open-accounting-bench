@@ -80,13 +80,16 @@ def money(value: Decimal) -> str:
     return f"{value.quantize(CENT):.2f}"
 
 
-def _chart_md() -> str:
-    rows = "\n".join(f"- `{account}` — {desc}" for account, desc in CHART)
+def _chart_md(extra: list[tuple[str, str]] | None = None) -> str:
+    rows = "\n".join(f"- `{account}` — {desc}" for account, desc in CHART + (extra or []))
     return f"# Chart of accounts\n\n{rows}\n"
 
 
-def _ledger_header(opening_bank: Decimal) -> str:
-    opens = "\n".join(f"2026-01-01 open {account} USD" for account, _ in CHART)
+def _ledger_header(opening_bank: Decimal, extra: list[tuple[str, str]] | None = None) -> str:
+    """Opening ledger. `extra` opens family-local accounts without touching CHART,
+    so adding a family never changes existing Stable tasks."""
+    accounts = CHART + (extra or [])
+    opens = "\n".join(f"2026-01-01 open {account} USD" for account, _ in accounts)
     return f"""option "title" "Acme Widgets LLC"
 option "operating_currency" "USD"
 
