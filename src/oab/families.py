@@ -926,6 +926,126 @@ def accrual_deferral_reversal(seed: int) -> TaskInstance:
     )
 
 
+AP = "Liabilities:AccountsPayable"
+MATERIALS = "Expenses:Materials"
+PAYABLE_ACCOUNTS = [
+    (AP, "Trade payables (supplier invoices on credit)"),
+    (MATERIALS, "Materials purchased and consumed"),
+]
+
+
+def payables_statement_recon(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    supplier = rng.choice(["Apex Components", "Bolt & Nut Supply", "Crestline Materials"])
+    ids = rng.sample(range(200, 1000), 5)
+    opening_ap = Decimal(rng.randrange(20, 61)) * 100  # December invoice, unpaid
+    inv_a = Decimal(rng.randrange(8, 31)) * 100
+    # Transposition: ledger swaps the hundreds and tens digits of the true amount.
+    thousands = rng.randint(1, 4)
+    hundreds, tens = rng.sample(range(1, 10), 2)
+    true_b = Decimal(thousands * 1000 + hundreds * 100 + tens * 10)
+    booked_b = Decimal(thousands * 1000 + tens * 100 + hundreds * 10)
+    credit_note = Decimal(rng.randrange(2, 9)) * 50
+    in_transit = Decimal(rng.randrange(6, 25)) * 100
+    payment = opening_ap  # pays the December invoice on 2026-01-30
+    dec_inv, a_id, b_id, cn_id, t_id = (f"{n}" for n in ids)
+    opening = Decimal("20000.00")
+    initial = (
+        _ledger_header(opening, PAYABLE_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            supplier,
+            f"Opening payable: December invoice {dec_inv}",
+            [("Equity:Opening-Balances", opening_ap), (AP, -opening_ap)],
+        )
+        + _txn("2026-01-08", supplier, f"Invoice {a_id}", [(MATERIALS, inv_a), (AP, -inv_a)])
+        + _txn("2026-01-16", supplier, f"Invoice {b_id}", [(MATERIALS, booked_b), (AP, -booked_b)])
+        + _txn(
+            "2026-01-30",
+            supplier,
+            f"Payment of invoice {dec_inv}",
+            [(AP, payment), (BANK, -payment)],
+        )
+    )
+    statement_balance = opening_ap + inv_a + true_b - credit_note + in_transit
+    statement = (
+        f"# Supplier statement — {supplier}, as at 2026-01-31\n\n"
+        "| Date | Reference | Debit (owed) | Credit |\n|---|---|---:|---:|\n"
+        f"| 2025-12-18 | Invoice {dec_inv} | {money(opening_ap)} | |\n"
+        f"| 2026-01-08 | Invoice {a_id} | {money(inv_a)} | |\n"
+        f"| 2026-01-16 | Invoice {b_id} | {money(true_b)} | |\n"
+        f"| 2026-01-22 | Credit note {cn_id} (returned goods) | | {money(credit_note)} |\n"
+        f"| 2026-01-31 | Invoice {t_id} (goods dispatched 2026-01-31) | {money(in_transit)} | |\n"
+        f"\nBalance due: USD {money(statement_balance)}\n"
+    )
+    receiving = (
+        "# Goods received log — January 2026\n\n"
+        f"- 2026-01-08: {supplier} delivery, invoice {a_id}, accepted\n"
+        f"- 2026-01-16: {supplier} delivery, invoice {b_id}, accepted\n"
+        f"- 2026-01-22: returned damaged items to {supplier} (credit note {cn_id} expected)\n"
+        f"- No delivery for invoice {t_id} received by 2026-01-31\n"
+    )
+    policy = POLICY + (
+        "- Supplier statements are reconciled at month-end. Correct only errors\n"
+        "  in our ledger (unrecorded credit notes, mis-keyed amounts) against\n"
+        "  the purchase account. Timing differences are not errors: purchases\n"
+        "  are recorded when goods are received, and payments we have sent\n"
+        "  may not yet appear on the supplier's statement.\n"
+    )
+    diff = booked_b - true_b
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            supplier,
+            f"Credit note {cn_id} for returned goods",
+            [(AP, credit_note), (MATERIALS, -credit_note)],
+        )
+        + _txn(
+            "2026-01-31",
+            supplier,
+            f"Correct mis-keyed invoice {b_id}",
+            [(AP, diff), (MATERIALS, -diff)],
+        )
+    )
+    ledger_final = opening_ap + inv_a + true_b - credit_note - payment
+    return TaskInstance(
+        task_id="payables-statement-recon",
+        family="payables-reconciliation",
+        title="Reconcile a supplier statement",
+        instruction=(
+            f"Reconcile the {supplier} balance in `{AP}` in `/app/ledger.beancount` to "
+            "`/app/documents/supplier_statement.md` as at 2026-01-31, using "
+            "`/app/documents/goods_received.md` and `/app/policy.md`. Append correcting "
+            "transactions dated 2026-01-31 for any errors in our ledger; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(PAYABLE_ACCOUNTS),
+            "documents/supplier_statement.md": statement,
+            "documents/goods_received.md": receiving,
+        },
+        expected=_expected(
+            "payables-statement-recon",
+            "payables-reconciliation",
+            seed,
+            expected_deltas={
+                AP: money(credit_note + diff),
+                MATERIALS: money(-(credit_note + diff)),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={AP: money(-ledger_final), BANK: money(opening - payment)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["payables", "supplier-statement", "reconciliation", "timing-differences"],
+        skill="analysis",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -936,6 +1056,7 @@ FAMILIES = {
     "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
     "receivable-allowance-trueup": receivable_allowance_trueup,
     "accrual-deferral-reversal": accrual_deferral_reversal,
+    "payables-statement-recon": payables_statement_recon,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -949,4 +1070,5 @@ STABLE_SEEDS = {
     "ifrs-capitalize-borrowing-costs": 107,
     "receivable-allowance-trueup": 108,
     "accrual-deferral-reversal": 109,
+    "payables-statement-recon": 110,
 }

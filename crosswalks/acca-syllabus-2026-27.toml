@@ -185,6 +185,32 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Applies accrual accounting to an accrued expense and deferred income across a period boundary."
 
+[[mapping]]
+generator = "payables-statement-recon"
+target_id = "FA.E2(d)"
+target_skill = "K"
+target_text_sha256 = "sha256:0941f9428e4d9bdf40f5941eca893ac3dd6765a39549bb3ddfbc6f3fc51529cf"
+relationship = "superset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Finds and corrects an unrecorded credit note and a mis-keyed invoice from a supplier statement, while leaving timing items alone."
+
+[[mapping]]
+generator = "payables-statement-recon"
+target_id = "FA.E2(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:c623330a9e5b71b62e53e427989404d9d583a710509299ce5f39af5ff46e0cd1"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Reaches a reconciled ledger balance, but no reconciliation statement is prepared."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

@@ -19,6 +19,7 @@ crosswalk mappings.
 
 ## Pending
 
+- [ ] **`payables-statement-recon`** — new family (w1/m3, merged from `family/payables-statement-recon`). Check: scenario, policy wording (correct errors only; timing items stay), oracle, traps, level university, skill analysis; FA.E2(d) superset-of would count as covered. Proposed mappings: FAR.II.G#4 intersects-with 5; FA.E2(d) superset-of 8; FA.E2(c) intersects-with 4.
 - [ ] **`accrual-deferral-reversal`** — new family (w1/m2, merged from `family/accrual-deferral-reversal`). Check: scenario (opening balances stand in for December), policy wording (reverse on day 1; revenue per session), oracle, traps, level university. Proposed mappings: FAR.II.G#2 intersects-with 4; FA.D7(d) subset-of 7; FA.D7(a) subset-of 6.
 - [ ] **`receivable-allowance-trueup`** — new family (w1/m1, merged from `family/receivable-allowance-trueup`). Check: policy wording (write-off, then true-up; either write-off method accepted), aging rates and oracle, traps, level university (borderline). Proposed mappings: FAR.II.B#1 subset-of 7; FA.D8(e) superset-of 8; FA.D8(h) subset-of 8.
 

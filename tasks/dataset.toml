@@ -37,6 +37,10 @@ name = "open-accounting-bench/mgmt-break-even-units"
 digest = "sha256:e17a7cf2dda0f3d06403b237307c4587d2071895f7b09a335c3dd2cc3d941aeb"
 
 [[tasks]]
+name = "open-accounting-bench/payables-statement-recon"
+digest = "sha256:b4acce2385c91407b834fffd7a0df41c5bffb69c0a3639e259ee98322f6faf1b"
+
+[[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
 digest = "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
 

@@ -85,8 +85,9 @@ problem the task hands over. An analysis task can be vocational.
 | `ifrs-capitalize-borrowing-costs` | adjustments-corrections | journal-entry | ifrs | application | `ias:23` | Expense qualifying interest |
 | `receivable-allowance-trueup` | receivables | journal-entry | core | application | — | Expense the full required allowance |
 | `accrual-deferral-reversal` | accruals-deferrals | journal-entry | core | application | — | Skip the accrual reversal |
+| `payables-statement-recon` | payables-reconciliation | journal-entry | core | analysis | — | Book timing items as errors |
 
-Stable seeds: 101–109 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–110 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -95,12 +96,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 7 | 1 | planned | planned |
+| financial-accounting | 8 | 1 | planned | planned |
 | management-accounting | 1 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×7, multiple-choice ×1, numeric ×1;
+Format coverage: journal-entry ×8, multiple-choice ×1, numeric ×1;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
