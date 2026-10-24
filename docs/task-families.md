@@ -83,8 +83,9 @@ problem the task hands over. An analysis task can be vocational.
 | `mc-capitalization-treatment` | transaction-classification | multiple-choice | core | application | — | Expense-it distractor |
 | `mgmt-break-even-units` | cost-volume-profit | numeric | core | application | — | Answer current volume |
 | `ifrs-capitalize-borrowing-costs` | adjustments-corrections | journal-entry | ifrs | application | `ias:23` | Expense qualifying interest |
+| `ppe-disposal` | fixed-assets | journal-entry | core | application | — | Skip disposal-month depreciation |
 
-Stable seeds: 101–107 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–107, 111 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -93,12 +94,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 5 | 1 | planned | planned |
+| financial-accounting | 6 | 1 | planned | planned |
 | management-accounting | 1 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×5, multiple-choice ×1, numeric ×1;
+Format coverage: journal-entry ×6, multiple-choice ×1, numeric ×1;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 

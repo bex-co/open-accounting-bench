@@ -127,6 +127,34 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
 
+[[mapping]]
+generator = "ppe-disposal"
+target_id = "FAR.II.D"
+target_item = 2
+target_skill = "application"
+target_text_sha256 = "sha256:e3845654ddaa339a3c0850f5c9ce4adbc2d2e021fd0a9cedb923b896564e7f95"
+relationship = "superset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Computes and records the gain or loss on selling one asset, after depreciating it to the disposal month."
+
+[[mapping]]
+generator = "ppe-disposal"
+target_id = "FAR.II.D"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Works from gross cost and accumulated depreciation to a carrying amount at disposal; no capitalization or year-end balances."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

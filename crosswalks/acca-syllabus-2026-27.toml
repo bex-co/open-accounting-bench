@@ -133,6 +133,45 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
 
+[[mapping]]
+generator = "ppe-disposal"
+target_id = "FA.D4(f)"
+target_skill = "S"
+target_text_sha256 = "sha256:d082f528ae44a47b505f4912843e26ff2c61e5e76feb04b3b241b4ac6c294120"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Calculates and records a disposal gain or loss for a cash sale; part-exchange is not tested."
+
+[[mapping]]
+generator = "ppe-disposal"
+target_id = "FA.D4(e)"
+target_skill = "S"
+target_text_sha256 = "sha256:0b6ced4a967a26c87d73750ada9b3bff9487543fd4f9c8f38e1647daed0cd20f"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Records a disposal in the ledger (cost and accumulated depreciation removed); acquisitions are not tested."
+
+[[mapping]]
+generator = "ppe-disposal"
+target_id = "FA.D5(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:0557cd9a1f436d47dc300f7e62e5700af4a54520e30cb4c3b1355133ebb1301d"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Posts one month's depreciation charge to expense and accumulated depreciation."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

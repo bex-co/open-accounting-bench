@@ -662,6 +662,123 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
     )
 
 
+ACC_DEP = "Assets:AccumulatedDepreciation"
+DEPRECIATION = "Expenses:Depreciation"
+DISPOSAL = "Income:GainLossOnDisposal"
+DISPOSAL_ACCOUNTS = [
+    (ACC_DEP, "Accumulated depreciation on equipment (contra-asset; credit balance)"),
+    (DEPRECIATION, "Depreciation expense"),
+    (DISPOSAL, "Gain (credit) or loss (debit) on disposal of non-current assets"),
+]
+
+
+def ppe_disposal(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    asset = rng.choice(["delivery van", "CNC router", "forklift", "packaging line"])
+    buyer = rng.choice(["Lumen Fleet", "Northgate Machinery", "Oakridge Auctions"])
+    life_years = rng.choice([3, 4, 5])
+    monthly = Decimal(rng.randrange(150, 601))  # whole dollars per month
+    residual = Decimal(rng.randrange(5, 31)) * 100
+    cost = monthly * 12 * life_years + residual
+    held = rng.randint(10, life_years * 12 - 6)  # months depreciated through 2025-12-31
+    # First depreciated month is the acquisition month; `held` months run
+    # through December 2025 inclusive.
+    first = 2025 * 12 + 11 - (held - 1)
+    acquired_year, acquired_month = first // 12, first % 12 + 1
+    acc_open = monthly * held
+    carrying = cost - monthly * (held + 1)  # after January's depreciation
+    proceeds = carrying + Decimal(rng.choice([-1, 1])) * Decimal(rng.randrange(2, 41)) * 50
+    gain = proceeds - carrying
+    sale_day = rng.randint(8, 27)
+    sale_date = f"2026-01-{sale_day:02d}"
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, DISPOSAL_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Opening fixed asset: {asset}",
+        [
+            ("Assets:Equipment", cost),
+            (ACC_DEP, -acc_open),
+            ("Equity:Opening-Balances", acc_open - cost),
+        ],
+    )
+    register = (
+        "# Fixed asset register (extract)\n\n"
+        f"- Asset: {asset}\n"
+        f"- Acquired: {acquired_year}-{acquired_month:02d}-01, cost USD {money(cost)}\n"
+        f"- Useful life {life_years} years, residual value USD {money(residual)}, straight-line\n"
+        f"- Accumulated depreciation through 2025-12-31: USD {money(acc_open)} ({held} months)\n"
+    )
+    sale = (
+        f"# Sale agreement — {asset}\n\n"
+        f"Sold to {buyer} on {sale_date} for USD {money(proceeds)}, "
+        "received in full into checking the same day.\n"
+    )
+    policy = POLICY + (
+        "- Equipment is depreciated straight-line per month: (cost - residual)\n"
+        "  / useful life in months. A full month's depreciation is charged in\n"
+        "  the month of acquisition and in the month of disposal.\n"
+        "- On disposal, remove the asset's cost and accumulated depreciation;\n"
+        "  the difference between proceeds and carrying amount is a gain or\n"
+        "  loss on disposal.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            sale_date,
+            "Depreciation",
+            f"January depreciation, {asset}",
+            [(DEPRECIATION, monthly), (ACC_DEP, -monthly)],
+        )
+        + _txn(
+            sale_date,
+            buyer,
+            f"Disposal of {asset}",
+            [
+                (BANK, proceeds),
+                (ACC_DEP, acc_open + monthly),
+                ("Assets:Equipment", -cost),
+                (DISPOSAL, -gain),
+            ],
+        )
+    )
+    return TaskInstance(
+        task_id="ppe-disposal",
+        family="fixed-assets",
+        title="Record the disposal of a depreciated asset",
+        instruction=(
+            f"Record the sale of the {asset} described in `/app/documents/sale_agreement.md` "
+            "in `/app/ledger.beancount`, using `/app/documents/asset_register.md` and "
+            "`/app/policy.md`. Append new transactions dated in January 2026 only; do not "
+            "edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(DISPOSAL_ACCOUNTS),
+            "documents/asset_register.md": register,
+            "documents/sale_agreement.md": sale,
+        },
+        expected=_expected(
+            "ppe-disposal",
+            "fixed-assets",
+            seed,
+            expected_deltas={
+                DEPRECIATION: money(monthly),
+                ACC_DEP: money(acc_open),
+                "Assets:Equipment": money(-cost),
+                BANK: money(proceeds),
+                DISPOSAL: money(-gain),
+            },
+            expected_new_transactions=[1, 2],
+            required_final_balances={"Assets:Equipment": "0.00", ACC_DEP: "0.00"},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["fixed-assets", "depreciation", "disposal", "gain-loss"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -670,6 +787,7 @@ FAMILIES = {
     "mc-capitalization-treatment": mc_capitalization_treatment,
     "mgmt-break-even-units": mgmt_break_even_units,
     "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
+    "ppe-disposal": ppe_disposal,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -681,4 +799,5 @@ STABLE_SEEDS = {
     "mc-capitalization-treatment": 105,
     "mgmt-break-even-units": 106,
     "ifrs-capitalize-borrowing-costs": 107,
+    "ppe-disposal": 111,
 }

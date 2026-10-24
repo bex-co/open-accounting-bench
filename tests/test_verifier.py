@@ -123,3 +123,62 @@ def test_ifrs_expensing_qualifying_interest_fails_semantics():
 def test_parser_rejects_unknown_directives():
     ledger = parse_ledger("2026-01-01 open Assets:Cash USD\nfrobnicate x\n")
     assert ledger.errors
+
+
+def _disposal_parts(instance):
+    from decimal import Decimal
+
+    d = instance.expected["expected_deltas"]
+    return (
+        Decimal(d["Expenses:Depreciation"]),
+        Decimal(d["Assets:AccumulatedDepreciation"]),
+        -Decimal(d["Assets:Equipment"]),
+        Decimal(d["Assets:Bank:Checking"]),
+    )
+
+
+def test_disposal_without_final_month_depreciation_fails():
+    """Trap: compute the gain on last year-end's carrying amount."""
+    instance = FAMILIES["ppe-disposal"](111)
+    _, acc_open, cost, proceeds = _disposal_parts(instance)
+    gain = proceeds - (cost - acc_open)
+    wrong = instance.initial_ledger + (
+        '\n2026-01-20 * "Buyer" "Disposal"\n'
+        f"  Assets:Bank:Checking  {proceeds:.2f} USD\n"
+        f"  Assets:AccumulatedDepreciation  {acc_open:.2f} USD\n"
+        f"  Assets:Equipment  -{cost:.2f} USD\n"
+        f"  Income:GainLossOnDisposal  {-gain:.2f} USD\n"
+    )
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_proceeds_booked_as_income_fails():
+    """Trap: treat the sale price as income and leave the asset on the books."""
+    instance = FAMILIES["ppe-disposal"](111)
+    _, _, _, proceeds = _disposal_parts(instance)
+    wrong = instance.initial_ledger + (
+        '\n2026-01-20 * "Buyer" "Sale of equipment"\n'
+        f"  Assets:Bank:Checking  {proceeds:.2f} USD\n"
+        f"  Income:GainLossOnDisposal  -{proceeds:.2f} USD\n"
+    )
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_single_disposal_entry_with_depreciation_is_equivalent():
+    instance = FAMILIES["ppe-disposal"](111)
+    monthly, acc_open, cost, proceeds = _disposal_parts(instance)
+    gain = proceeds - (cost - acc_open - monthly)
+    combined = instance.initial_ledger + (
+        '\n2026-01-20 * "Buyer" "Depreciate to disposal and derecognize"\n'
+        f"  Expenses:Depreciation  {monthly:.2f} USD\n"
+        f"  Assets:AccumulatedDepreciation  {acc_open:.2f} USD\n"
+        f"  Assets:Equipment  -{cost:.2f} USD\n"
+        f"  Assets:Bank:Checking  {proceeds:.2f} USD\n"
+        f"  Income:GainLossOnDisposal  {-gain:.2f} USD\n"
+    )
+    assert verify(instance.initial_ledger, combined, instance.expected).reward == 1

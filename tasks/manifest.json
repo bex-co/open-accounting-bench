@@ -89,6 +89,20 @@
       "digest": "sha256:e17a7cf2dda0f3d06403b237307c4587d2071895f7b09a335c3dd2cc3d941aeb"
     },
     {
+      "task_id": "ppe-disposal",
+      "family": "fixed-assets",
+      "seed": 111,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:57b5114bebeea9552d471f8ededc9f781ce5b65e9df2832e05f2996a66bd27be"
+    },
+    {
       "task_id": "prepaid-insurance-adjustment",
       "family": "adjustments-corrections",
       "seed": 103,
