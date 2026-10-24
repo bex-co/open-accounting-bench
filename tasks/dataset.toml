@@ -9,6 +9,10 @@ authors = []
 keywords = ["accounting", "beancount", "agents"]
 
 [[tasks]]
+name = "open-accounting-bench/accrual-deferral-reversal"
+digest = "sha256:b8261c67f2ec798122393c5f0b7a6e9ca32a30ffbea150bacfc564c4ad5fea1a"
+
+[[tasks]]
 name = "open-accounting-bench/bank-recon-missing-fee"
 digest = "sha256:ec5eb3e30f04468ce96c6548a92d90ea8df93435f04372e1bac04a3c45f2e7e9"
 

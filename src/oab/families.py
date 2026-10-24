@@ -805,6 +805,127 @@ def receivable_allowance_trueup(seed: int) -> TaskInstance:
     )
 
 
+ACCRUED = "Liabilities:AccruedExpenses"
+DEFERRED = "Liabilities:DeferredRevenue"
+SERVICES = "Income:Services"
+ACCRUAL_ACCOUNTS = [
+    (ACCRUED, "Expenses incurred but not yet billed (accrued at period end)"),
+    (DEFERRED, "Cash received for services not yet delivered"),
+    (SERVICES, "Service revenue (recognized as delivered)"),
+]
+
+
+def accrual_deferral_reversal(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    utility = rng.choice(["City Power", "Metro Gas", "Northside Energy"])
+    estimate = Decimal(rng.randrange(80, 241)) * 5
+    actual = estimate + Decimal(rng.choice([-1, 1])) * Decimal(rng.randrange(4, 31)) * 5
+    client = rng.choice(["Orion Dental", "Pike Logistics", "Quarry Arts", "Rowan Legal"])
+    sessions = rng.choice([8, 10, 12])
+    price = Decimal(rng.randrange(30, 91)) * 10
+    delivered = rng.randint(2, 4)
+    days = sorted(rng.sample(range(6, 29), delivered))
+    opening = Decimal("10000.00")
+    deferred_open = price * sessions
+    initial = _ledger_header(opening, ACCRUAL_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "December 2025 closing balances: utilities accrual and workshop prepayment",
+        [
+            (ACCRUED, -estimate),
+            (DEFERRED, -deferred_open),
+            ("Equity:Opening-Balances", estimate + deferred_open),
+        ],
+    )
+    close_note = (
+        "# December 2025 close — open items carried into January\n\n"
+        f"- Accrued utilities: December usage from {utility} not yet billed, "
+        f"estimated at USD {money(estimate)} (credit `{ACCRUED}`).\n"
+        f"- Deferred revenue: {client} prepaid {sessions} training sessions at "
+        f"USD {money(price)} each on 2025-12-20 (credit `{DEFERRED}` "
+        f"USD {money(deferred_open)}).\n"
+    )
+    bill = (
+        f"# Utility bill — {utility}\n\n"
+        "Service period: 2025-12-01 to 2025-12-31\n"
+        f"Amount due: USD {money(actual)}. Paid from checking on 2026-01-15.\n"
+    )
+    log = (
+        f"# Training delivery log — {client}\n\n"
+        + "".join(f"- 2026-01-{d:02d}: session delivered\n" for d in days)
+        + f"\nSessions remaining after January: {sessions - delivered}\n"
+    )
+    policy = POLICY + (
+        "- Accrued expenses are reversed on the first day of the next period;\n"
+        "  the supplier's bill is then recorded in full when received.\n"
+        "- Prepaid service contracts are recognized as revenue per session\n"
+        "  delivered, at the contract price per session.\n"
+    )
+    earned = price * delivered
+    solution = (
+        initial
+        + _txn(
+            "2026-01-01",
+            utility,
+            "Reverse December utilities accrual",
+            [(ACCRUED, estimate), ("Expenses:Utilities", -estimate)],
+        )
+        + _txn(
+            "2026-01-15",
+            utility,
+            "December utility bill paid",
+            [("Expenses:Utilities", actual), (BANK, -actual)],
+        )
+        + _txn(
+            "2026-01-31",
+            client,
+            f"Revenue for {delivered} sessions delivered in January",
+            [(DEFERRED, earned), (SERVICES, -earned)],
+        )
+    )
+    return TaskInstance(
+        task_id="accrual-deferral-reversal",
+        family="accruals-deferrals",
+        title="Reverse an accrual and release deferred revenue",
+        instruction=(
+            "Record January 2026 in `/app/ledger.beancount` for the items carried over in "
+            "`/app/documents/december_close.md`: the utility bill in "
+            "`/app/documents/utility_bill.md` and the sessions in "
+            "`/app/documents/delivery_log.md`, following `/app/policy.md`. Append new "
+            "transactions dated in January 2026 only; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ACCRUAL_ACCOUNTS),
+            "documents/december_close.md": close_note,
+            "documents/utility_bill.md": bill,
+            "documents/delivery_log.md": log,
+        },
+        expected=_expected(
+            "accrual-deferral-reversal",
+            "accruals-deferrals",
+            seed,
+            expected_deltas={
+                ACCRUED: money(estimate),
+                "Expenses:Utilities": money(actual - estimate),
+                BANK: money(-actual),
+                DEFERRED: money(earned),
+                SERVICES: money(-earned),
+            },
+            expected_new_transactions=[2, 4],
+            required_final_balances={
+                ACCRUED: "0.00",
+                DEFERRED: money(-(deferred_open - earned)),
+                BANK: money(opening - actual),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["accrual", "reversal", "deferred-revenue", "period-end"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -814,6 +935,7 @@ FAMILIES = {
     "mgmt-break-even-units": mgmt_break_even_units,
     "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
     "receivable-allowance-trueup": receivable_allowance_trueup,
+    "accrual-deferral-reversal": accrual_deferral_reversal,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -826,4 +948,5 @@ STABLE_SEEDS = {
     "mgmt-break-even-units": 106,
     "ifrs-capitalize-borrowing-costs": 107,
     "receivable-allowance-trueup": 108,
+    "accrual-deferral-reversal": 109,
 }

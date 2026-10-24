@@ -1,0 +1,36 @@
+{
+  "task_id": "accrual-deferral-reversal",
+  "family": "accruals-deferrals",
+  "seed": 109,
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Liabilities:AccruedExpenses": "690.00",
+    "Expenses:Utilities": "90.00",
+    "Assets:Bank:Checking": "-780.00",
+    "Liabilities:DeferredRevenue": "1760.00",
+    "Income:Services": "-1760.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    2,
+    4
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Liabilities:AccruedExpenses": "0.00",
+    "Liabilities:DeferredRevenue": "-1760.00",
+    "Assets:Bank:Checking": "9220.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "application",
+  "standards": []
+}

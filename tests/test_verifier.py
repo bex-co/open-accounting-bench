@@ -184,3 +184,73 @@ def test_direct_write_off_then_true_up_is_equivalent():
         f"  Assets:AllowanceForDoubtfulAccounts  {-to_allowance:.2f} USD\n"
     )
     assert verify(instance.initial_ledger, equivalent, instance.expected).reward == 1
+
+
+def _accrual_parts(instance):
+    from decimal import Decimal
+
+    d = instance.expected["expected_deltas"]
+    estimate = Decimal(d["Liabilities:AccruedExpenses"])
+    actual = -Decimal(d["Assets:Bank:Checking"])
+    earned = Decimal(d["Liabilities:DeferredRevenue"])
+    return estimate, actual, earned
+
+
+def _release(earned) -> str:
+    return (
+        '\n2026-01-31 * "Client" "Sessions delivered"\n'
+        f"  Liabilities:DeferredRevenue  {earned:.2f} USD\n"
+        f"  Income:Services  -{earned:.2f} USD\n"
+    )
+
+
+def test_bill_without_reversing_accrual_fails_semantics():
+    """Trap: book the full bill without reversing December's accrual (double count)."""
+    instance = FAMILIES["accrual-deferral-reversal"](109)
+    _, actual, earned = _accrual_parts(instance)
+    wrong = (
+        instance.initial_ledger
+        + (
+            '\n2026-01-15 * "Utility" "Bill paid"\n'
+            f"  Expenses:Utilities  {actual:.2f} USD\n"
+            f"  Assets:Bank:Checking  -{actual:.2f} USD\n"
+        )
+        + _release(earned)
+    )
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_releasing_all_deferred_revenue_fails_semantics():
+    """Trap: recognize the whole prepayment instead of the sessions delivered."""
+    instance = FAMILIES["accrual-deferral-reversal"](109)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    from decimal import Decimal
+
+    _, _, earned = _accrual_parts(instance)
+    balances = instance.expected["required_final_balances"]
+    full = -Decimal(balances["Liabilities:DeferredRevenue"]) + earned
+    wrong = instance.initial_ledger + added.replace(f"{earned:.2f} USD", f"{full:.2f} USD")
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_settling_bill_against_accrual_is_equivalent():
+    """Charging only the true-up to expense and clearing the accrual in the
+    payment entry reaches the same state as reverse-then-record."""
+    instance = FAMILIES["accrual-deferral-reversal"](109)
+    estimate, actual, earned = _accrual_parts(instance)
+    equivalent = (
+        instance.initial_ledger
+        + (
+            '\n2026-01-15 * "Utility" "Bill paid against December accrual"\n'
+            f"  Liabilities:AccruedExpenses  {estimate:.2f} USD\n"
+            f"  Expenses:Utilities  {actual - estimate:.2f} USD\n"
+            f"  Assets:Bank:Checking  -{actual:.2f} USD\n"
+        )
+        + _release(earned)
+    )
+    assert verify(instance.initial_ledger, equivalent, instance.expected).reward == 1

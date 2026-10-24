@@ -139,6 +139,20 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Writes off one invoice and trues up the credit-loss allowance from an aging; sales-returns allowances are not tested."
 
+[[mapping]]
+generator = "accrual-deferral-reversal"
+target_id = "FAR.II.G"
+target_item = 2
+target_skill = "application"
+target_text_sha256 = "sha256:9125fdefa82f6c01d0ad91c19d756bdff99cf0d5a84af5cc50887ca557cace6e"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Clears an existing utilities accrual against the actual bill; the accrued amount is given, not calculated."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 
