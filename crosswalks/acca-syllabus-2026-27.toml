@@ -354,6 +354,19 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Correcting entries for a transposition and an omitted counter-entry."
 
+[[mapping]]
+generator = "loan-effective-interest"
+target_id = "FA.D10(j)"
+target_skill = "S"
+target_text_sha256 = "sha256:55ac10df10a0d63bea1461805d034c83d28ee4c2440a3c1c2ec8d788da8f307c"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Calculates and records one month's interest expense and coupon accrual in the ledger; statement presentation is not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

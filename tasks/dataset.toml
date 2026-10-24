@@ -33,6 +33,10 @@ name = "open-accounting-bench/inventory-costing-nrv"
 digest = "sha256:4d879ef95c5e04065954d529191ba85488a6d5a97df2f6f7524d3cf466b55f80"
 
 [[tasks]]
+name = "open-accounting-bench/loan-effective-interest"
+digest = "sha256:2ac1d0ec609ec8bc4fe81da93bde2298971217f29a72ceda68cdadca0750c542"
+
+[[tasks]]
 name = "open-accounting-bench/mc-capitalization-treatment"
 digest = "sha256:9d6262a6fdf43a31f488aa1b97dbe27e4bc3959a54474e614b8752d69e6052d4"
 

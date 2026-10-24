@@ -508,3 +508,59 @@ def test_single_suspense_clearing_entry_is_equivalent():
         f"  Income:Sales  {d['Income:Sales']} USD\n"
     )
     assert verify(instance.initial_ledger, combined, instance.expected).reward == 1
+
+
+def _loan_entry(expense, coupon) -> str:
+    return (
+        '\n2026-01-31 * "Lender" "January interest"\n'
+        f"  Expenses:Interest  {expense:.2f} USD\n"
+        f"  Liabilities:InterestPayable  -{coupon:.2f} USD\n"
+        "  Liabilities:LoanPayable\n"
+    )
+
+
+def test_coupon_rate_interest_fails_amortized_cost():
+    """Trap: expense only the coupon, ignoring the effective rate (issue costs
+    never amortize)."""
+    from decimal import Decimal
+
+    instance = FAMILIES["loan-effective-interest"](115)
+    coupon = -Decimal(instance.expected["expected_deltas"]["Liabilities:InterestPayable"])
+    wrong = instance.initial_ledger + _loan_entry(coupon, coupon)
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_effective_rate_on_face_value_fails():
+    """Trap: apply the effective rate to face value instead of carrying amount."""
+    from decimal import Decimal
+
+    instance = FAMILIES["loan-effective-interest"](115)
+    doc = instance.app_files["documents/loan_agreement.md"]
+    face = Decimal(doc.split("face value USD ")[1].split(";")[0])
+    rate = Decimal(doc.split("cash flows): ")[1].split("%")[0]) / 100
+    coupon = -Decimal(instance.expected["expected_deltas"]["Liabilities:InterestPayable"])
+    wrong = instance.initial_ledger + _loan_entry((face * rate).quantize(Decimal("0.01")), coupon)
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_coupon_and_amortization_entries_are_equivalent():
+    from decimal import Decimal
+
+    instance = FAMILIES["loan-effective-interest"](115)
+    d = instance.expected["expected_deltas"]
+    coupon = -Decimal(d["Liabilities:InterestPayable"])
+    amortization = -Decimal(d["Liabilities:LoanPayable"])
+    split = instance.initial_ledger + (
+        '\n2026-01-31 * "Lender" "Coupon accrual"\n'
+        f"  Expenses:Interest  {coupon:.2f} USD\n"
+        f"  Liabilities:InterestPayable  -{coupon:.2f} USD\n"
+        '\n2026-01-31 * "Lender" "Amortize issue costs"\n'
+        f"  Expenses:Interest  {amortization:.2f} USD\n"
+        f"  Liabilities:LoanPayable  -{amortization:.2f} USD\n"
+    )
+    assert verify(instance.initial_ledger, split, instance.expected).reward == 1

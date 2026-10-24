@@ -1,0 +1,35 @@
+{
+  "task_id": "loan-effective-interest",
+  "family": "borrowings",
+  "seed": 115,
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Expenses:Interest": "693.75",
+    "Liabilities:InterestPayable": "-660.00",
+    "Liabilities:LoanPayable": "-33.75"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Liabilities:LoanPayable": "-129657.75"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "application",
+  "standards": [
+    "asc:835-30",
+    "ifrs:9"
+  ]
+}

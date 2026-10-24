@@ -77,7 +77,7 @@ pass). See [docs/metrics.md](docs/metrics.md).
 
 ## Task families
 
-Fourteen frozen Stable instances so far; each generator yields hundreds of
+Fifteen frozen Stable instances so far; each generator yields hundreds of
 reproducible instances. Tasks are tagged by category, framework,
 level, format, and skill, and crosswalked to the AICPA CPA blueprint
 and ACCA syllabus (`crosswalks/`); the 90-day target is 12–15 validated generators
@@ -100,6 +100,7 @@ matrix and [docs/roadmap.md](docs/roadmap.md)).
 | `inventory-costing-nrv` | journal-entry | Average cost under a FIFO policy; skipping the NRV write-down |
 | `revenue-bundle-allocation` | journal-entry | Allocating on invoice line prices instead of standalone selling prices |
 | `suspense-clearance` | journal-entry | Zeroing the clearing account without fixing its causes |
+| `loan-effective-interest` | journal-entry | Expensing only the coupon instead of effective interest |
 
 ## Quickstart
 

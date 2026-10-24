@@ -11,4 +11,4 @@
 - [x] **m5** — [Inventory costing and NRV write-down family](./done/m5/README.md) (8 tasks) ← from w1/006
 - [x] **m6** — [Bundle revenue allocation family](./done/m6/README.md) (8 tasks) ← from w1/007
 - [x] **m7** — [Suspense (clearing) account clearance family](./done/m7/README.md) (8 tasks) ← from w1/008
-- [ ] **m8** — [Effective-interest loan family](./m8/README.md) (8 tasks) ← from w1/009
+- [x] **m8** — [Effective-interest loan family](./done/m8/README.md) (8 tasks) ← from w1/009

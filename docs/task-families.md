@@ -90,8 +90,9 @@ problem the task hands over. An analysis task can be vocational.
 | `inventory-costing-nrv` | inventory | journal-entry | core | application | — | Average cost; no NRV write-down |
 | `revenue-bundle-allocation` | revenue-recognition | journal-entry | core | application | `asc:606`, `ifrs:15` | Allocate on invoice lines |
 | `suspense-clearance` | ledger-integrity-reporting | journal-entry | core | analysis | — | Clear suspense to one account |
+| `loan-effective-interest` | borrowings | journal-entry | core | application | `asc:835-30`, `ifrs:9` | Coupon-rate interest |
 
-Stable seeds: 101–114 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–115 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -100,12 +101,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 12 | 1 | planned | planned |
+| financial-accounting | 13 | 1 | planned | planned |
 | management-accounting | 1 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×12, multiple-choice ×1, numeric ×1;
+Format coverage: journal-entry ×13, multiple-choice ×1, numeric ×1;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
