@@ -125,6 +125,20 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
 
+[[mapping]]
+generator = "payables-statement-recon"
+target_id = "FAR.II.G"
+target_item = 4
+target_skill = "analysis"
+target_text_sha256 = "sha256:8f99c9c686363325a1dbfad988bc31334a2b213d0a15173bd83f2e17700e644d"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Investigates supplier-statement differences and adjusts only true errors; no subledger-to-GL or accrued-liability reconciliation."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

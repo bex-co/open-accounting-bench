@@ -123,3 +123,49 @@ def test_ifrs_expensing_qualifying_interest_fails_semantics():
 def test_parser_rejects_unknown_directives():
     ledger = parse_ledger("2026-01-01 open Assets:Cash USD\nfrobnicate x\n")
     assert ledger.errors
+
+
+def test_forcing_ledger_to_supplier_statement_fails():
+    """Trap: book every difference (goods in transit, unpresented payment) so the
+    ledger equals the statement, on top of the genuine corrections."""
+    instance = FAMILIES["payables-statement-recon"](110)
+    statement = instance.app_files["documents/supplier_statement.md"]
+    in_transit = statement.split("goods dispatched 2026-01-31) | ")[1].split(" |")[0]
+    payment = instance.initial_ledger.split("Payment of invoice")[1].split(
+        "Liabilities:AccountsPayable  "
+    )[1]
+    payment = payment.split(" USD")[0]
+    forced = instance.solution_ledger + (
+        '\n2026-01-31 * "Supplier" "Invoice in transit"\n'
+        f"  Expenses:Materials  {in_transit} USD\n"
+        f"  Liabilities:AccountsPayable  -{in_transit} USD\n"
+        '\n2026-01-31 * "Supplier" "Payment not on statement"\n'
+        f"  Assets:Bank:Checking  {payment} USD\n"
+        f"  Liabilities:AccountsPayable  -{payment} USD\n"
+    )
+    report = verify(instance.initial_ledger, forced, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_missing_the_transposition_fails_semantics():
+    """Trap: record the credit note but miss the mis-keyed invoice."""
+    instance = FAMILIES["payables-statement-recon"](110)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    credit_note_entry = added.strip("\n").split("\n\n")[0]
+    wrong = instance.initial_ledger + "\n" + credit_note_entry + "\n"
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_combined_payables_correction_is_equivalent():
+    instance = FAMILIES["payables-statement-recon"](110)
+    delta = instance.expected["expected_deltas"]["Liabilities:AccountsPayable"]
+    combined = instance.initial_ledger + (
+        '\n2026-01-31 * "Supplier" "Statement reconciliation corrections"\n'
+        f"  Liabilities:AccountsPayable  {delta} USD\n"
+        "  Expenses:Materials\n"
+    )
+    assert verify(instance.initial_ledger, combined, instance.expected).reward == 1
