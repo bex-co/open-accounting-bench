@@ -22,11 +22,11 @@ digest = "sha256:010a0d662f7090ab0082ac487ab32a13771b7b0ed68fe24ce14bec5bdd00028
 
 [[tasks]]
 name = "open-accounting-bench/correct-misclassification"
-digest = "sha256:f4a4ece311e2574ba8a0c49791a96f92f6e3b18e5324e5a7a0f11e3b506859da"
+digest = "sha256:d301794017243b1367aac3cadc42d3e0ea4c1e4c8a88aa23f9c311c125c67cf4"
 
 [[tasks]]
 name = "open-accounting-bench/ifrs-capitalize-borrowing-costs"
-digest = "sha256:46583296c71625330ff3a27771baf0d1474d80df04545c6dd1d00b3aa5a6c4ab"
+digest = "sha256:8e8c1f7c80353a2c460e62a50872fe8c509c142c2a7f919359ac0e80a15b49aa"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-costing-nrv"
@@ -42,7 +42,7 @@ digest = "sha256:9d6262a6fdf43a31f488aa1b97dbe27e4bc3959a54474e614b8752d69e6052d
 
 [[tasks]]
 name = "open-accounting-bench/mgmt-break-even-units"
-digest = "sha256:e17a7cf2dda0f3d06403b237307c4587d2071895f7b09a335c3dd2cc3d941aeb"
+digest = "sha256:c77157c64f1afb01e607dd077dd043c6836a2a14dbf4d73ca9807ae5f8373661"
 
 [[tasks]]
 name = "open-accounting-bench/payables-statement-recon"
@@ -54,7 +54,7 @@ digest = "sha256:57b5114bebeea9552d471f8ededc9f781ce5b65e9df2832e05f2996a66bd27b
 
 [[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
-digest = "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
+digest = "sha256:78e0173d2b46e75377b7b4133edfca1397b24d96d4f1347b3c79319d0bff466f"
 
 [[tasks]]
 name = "open-accounting-bench/receivable-allowance-trueup"

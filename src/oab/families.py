@@ -339,6 +339,7 @@ def prepaid_insurance_adjustment(seed: int) -> TaskInstance:
         ),
         solution_ledger=solution,
         keywords=["prepayment", "adjusting-entry", "accrual"],
+        level="vocational",
     )
 
 
@@ -399,6 +400,7 @@ def correct_misclassification(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["correction", "capitalization", "audit-trail"],
+        level="vocational",
     )
 
 
@@ -582,6 +584,7 @@ self-assessed probability (0-100) that the value is correct.
         solution_ledger="",
         solution_answer={"final_answer": units, "confidence": 100},
         keywords=["numeric", "break-even", "cvp"],
+        level="vocational",
         category="management-accounting",
         format="numeric",
     )
@@ -657,7 +660,7 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
         difficulty="medium",
         keywords=["ifrs", "ias-23", "borrowing-costs"],
         framework="ifrs",
-        level="professional",
+        level="university",
         standards=["ias:23"],
     )
 
