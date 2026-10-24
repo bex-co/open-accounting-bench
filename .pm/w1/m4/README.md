@@ -1,18 +1,18 @@
 # w1 · m4 — PP&E disposal family
 
-**Worker:** worker1 **Goal:** Ship the `ppe-disposal` task family with trap, oracle, Stable task, docs, and crosswalk mappings, accounting-reviewed. **Status:** todo
+**Worker:** worker1 **Goal:** Ship the `ppe-disposal` task family with trap, oracle, Stable task, docs, and crosswalk mappings, accounting-reviewed. **Status:** in progress (t001, t002, t003, t004, t005, t006 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Implement the generator | 45m | — |
-| t002 | Trap, equivalence, and oracle tests | 30m | t001 |
-| t003 | Regenerate, document, crosswalk | 30m | t002 |
-| t004 | Adoption surface | 15m | t003 |
-| t005 | Simplify | 15m | t004 |
-| t006 | Test coverage | 15m | t004 |
-| t007 | Accounting review | 30m | t006 |
+| t001 | Implement the generator — **DONE** | 45m | — |
+| t002 | Trap, equivalence, and oracle tests — **DONE** | 30m | t001 |
+| t003 | Regenerate, document, crosswalk — **DONE** | 30m | t002 |
+| t004 | Adoption surface — **DONE** | 15m | t003 |
+| t005 | Simplify — **DONE** | 15m | t004 |
+| t006 | Test coverage — **DONE** | 15m | t004 |
+| t007 | Accounting review — **BLOCKED** | 30m | t006 |
 | t008 | Closeout | 10m | t007 |
 
 ## Definition of done
@@ -32,3 +32,9 @@
 - **Goal linkage:** B2 — a reviewed family covering a measured coverage gap.
 - **Expected outcome:** evaluators can measure agents on this accounting task; crosswalk coverage gains a linked item.
 - **Why now:** top of the gap-ranked candidate list; independent of other open work. Adoption surface included (new task in README/docs); Accounting review included (new family).
+
+## Blocked
+
+- **t007 Accounting review** (blocked 2026-10-23): the family is complete on branch `family/ppe-disposal` (9f35e87) but has no accounting sign-off; CONTRIBUTING.md step 6 requires it before merging to main.
+  **Unblock:** a reviewer with accounting background checks the scenario, policy wording (full month in acquisition and disposal months), oracle, traps, level (university: dependent steps and linked accounts score U), task-id change from the note (`ppe-disposal`), and the five proposed mappings (FAR.II.D#2 superset-of would count as covered). Who: a maintainer with accounting background.
+  Partial work: t001–t006 done on the branch; nothing merged.
