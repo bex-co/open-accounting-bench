@@ -34,10 +34,16 @@ access.
 
 ## Contributions & review
 
-New families need: generator + oracle tests, an adversarial case,
-expert accounting review (a maintainer with accounting background or
-an external reviewer), and provenance notes confirming original
-synthetic data. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+New families need: generator + oracle tests, an adversarial case, and
+provenance notes confirming original synthetic data. Expert accounting
+review (a maintainer with accounting background or an external
+reviewer) is deferred: it does not gate merging. Every unreviewed
+family, accounting change, and crosswalk mapping is listed in
+[TO_REVIEW.md](../TO_REVIEW.md) and reviewed in batches; a review that
+finds an error is fixed forward like any bug, with a
+`GENERATOR_VERSION` bump if expectations change. Coverage claims still
+count only reviewed crosswalk links ([metrics.md](metrics.md#framework-coverage)).
+See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Data policy
 

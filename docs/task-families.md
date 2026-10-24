@@ -154,7 +154,7 @@ Rules:
   text (AICPA and ACCA copyright; see [PROVENANCE.md](../PROVENANCE.md)).
 - A crosswalk is a view of the dataset, not task metadata: editing one
   never regenerates tasks or changes scores.
-- New mappings need the same accounting review as new families.
+- New mappings start `proposed` and are listed in [TO_REVIEW.md](../TO_REVIEW.md); they count toward cited coverage only once reviewed.
 
 `oab crosswalk` (CI) validates every file and prints coverage; counting
 rules are in [metrics.md](metrics.md#framework-coverage). As of this

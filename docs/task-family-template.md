@@ -44,10 +44,12 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   combined vs split entries, option order) and why grading accepts
   them. If a representation is intentionally rejected, say why.
 
-## 5. Review sign-off
+## 5. Review (deferred)
 
-- Accounting reviewer (name/role) confirmed: scenario realistic,
-  policy wording unambiguous, oracle correct, trap genuinely plausible.
+- Add a `TO_REVIEW.md` entry naming what to check: scenario realism,
+  policy wording, oracle, trap plausibility, level scores, crosswalk
+  mappings. A reviewer with accounting background signs it later;
+  merging does not wait.
 - Provenance: all names/amounts synthetic; any adapted material added
   to `PROVENANCE.md`.
 

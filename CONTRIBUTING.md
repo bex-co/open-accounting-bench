@@ -36,9 +36,11 @@ the PR, then:
    uv run pytest
    ```
 
-6. Accounting review: a reviewer with accounting background confirms
-   the scenario, policy wording, and oracle are unambiguous. Note the
-   review in the PR.
+6. Accounting review (deferred): add the family to
+   [TO_REVIEW.md](TO_REVIEW.md) with what a reviewer should check.
+   Merging does not wait for it; a reviewer with accounting background
+   later confirms the scenario, policy wording, and oracle, and the
+   entry moves to the file's Reviewed section.
 
 Do not hand-edit anything under `tasks/<task-id>/` — it is generated.
 Do not edit `tasks/*/tests/grader.py` — it is a verbatim copy of

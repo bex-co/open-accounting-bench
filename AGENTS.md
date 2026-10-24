@@ -35,7 +35,7 @@ Scoped guides:
 - **Verifier changes start with a failing test**, keep the full suite green, and regenerate tasks in the same commit. They change every score ever reported.
 - **Changing a family's accounting semantics or expectations** means deciding on a `GENERATOR_VERSION` bump ([docs/governance.md](docs/governance.md)) and regenerating Stable tasks in the same commit.
 - **Expectations are accounting state, never exact ledger text.** Every family carries a trap: at least one balanced-but-wrong attempt fails a non-structural layer, with a test in `tests/test_verifier.py`.
-- **New families need accounting review** by a reviewer with accounting background. An agent cannot self-certify it.
+- **Accounting review is deferred, not a gate.** New families and accounting changes merge once their automated gates pass (oracle, trap test, validate); each is listed in [TO_REVIEW.md](TO_REVIEW.md) for a later batch review by a reviewer with accounting background. An agent never marks an item reviewed itself.
 - **Synthetic data only** ([PROVENANCE.md](PROVENANCE.md)). Never publish Holdout-track families, seeds, or expectations anywhere in this public repo.
 
 ## Checks
