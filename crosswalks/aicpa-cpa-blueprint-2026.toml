@@ -127,6 +127,34 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
 
+[[mapping]]
+generator = "loan-effective-interest"
+target_id = "FAR.II.H.1"
+target_item = 3
+target_skill = "application"
+target_text_sha256 = "sha256:dcb048890159c7ea3cb2310d46ca784af23fb600499fa59a0a5de902f5be1d34"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Computes one month's effective interest on a loan carried net of issue costs; premiums and discounts on bonds are not tested."
+
+[[mapping]]
+generator = "loan-effective-interest"
+target_id = "FAR.II.H.1"
+target_item = 4
+target_skill = "application"
+target_text_sha256 = "sha256:c28ba0f689a593c2f696a41ced9a7b9bafb38fe72ed81a0a3773a7ff83383d61"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Rolls the carrying amount forward by the amortization and posts the entry; issuance and repayment are not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

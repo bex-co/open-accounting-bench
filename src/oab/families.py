@@ -662,6 +662,102 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
     )
 
 
+LOAN = "Liabilities:LoanPayable"
+INTEREST_PAYABLE = "Liabilities:InterestPayable"
+LOAN_ACCOUNTS = [
+    (LOAN, "Term loan at amortized cost (face value less unamortized issue costs)"),
+    (INTEREST_PAYABLE, "Coupon interest accrued, not yet paid"),
+]
+
+
+def _monthly_effective_rate(net: Decimal, coupon: Decimal, face: Decimal, months: int) -> Decimal:
+    """Monthly rate equating the coupon stream plus face repayment to `net` proceeds."""
+    lo, hi = Decimal("0"), Decimal("0.05")
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        pv = sum(coupon / (1 + mid) ** t for t in range(1, months + 1)) + face / (1 + mid) ** months
+        lo, hi = (mid, hi) if pv > net else (lo, mid)
+    return ((lo + hi) / 2).quantize(Decimal("0.000001"))
+
+
+def loan_effective_interest(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    lender = rng.choice(["Keystone Bank", "Lakeshore Credit Union", "Meridian Capital"])
+    face = Decimal(rng.randrange(5, 21)) * 12000
+    annual = rng.choice([Decimal("0.060"), Decimal("0.072"), Decimal("0.084")])
+    coupon = face * annual / 12  # exact by construction
+    years = rng.choice([3, 4, 5])
+    costs = (face * Decimal(rng.randrange(15, 41)) / 1000).quantize(Decimal("1"))
+    net = face - costs
+    rate = _monthly_effective_rate(net, coupon, face, years * 12)
+    expense = (net * rate).quantize(CENT)
+    amortization = expense - coupon
+    opening = Decimal("5000.00")
+    initial = _ledger_header(opening, LOAN_ACCOUNTS) + _txn(
+        "2026-01-01",
+        lender,
+        "Term loan drawn, net of issue costs",
+        [(BANK, net), (LOAN, -net)],
+    )
+    agreement = (
+        f"# Loan agreement summary — {lender}\n\n"
+        f"- Drawn 2026-01-01; face value USD {money(face)}; "
+        f"term {years} years, repaid at maturity\n"
+        f"- Coupon {annual * 100:.1f}% a year on face value, paid monthly in arrears "
+        "on the 5th of the next month\n"
+        f"- Issue costs USD {money(costs)} deducted from proceeds; cash received USD {money(net)}\n"
+        f"- Effective interest rate (computed by treasury from these cash flows): "
+        f"{rate * 100:.4f}% per month\n"
+    )
+    policy = POLICY + (
+        "- Borrowings are measured at amortized cost using the effective\n"
+        "  interest method: monthly interest expense = carrying amount at the\n"
+        "  start of the month x the effective monthly rate, rounded to the\n"
+        "  cent. Coupon interest due but unpaid is accrued in\n"
+        "  `Liabilities:InterestPayable`; the difference adjusts the loan's\n"
+        "  carrying amount.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        lender,
+        "January interest (effective interest method)",
+        [("Expenses:Interest", expense), (INTEREST_PAYABLE, -coupon), (LOAN, -amortization)],
+    )
+    return TaskInstance(
+        task_id="loan-effective-interest",
+        family="borrowings",
+        title="Accrue January interest on a loan at amortized cost",
+        instruction=(
+            "Record January 2026 interest on the loan in `/app/ledger.beancount`, using "
+            "`/app/documents/loan_agreement.md` and `/app/policy.md`. Append new "
+            "transactions dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(LOAN_ACCOUNTS),
+            "documents/loan_agreement.md": agreement,
+        },
+        expected=_expected(
+            "loan-effective-interest",
+            "borrowings",
+            seed,
+            expected_deltas={
+                "Expenses:Interest": money(expense),
+                INTEREST_PAYABLE: money(-coupon),
+                LOAN: money(-amortization),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={LOAN: money(-(net + amortization))},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["borrowings", "effective-interest", "amortized-cost", "issue-costs"],
+        standards=["asc:835-30", "ifrs:9"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -670,6 +766,7 @@ FAMILIES = {
     "mc-capitalization-treatment": mc_capitalization_treatment,
     "mgmt-break-even-units": mgmt_break_even_units,
     "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
+    "loan-effective-interest": loan_effective_interest,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -681,4 +778,5 @@ STABLE_SEEDS = {
     "mc-capitalization-treatment": 105,
     "mgmt-break-even-units": 106,
     "ifrs-capitalize-borrowing-costs": 107,
+    "loan-effective-interest": 115,
 }

@@ -25,6 +25,10 @@ name = "open-accounting-bench/ifrs-capitalize-borrowing-costs"
 digest = "sha256:46583296c71625330ff3a27771baf0d1474d80df04545c6dd1d00b3aa5a6c4ab"
 
 [[tasks]]
+name = "open-accounting-bench/loan-effective-interest"
+digest = "sha256:2ac1d0ec609ec8bc4fe81da93bde2298971217f29a72ceda68cdadca0750c542"
+
+[[tasks]]
 name = "open-accounting-bench/mc-capitalization-treatment"
 digest = "sha256:9d6262a6fdf43a31f488aa1b97dbe27e4bc3959a54474e614b8752d69e6052d4"
 
