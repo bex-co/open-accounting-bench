@@ -17,6 +17,9 @@ publisher = "AICPA"
 effective = "2026-01-01"
 source = "https://www.aicpa-cima.com/resources/download/learn-what-is-tested-on-the-cpa-exam"
 
+# Sections with a reviewed gradability triage ([[out_of_scope]] below).
+triaged = ["FAR"]
+
 # Representative tasks per section (denominators for coverage).
 [framework.denominators]
 AUD = 147
@@ -123,3 +126,118 @@ status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
+
+# Items judged not agent-gradable (reviewed gradability triage).
+# Absent items are in scope; see docs/metrics.md#framework-coverage.
+
+[[out_of_scope]]
+target_id = "FAR.I.A.3"
+target_item = 1
+reason = "Purpose-of-statement recall; no closed accounting result to execute."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.A.3"
+target_item = 2
+reason = "Recalling which items belong in OCI; pure list recall even with given items."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.A.7"
+target_item = 1
+reason = "Output is revised disclosure prose (boundary case 2)."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.B.1"
+target_item = 1
+reason = "Recall of statement purpose; no executable outcome."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.B.2"
+target_item = 1
+reason = "Recall of statement purpose; no executable outcome."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.B.3"
+target_item = 1
+reason = "Recall of statement purpose; no executable outcome."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.B.4"
+target_item = 1
+reason = "Output is disclosure prose (boundary case 2)."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.C.1"
+target_item = 1
+reason = "Recalling each fund type's measurement focus; same recall act as statement purpose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.D"
+target_item = 1
+reason = "SEC filing purpose recall; no accounting state."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.D"
+target_item = 2
+reason = "Rote recall of filing item numbering; outside execution focus."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.E"
+target_item = 1
+reason = "Naming convention recall; no accounting computation."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.I.F"
+target_item = 1
+reason = "Naming the ratio for a purpose is recall; computing ratios is covered by sibling rows."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.II.G"
+target_item = 1
+reason = "Recalling ARO recognition and measurement rules; recall verb, no facts to apply."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.III.C"
+target_item = 1
+reason = "Broad conceptual recall without a closed accounting outcome."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.III.E"
+target_item = 1
+reason = "Naming valuation approaches is recall; applying inputs is covered by FAR.III.E#2."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FAR.III.F"
+target_item = 1
+reason = "Recalling how lease terms are treated; recall verb, no scenario to resolve."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"

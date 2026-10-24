@@ -71,11 +71,17 @@ strongest link ([task-families.md](task-families.md#crosswalks-to-external-frame
 - **Touched** — best link is `intersects-with`, or a weak superset.
 - **Unreviewed** — items whose best link is still `proposed`.
 
-Cite coverage with its basis, e.g. "covers 0 of 113 FAR representative
-tasks (AICPA blueprint 2027; equal/superset-of, strength >= 7); 2
-partial, 2 touched; 0 unreviewed". Never merge partial or touched into
+- **Gradable** — items left after `[[out_of_scope]]` exclusions (items
+  no deterministic grader can check: pure recall, disclosure prose).
+  Shown only for sections listed in `framework.triaged`; `—` otherwise.
+
+Cite coverage with its basis and both denominators, e.g. "covers 0 of
+97 gradable (113 total) FAR representative tasks (AICPA blueprint 2027;
+equal/superset-of, strength >= 7); 2 partial, 2 touched; 0
+unreviewed". Never merge partial or touched into
 covered, and do not publish a coverage claim while its counted links
-are unreviewed. The denominator is every item in the section; items
-that cannot be agent-graded are not yet excluded (that split needs
-reviewer classification).
+are unreviewed. Unreviewed also counts unreviewed exclusions, so the
+gradable denominator cannot be cited before its exclusions are
+reviewed. Exclusions are recorded, not inclusions: a missing record
+keeps an item in the denominator, the conservative direction.
 

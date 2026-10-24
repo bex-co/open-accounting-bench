@@ -19,6 +19,9 @@ documents = [
   "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/SBR/sbr_int_s26_j27_syllabus_and_study_guide.pdf",
 ]
 
+# Sections with a reviewed gradability triage ([[out_of_scope]] below).
+triaged = ["FA"]
+
 # Study-guide outcomes carrying a level marker per exam
 # (FA: [K]/[S]; FR, SBR: intellectual levels [1]-[3]).
 [framework.denominators]
@@ -129,3 +132,420 @@ status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
+
+# Items judged not agent-gradable (reviewed gradability triage).
+# Absent items are in scope; see docs/metrics.md#framework-coverage.
+
+[[out_of_scope]]
+target_id = "FA.A1(a)"
+reason = "Definitional recall of financial reporting; no closed answer to execute."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A1(b)"
+reason = "Naming entity types is closed-book recall outside execution focus."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A1(c)"
+reason = "Legal comparison of entity forms is explanatory prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A1(d)"
+reason = "Pros and cons of entity forms require discussion, not a single key."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A1(e)"
+reason = "Scope and principles of reporting are definitional prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A2(a)"
+reason = "User groups and their needs are descriptive; no ledger or numeric result."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A3(a)"
+reason = "Purpose of each statement is descriptive recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A4(a)"
+reason = "Roles of standard-setting bodies are institutional description."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A4(b)"
+reason = "Role of standards is explanatory prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A5(a)"
+reason = "Governance meaning is explanatory; no deterministic output."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.A5(b)"
+reason = "Director responsibilities are descriptive prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.B1(a)"
+reason = "Concept application is judgement-heavy; concept definitions are recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.B2(a)"
+reason = "Qualitative characteristics are definitional; applying them is judgement."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C1(a)"
+reason = "Function of data sources is descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C1(b)"
+reason = "Document contents and purposes are recall; no real documents synthesizable meaningfully."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C1(d)"
+reason = "Features of computerised systems and cloud are descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C1(e)"
+reason = "System contribution to policy compliance is prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C1(f)"
+reason = "Naming transaction types is trivial recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C2(a)"
+reason = "Ledger account types described in prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.C2(b)"
+reason = "Initial recording process is descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D1(c)"
+reason = "Sales tax operating principles are descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D2(b)"
+reason = "Need for petty cash records is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D3(a)"
+reason = "Need for inventory adjustments is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D3(e)"
+reason = "Perpetual versus periodic records explained in prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D4(a)"
+reason = "Definition recall only."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D4(b)"
+reason = "Current versus non-current comparison is definitional."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D4(c)"
+reason = "Capital versus revenue distinction explained in prose; applied form is D4(d)."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D4(j)"
+reason = "Asset register purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D5(a)"
+reason = "Purpose of depreciation is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D5(c)"
+reason = "Method suitability is judgement without one key."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D6(a)"
+reason = "Tangible versus intangible comparison is definitional."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D6(b)"
+reason = "Listing intangible types is recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D6(e)"
+reason = "Amortisation purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D8(a)"
+reason = "Examples of receivables and payables are recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D8(b)"
+reason = "Credit policy costs and benefits need discussion."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D8(c)"
+reason = "Aged analysis purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D8(d)"
+reason = "Credit limit purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D9(a)"
+reason = "Definitions of provisions and contingencies are recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D9(c)"
+reason = "Describing treatment methods overlaps D9(b) and is mainly prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D10(a)"
+reason = "Capital structure description is prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D10(b)"
+reason = "Nature of equity components is descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D10(e)"
+reason = "Bonus issue pros and cons need discussion."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D10(f)"
+reason = "Rights issue pros and cons need discussion."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.D10(k)"
+reason = "Listing equity statement components is recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.E1(a)"
+reason = "Purpose of bank reconciliation is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.E1(b)"
+reason = "Reasons for differences listed in prose; applied form tested in E1(c-d)."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.E2(a)"
+reason = "Payables control account purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.E2(b)"
+reason = "Reconciliation purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.F1(a)"
+reason = "Trial balance purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.F1(d)"
+reason = "Limitations are explanatory prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.F2(a)"
+reason = "Error taxonomy is recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.F3(a)"
+reason = "Suspense account purpose is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G1(a)"
+reason = "Conceptual basis of position statement is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G2(d)"
+reason = "Separate disclosure items are recall of presentation rules."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G2(e)"
+reason = "Interrelationship of statements is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G3(a)"
+reason = "Purpose of notes is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G3(b)"
+reason = "Drafting notes is disclosure prose; numeric parts covered elsewhere."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G4(a)"
+reason = "Definition recall."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G4(c)"
+reason = "Reporting differences described in prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G5(a)"
+reason = "Profit versus cash distinction is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G5(b)"
+reason = "Cash control need is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.G5(c)"
+reason = "User benefits and drawbacks need discussion."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.H1(a)"
+reason = "Group terminology is definitional."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.H2(b)"
+reason = "Features of parent-associate relationship are descriptive; identification covered in H2(a)."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.H2(c)"
+reason = "Equity method principle described in prose."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.I1(a)"
+reason = "Business use of analysis is descriptive."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.I1(b)"
+reason = "Purpose of ratios is explanatory."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.I2(b)"
+reason = "Ratio interrelationships need explanation."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+
+[[out_of_scope]]
+target_id = "FA.I3(b)"
+reason = "Conclusions and presentation to users are prose judgement."
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"

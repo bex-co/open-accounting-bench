@@ -138,6 +138,12 @@ the focal element:
 | `status`, `mapper`, `reviewer` | `proposed` until an accounting reviewer signs; `reviewed` requires `reviewer` |
 | `comment` | OAB-written summary of what the generator does and does not test |
 
+`[[out_of_scope]]` records (`target_id`, `target_item`, OAB-written
+`reason`, `status`, `reviewer`) mark items OAB judges not agent-gradable;
+they are allowed only in sections listed in `framework.triaged` and
+never on an item a mapping covers. They define the gradable
+denominator in [metrics.md](metrics.md#framework-coverage).
+
 Rules:
 
 - One file per framework **edition**. A new blueprint or syllabus year

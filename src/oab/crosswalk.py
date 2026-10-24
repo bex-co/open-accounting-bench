@@ -5,7 +5,9 @@ One TOML file per external framework *version* under ``crosswalks/``
 Records follow NIST IR 8278A Rev.1 set-theory mapping: the focal element
 is an OAB generator (a ``FAMILIES`` key), the reference element an
 external item; each record carries a relationship, a rationale, and a
-0-10 strength. Files hold IDs and OAB-written summaries only — never
+0-10 strength. ``[[out_of_scope]]`` records exclude items OAB judges not
+agent-gradable from the gradable denominator. Files hold IDs and
+OAB-written summaries only — never
 the external framework's text (see PROVENANCE.md and docs/metrics.md).
 """
 
@@ -14,7 +16,7 @@ from __future__ import annotations
 import hashlib
 import re
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from oab.families import FAMILIES
@@ -45,6 +47,7 @@ class Crosswalk:
     path: Path
     framework: dict
     mappings: list[dict]
+    out_of_scope: list[dict] = field(default_factory=list)
 
     @property
     def label(self) -> str:
@@ -55,7 +58,14 @@ def load_crosswalks(directory: Path) -> list[Crosswalk]:
     crosswalks = []
     for path in sorted(directory.glob("*.toml")):
         data = tomllib.loads(path.read_text(encoding="utf-8"))
-        crosswalks.append(Crosswalk(path, data.get("framework", {}), data.get("mapping", [])))
+        crosswalks.append(
+            Crosswalk(
+                path,
+                data.get("framework", {}),
+                data.get("mapping", []),
+                data.get("out_of_scope", []),
+            )
+        )
     return crosswalks
 
 
@@ -120,6 +130,39 @@ def validate_crosswalk(cw: Crosswalk) -> list[str]:
         if key in seen:
             failures.append(f"{where}: duplicate mapping {key}")
         seen.add(key)
+    triaged = fw.get("triaged", [])
+    if not isinstance(triaged, list) or not set(triaged) <= set(denominators):
+        failures.append(f"{name}: framework.triaged must list denominator keys")
+        triaged = []
+    covered = {
+        target_key(m)
+        for m in cw.mappings
+        if m.get("relationship") in COVERING and m.get("target_id")
+    }
+    excluded: set[str] = set()
+    for i, x in enumerate(cw.out_of_scope):
+        where = f"{name}: out_of_scope[{i}]"
+        target_id = x.get("target_id")
+        if not isinstance(target_id, str) or section_of(target_id) not in denominators:
+            failures.append(f"{where}: target_id {target_id!r} must start with a denominator key")
+            continue
+        if section_of(target_id) not in triaged:
+            failures.append(f"{where}: section {section_of(target_id)} is not in framework.triaged")
+        item = x.get("target_item")
+        if item is not None and (not isinstance(item, int) or item < 1):
+            failures.append(f"{where}: target_item must be a 1-based int")
+        if not x.get("reason"):
+            failures.append(f"{where}: reason (OAB-written) is required")
+        if x.get("status") not in STATUSES:
+            failures.append(f"{where}: status {x.get('status')!r} not in {STATUSES}")
+        if x.get("status") == "reviewed" and not x.get("reviewer"):
+            failures.append(f"{where}: reviewed exclusions need a reviewer")
+        key = target_key(x)
+        if key in excluded:
+            failures.append(f"{where}: duplicate exclusion {key}")
+        if key in covered:
+            failures.append(f"{where}: {key} is covered by a mapping but marked out of scope")
+        excluded.add(key)
     return failures
 
 
@@ -128,7 +171,10 @@ def coverage(cw: Crosswalk) -> dict[str, dict]:
 
     covered: an equal/superset-of link with strength >= COVER_MIN_STRENGTH;
     partial: otherwise a subset-of link; touched: only intersects-with or
-    weak links. `unreviewed` counts items whose best link is still proposed.
+    weak links. `gradable` is the total minus `[[out_of_scope]]` items,
+    or None for sections not listed in `framework.triaged`;
+    `unreviewed` counts items whose best link, or whose exclusion, is
+    still proposed.
     """
     rank = {"covered": 3, "partial": 2, "touched": 1}
     best: dict[str, tuple[str, bool]] = {}
@@ -146,26 +192,38 @@ def coverage(cw: Crosswalk) -> dict[str, dict]:
             best[key] = (tier, reviewed)
     result = {}
     for section, total in cw.framework["denominators"].items():
-        counts = {"total": total, "covered": 0, "partial": 0, "touched": 0, "unreviewed": 0}
+        counts = {
+            "total": total,
+            "gradable": total if section in cw.framework.get("triaged", []) else None,
+            "covered": 0,
+            "partial": 0,
+            "touched": 0,
+            "unreviewed": 0,
+        }
         for key, (tier, reviewed) in best.items():
             if section_of(key) == section:
                 counts[tier] += 1
                 counts["unreviewed"] += not reviewed
+        for x in cw.out_of_scope:
+            if section_of(x["target_id"]) == section and counts["gradable"] is not None:
+                counts["gradable"] -= 1
+                counts["unreviewed"] += x["status"] != "reviewed"
         result[section] = counts
     return result
 
 
 def format_coverage(crosswalks: list[Crosswalk]) -> str:
     lines = [
-        "| Framework | Section | Covered | Partial | Touched | Items | Unreviewed |",
-        "|---|---|---:|---:|---:|---:|---:|",
+        "| Framework | Section | Covered | Partial | Touched | Gradable | Items | Unreviewed |",
+        "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for cw in crosswalks:
         for section, c in coverage(cw).items():
-            if c["covered"] + c["partial"] + c["touched"] == 0:
+            if c["covered"] + c["partial"] + c["touched"] == 0 and c["gradable"] is None:
                 continue
+            gradable = "—" if c["gradable"] is None else c["gradable"]
             lines.append(
                 f"| {cw.label} | {section} | {c['covered']} | {c['partial']} | "
-                f"{c['touched']} | {c['total']} | {c['unreviewed']} |"
+                f"{c['touched']} | {gradable} | {c['total']} | {c['unreviewed']} |"
             )
     return "\n".join(lines)

@@ -12,7 +12,8 @@ FRAMEWORK = {
     "title": "Demo",
     "publisher": "Demo",
     "source": "https://example.org",
-    "denominators": {"X": 10},
+    "denominators": {"X": 10, "Z": 5},
+    "triaged": ["X"],
 }
 
 
@@ -30,8 +31,18 @@ def _mapping(**overrides) -> dict:
     return {**base, **overrides}
 
 
-def _cw(*mappings: dict) -> Crosswalk:
-    return Crosswalk(Path("demo.toml"), FRAMEWORK, list(mappings))
+def _cw(*mappings: dict, out_of_scope: tuple[dict, ...] = ()) -> Crosswalk:
+    return Crosswalk(Path("demo.toml"), FRAMEWORK, list(mappings), list(out_of_scope))
+
+
+def _excluded(**overrides) -> dict:
+    base = {
+        "target_id": "X.I.B",
+        "target_item": 1,
+        "reason": "recall only",
+        "status": "proposed",
+    }
+    return {**base, **overrides}
 
 
 def test_committed_crosswalks_validate():
@@ -77,6 +88,7 @@ def test_coverage_counts_each_item_once_by_strongest_link():
     # Item 1 covered once; a weak superset-of only counts as touched.
     assert counts == {
         "total": 10,
+        "gradable": 10,
         "covered": 1,
         "partial": 0,
         "touched": 2,
@@ -92,3 +104,34 @@ def test_subset_of_is_partial_not_covered():
 def test_text_digest_folds_case_and_whitespace():
     assert text_digest("Reconcile  the\ncash.") == text_digest("reconcile the cash.")
     assert text_digest("a").startswith("sha256:")
+
+
+def test_untriaged_section_has_no_gradable_count():
+    cw = _cw(_mapping(target_id="Z.I.A"))
+    assert coverage(cw)["Z"]["gradable"] is None
+    assert validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(target_id="Z.I.B"),)))
+
+
+def test_out_of_scope_shrinks_gradable_denominator():
+    cw = _cw(
+        _mapping(),
+        out_of_scope=(_excluded(), _excluded(target_item=2, status="reviewed", reviewer="R")),
+    )
+    counts = coverage(cw)["X"]
+    assert (counts["total"], counts["gradable"]) == (10, 8)
+    # one unreviewed mapping item + one unreviewed exclusion
+    assert counts["unreviewed"] == 2
+
+
+def test_out_of_scope_validation():
+    assert not validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(),)))
+    assert validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(reason=""),)))
+    assert validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(target_id="Y.I.B"),)))
+    assert validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(), _excluded())))
+    assert validate_crosswalk(_cw(_mapping(), out_of_scope=(_excluded(status="reviewed"),)))
+
+
+def test_item_cannot_be_covered_and_out_of_scope():
+    covering = _mapping(target_id="X.I.B", relationship="superset-of", strength=8)
+    failures = validate_crosswalk(_cw(covering, out_of_scope=(_excluded(),)))
+    assert any("out of scope" in f for f in failures)
