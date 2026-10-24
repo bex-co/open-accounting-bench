@@ -35,9 +35,9 @@ target_text_sha256 = "sha256:19066817bac6669ebe83deadadd3083df78a234251897a50ca3
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Brings the GL cash balance to the statement balance; no reconciliation schedule is prepared."
 
 [[mapping]]
@@ -49,9 +49,9 @@ target_text_sha256 = "sha256:7f8c1ee80a4cf0a533178c332ff1f3abcd5f6222766b70b645c
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Diagnoses a duplicate import and an unrecorded bank fee, then books the adjustments."
 
 [[mapping]]
@@ -63,9 +63,9 @@ target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 3
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Capitalize-versus-expense decision at purchase; PP&E balances and depreciation are not tested."
 
 [[mapping]]
@@ -77,9 +77,9 @@ target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 2
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Selects the correct treatment statements for one capital purchase; no balances or journal entries."
 
 [[mapping]]
@@ -91,9 +91,9 @@ target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 3
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Moves an expensed capital purchase into equipment via journal entries."
 
 [[mapping]]
@@ -105,9 +105,9 @@ target_text_sha256 = "sha256:e70cbe487fb262b410fa90183ea75259e52c0316d4e6fed0bc2
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 4
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Current-period error correction by appended entries; no prospective/retrospective determination."
 
 [[mapping]]
@@ -119,7 +119,7 @@ target_text_sha256 = "sha256:28139f05103ff04b79c49bd663549998e2d61247483d8411f21
 relationship = "subset-of"
 rationale = "semantic"
 strength = 5
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."

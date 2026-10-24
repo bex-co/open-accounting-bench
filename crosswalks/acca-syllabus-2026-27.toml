@@ -34,9 +34,9 @@ target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7ec
 relationship = "subset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Classifies one receipt as an expense rather than an asset and records it."
 
 [[mapping]]
@@ -47,9 +47,9 @@ target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7ec
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Selects the correct treatment statements for one capital purchase, including its profit effect."
 
 [[mapping]]
@@ -60,9 +60,9 @@ target_text_sha256 = "sha256:777ea1575c1a0689eed446e21a54d3d530dc3a25425c5a4b0e0
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Month-end release of a prepayment; accruals, accrued and deferred income, and reversals are not tested."
 
 [[mapping]]
@@ -73,9 +73,9 @@ target_text_sha256 = "sha256:e16ccf6413464618103505f97fb9fdf4cb0bb926e55bfc7ac23
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Corrects a duplicate import and an omitted bank fee in the bank ledger account."
 
 [[mapping]]
@@ -86,9 +86,9 @@ target_text_sha256 = "sha256:c21435502c5ba7a7def3c0fd65c0f69a501c892002dfdb003f4
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 4
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Ends with ledger and statement in agreement, but no reconciliation statement is prepared."
 
 [[mapping]]
@@ -99,9 +99,9 @@ target_text_sha256 = "sha256:ad29b5491ab72cd7d3e60120cda3e6653d8df5021313ff8168d
 relationship = "subset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Correcting journal entries for an error of principle (expensed capital item)."
 
 [[mapping]]
@@ -112,9 +112,9 @@ target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7ec
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 4
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Reclassifies an expensed laptop as equipment."
 
 [[mapping]]
@@ -125,7 +125,7 @@ target_text_sha256 = "sha256:a76e6f0b67b1c205fb2c708104ebe5707c85690463d26e80c83
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."

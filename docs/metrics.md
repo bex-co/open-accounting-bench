@@ -73,7 +73,7 @@ strongest link ([task-families.md](task-families.md#crosswalks-to-external-frame
 
 Cite coverage with its basis, e.g. "covers 0 of 113 FAR representative
 tasks (AICPA blueprint 2027; equal/superset-of, strength >= 7); 2
-partial, 2 touched; 4 unreviewed". Never merge partial or touched into
+partial, 2 touched; 0 unreviewed". Never merge partial or touched into
 covered, and do not publish a coverage claim while its counted links
 are unreviewed. The denominator is every item in the section; items
 that cannot be agent-graded are not yet excluded (that split needs

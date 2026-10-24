@@ -137,7 +137,8 @@ Rules:
 `oab crosswalk` (CI) validates every file and prints coverage; counting
 rules are in [metrics.md](metrics.md#framework-coverage). As of this
 edition no generator fully covers any blueprint or syllabus item —
-current links are `subset-of` or `intersects-with`, all `proposed`.
+current links are `subset-of` or `intersects-with`, all reviewed
+(2026-10-23).
 
 ## Instance contract
 
