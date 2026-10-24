@@ -133,6 +133,32 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
 
+[[mapping]]
+generator = "accrual-deferral-reversal"
+target_id = "FA.D7(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:777ea1575c1a0689eed446e21a54d3d530dc3a25425c5a4b0e000eba9c573ae2"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Reverses an accrual and releases deferred income by delivery; creating accruals, prepayments, and accrued income are not tested."
+
+[[mapping]]
+generator = "accrual-deferral-reversal"
+target_id = "FA.D7(a)"
+target_skill = "S"
+target_text_sha256 = "sha256:14fc3c8001af3df3594de93380ed2abcdc04b7fbe14db814f3acb2a99ec3195b"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Applies accrual accounting to an accrued expense and deferred income across a period boundary."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 
