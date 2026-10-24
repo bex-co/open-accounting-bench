@@ -101,6 +101,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
+    },
+    {
+      "task_id": "receivable-allowance-trueup",
+      "family": "receivables",
+      "seed": 108,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:c847e758719436baca6e0d11e4401ce1986dded92a5025e7e2f4984e92499676"
     }
   ]
 }

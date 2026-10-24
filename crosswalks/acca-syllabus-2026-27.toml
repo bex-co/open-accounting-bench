@@ -133,6 +133,32 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
 
+[[mapping]]
+generator = "receivable-allowance-trueup"
+target_id = "FA.D8(e)"
+target_skill = "S"
+target_text_sha256 = "sha256:eef200e4aadfc111cd183d23c1efca5f4b4ae85783c564b62dc6e8b28d2c63a0"
+relationship = "superset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Records the write-off of one uncollectible invoice, then also adjusts the allowance."
+
+[[mapping]]
+generator = "receivable-allowance-trueup"
+target_id = "FA.D8(h)"
+target_skill = "S"
+target_text_sha256 = "sha256:78558321fda4a3d0940f8e6ae478077fdc8f1ada51b2ee1e9c1a253a05e6c5a4"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Adjusts an existing allowance to an aging-based requirement; creating a first allowance is not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

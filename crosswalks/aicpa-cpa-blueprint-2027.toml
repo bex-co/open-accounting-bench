@@ -125,6 +125,20 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
 
+[[mapping]]
+generator = "receivable-allowance-trueup"
+target_id = "FAR.II.B"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:38ce1b0e201f3aab4bc6b7d6cb2764eb41a167d80e735315c38537e59cfaf875"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Writes off one invoice and trues up the credit-loss allowance from an aging; sales-returns allowances are not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 
