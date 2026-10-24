@@ -12,7 +12,8 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   in evidence or in `/app/policy.md` — nothing may hinge on unstated
   assumptions.
 - Taxonomy: `category`, `framework`, `level` (scored with the
-  [level rubric](task-families.md#assigning-level)), `format`, `skill` (closed
+  [level rubric](task-families.md#assigning-level); list the seven
+  dimension scores and flag borderline), `format`, `skill` (closed
   vocabularies in `oab.families.TAXONOMY`; extend the vocabulary in
   the same PR if a new value is genuinely needed), plus `standards`
   references (`asc:606`, `ias:23`, …) when a standard governs the

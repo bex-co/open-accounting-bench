@@ -56,6 +56,22 @@ otherwise **university** if at least two score U or higher; otherwise
 instruction that names the problem, scores V on that dimension however
 advanced the topic.
 
+Reaching P under deterministic grading: every task ships a `policy.md`
+so the oracle is unique, which pushes rule provision toward V. A task
+can still score P there when the policy cites the governing standard
+and supplies the facts and thresholds that standard needs, but not the
+conclusion rule for the case — the oracle is then the standard applied
+to seeded facts. A policy that states the decisive rule cannot score P
+on rule provision.
+
+The two-dimension thresholds make labels sensitive to a single score.
+Record all seven scores in the family PR and mark the level
+**borderline** when flipping any one dimension would change it.
+
+`level` and `skill` are independent axes: `skill` is the cognitive
+operation the task demands (e.g. analysis), `level` is how much of the
+problem the task hands over. An analysis task can be vocational.
+
 ## Implemented
 
 | Task ID | Family | Format | Framework | Skill | Standards | Trap |
