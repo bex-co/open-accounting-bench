@@ -133,6 +133,32 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
 
+[[mapping]]
+generator = "revenue-bundle-allocation"
+target_id = "FR.B10(a)"
+target_skill = "2"
+target_text_sha256 = "sha256:6c556af9ed14e8d938572e2b32d23c32b8809a9475f4ce1fbd893e43f1d34813"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Applies price allocation to two performance obligations and records the result; the explain part is not graded."
+
+[[mapping]]
+generator = "revenue-bundle-allocation"
+target_id = "FR.B10(b)"
+target_skill = "2"
+target_text_sha256 = "sha256:1117bba172894657f006832eb62de6ec7658589c4e5dcadc5bb02a13490f128e"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Recognizes one obligation at a point in time and one over time; judging which criteria apply is given by policy."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 
