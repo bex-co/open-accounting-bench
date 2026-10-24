@@ -188,6 +188,20 @@
         "ifrs:15"
       ],
       "digest": "sha256:9f807c7d25441727a667a35ff938776a9268f17d93ca569064a78300a6eaf3bd"
+    },
+    {
+      "task_id": "suspense-clearance",
+      "family": "ledger-integrity-reporting",
+      "seed": 114,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [],
+      "digest": "sha256:43c72f2e59c101bf6f488abb0e59d860ecce054eeba137702296b6a060e62606"
     }
   ]
 }

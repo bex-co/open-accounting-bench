@@ -1413,6 +1413,114 @@ def revenue_bundle_allocation(seed: int) -> TaskInstance:
     )
 
 
+SUSPENSE = "Assets:Suspense"
+SUSPENSE_ACCOUNTS = [
+    (SUSPENSE, "Clearing account for unbalanced imports (must be zero at month-end)")
+]
+
+
+def suspense_clearance(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    takings = Decimal(rng.randrange(400, 1501)) * 2
+    lessor = rng.choice(["Parkside Properties", "Quayside Estates", "Redwood Realty"])
+    hundreds, tens = rng.sample(range(1, 10), 2)
+    thousands = rng.randint(1, 3)
+    rent = Decimal(thousands * 1000 + hundreds * 100 + tens * 10)
+    keyed = Decimal(thousands * 1000 + tens * 100 + hundreds * 10)  # transposed expense side
+    opening = Decimal("15000.00")
+    initial = (
+        _ledger_header(opening, SUSPENSE_ACCOUNTS)
+        + _txn(
+            "2026-01-05",
+            lessor,
+            "January rent (bank import)",
+            [("Expenses:Rent", keyed), (BANK, -rent), (SUSPENSE, rent - keyed)],
+        )
+        + _txn(
+            "2026-01-09",
+            "Deposit",
+            "Counter deposit (bank import, no counter-entry)",
+            [(BANK, takings), (SUSPENSE, -takings)],
+        )
+        + _txn(
+            "2026-01-20",
+            "City Power",
+            "Utilities (bank import)",
+            [("Expenses:Utilities", Decimal("212.40")), (BANK, Decimal("-212.40"))],
+        )
+    )
+    balance = (rent - keyed) - takings
+    statement = (
+        "# Bank statement extract — Checking, January 2026\n\n"
+        f"- 2026-01-05 {lessor}, rent January: -{money(rent)} USD\n"
+        f"- 2026-01-09 Deposit, shop counter takings (cash sales): +{money(takings)} USD\n"
+        "- 2026-01-20 City Power: -212.40 USD\n"
+    )
+    lease = f"# Lease summary — {lessor}\n\nMonthly rent: USD {money(rent)}, due on the 5th.\n"
+    memo = (
+        "# Controller memo — month-end\n\n"
+        f"`{SUSPENSE}` shows a balance of USD {money(balance)} after the January bank "
+        "import. Investigate, correct the underlying postings, and leave the clearing "
+        "account at zero.\n"
+    )
+    policy = POLICY + (
+        f"- `{SUSPENSE}` is a temporary clearing account and must be zero at\n"
+        "  month-end. Clear it by correcting the postings that created it.\n"
+        "- Shop counter takings are cash sales (`Income:Sales`).\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            lessor,
+            "Correct transposed rent expense",
+            [(SUSPENSE, keyed - rent), ("Expenses:Rent", rent - keyed)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Deposit",
+            "Record counter takings as cash sales",
+            [(SUSPENSE, takings), ("Income:Sales", -takings)],
+        )
+    )
+    return TaskInstance(
+        task_id="suspense-clearance",
+        family="ledger-integrity-reporting",
+        title="Clear a suspense balance by correcting its causes",
+        instruction=(
+            "Follow up the controller memo in `/app/documents/controller_memo.md` for "
+            "`/app/ledger.beancount`, using `/app/documents/bank_statement.md`, "
+            "`/app/documents/lease.md`, and `/app/policy.md`. Append correcting "
+            "transactions dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(SUSPENSE_ACCOUNTS),
+            "documents/controller_memo.md": memo,
+            "documents/bank_statement.md": statement,
+            "documents/lease.md": lease,
+        },
+        expected=_expected(
+            "suspense-clearance",
+            "ledger-integrity-reporting",
+            seed,
+            expected_deltas={
+                SUSPENSE: money(-balance),
+                "Expenses:Rent": money(rent - keyed),
+                "Income:Sales": money(-takings),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={SUSPENSE: "0.00", "Expenses:Rent": money(rent)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["suspense", "clearing-account", "error-correction", "transposition"],
+        skill="analysis",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -1427,6 +1535,7 @@ FAMILIES = {
     "ppe-disposal": ppe_disposal,
     "inventory-costing-nrv": inventory_costing_nrv,
     "revenue-bundle-allocation": revenue_bundle_allocation,
+    "suspense-clearance": suspense_clearance,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -1444,4 +1553,5 @@ STABLE_SEEDS = {
     "ppe-disposal": 111,
     "inventory-costing-nrv": 112,
     "revenue-bundle-allocation": 113,
+    "suspense-clearance": 114,
 }
