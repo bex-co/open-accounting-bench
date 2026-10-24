@@ -7,7 +7,7 @@
 - [x] **m1** — [Receivable allowance true-up family](./done/m1/README.md) (8 tasks) ← from w1/002
 - [x] **m2** — [Accrual and deferred-income reversal family](./done/m2/README.md) (8 tasks) ← from w1/003
 - [x] **m3** — [Supplier statement reconciliation family](./done/m3/README.md) (8 tasks) ← from w1/004
-- [ ] **m4** — [PP&E disposal family](./m4/README.md) (8 tasks) ← from w1/005
+- [x] **m4** — [PP&E disposal family](./done/m4/README.md) (8 tasks) ← from w1/005
 - [ ] **m5** — [Inventory costing and NRV write-down family](./m5/README.md) (8 tasks) ← from w1/006
 - [ ] **m6** — [Bundle revenue allocation family](./m6/README.md) (8 tasks) ← from w1/007
 - [ ] **m7** — [Suspense (clearing) account clearance family](./m7/README.md) (8 tasks) ← from w1/008

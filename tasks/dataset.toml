@@ -41,6 +41,10 @@ name = "open-accounting-bench/payables-statement-recon"
 digest = "sha256:b4acce2385c91407b834fffd7a0df41c5bffb69c0a3639e259ee98322f6faf1b"
 
 [[tasks]]
+name = "open-accounting-bench/ppe-disposal"
+digest = "sha256:57b5114bebeea9552d471f8ededc9f781ce5b65e9df2832e05f2996a66bd27be"
+
+[[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
 digest = "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
 

@@ -86,8 +86,9 @@ problem the task hands over. An analysis task can be vocational.
 | `receivable-allowance-trueup` | receivables | journal-entry | core | application | — | Expense the full required allowance |
 | `accrual-deferral-reversal` | accruals-deferrals | journal-entry | core | application | — | Skip the accrual reversal |
 | `payables-statement-recon` | payables-reconciliation | journal-entry | core | analysis | — | Book timing items as errors |
+| `ppe-disposal` | fixed-assets | journal-entry | core | application | — | Skip disposal-month depreciation |
 
-Stable seeds: 101–110 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–111 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -96,12 +97,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 8 | 1 | planned | planned |
+| financial-accounting | 9 | 1 | planned | planned |
 | management-accounting | 1 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×8, multiple-choice ×1, numeric ×1;
+Format coverage: journal-entry ×9, multiple-choice ×1, numeric ×1;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
