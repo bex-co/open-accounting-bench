@@ -1,0 +1,32 @@
+{
+  "task_id": "inventory-costing-nrv",
+  "family": "inventory",
+  "seed": 112,
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Expenses:CostOfSales": "2096.00",
+    "Expenses:InventoryWriteDown": "336.25",
+    "Assets:Inventory": "-2432.25"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Inventory": "1774.50"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "application",
+  "standards": []
+}
