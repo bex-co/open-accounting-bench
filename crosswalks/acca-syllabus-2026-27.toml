@@ -50,7 +50,7 @@ strength = 7
 status = "proposed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = ""
-comment = "Chooses the capitalizable items from a list of expenditures."
+comment = "Selects the correct treatment statements for one capital purchase, including its profit effect."
 
 [[mapping]]
 generator = "prepaid-insurance-adjustment"
@@ -59,7 +59,7 @@ target_skill = "S"
 target_text_sha256 = "sha256:777ea1575c1a0689eed446e21a54d3d530dc3a25425c5a4b0e000eba9c573ae2"
 relationship = "subset-of"
 rationale = "semantic"
-strength = 7
+strength = 6
 status = "proposed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = ""
@@ -72,7 +72,7 @@ target_skill = "S"
 target_text_sha256 = "sha256:e16ccf6413464618103505f97fb9fdf4cb0bb926e55bfc7ac23056562a450634"
 relationship = "subset-of"
 rationale = "semantic"
-strength = 8
+strength = 7
 status = "proposed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = ""

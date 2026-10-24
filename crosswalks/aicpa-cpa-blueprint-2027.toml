@@ -46,7 +46,7 @@ target_skill = "analysis"
 target_text_sha256 = "sha256:7f8c1ee80a4cf0a533178c332ff1f3abcd5f6222766b70b645cfdc94cd3476ad"
 relationship = "subset-of"
 rationale = "semantic"
-strength = 8
+strength = 7
 status = "proposed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = ""
@@ -74,11 +74,11 @@ target_skill = "application"
 target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
 relationship = "intersects-with"
 rationale = "semantic"
-strength = 3
+strength = 2
 status = "proposed"
 mapper = "oab-maintainers (agent draft)"
 reviewer = ""
-comment = "Selects which expenditures to capitalize; no balances or journal entries."
+comment = "Selects the correct treatment statements for one capital purchase; no balances or journal entries."
 
 [[mapping]]
 generator = "correct-misclassification"
