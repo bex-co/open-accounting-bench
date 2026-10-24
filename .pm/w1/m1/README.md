@@ -35,6 +35,6 @@
 
 ## Blocked
 
-- **t007 Accounting review** (blocked 2026-10-23): the family is complete on branch `family/receivable-allowance-trueup` (ec50ab9) but has no accounting sign-off; CONTRIBUTING.md step 6 requires it before merging to main.
+- **t007 Accounting review** (blocked 2026-10-23): the family is complete on branch `family/receivable-allowance-trueup` (0f21494) but has no accounting sign-off; CONTRIBUTING.md step 6 requires it before merging to main.
   **Unblock:** a reviewer with accounting background checks the scenario, policy wording (write-off then true-up; either write-off method accepted), oracle, traps, level (university, borderline: dependent steps and linked accounts score U), and the three proposed mappings. Who: a maintainer with accounting background.
   Partial work: t001–t006 done on the branch; nothing merged.
