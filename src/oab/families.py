@@ -1163,6 +1163,161 @@ def ppe_disposal(seed: int) -> TaskInstance:
     )
 
 
+INVENTORY = "Assets:Inventory"
+COST_OF_SALES = "Expenses:CostOfSales"
+WRITE_DOWN = "Expenses:InventoryWriteDown"
+INVENTORY_ACCOUNTS = [
+    (INVENTORY, "Inventory of goods held for sale (FIFO cost)"),
+    (COST_OF_SALES, "Cost of goods sold"),
+    (WRITE_DOWN, "Write-down of inventory to net realizable value"),
+]
+
+
+def _fifo_issue(layers: list[list[Decimal]], units: int) -> Decimal:
+    """Consume `units` from FIFO layers [[qty, unit_cost], ...]; return cost."""
+    cost = Decimal("0")
+    while units:
+        take = min(units, int(layers[0][0]))
+        cost += take * layers[0][1]
+        layers[0][0] -= take
+        units -= take
+        if not layers[0][0]:
+            layers.pop(0)
+    return cost
+
+
+def inventory_costing_nrv(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    item = rng.choice(
+        ["ceramic planters", "trail backpacks", "LED desk lamps", "steel water bottles"]
+    )
+    q0, q1, q2 = rng.randint(20, 60), rng.randint(40, 90), rng.randint(40, 90)
+    c0 = Decimal(rng.randrange(1200, 2201, 25)) / 100
+    c1 = c0 + Decimal(rng.randrange(50, 301, 25)) / 100
+    c2 = c1 + Decimal(rng.randrange(50, 301, 25)) / 100
+    s1 = rng.randint(q0 // 2, q0 + q1 // 2)
+    s2 = rng.randint(10, q0 + q1 - s1 + q2 // 2)
+    price = (c2 * Decimal("1.8")).quantize(Decimal("1"))
+    layers = [[Decimal(q0), c0], [Decimal(q1), c1], [Decimal(q2), c2]]
+    # Issues happen in date order: purchase 1 arrives before sale 1, purchase 2 after.
+    cogs = _fifo_issue(layers, s1) + _fifo_issue(layers, s2)
+    ending_units = q0 + q1 + q2 - s1 - s2
+    ending_cost = sum(q * c for q, c in layers)
+    lowest_layer = min(c for _, c in layers)
+    selling = (
+        lowest_layer - Decimal(rng.randrange(100, 401, 25)) / 100 + Decimal("2.00")
+    ).quantize(CENT)
+    selling_costs = Decimal("2.00")
+    nrv = selling - selling_costs  # below every remaining layer's cost
+    write_down = ending_cost - nrv * ending_units
+    opening = Decimal("20000.00")
+    initial = (
+        _ledger_header(opening, INVENTORY_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            f"Opening inventory: {q0} {item} @ {money(c0)}",
+            [(INVENTORY, q0 * c0), ("Equity:Opening-Balances", -q0 * c0)],
+        )
+        + _txn(
+            "2026-01-05",
+            "Supplier",
+            f"Purchase {q1} {item} @ {money(c1)}",
+            [(INVENTORY, q1 * c1), (BANK, -q1 * c1)],
+        )
+        + _txn(
+            "2026-01-12",
+            "Customers",
+            f"Sales: {s1} {item} @ {money(price)}",
+            [(BANK, s1 * price), ("Income:Sales", -s1 * price)],
+        )
+        + _txn(
+            "2026-01-18",
+            "Supplier",
+            f"Purchase {q2} {item} @ {money(c2)}",
+            [(INVENTORY, q2 * c2), (BANK, -q2 * c2)],
+        )
+        + _txn(
+            "2026-01-26",
+            "Customers",
+            f"Sales: {s2} {item} @ {money(price)}",
+            [(BANK, s2 * price), ("Income:Sales", -s2 * price)],
+        )
+    )
+    card = (
+        f"# Inventory card — {item}, January 2026\n\n"
+        "| Date | Movement | Units | Unit cost (USD) |\n|---|---|---:|---:|\n"
+        f"| 2026-01-01 | Opening balance | {q0} | {money(c0)} |\n"
+        f"| 2026-01-05 | Purchase | {q1} | {money(c1)} |\n"
+        f"| 2026-01-12 | Sale | {s1} | |\n"
+        f"| 2026-01-18 | Purchase | {q2} | {money(c2)} |\n"
+        f"| 2026-01-26 | Sale | {s2} | |\n"
+        f"\nUnits on hand 2026-01-31 (count agrees): {ending_units}\n"
+    )
+    quote = (
+        f"# Month-end market check — {item}\n\n"
+        f"A competitor's clearance has cut the market price. Estimated selling price "
+        f"at 2026-01-31: USD {money(selling)} per unit; estimated costs to sell: "
+        f"USD {money(selling_costs)} per unit.\n"
+    )
+    policy = POLICY + (
+        "- Inventory uses a perpetual FIFO system. Sales are already recorded;\n"
+        "  cost of sales has not been posted for January.\n"
+        "- At month-end inventory is measured at the lower of FIFO cost and net\n"
+        "  realizable value (estimated selling price less costs to sell), item\n"
+        "  by item; any write-down goes to `Expenses:InventoryWriteDown`.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            "Inventory",
+            "January cost of sales (FIFO)",
+            [(COST_OF_SALES, cogs), (INVENTORY, -cogs)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Inventory",
+            "Write down inventory to net realizable value",
+            [(WRITE_DOWN, write_down), (INVENTORY, -write_down)],
+        )
+    )
+    return TaskInstance(
+        task_id="inventory-costing-nrv",
+        family="inventory",
+        title="Post FIFO cost of sales and an NRV write-down",
+        instruction=(
+            f"Complete January 2026 inventory accounting for {item} in `/app/ledger.beancount`: "
+            "post cost of sales and measure month-end inventory, using "
+            "`/app/documents/inventory_card.md`, `/app/documents/market_check.md`, and "
+            "`/app/policy.md`. Append new transactions dated 2026-01-31 or earlier in January; "
+            "do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(INVENTORY_ACCOUNTS),
+            "documents/inventory_card.md": card,
+            "documents/market_check.md": quote,
+        },
+        expected=_expected(
+            "inventory-costing-nrv",
+            "inventory",
+            seed,
+            expected_deltas={
+                COST_OF_SALES: money(cogs),
+                WRITE_DOWN: money(write_down),
+                INVENTORY: money(-(cogs + write_down)),
+            },
+            expected_new_transactions=[1, 3],
+            required_final_balances={INVENTORY: money(nrv * ending_units)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["inventory", "fifo", "cost-of-sales", "net-realizable-value"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -1175,6 +1330,7 @@ FAMILIES = {
     "accrual-deferral-reversal": accrual_deferral_reversal,
     "payables-statement-recon": payables_statement_recon,
     "ppe-disposal": ppe_disposal,
+    "inventory-costing-nrv": inventory_costing_nrv,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -1190,4 +1346,5 @@ STABLE_SEEDS = {
     "accrual-deferral-reversal": 109,
     "payables-statement-recon": 110,
     "ppe-disposal": 111,
+    "inventory-costing-nrv": 112,
 }

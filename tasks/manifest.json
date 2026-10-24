@@ -75,6 +75,20 @@
       "digest": "sha256:46583296c71625330ff3a27771baf0d1474d80df04545c6dd1d00b3aa5a6c4ab"
     },
     {
+      "task_id": "inventory-costing-nrv",
+      "family": "inventory",
+      "seed": 112,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4d879ef95c5e04065954d529191ba85488a6d5a97df2f6f7524d3cf466b55f80"
+    },
+    {
       "task_id": "mc-capitalization-treatment",
       "family": "transaction-classification",
       "seed": 105,

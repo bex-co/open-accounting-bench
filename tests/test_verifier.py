@@ -359,3 +359,66 @@ def test_single_disposal_entry_with_depreciation_is_equivalent():
         f"  Income:GainLossOnDisposal  {-gain:.2f} USD\n"
     )
     assert verify(instance.initial_ledger, combined, instance.expected).reward == 1
+
+
+def _inventory_entries(cogs, write_down) -> str:
+    return (
+        '\n2026-01-31 * "Inventory" "Cost of sales"\n'
+        f"  Expenses:CostOfSales  {cogs:.2f} USD\n"
+        f"  Assets:Inventory  -{cogs:.2f} USD\n"
+        '\n2026-01-31 * "Inventory" "NRV write-down"\n'
+        f"  Expenses:InventoryWriteDown  {write_down:.2f} USD\n"
+        f"  Assets:Inventory  -{write_down:.2f} USD\n"
+    )
+
+
+def test_weighted_average_cost_of_sales_fails_under_fifo_policy():
+    """Trap: periodic weighted-average cost of sales when policy says FIFO."""
+    from decimal import Decimal
+
+    instance = FAMILIES["inventory-costing-nrv"](112)
+    card = instance.app_files["documents/inventory_card.md"]
+    rows = [r.split("|")[1:-1] for r in card.splitlines() if r.startswith("| 2026")]
+    bought = [(int(r[2]), Decimal(r[3])) for r in rows if r[3].strip()]
+    sold = sum(int(r[2]) for r in rows if not r[3].strip())
+    average = sum(q * c for q, c in bought) / sum(q for q, _ in bought)
+    cogs = (average * sold).quantize(Decimal("0.01"))
+    final = Decimal(instance.expected["required_final_balances"]["Assets:Inventory"])
+    opening_cost = sum(q * c for q, c in bought)
+    wrong = instance.initial_ledger + _inventory_entries(cogs, opening_cost - cogs - final)
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_skipping_nrv_write_down_fails():
+    """Trap: post FIFO cost of sales but leave inventory at cost above NRV."""
+    from decimal import Decimal
+
+    instance = FAMILIES["inventory-costing-nrv"](112)
+    cogs = Decimal(instance.expected["expected_deltas"]["Expenses:CostOfSales"])
+    wrong = instance.initial_ledger + _inventory_entries(cogs, Decimal("0"))
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_cost_of_sales_per_sale_is_equivalent():
+    """Posting cost of sales per sale date instead of one month-end entry."""
+    from decimal import Decimal
+
+    instance = FAMILIES["inventory-costing-nrv"](112)
+    d = instance.expected["expected_deltas"]
+    cogs, write_down = Decimal(d["Expenses:CostOfSales"]), Decimal(d["Expenses:InventoryWriteDown"])
+    first = (cogs / 3).quantize(Decimal("0.01"))
+    split = (
+        instance.initial_ledger
+        + (
+            '\n2026-01-12 * "Inventory" "Cost of sales, first sale"\n'
+            f"  Expenses:CostOfSales  {first:.2f} USD\n"
+            f"  Assets:Inventory  -{first:.2f} USD\n"
+        )
+        + _inventory_entries(cogs - first, write_down)
+    )
+    assert verify(instance.initial_ledger, split, instance.expected).reward == 1

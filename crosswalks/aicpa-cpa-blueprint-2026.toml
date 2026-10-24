@@ -197,6 +197,34 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Works from gross cost and accumulated depreciation to a carrying amount at disposal; no capitalization or year-end balances."
 
+[[mapping]]
+generator = "inventory-costing-nrv"
+target_id = "FAR.II.C"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:c9b3a415ad64d3bf5fd893b64ff486013d195e88b4cd8dbfd2106486c759b618"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Computes FIFO cost of sales and carrying amount for one item and posts the entries; other costing methods are not tested."
+
+[[mapping]]
+generator = "inventory-costing-nrv"
+target_id = "FAR.II.C"
+target_item = 2
+target_skill = "application"
+target_text_sha256 = "sha256:dbdbe41094f660dc3d8427017f49be9efd64d7eabccf78acbccb278816e58bb2"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Measures month-end inventory at the lower of cost and net realizable value and books the write-down; lower of cost or market is not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

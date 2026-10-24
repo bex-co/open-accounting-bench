@@ -250,6 +250,45 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Posts one month's depreciation charge to expense and accumulated depreciation."
 
+[[mapping]]
+generator = "inventory-costing-nrv"
+target_id = "FA.D3(b)"
+target_skill = "S"
+target_text_sha256 = "sha256:22a354efd538933ca0412d8267e9e28d2cffabc64f376eb1365f26e50ad888f6"
+relationship = "superset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Records cost of sales and the closing inventory value, and also applies an NRV write-down."
+
+[[mapping]]
+generator = "inventory-costing-nrv"
+target_id = "FA.D3(f)"
+target_skill = "S"
+target_text_sha256 = "sha256:78b9ade85400d9556238b160b96b695bfc915f9ec4b24b94ed99b59ec85a746a"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Calculates closing inventory under perpetual FIFO; average-cost methods are not tested (they are the trap)."
+
+[[mapping]]
+generator = "inventory-costing-nrv"
+target_id = "FA.D3(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:6c1f482a4e7b878626574a2a7e10c325459c1f8e260c811b04a6fdac724d0603"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Applies the lower of cost and net realizable value rule to one item; cost composition is not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 
