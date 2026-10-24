@@ -171,6 +171,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:c847e758719436baca6e0d11e4401ce1986dded92a5025e7e2f4984e92499676"
+    },
+    {
+      "task_id": "revenue-bundle-allocation",
+      "family": "revenue-recognition",
+      "seed": 113,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:606",
+        "ifrs:15"
+      ],
+      "digest": "sha256:9f807c7d25441727a667a35ff938776a9268f17d93ca569064a78300a6eaf3bd"
     }
   ]
 }

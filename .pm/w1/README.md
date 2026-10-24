@@ -9,6 +9,6 @@
 - [x] **m3** — [Supplier statement reconciliation family](./done/m3/README.md) (8 tasks) ← from w1/004
 - [x] **m4** — [PP&E disposal family](./done/m4/README.md) (8 tasks) ← from w1/005
 - [x] **m5** — [Inventory costing and NRV write-down family](./done/m5/README.md) (8 tasks) ← from w1/006
-- [ ] **m6** — [Bundle revenue allocation family](./m6/README.md) (8 tasks) ← from w1/007
+- [x] **m6** — [Bundle revenue allocation family](./done/m6/README.md) (8 tasks) ← from w1/007
 - [ ] **m7** — [Suspense (clearing) account clearance family](./m7/README.md) (8 tasks) ← from w1/008
 - [ ] **m8** — [Effective-interest loan family](./m8/README.md) (8 tasks) ← from w1/009

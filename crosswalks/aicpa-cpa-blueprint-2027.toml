@@ -223,6 +223,20 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = ""
 comment = "Measures month-end inventory at the lower of cost and net realizable value and books the write-down; lower of cost or market is not tested."
 
+[[mapping]]
+generator = "revenue-bundle-allocation"
+target_id = "FAR.III.C"
+target_item = 4
+target_skill = "application"
+target_text_sha256 = "sha256:730b9f73b369ec8321821257e5161037395f9cb35ed89e2014855d71fe3fbaf2"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Allocates one contract price by standalone selling prices and recognizes point-in-time and over-time revenue for January; variable consideration and contract modification are not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

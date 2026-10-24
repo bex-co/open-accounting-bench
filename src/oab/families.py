@@ -1318,6 +1318,101 @@ def inventory_costing_nrv(seed: int) -> TaskInstance:
     )
 
 
+CONTRACT_LIABILITY = "Liabilities:ContractLiability"
+PRODUCT_REVENUE = "Income:ProductRevenue"
+SUPPORT_REVENUE = "Income:SupportRevenue"
+REVENUE_ACCOUNTS = [
+    (CONTRACT_LIABILITY, "Consideration received for obligations not yet satisfied"),
+    (PRODUCT_REVENUE, "Revenue from hardware delivered"),
+    (SUPPORT_REVENUE, "Revenue from support services rendered"),
+]
+
+
+def revenue_bundle_allocation(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    customer = rng.choice(["Summit Clinics", "Tidewater Schools", "Uplands Logistics"])
+    product = rng.choice(["point-of-sale terminals", "network appliances", "label printers"])
+    ssp_hw = Decimal(rng.randrange(40, 151)) * 100
+    ssp_support = Decimal(rng.randrange(2, 9)) * 1200
+    factor = rng.choice([Decimal("0.80"), Decimal("0.85"), Decimal("0.90")])
+    price = (ssp_hw + ssp_support) * factor
+    alloc_hw = ssp_hw * factor
+    alloc_support = ssp_support * factor
+    monthly = alloc_support / 12  # exact: ssp_support is a multiple of 1200
+    # The invoice prices the support line low and loads the discount elsewhere.
+    invoice_support = (ssp_support * Decimal("0.25")).quantize(Decimal("1"))
+    invoice_hw = price - invoice_support
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, REVENUE_ACCOUNTS) + _txn(
+        "2026-01-02",
+        customer,
+        "Contract signed; full consideration received in advance",
+        [(BANK, price), (CONTRACT_LIABILITY, -price)],
+    )
+    contract = (
+        f"# Contract summary — {customer}\n\n"
+        f"Signed 2026-01-02. Single price USD {money(price)}, paid in full on signing, for:\n\n"
+        f"1. {product.capitalize()} — delivered and accepted 2026-01-02.\n"
+        "2. Support and software updates for 12 months, 2026-01-01 to 2026-12-31.\n\n"
+        "## Invoice lines (as billed)\n\n"
+        f"- {product.capitalize()}: USD {money(invoice_hw)}\n"
+        f"- 12-month support: USD {money(invoice_support)}\n"
+    )
+    prices = (
+        "# Standalone selling prices (price list, sold separately)\n\n"
+        f"- {product.capitalize()}: USD {money(ssp_hw)}\n"
+        f"- 12-month support: USD {money(ssp_support)}\n"
+    )
+    policy = POLICY + (
+        "- Revenue (ASC 606 / IFRS 15): allocate a contract's price to each\n"
+        "  performance obligation in proportion to standalone selling prices.\n"
+        "  Hardware revenue is recognized on delivery; support is recognized\n"
+        "  evenly over its term by month. Unearned consideration stays in\n"
+        "  `Liabilities:ContractLiability`.\n"
+    )
+    earned = alloc_hw + monthly
+    solution = initial + _txn(
+        "2026-01-31",
+        customer,
+        "January revenue: hardware delivered, 1 of 12 support months",
+        [(CONTRACT_LIABILITY, earned), (PRODUCT_REVENUE, -alloc_hw), (SUPPORT_REVENUE, -monthly)],
+    )
+    return TaskInstance(
+        task_id="revenue-bundle-allocation",
+        family="revenue-recognition",
+        title="Allocate a bundled contract price and recognize January revenue",
+        instruction=(
+            f"Recognize January 2026 revenue on the {customer} contract in "
+            "`/app/ledger.beancount`, using `/app/documents/contract.md`, "
+            "`/app/documents/standalone_prices.md`, and `/app/policy.md`. Append new "
+            "transactions dated in January 2026 only; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(REVENUE_ACCOUNTS),
+            "documents/contract.md": contract,
+            "documents/standalone_prices.md": prices,
+        },
+        expected=_expected(
+            "revenue-bundle-allocation",
+            "revenue-recognition",
+            seed,
+            expected_deltas={
+                CONTRACT_LIABILITY: money(earned),
+                PRODUCT_REVENUE: money(-alloc_hw),
+                SUPPORT_REVENUE: money(-monthly),
+            },
+            expected_new_transactions=[1, 2],
+            required_final_balances={CONTRACT_LIABILITY: money(-(price - earned))},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["revenue", "performance-obligations", "allocation", "contract-liability"],
+        standards=["asc:606", "ifrs:15"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -1331,6 +1426,7 @@ FAMILIES = {
     "payables-statement-recon": payables_statement_recon,
     "ppe-disposal": ppe_disposal,
     "inventory-costing-nrv": inventory_costing_nrv,
+    "revenue-bundle-allocation": revenue_bundle_allocation,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -1347,4 +1443,5 @@ STABLE_SEEDS = {
     "payables-statement-recon": 110,
     "ppe-disposal": 111,
     "inventory-costing-nrv": 112,
+    "revenue-bundle-allocation": 113,
 }

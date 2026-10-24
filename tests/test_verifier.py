@@ -422,3 +422,59 @@ def test_cost_of_sales_per_sale_is_equivalent():
         + _inventory_entries(cogs - first, write_down)
     )
     assert verify(instance.initial_ledger, split, instance.expected).reward == 1
+
+
+def _revenue_entry(hardware, support) -> str:
+    return (
+        '\n2026-01-31 * "Customer" "January revenue"\n'
+        f"  Liabilities:ContractLiability  {hardware + support:.2f} USD\n"
+        f"  Income:ProductRevenue  -{hardware:.2f} USD\n"
+        f"  Income:SupportRevenue  -{support:.2f} USD\n"
+    )
+
+
+def test_allocating_on_invoice_lines_fails():
+    """Trap: use the invoice's line prices instead of standalone selling prices."""
+    from decimal import Decimal
+
+    instance = FAMILIES["revenue-bundle-allocation"](113)
+    lines = instance.app_files["documents/contract.md"].split("## Invoice lines")[1]
+    amounts = [Decimal(x.split("USD ")[1]) for x in lines.splitlines() if "USD" in x]
+    wrong = instance.initial_ledger + _revenue_entry(
+        amounts[0], (amounts[1] / 12).quantize(Decimal("0.01"))
+    )
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_recognizing_whole_support_term_up_front_fails():
+    """Trap: recognize all twelve support months in January."""
+    from decimal import Decimal
+
+    instance = FAMILIES["revenue-bundle-allocation"](113)
+    d = instance.expected["expected_deltas"]
+    hardware = -Decimal(d["Income:ProductRevenue"])
+    support_year = -Decimal(d["Income:SupportRevenue"]) * 12
+    wrong = instance.initial_ledger + _revenue_entry(hardware, support_year)
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_separate_entries_per_obligation_are_equivalent():
+    from decimal import Decimal
+
+    instance = FAMILIES["revenue-bundle-allocation"](113)
+    d = instance.expected["expected_deltas"]
+    hardware, support = -Decimal(d["Income:ProductRevenue"]), -Decimal(d["Income:SupportRevenue"])
+    split = instance.initial_ledger + (
+        '\n2026-01-02 * "Customer" "Hardware delivered"\n'
+        f"  Liabilities:ContractLiability  {hardware:.2f} USD\n"
+        f"  Income:ProductRevenue  -{hardware:.2f} USD\n"
+        '\n2026-01-31 * "Customer" "Support, January"\n'
+        f"  Liabilities:ContractLiability  {support:.2f} USD\n"
+        f"  Income:SupportRevenue  -{support:.2f} USD\n"
+    )
+    assert verify(instance.initial_ledger, split, instance.expected).reward == 1
