@@ -6,3 +6,4 @@
 
 - [ ] **m1** — [Receivable allowance true-up family](./m1/README.md) (8 tasks) ← from w1/002
 - [ ] **m2** — [Accrual and deferred-income reversal family](./m2/README.md) (8 tasks) ← from w1/003
+- [ ] **m3** — [Supplier statement reconciliation family](./m3/README.md) (8 tasks) ← from w1/004
