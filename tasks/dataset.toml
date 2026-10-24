@@ -35,3 +35,7 @@ digest = "sha256:e17a7cf2dda0f3d06403b237307c4587d2071895f7b09a335c3dd2cc3d941ae
 [[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
 digest = "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
+
+[[tasks]]
+name = "open-accounting-bench/receivable-allowance-trueup"
+digest = "sha256:c847e758719436baca6e0d11e4401ce1986dded92a5025e7e2f4984e92499676"

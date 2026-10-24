@@ -662,6 +662,149 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
     )
 
 
+AR = "Assets:AccountsReceivable"
+ALLOWANCE = "Assets:AllowanceForDoubtfulAccounts"
+BAD_DEBTS = "Expenses:BadDebts"
+RECEIVABLE_ACCOUNTS = [
+    (AR, "Trade receivables (customer invoices on credit)"),
+    (ALLOWANCE, "Allowance for doubtful accounts (contra-asset; credit balance)"),
+    (BAD_DEBTS, "Bad-debt (credit-loss) expense"),
+]
+# Aging bucket -> expected loss rate (policy). Bucket amounts are whole
+# hundreds, so every rate x amount is exact to the cent.
+AGING_RATES = [
+    ("Current", Decimal("0.01")),
+    ("1-30 days past due", Decimal("0.03")),
+    ("31-90 days past due", Decimal("0.10")),
+    ("Over 90 days past due", Decimal("0.40")),
+]
+CUSTOMERS = [
+    "Birch & Co",
+    "Cobalt Retail",
+    "Delta Foods",
+    "Evergreen Labs",
+    "Fjord Outfitters",
+    "Granite Supply",
+    "Harbor Clinics",
+    "Ivory Studio",
+    "Juniper Hotels",
+    "Kestrel Media",
+]
+
+
+def receivable_allowance_trueup(seed: int) -> TaskInstance:
+    rng = random.Random(seed)
+    names = rng.sample(CUSTOMERS, 7)
+    # (invoice id, customer, bucket index, amount); January invoices are Current.
+    ids = rng.sample(range(1000, 10000), 7)
+    invoices = [
+        (f"INV-{ids[i]}", name, bucket, Decimal(rng.randrange(8, 61)) * 100)
+        for i, (name, bucket) in enumerate(zip(names, [0, 0, 1, 1, 2, 3, 3], strict=True))
+    ]
+    bad = invoices[-1]  # one over-90-day invoice is uncollectible
+    remaining = [inv for inv in invoices if inv is not bad]
+    required = sum(AGING_RATES[b][1] * amt for _, _, b, amt in remaining).quantize(CENT)
+    write_off = bad[3]
+    # Allowance credit balance at 2026-01-01: covers the write-off but falls
+    # short of the requirement, so the true-up is always a positive expense.
+    low, high = int(write_off) // 25 + 4, int(required + write_off) // 25 - 4
+    existing = Decimal(rng.randrange(low, high + 1)) * 25
+    opening = Decimal("10000.00")
+    prior = [inv for inv in invoices if inv[2] > 0]
+    january = [inv for inv in invoices if inv[2] == 0]
+    prior_total = sum(inv[3] for inv in prior)
+    initial = _ledger_header(opening, RECEIVABLE_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening receivables (2025 invoices) and allowance",
+        [
+            (AR, prior_total),
+            (ALLOWANCE, -existing),
+            ("Equity:Opening-Balances", existing - prior_total),
+        ],
+    )
+    for k, (inv, name, _, amount) in enumerate(january):
+        initial += _txn(
+            f"2026-01-{12 + 7 * k:02d}",
+            name,
+            f"Invoice {inv} on credit",
+            [(AR, amount), ("Income:Sales", -amount)],
+        )
+    adjustment = required - (existing - write_off)
+    rows = "\n".join(
+        f"| {inv} | {name} | {AGING_RATES[b][0]} | {money(amt)} |" for inv, name, b, amt in invoices
+    )
+    aging = (
+        "# Accounts receivable aging — 2026-01-31\n\n"
+        "| Invoice | Customer | Bucket | Amount (USD) |\n|---|---|---|---:|\n"
+        f"{rows}\n\nTotal: USD {money(sum(inv[3] for inv in invoices))}\n"
+    )
+    memo = (
+        "# Credit memo — write-off approval\n\n"
+        f"Customer {bad[1]} filed for liquidation on 2026-01-27. Invoice {bad[0]} "
+        f"(USD {money(write_off)}) is uncollectible. Approved for write-off as of 2026-01-31.\n"
+    )
+    policy = POLICY + (
+        "- Receivables are carried net of an allowance for doubtful accounts.\n"
+        "  At month-end: first write off invoices approved as uncollectible,\n"
+        "  then adjust the allowance so its balance equals the required\n"
+        "  allowance: the loss rate for each aging bucket times the bucket's\n"
+        "  remaining invoices (Current 1%, 1-30 days 3%, 31-90 days 10%,\n"
+        "  over 90 days 40%), summed. The adjustment is bad-debt expense.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            bad[1],
+            f"Write off uncollectible invoice {bad[0]}",
+            [(ALLOWANCE, write_off), (AR, -write_off)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Allowance",
+            "Adjust allowance to aging requirement",
+            [(BAD_DEBTS, adjustment), (ALLOWANCE, -adjustment)],
+        )
+    )
+    ar_final = sum(inv[3] for inv in remaining)
+    return TaskInstance(
+        task_id="receivable-allowance-trueup",
+        family="receivables",
+        title="Write off a bad debt and true up the allowance",
+        instruction=(
+            "Close January 2026 receivables in `/app/ledger.beancount`: process the write-off "
+            "approved in `/app/documents/credit_memo.md` and bring the allowance for doubtful "
+            "accounts to the balance `/app/policy.md` requires, using the aging in "
+            "`/app/documents/aging.md`. Append new transactions dated 2026-01-31 only; do not "
+            "edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(RECEIVABLE_ACCOUNTS),
+            "documents/aging.md": aging,
+            "documents/credit_memo.md": memo,
+        },
+        expected=_expected(
+            "receivable-allowance-trueup",
+            "receivables",
+            seed,
+            expected_deltas={
+                AR: money(-write_off),
+                ALLOWANCE: money(existing - required),
+                BAD_DEBTS: money(adjustment),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={AR: money(ar_final), ALLOWANCE: money(-required)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["receivables", "allowance", "bad-debt", "write-off"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -670,6 +813,7 @@ FAMILIES = {
     "mc-capitalization-treatment": mc_capitalization_treatment,
     "mgmt-break-even-units": mgmt_break_even_units,
     "ifrs-capitalize-borrowing-costs": ifrs_capitalize_borrowing_costs,
+    "receivable-allowance-trueup": receivable_allowance_trueup,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -681,4 +825,5 @@ STABLE_SEEDS = {
     "mc-capitalization-treatment": 105,
     "mgmt-break-even-units": 106,
     "ifrs-capitalize-borrowing-costs": 107,
+    "receivable-allowance-trueup": 108,
 }
