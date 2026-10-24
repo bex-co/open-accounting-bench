@@ -1,0 +1,41 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Assets:Suspense USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  15000.00 USD
+  Equity:Opening-Balances  -15000.00 USD
+
+2026-01-05 * "Redwood Realty" "January rent (bank import)"
+  Expenses:Rent  3620.00 USD
+  Assets:Bank:Checking  -3260.00 USD
+  Assets:Suspense  -360.00 USD
+
+2026-01-09 * "Deposit" "Counter deposit (bank import, no counter-entry)"
+  Assets:Bank:Checking  1786.00 USD
+  Assets:Suspense  -1786.00 USD
+
+2026-01-20 * "City Power" "Utilities (bank import)"
+  Expenses:Utilities  212.40 USD
+  Assets:Bank:Checking  -212.40 USD
+
+2026-01-31 * "Redwood Realty" "Correct transposed rent expense"
+  Assets:Suspense  360.00 USD
+  Expenses:Rent  -360.00 USD
+
+2026-01-31 * "Deposit" "Record counter takings as cash sales"
+  Assets:Suspense  1786.00 USD
+  Income:Sales  -1786.00 USD

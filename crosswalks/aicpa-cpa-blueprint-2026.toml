@@ -127,6 +127,20 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Computes break-even units only; no sensitivity analysis or interpretation."
 
+[[mapping]]
+generator = "suspense-clearance"
+target_id = "FAR.III.A"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:e70cbe487fb262b410fa90183ea75259e52c0316d4e6fed0bc24ca8217147832"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 3
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Current-period correction of import errors; no accounting change or prospective/retrospective determination."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

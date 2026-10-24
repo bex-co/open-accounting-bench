@@ -133,6 +133,45 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Capitalizes qualifying interest under IAS 23; other initial-measurement components are not tested."
 
+[[mapping]]
+generator = "suspense-clearance"
+target_id = "FA.F3(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:3b5be86b88bffad5e8198f997c19e41833746ac4c4b7acb1a936a14dede07d25"
+relationship = "superset-of"
+rationale = "semantic"
+strength = 8
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Clears a suspense balance with journal entries, after identifying the two postings that created it."
+
+[[mapping]]
+generator = "suspense-clearance"
+target_id = "FA.F3(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:d5ffece5e2fe5e224e33942487c686ad32b455b20107292f64b91813914f67e3"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Works with entries already in a suspense account; does not create them."
+
+[[mapping]]
+generator = "suspense-clearance"
+target_id = "FA.F2(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:ad29b5491ab72cd7d3e60120cda3e6653d8df5021313ff8168d7af641db99acf"
+relationship = "subset-of"
+rationale = "semantic"
+strength = 7
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+reviewer = ""
+comment = "Correcting entries for a transposition and an omitted counter-entry."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

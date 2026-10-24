@@ -123,3 +123,33 @@ def test_ifrs_expensing_qualifying_interest_fails_semantics():
 def test_parser_rejects_unknown_directives():
     ledger = parse_ledger("2026-01-01 open Assets:Cash USD\nfrobnicate x\n")
     assert ledger.errors
+
+
+def test_clearing_suspense_to_one_plausible_account_fails():
+    """Trap: zero the clearing account against sales in one entry, leaving the
+    transposed rent uncorrected. Balanced, and the suspense balance hits zero."""
+    from decimal import Decimal
+
+    instance = FAMILIES["suspense-clearance"](114)
+    clear = Decimal(instance.expected["expected_deltas"]["Assets:Suspense"])
+    wrong = instance.initial_ledger + (
+        '\n2026-01-31 * "Controller" "Clear suspense"\n'
+        f"  Assets:Suspense  {clear:.2f} USD\n"
+        f"  Income:Sales  {-clear:.2f} USD\n"
+    )
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_single_suspense_clearing_entry_is_equivalent():
+    instance = FAMILIES["suspense-clearance"](114)
+    d = instance.expected["expected_deltas"]
+    combined = instance.initial_ledger + (
+        '\n2026-01-31 * "Controller" "Correct import errors and clear suspense"\n'
+        f"  Assets:Suspense  {d['Assets:Suspense']} USD\n"
+        f"  Expenses:Rent  {d['Expenses:Rent']} USD\n"
+        f"  Income:Sales  {d['Income:Sales']} USD\n"
+    )
+    assert verify(instance.initial_ledger, combined, instance.expected).reward == 1

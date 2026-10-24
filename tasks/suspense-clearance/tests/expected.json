@@ -1,0 +1,33 @@
+{
+  "task_id": "suspense-clearance",
+  "family": "ledger-integrity-reporting",
+  "seed": 114,
+  "generator_version": "0.2.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Suspense": "2146.00",
+    "Expenses:Rent": "-360.00",
+    "Income:Sales": "-1786.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Suspense": "0.00",
+    "Expenses:Rent": "3260.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "analysis",
+  "standards": []
+}

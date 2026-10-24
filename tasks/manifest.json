@@ -101,6 +101,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:62dd89250f3251796f6a00488bfcba40d5dbbde23bbbcbcbeb8fe5ad97b0d7b2"
+    },
+    {
+      "task_id": "suspense-clearance",
+      "family": "ledger-integrity-reporting",
+      "seed": 114,
+      "generator_version": "0.2.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [],
+      "digest": "sha256:43c72f2e59c101bf6f488abb0e59d860ecce054eeba137702296b6a060e62606"
     }
   ]
 }
