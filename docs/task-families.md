@@ -68,6 +68,41 @@ The two-dimension thresholds make labels sensitive to a single score.
 Record all seven scores in the family PR and mark the level
 **borderline** when flipping any one dimension would change it.
 
+**Score at the strict reading** (adopted 2026-10-25, applied to every
+task): a dimension is U or P only if the task as delivered actually
+demands it. Dependent steps count only when an intermediate value must
+be derived — amounts readable off a document, or a target balance the
+instruction states, do not count. A document counts as a distractor
+only if a plausible mistake uses it; combining several clean documents
+is not enough. Scope is U only for genuinely multi-period work or
+several accounts whose movement the solver must work out. When in
+doubt, score V.
+
+Current Stable tasks (R = rule provision, S = dependent steps,
+I = problem identification, E = evidence, J = judgement, C = scope,
+D = standards depth):
+
+| Task | R | S | I | E | J | C | D | Level |
+|---|---|---|---|---|---|---|---|---|
+| `classify-operating-expense` | V | V | V | V | V | V | V | vocational |
+| `bank-recon-missing-fee` | V | V | V | V | V | V | V | vocational |
+| `prepaid-insurance-adjustment` | V | V | V | V | V | U | V | vocational |
+| `correct-misclassification` | V | V | V | V | V | V | V | vocational |
+| `mc-capitalization-treatment` | V | V | V | U | V | V | V | vocational |
+| `mgmt-break-even-units` | V | V | V | V | V | V | V | vocational |
+| `ifrs-capitalize-borrowing-costs` | V | V | V | V | V | V | U | vocational |
+| `ppe-disposal` | V | U | V | V | V | V | V | vocational |
+| `inventory-costing-nrv` | V | U | V | V | V | V | V | vocational |
+| `receivable-allowance-trueup` | V | U | V | V | V | U | V | university (borderline) |
+| `accrual-deferral-reversal` | V | U | V | V | V | U | V | university (borderline) |
+| `payables-statement-recon` | V | V | U | U | V | V | V | university (borderline) |
+| `suspense-clearance` | V | V | U | U | V | V | V | university (borderline) |
+| `loan-effective-interest` | V | U | V | V | V | V | U | university (borderline) |
+| `revenue-bundle-allocation` | V | U | V | U | V | V | U | university |
+
+No task reaches professional yet; that needs P on problem
+identification, evidence, or judgement (see above).
+
 `level` and `skill` are independent axes: `skill` is the cognitive
 operation the task demands (e.g. analysis), `level` is how much of the
 problem the task hands over. An analysis task can be vocational.

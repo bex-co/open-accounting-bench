@@ -24,11 +24,11 @@
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
-      "level": "university",
+      "level": "vocational",
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:8373bcaa7a78a27c38a3d95bd5b4976ed1ced206dfdfb6ab782fc88c1ad06b33"
+      "digest": "sha256:151b31899e420c15ac2c545ddafbdc487a7383deb6c53cce81b2ca6bcc05a749"
     },
     {
       "task_id": "classify-operating-expense",
@@ -66,13 +66,13 @@
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
-      "level": "university",
+      "level": "vocational",
       "format": "journal-entry",
       "skill": "application",
       "standards": [
         "ias:23"
       ],
-      "digest": "sha256:f07216718b2eb9c513a4487085966a8567e6cbbab177cb1d2dac7017fd3b2e4e"
+      "digest": "sha256:60eece78beee663e02073797283e1ee22a55a209eeb0e989a0669ee5ab82e5ec"
     },
     {
       "task_id": "inventory-costing-nrv",
@@ -82,11 +82,11 @@
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
-      "level": "university",
+      "level": "vocational",
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6cd64d40c09357a8fd80bd90a126f59b91611ed2d928dda2320587f6adff21e7"
+      "digest": "sha256:69494c2f34a8f9a118bc82e20921b6b3cc5980e4a575904a5371d330b6ed7e00"
     },
     {
       "task_id": "loan-effective-interest",
@@ -113,11 +113,11 @@
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
-      "level": "university",
+      "level": "vocational",
       "format": "multiple-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:81338df2cb4f382437fd36bef76667d56629331d47146ef88f0f2c9c4bf511f1"
+      "digest": "sha256:c7e24dd5afec2eadb61bd6dbc72558f7e13af4065dd016a9b1712a6648f78f52"
     },
     {
       "task_id": "mgmt-break-even-units",
@@ -155,11 +155,11 @@
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
-      "level": "university",
+      "level": "vocational",
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0be6f93f75e051412f02d880947be0144e8cb7d7db1b9bd34cb3841cd1ff0afb"
+      "digest": "sha256:2dae436cb78353a7b6d010ee3e5ef19245f0ca4a58f510701b01765ea3200601"
     },
     {
       "task_id": "prepaid-insurance-adjustment",

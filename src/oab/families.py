@@ -283,6 +283,7 @@ def bank_recon_missing_fee(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["bank-reconciliation", "duplicate", "bank-fees"],
+        level="vocational",
         skill="analysis",
     )
 
@@ -499,6 +500,7 @@ believe are correct.
         solution_ledger="",
         solution_answer={"final_answer": gold, "confidence": 100},
         keywords=["multiple-choice", "capitalization"],
+        level="vocational",
         format="multiple-choice",
     )
 
@@ -660,7 +662,7 @@ def ifrs_capitalize_borrowing_costs(seed: int) -> TaskInstance:
         difficulty="medium",
         keywords=["ifrs", "ias-23", "borrowing-costs"],
         framework="ifrs",
-        level="university",
+        level="vocational",
         standards=["ias:23"],
     )
 
@@ -1166,6 +1168,7 @@ def ppe_disposal(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["fixed-assets", "depreciation", "disposal", "gain-loss"],
+        level="vocational",
     )
 
 
@@ -1321,6 +1324,7 @@ def inventory_costing_nrv(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["inventory", "fifo", "cost-of-sales", "net-realizable-value"],
+        level="vocational",
     )
 
 
