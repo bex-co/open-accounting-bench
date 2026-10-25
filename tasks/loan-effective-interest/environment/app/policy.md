@@ -15,4 +15,5 @@
   start of the month x the effective monthly rate, rounded to the
   cent. Coupon interest due but unpaid is accrued in
   `Liabilities:InterestPayable`; the difference adjusts the loan's
-  carrying amount.
+  carrying amount. Use the effective rate stated in the loan
+  agreement as given; do not recompute it.

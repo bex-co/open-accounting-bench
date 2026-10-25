@@ -1,12 +1,12 @@
 {
   "dataset": "open-accounting-bench/open-accounting-bench",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "tasks": [
     {
       "task_id": "accrual-deferral-reversal",
       "family": "accruals-deferrals",
       "seed": 109,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -14,13 +14,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b8261c67f2ec798122393c5f0b7a6e9ca32a30ffbea150bacfc564c4ad5fea1a"
+      "digest": "sha256:74f9c9320aa855d0c89140aa20e107172f0eaad10590e21f51bffe12812882d2"
     },
     {
       "task_id": "bank-recon-missing-fee",
       "family": "bank-reconciliation",
       "seed": 102,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -28,13 +28,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:ec5eb3e30f04468ce96c6548a92d90ea8df93435f04372e1bac04a3c45f2e7e9"
+      "digest": "sha256:8373bcaa7a78a27c38a3d95bd5b4976ed1ced206dfdfb6ab782fc88c1ad06b33"
     },
     {
       "task_id": "classify-operating-expense",
       "family": "transaction-classification",
       "seed": 101,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -42,13 +42,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:010a0d662f7090ab0082ac487ab32a13771b7b0ed68fe24ce14bec5bdd00028c"
+      "digest": "sha256:ef2c98584e12ffff020cce3ceba456ef9f02960b3c7295854227ea12eae30687"
     },
     {
       "task_id": "correct-misclassification",
       "family": "ledger-integrity-reporting",
       "seed": 104,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -56,13 +56,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d301794017243b1367aac3cadc42d3e0ea4c1e4c8a88aa23f9c311c125c67cf4"
+      "digest": "sha256:3efe9d7a6cd12d37a5b1e1f3d886d436399c14febd981bc05e884c3c4c94ad78"
     },
     {
       "task_id": "ifrs-capitalize-borrowing-costs",
       "family": "adjustments-corrections",
       "seed": 107,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -72,13 +72,13 @@
       "standards": [
         "ias:23"
       ],
-      "digest": "sha256:8e8c1f7c80353a2c460e62a50872fe8c509c142c2a7f919359ac0e80a15b49aa"
+      "digest": "sha256:f07216718b2eb9c513a4487085966a8567e6cbbab177cb1d2dac7017fd3b2e4e"
     },
     {
       "task_id": "inventory-costing-nrv",
       "family": "inventory",
       "seed": 112,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -86,13 +86,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4d879ef95c5e04065954d529191ba85488a6d5a97df2f6f7524d3cf466b55f80"
+      "digest": "sha256:6cd64d40c09357a8fd80bd90a126f59b91611ed2d928dda2320587f6adff21e7"
     },
     {
       "task_id": "loan-effective-interest",
       "family": "borrowings",
       "seed": 115,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -103,13 +103,13 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:2ac1d0ec609ec8bc4fe81da93bde2298971217f29a72ceda68cdadca0750c542"
+      "digest": "sha256:ab1daa647889c88590e5438947b4b661970e741dc7f4637cbb02de026593f95a"
     },
     {
       "task_id": "mc-capitalization-treatment",
       "family": "transaction-classification",
       "seed": 105,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -117,13 +117,13 @@
       "format": "multiple-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9d6262a6fdf43a31f488aa1b97dbe27e4bc3959a54474e614b8752d69e6052d4"
+      "digest": "sha256:81338df2cb4f382437fd36bef76667d56629331d47146ef88f0f2c9c4bf511f1"
     },
     {
       "task_id": "mgmt-break-even-units",
       "family": "cost-volume-profit",
       "seed": 106,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -131,13 +131,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c77157c64f1afb01e607dd077dd043c6836a2a14dbf4d73ca9807ae5f8373661"
+      "digest": "sha256:ce62e516b7c342014008a347a65258002baf6349eccfb8d19e54917462383321"
     },
     {
       "task_id": "payables-statement-recon",
       "family": "payables-reconciliation",
       "seed": 110,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -145,13 +145,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:b4acce2385c91407b834fffd7a0df41c5bffb69c0a3639e259ee98322f6faf1b"
+      "digest": "sha256:5c7388097d66f2de6161a981cc35091577b1ed45da6c73d500489abb9fd8de1b"
     },
     {
       "task_id": "ppe-disposal",
       "family": "fixed-assets",
       "seed": 111,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -159,13 +159,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:57b5114bebeea9552d471f8ededc9f781ce5b65e9df2832e05f2996a66bd27be"
+      "digest": "sha256:0be6f93f75e051412f02d880947be0144e8cb7d7db1b9bd34cb3841cd1ff0afb"
     },
     {
       "task_id": "prepaid-insurance-adjustment",
       "family": "adjustments-corrections",
       "seed": 103,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -173,13 +173,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:78e0173d2b46e75377b7b4133edfca1397b24d96d4f1347b3c79319d0bff466f"
+      "digest": "sha256:7fad87ca81219f2b1e93616d2b2ff82f1eb254db912cf6093f3f39838ab1df15"
     },
     {
       "task_id": "receivable-allowance-trueup",
       "family": "receivables",
       "seed": 108,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -187,13 +187,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c847e758719436baca6e0d11e4401ce1986dded92a5025e7e2f4984e92499676"
+      "digest": "sha256:d8b94f23b19b485b42751876c339a3fd6cb0153a1b9299fe89c75640872cb56b"
     },
     {
       "task_id": "revenue-bundle-allocation",
       "family": "revenue-recognition",
       "seed": 113,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -204,13 +204,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:9f807c7d25441727a667a35ff938776a9268f17d93ca569064a78300a6eaf3bd"
+      "digest": "sha256:723c57ebce3bdb6396b75c5e71750669f80008fcb74b0da6ccac394c877c556c"
     },
     {
       "task_id": "suspense-clearance",
       "family": "ledger-integrity-reporting",
       "seed": 114,
-      "generator_version": "0.2.0",
+      "generator_version": "0.3.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -218,7 +218,7 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:43c72f2e59c101bf6f488abb0e59d860ecce054eeba137702296b6a060e62606"
+      "digest": "sha256:dbee78686ec1e54fa861a98a67e8592c60bd1400187835aeac3219cb15419a85"
     }
   ]
 }

@@ -1074,7 +1074,10 @@ def ppe_disposal(seed: int) -> TaskInstance:
     acquired_year, acquired_month = first // 12, first % 12 + 1
     acc_open = monthly * held
     carrying = cost - monthly * (held + 1)  # after January's depreciation
-    proceeds = carrying + Decimal(rng.choice([-1, 1])) * Decimal(rng.randrange(2, 41)) * 50
+    sign, offset = rng.choice([-1, 1]), Decimal(rng.randrange(2, 41)) * 50
+    if sign < 0:  # a loss never exceeds half the carrying amount: proceeds stay positive
+        offset = min(offset, (carrying / 2 // 50) * 50)
+    proceeds = carrying + sign * offset
     gain = proceeds - carrying
     sale_day = rng.randint(8, 27)
     sale_date = f"2026-01-{sale_day:02d}"
@@ -1462,7 +1465,8 @@ def suspense_clearance(seed: int) -> TaskInstance:
     lease = f"# Lease summary — {lessor}\n\nMonthly rent: USD {money(rent)}, due on the 5th.\n"
     memo = (
         "# Controller memo — month-end\n\n"
-        f"`{SUSPENSE}` shows a balance of USD {money(balance)} after the January bank "
+        f"`{SUSPENSE}` shows a {'debit' if balance > 0 else 'credit'} balance of "
+        f"USD {money(abs(balance))} after the January bank "
         "import. Investigate, correct the underlying postings, and leave the clearing "
         "account at zero.\n"
     )
@@ -1577,7 +1581,8 @@ def loan_effective_interest(seed: int) -> TaskInstance:
         "  start of the month x the effective monthly rate, rounded to the\n"
         "  cent. Coupon interest due but unpaid is accrued in\n"
         "  `Liabilities:InterestPayable`; the difference adjusts the loan's\n"
-        "  carrying amount.\n"
+        "  carrying amount. Use the effective rate stated in the loan\n"
+        "  agreement as given; do not recompute it.\n"
     )
     solution = initial + _txn(
         "2026-01-31",

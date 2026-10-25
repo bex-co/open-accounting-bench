@@ -25,3 +25,20 @@ def test_written_task_is_reproducible(tmp_path: Path):
     digest_a = task_digest(first)
     second = write_task(instance, tmp_path / "b")
     assert task_digest(second) == digest_a
+
+
+def test_ppe_disposal_proceeds_are_positive():
+    """Regression: a large loss offset on a small carrying amount gave negative
+    sale proceeds (e.g. seed 6589)."""
+    from decimal import Decimal
+
+    for seed in [6589, *range(1, 3000)]:
+        deltas = FAMILIES["ppe-disposal"](seed).expected["expected_deltas"]
+        assert Decimal(deltas["Assets:Bank:Checking"]) > 0, seed
+
+
+def test_suspense_memo_states_balance_side_without_sign():
+    for seed in range(1, 200):
+        memo = FAMILIES["suspense-clearance"](seed).app_files["documents/controller_memo.md"]
+        assert "USD -" not in memo, seed
+        assert "credit balance" in memo or "debit balance" in memo, seed
