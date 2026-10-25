@@ -141,9 +141,9 @@ target_text_sha256 = "sha256:eef200e4aadfc111cd183d23c1efca5f4b4ae85783c564b62dc
 relationship = "superset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Records the write-off of one uncollectible invoice, then also adjusts the allowance."
 
 [[mapping]]
@@ -154,9 +154,9 @@ target_text_sha256 = "sha256:78558321fda4a3d0940f8e6ae478077fdc8f1ada51b2ee1e9c1
 relationship = "subset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Adjusts an existing allowance to an aging-based requirement; creating a first allowance is not tested."
 
 [[mapping]]
@@ -167,9 +167,9 @@ target_text_sha256 = "sha256:777ea1575c1a0689eed446e21a54d3d530dc3a25425c5a4b0e0
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Reverses an accrual and releases deferred income by delivery; creating accruals, prepayments, and accrued income are not tested."
 
 [[mapping]]
@@ -180,9 +180,9 @@ target_text_sha256 = "sha256:14fc3c8001af3df3594de93380ed2abcdc04b7fbe14db814f3a
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Applies accrual accounting to an accrued expense and deferred income across a period boundary."
 
 [[mapping]]
@@ -190,12 +190,12 @@ generator = "payables-statement-recon"
 target_id = "FA.E2(d)"
 target_skill = "K"
 target_text_sha256 = "sha256:0941f9428e4d9bdf40f5941eca893ac3dd6765a39549bb3ddfbc6f3fc51529cf"
-relationship = "superset-of"
+relationship = "subset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Finds and corrects an unrecorded credit note and a mis-keyed invoice from a supplier statement, while leaving timing items alone."
 
 [[mapping]]
@@ -206,9 +206,9 @@ target_text_sha256 = "sha256:c623330a9e5b71b62e53e427989404d9d583a710509299ce5f3
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 4
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Reaches a reconciled ledger balance, but no reconciliation statement is prepared."
 
 [[mapping]]
@@ -219,9 +219,9 @@ target_text_sha256 = "sha256:d082f528ae44a47b505f4912843e26ff2c61e5e76feb04b3b24
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Calculates and records a disposal gain or loss for a cash sale; part-exchange is not tested."
 
 [[mapping]]
@@ -232,9 +232,9 @@ target_text_sha256 = "sha256:0b6ced4a967a26c87d73750ada9b3bff9487543fd4f9c8f38e1
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Records a disposal in the ledger (cost and accumulated depreciation removed); acquisitions are not tested."
 
 [[mapping]]
@@ -245,9 +245,9 @@ target_text_sha256 = "sha256:0557cd9a1f436d47dc300f7e62e5700af4a54520e30cb4c3b13
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Posts one month's depreciation charge to expense and accumulated depreciation."
 
 [[mapping]]
@@ -258,9 +258,9 @@ target_text_sha256 = "sha256:22a354efd538933ca0412d8267e9e28d2cffabc64f376eb1365
 relationship = "superset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Records cost of sales and the closing inventory value, and also applies an NRV write-down."
 
 [[mapping]]
@@ -270,10 +270,10 @@ target_skill = "S"
 target_text_sha256 = "sha256:78b9ade85400d9556238b160b96b695bfc915f9ec4b24b94ed99b59ec85a746a"
 relationship = "subset-of"
 rationale = "semantic"
-strength = 7
-status = "proposed"
+strength = 6
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Calculates closing inventory under perpetual FIFO; average-cost methods are not tested (they are the trap)."
 
 [[mapping]]
@@ -284,9 +284,9 @@ target_text_sha256 = "sha256:6c1f482a4e7b878626574a2a7e10c325459c1f8e260c811b04a
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Applies the lower of cost and net realizable value rule to one item; cost composition is not tested."
 
 [[mapping]]
@@ -297,9 +297,9 @@ target_text_sha256 = "sha256:6c556af9ed14e8d938572e2b32d23c32b8809a9475f4ce1fbd8
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Applies price allocation to two performance obligations and records the result; the explain part is not graded."
 
 [[mapping]]
@@ -310,9 +310,9 @@ target_text_sha256 = "sha256:1117bba172894657f006832eb62de6ec7658589c4e5dcadc5bb
 relationship = "subset-of"
 rationale = "semantic"
 strength = 6
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Recognizes one obligation at a point in time and one over time; judging which criteria apply is given by policy."
 
 [[mapping]]
@@ -323,9 +323,9 @@ target_text_sha256 = "sha256:3b5be86b88bffad5e8198f997c19e41833746ac4c4b7acb1a93
 relationship = "superset-of"
 rationale = "semantic"
 strength = 8
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Clears a suspense balance with journal entries, after identifying the two postings that created it."
 
 [[mapping]]
@@ -336,9 +336,9 @@ target_text_sha256 = "sha256:d5ffece5e2fe5e224e33942487c686ad32b455b20107292f64b
 relationship = "intersects-with"
 rationale = "semantic"
 strength = 4
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Works with entries already in a suspense account; does not create them."
 
 [[mapping]]
@@ -349,9 +349,9 @@ target_text_sha256 = "sha256:ad29b5491ab72cd7d3e60120cda3e6653d8df5021313ff8168d
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Correcting entries for a transposition and an omitted counter-entry."
 
 [[mapping]]
@@ -362,9 +362,9 @@ target_text_sha256 = "sha256:55ac10df10a0d63bea1461805d034c83d28ee4c2440a3c1c2ec
 relationship = "subset-of"
 rationale = "semantic"
 strength = 7
-status = "proposed"
+status = "reviewed"
 mapper = "oab-maintainers (agent draft)"
-reviewer = ""
+reviewer = "Tian Pan (maintainer)"
 comment = "Calculates and records one month's interest expense and coupon accrual in the ledger; statement presentation is not tested."
 
 # Items judged not agent-gradable (reviewed gradability triage).

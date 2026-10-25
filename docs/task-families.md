@@ -165,10 +165,10 @@ Rules:
 - New mappings start `proposed` and are listed in [TO_REVIEW.md](../TO_REVIEW.md); they count toward cited coverage only once reviewed.
 
 `oab crosswalk` (CI) validates every file and prints coverage; counting
-rules are in [metrics.md](metrics.md#framework-coverage). As of this
-edition no generator fully covers any blueprint or syllabus item —
-current links are `subset-of` or `intersects-with`, all reviewed
-(2026-10-23).
+rules are in [metrics.md](metrics.md#framework-coverage). As of
+2026-10-25 (all links reviewed): ACCA FA has 3 covered items of 85
+gradable (FA.D3(b), FA.D8(e), FA.F3(d)); FAR and BAR have none
+covered — their links are `subset-of` or `intersects-with`.
 
 ## Instance contract
 

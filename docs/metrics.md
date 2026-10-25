@@ -77,7 +77,7 @@ strongest link ([task-families.md](task-families.md#crosswalks-to-external-frame
 
 Cite coverage with its basis and both denominators, e.g. "covers 0 of
 97 gradable (113 total) FAR representative tasks (AICPA blueprint 2027;
-equal/superset-of, strength >= 7); 2 partial, 2 touched; 0
+equal/superset-of, strength >= 7); 9 partial, 4 touched; 0
 unreviewed". Never merge partial or touched into
 covered, and do not publish a coverage claim while its counted links
 are unreviewed. Unreviewed also counts unreviewed exclusions, so the
