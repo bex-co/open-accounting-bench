@@ -1,0 +1,33 @@
+{
+  "task_id": "sales-return-restock",
+  "family": "inventory",
+  "seed": 117,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Income:SalesReturnsAndAllowances": "162.00",
+    "Assets:AccountsReceivable": "-162.00",
+    "Assets:Inventory": "90.00",
+    "Expenses:CostOfSales": "-90.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-20",
+    "2026-01-20"
+  ],
+  "required_final_balances": {
+    "Assets:AccountsReceivable": "918.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

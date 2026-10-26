@@ -76,6 +76,34 @@ def test_mc_family_oracle_nop_and_trap(seed):
         assert f"- {oid}." in question
 
 
+NUMERIC_FAMILIES = [
+    "cvp-target-profit-units",
+    "process-costing-equivalent-units",
+    "operating-cash-flow-indirect",
+    "inventory-days-on-hand",
+    "lifo-ending-inventory",
+    "materials-price-variance",
+    "npv-project-evaluation",
+    "make-or-buy-advantage",
+    "absorption-variable-income-difference",
+    "current-ratio",
+    "bank-adjusted-balance",
+]
+
+
+@pytest.mark.parametrize("task_id", NUMERIC_FAMILIES)
+@pytest.mark.parametrize("seed", [1, 7, 42])
+def test_numeric_families_oracle_and_plausible_trap(task_id, seed):
+    instance = FAMILIES[task_id](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    # Trap: the documented plausible wrong value (wrong formula/method).
+    trap = grade_answer(expected, ans(float(expected["trap_value"])))
+    assert trap.reward == 0
+    assert trap.layers["answer_accuracy"].score < 1.0
+
+
 @pytest.mark.parametrize("seed", [1, 7, 42, 106])
 def test_mgmt_family_oracle_and_wrong_formula_trap(seed):
     from decimal import Decimal

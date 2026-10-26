@@ -99,6 +99,31 @@ D = standards depth):
 | `suspense-clearance` | V | V | U | U | V | V | V | university (borderline) |
 | `loan-effective-interest` | V | U | V | V | V | V | U | university (borderline) |
 | `revenue-bundle-allocation` | V | U | V | U | V | V | U | university |
+| `perpetual-sale-with-cost` | V | U | V | V | V | V | V | vocational |
+| `sales-return-restock` | V | U | V | V | V | V | V | vocational |
+| `supplies-adjustment` | V | V | V | V | V | V | V | vocational |
+| `accrued-wages-adjustment` | V | V | V | V | V | V | V | vocational |
+| `straight-line-depreciation` | V | U | V | V | V | V | V | vocational |
+| `note-interest-accrual` | V | U | V | V | V | V | V | vocational |
+| `payroll-withholdings` | V | U | V | V | V | V | V | vocational |
+| `bond-discount-amortization` | V | U | V | V | V | V | U | vocational |
+| `cvp-target-profit-units` | V | U | V | V | V | V | V | vocational |
+| `process-costing-equivalent-units` | V | U | V | V | V | V | V | vocational |
+| `operating-cash-flow-indirect` | V | U | V | V | V | V | U | vocational |
+| `inventory-days-on-hand` | V | U | V | V | V | V | V | vocational |
+| `equity-issue-above-par` | V | U | V | V | V | V | V | vocational |
+| `cash-dividend-declaration` | V | V | V | V | V | V | V | vocational |
+| `treasury-stock-repurchase` | V | V | V | V | V | V | V | vocational |
+| `closing-entries-income-summary` | V | U | V | V | V | V | V | vocational |
+| `job-overhead-applied` | V | U | V | U | V | V | V | vocational |
+| `note-dishonored` | V | U | V | V | V | U | V | vocational |
+| `lifo-ending-inventory` | V | U | V | V | V | V | V | vocational |
+| `materials-price-variance` | V | U | V | V | V | V | V | vocational |
+| `npv-project-evaluation` | V | U | V | V | V | V | V | vocational |
+| `make-or-buy-advantage` | V | U | V | U | V | V | V | vocational |
+| `absorption-variable-income-difference` | V | U | V | V | V | V | V | vocational |
+| `current-ratio` | V | U | V | V | V | V | V | vocational |
+| `bank-adjusted-balance` | V | U | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -126,8 +151,33 @@ problem the task hands over. An analysis task can be vocational.
 | `revenue-bundle-allocation` | revenue-recognition | journal-entry | core | application | `asc:606`, `ifrs:15` | Allocate on invoice lines |
 | `suspense-clearance` | ledger-integrity-reporting | journal-entry | core | analysis | — | Clear suspense to one account |
 | `loan-effective-interest` | borrowings | journal-entry | core | application | `asc:835-30`, `ifrs:9` | Coupon-rate interest |
+| `perpetual-sale-with-cost` | inventory | journal-entry | core | application | — | Revenue only, no COGS |
+| `sales-return-restock` | inventory | journal-entry | core | application | — | Restock at selling price |
+| `supplies-adjustment` | adjustments-corrections | journal-entry | core | application | — | Expense the counted remainder |
+| `accrued-wages-adjustment` | accruals-deferrals | journal-entry | core | application | — | Accrue the full week |
+| `straight-line-depreciation` | fixed-assets | journal-entry | core | application | — | Ignore residual value |
+| `note-interest-accrual` | receivables | journal-entry | core | application | — | Accrue the full 90 days |
+| `payroll-withholdings` | payroll | journal-entry | core | application | — | Expense net pay |
+| `bond-discount-amortization` | borrowings | journal-entry | core | application | `asc:835-30`, `ifrs:9` | Coupon-only interest |
+| `cvp-target-profit-units` | cost-volume-profit | numeric | core | application | — | Answer break-even units |
+| `process-costing-equivalent-units` | process-costing | numeric | core | application | — | FIFO equivalent units |
+| `operating-cash-flow-indirect` | cash-flow-statement | numeric | core | application | `asc:230`, `ias:7` | Add back the disposal gain |
+| `inventory-days-on-hand` | financial-analysis | numeric | core | application | — | Use ending inventory |
+| `equity-issue-above-par` | equity | journal-entry | core | application | — | Credit full proceeds to stock |
+| `cash-dividend-declaration` | equity | journal-entry | core | application | — | Pay on declaration date |
+| `treasury-stock-repurchase` | equity | journal-entry | core | application | — | Retire at repurchase cost |
+| `closing-entries-income-summary` | ledger-integrity-reporting | journal-entry | core | application | — | Close revenue only |
+| `job-overhead-applied` | job-order-costing | journal-entry | core | application | — | Apply actual overhead |
+| `note-dishonored` | receivables | journal-entry | core | application | — | Principal only to AR |
+| `lifo-ending-inventory` | inventory | numeric | core | application | — | FIFO ending value |
+| `materials-price-variance` | standard-costing | numeric | core | application | — | Use quantity used |
+| `npv-project-evaluation` | capital-budgeting | numeric | core | application | — | Undiscounted inflows |
+| `make-or-buy-advantage` | relevant-costing | numeric | core | application | — | Count unavoidable fixed cost |
+| `absorption-variable-income-difference` | absorption-variable-costing | numeric | core | application | — | Rate x units sold |
+| `current-ratio` | financial-analysis | numeric | core | application | — | Quick ratio |
+| `bank-adjusted-balance` | bank-reconciliation | numeric | core | application | — | Unadjusted book balance |
 
-Stable seeds: 101–115 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–140 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -136,12 +186,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 13 | 1 | planned | planned |
-| management-accounting | 1 | planned | planned | planned |
+| financial-accounting | 31 | 1 | planned | planned |
+| management-accounting | 8 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×13, multiple-choice ×1, numeric ×1;
+Format coverage: journal-entry ×27, multiple-choice ×1, numeric ×12;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 

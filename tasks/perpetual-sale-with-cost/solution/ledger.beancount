@@ -1,0 +1,34 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Assets:AccountsReceivable USD
+2026-01-01 open Assets:Inventory USD
+2026-01-01 open Expenses:CostOfSales USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  10000.00 USD
+  Equity:Opening-Balances  -10000.00 USD
+
+2026-01-01 * "Opening" "Opening inventory: 149 LED desk lamps"
+  Assets:Inventory  1825.25 USD
+  Equity:Opening-Balances  -1825.25 USD
+
+2026-01-24 * "Juniper Hotels" "Credit sale of 34 LED desk lamps"
+  Assets:AccountsReceivable  707.88 USD
+  Income:Sales  -707.88 USD
+
+2026-01-24 * "Juniper Hotels" "Cost of goods sold"
+  Expenses:CostOfSales  416.50 USD
+  Assets:Inventory  -416.50 USD

@@ -1,0 +1,28 @@
+{
+  "task_id": "job-overhead-applied",
+  "family": "job-order-costing",
+  "seed": 132,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:WorkInProcess": "3080.00",
+    "Expenses:ManufacturingOverhead": "-3080.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:WorkInProcess": "11405.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "management-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

@@ -564,3 +564,223 @@ def test_coupon_and_amortization_entries_are_equivalent():
         f"  Liabilities:LoanPayable  -{amortization:.2f} USD\n"
     )
     assert verify(instance.initial_ledger, split, instance.expected).reward == 1
+
+
+def _entry(date, payee, postings) -> str:
+    lines = [f'\n{date} * "{payee}" "Attempt"']
+    lines += [f"  {account}  {amount:.2f} USD" for account, amount in postings]
+    return "\n".join(lines) + "\n"
+
+
+def _deltas(instance):
+    from decimal import Decimal
+
+    return {k: Decimal(v) for k, v in instance.expected["expected_deltas"].items()}
+
+
+def _assert_semantic_trap(instance, wrong):
+    report = verify(instance.initial_ledger, wrong, instance.expected)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
+
+
+def test_perpetual_sale_without_cost_of_goods_fails():
+    """Trap: record revenue only, leaving inventory untouched."""
+    instance = FAMILIES["perpetual-sale-with-cost"](116)
+    d = _deltas(instance)
+    date = instance.expected["expected_period"][0]
+    revenue = d["Assets:AccountsReceivable"]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Customer",
+        [("Assets:AccountsReceivable", revenue), ("Income:Sales", -revenue)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_restocking_returns_at_selling_price_fails():
+    """Trap: put returned goods back into inventory at selling price."""
+    instance = FAMILIES["sales-return-restock"](117)
+    d = _deltas(instance)
+    refund = d["Income:SalesReturnsAndAllowances"]
+    assert d["Assets:Inventory"] != refund  # cost < selling price by construction
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Customer",
+        [
+            ("Income:SalesReturnsAndAllowances", refund),
+            ("Assets:AccountsReceivable", -refund),
+            ("Assets:Inventory", refund),
+            ("Expenses:CostOfSales", -refund),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_supplies_on_hand_fails():
+    """Trap: expense the counted remainder instead of the amount used."""
+    from decimal import Decimal
+
+    instance = FAMILIES["supplies-adjustment"](118)
+    on_hand = Decimal(instance.expected["required_final_balances"]["Assets:Supplies"])
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Adjustment",
+        [("Expenses:OfficeSupplies", on_hand), ("Assets:Supplies", -on_hand)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_accruing_full_week_of_wages_fails():
+    """Trap: accrue the full 5-day week, not the unpaid days since payday."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["accrued-wages-adjustment"](119)
+    days = int(re.search(r"worked (\d+) day", instance.app_files["documents/payroll_note.md"])[1])
+    amount = _deltas(instance)["Expenses:Wages"]
+    full_week = (amount / days * 5).quantize(Decimal("0.01"))
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Payroll",
+        [("Expenses:Wages", full_week), ("Liabilities:WagesPayable", -full_week)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_depreciating_full_cost_fails():
+    """Trap: ignore residual value in the straight-line charge."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["straight-line-depreciation"](120)
+    doc = instance.app_files["documents/asset_register.md"]
+    cost = Decimal(re.search(r"Cost USD ([\d]+\.[\d]{2})", doc)[1])
+    life = int(re.search(r"life (\d+) years", doc)[1])
+    wrong_amount = (cost / (life * 12)).quantize(Decimal("0.01"))
+    assert wrong_amount != _deltas(instance)["Expenses:Depreciation"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Depreciation",
+        [
+            ("Expenses:Depreciation", wrong_amount),
+            ("Assets:AccumulatedDepreciation", -wrong_amount),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_accruing_full_note_interest_fails():
+    """Trap: accrue all 90 days of note interest in January."""
+    instance = FAMILIES["note-interest-accrual"](121)
+    interest = _deltas(instance)["Assets:InterestReceivable"] * 3
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Customer",
+        [("Assets:InterestReceivable", interest), ("Income:Interest", -interest)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_net_pay_fails():
+    """Trap: record net pay as the expense, skipping withholdings."""
+    instance = FAMILIES["payroll-withholdings"](122)
+    net = -_deltas(instance)["Liabilities:WagesPayable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Payroll",
+        [("Expenses:Wages", net), ("Liabilities:WagesPayable", -net)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_bond_coupon_only_interest_fails():
+    """Trap: expense the coupon and never amortize the discount."""
+    instance = FAMILIES["bond-discount-amortization"](123)
+    coupon = -_deltas(instance)["Liabilities:InterestPayable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Bondholders",
+        [("Expenses:Interest", coupon), ("Liabilities:InterestPayable", -coupon)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_crediting_full_proceeds_to_common_stock_fails():
+    """Trap: credit common stock with the whole issue price, ignoring par/APIC."""
+    instance = FAMILIES["equity-issue-above-par"](128)
+    d = _deltas(instance)
+    proceeds = d["Assets:Bank:Checking"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Investors",
+        [("Assets:Bank:Checking", proceeds), ("Equity:CommonStock", -proceeds)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_paying_dividend_on_declaration_date_fails():
+    """Trap: pay cash in January instead of recording the declared liability."""
+    instance = FAMILIES["cash-dividend-declaration"](129)
+    total = _deltas(instance)["Equity:RetainedEarnings"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-15",
+        "Board",
+        [("Equity:RetainedEarnings", total), ("Assets:Bank:Checking", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_retiring_repurchased_shares_fails_under_cost_method():
+    """Trap: debit common stock at repurchase cost (retirement treatment)."""
+    instance = FAMILIES["treasury-stock-repurchase"](130)
+    cost = _deltas(instance)["Equity:TreasuryStock"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-18",
+        "Broker",
+        [("Equity:CommonStock", cost), ("Assets:Bank:Checking", -cost)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_closing_revenue_only_fails():
+    """Trap: transfer gross revenue to retained earnings, expenses left open."""
+    instance = FAMILIES["closing-entries-income-summary"](131)
+    revenue = _deltas(instance)["Income:Sales"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Closing",
+        [("Income:Sales", revenue), ("Equity:RetainedEarnings", -revenue)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_applying_actual_overhead_fails():
+    """Trap: apply January's actual overhead instead of the predetermined rate."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["job-overhead-applied"](132)
+    doc = instance.app_files["documents/job_cost_sheet.md"]
+    actual = Decimal(re.search(r"Actual manufacturing overhead.*USD ([\d]+\.[\d]{2})", doc)[1])
+    assert actual != _deltas(instance)["Assets:WorkInProcess"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Job",
+        [("Assets:WorkInProcess", actual), ("Expenses:ManufacturingOverhead", -actual)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_dishonored_note_principal_only_fails():
+    """Trap: charge the maker principal only, dropping the interest claim."""
+    instance = FAMILIES["note-dishonored"](133)
+    principal = -_deltas(instance)["Assets:NotesReceivable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Customer",
+        [("Assets:AccountsReceivable", principal), ("Assets:NotesReceivable", -principal)],
+    )
+    _assert_semantic_trap(instance, wrong)

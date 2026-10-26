@@ -1,0 +1,33 @@
+{
+  "task_id": "perpetual-sale-with-cost",
+  "family": "inventory",
+  "seed": 116,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:AccountsReceivable": "707.88",
+    "Income:Sales": "-707.88",
+    "Expenses:CostOfSales": "416.50",
+    "Assets:Inventory": "-416.50"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-24",
+    "2026-01-24"
+  ],
+  "required_final_balances": {
+    "Assets:Inventory": "1408.75"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

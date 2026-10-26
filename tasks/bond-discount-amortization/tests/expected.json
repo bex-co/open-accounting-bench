@@ -1,0 +1,35 @@
+{
+  "task_id": "bond-discount-amortization",
+  "family": "borrowings",
+  "seed": 123,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Expenses:Interest": "422.06",
+    "Liabilities:DiscountOnBondsPayable": "-62.06",
+    "Liabilities:InterestPayable": "-360.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Liabilities:DiscountOnBondsPayable": "1593.94"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:835-30",
+    "ifrs:9"
+  ]
+}

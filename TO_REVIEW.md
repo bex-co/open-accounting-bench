@@ -19,7 +19,30 @@ crosswalk mappings.
 
 ## Pending
 
-(none)
+- 2026-10-26 — twelve new generator families (Stable seeds 116–127):
+  `perpetual-sale-with-cost`, `sales-return-restock`,
+  `supplies-adjustment`, `accrued-wages-adjustment`,
+  `straight-line-depreciation`, `note-interest-accrual`,
+  `payroll-withholdings`, `bond-discount-amortization`,
+  `cvp-target-profit-units`, `process-costing-equivalent-units`,
+  `operating-cash-flow-indirect`, `inventory-days-on-hand`. Check
+  scenario realism, policy wording (in particular the stated effective
+  monthly rate in `bond-discount-amortization` and the 30/360
+  convention in `note-interest-accrual`), oracle numbers against the
+  documents, trap plausibility, and the vocational level scores in
+  [docs/task-families.md](docs/task-families.md). No crosswalk
+  mappings have been proposed for these generators yet.
+- 2026-10-26 — thirteen further generator families (Stable seeds
+  128–140): `equity-issue-above-par`, `cash-dividend-declaration`,
+  `treasury-stock-repurchase`, `closing-entries-income-summary`,
+  `job-overhead-applied`, `note-dishonored`, `lifo-ending-inventory`,
+  `materials-price-variance`, `npv-project-evaluation`,
+  `make-or-buy-advantage`, `absorption-variable-income-difference`,
+  `current-ratio`, `bank-adjusted-balance`. Same checks as the
+  116–127 batch; note the stated annuity factor in
+  `npv-project-evaluation` (4 d.p., used as given). No crosswalk
+  mappings proposed yet.
+
 
 ## Reviewed
 
