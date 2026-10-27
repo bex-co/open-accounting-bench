@@ -11,7 +11,10 @@
 - Every transaction must balance (debits equal credits) and be dated
   within the reporting period unless the task states otherwise.
 - Net periodic pension cost = service cost + interest cost -
-  expected return on plan assets + amortization amounts. Employer
-  cash contributions are funding, not expense: any excess of the
-  contribution over the period cost reduces the net pension
-  liability (credit bank for the full contribution).
+  expected return on plan assets + amortization amounts. The
+  amortization of prior losses is reclassified OUT OF accumulated
+  other comprehensive income (credit `Equity:AccumulatedOther-
+  ComprehensiveIncome`); it does not pass through the pension
+  liability. Service cost, interest cost, expected return, and
+  the contribution do. Employer cash contributions are funding,
+  not expense (credit bank for the full contribution).

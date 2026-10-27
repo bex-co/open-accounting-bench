@@ -12,3 +12,8 @@
   within the reporting period unless the task states otherwise.
 - Perpetual inventory: every sale records revenue at the selling
   price and cost of goods sold at unit cost in the same period.
+- Sales returns are recorded in the contra-revenue account
+  `Income:SalesReturnsAndAllowances` at the selling price
+  (debit), never netted directly against sales revenue;
+  restocked goods return to inventory at unit cost with the
+  offset to cost of goods sold.

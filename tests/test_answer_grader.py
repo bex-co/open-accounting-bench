@@ -184,13 +184,21 @@ def test_mc_normal_balances_oracle_and_traps(seed):
     assert grade_answer(expected, None).reward == 0
     gold = set(expected["gold"])
     assert 0 < len(gold) < 8
-    # Trap: pick the credit-normal accounts instead (contra-assets etc.).
-    inverse = sorted(set(expected["options"]) - gold)
-    assert grade_answer(expected, ans(inverse)).reward == 0
-    assert grade_answer(expected, ans(expected["options"])).reward == 0
     question = instance.app_files["question.md"]
     for oid in expected["options"]:
         assert f"- {oid}." in question
+    # Documented trap: classify by headline class — sweep the
+    # contra-assets (credit-normal) in with the assets and leave the
+    # equity/revenue contras (dividends, sales returns) out.
+    import re
+
+    by_name = dict(re.findall(r"- ([A-H])\. (.+?) has a normal DEBIT balance\.", question))
+    contra_assets = {"Accumulated depreciation", "Allowance for doubtful accounts"}
+    debit_lookalikes = {"Dividends declared", "Sales returns and allowances"}
+    trap = {oid for oid, name in by_name.items() if name in contra_assets}
+    trap |= gold - {oid for oid, name in by_name.items() if name in debit_lookalikes}
+    assert trap != gold  # the seeded option set must contain the trap material
+    assert grade_answer(expected, ans(sorted(trap))).reward == 0
 
 
 @pytest.mark.parametrize("seed", [1, 7, 42, 234])
@@ -242,5 +250,24 @@ def test_single_choice_families_oracle_and_wrong_option(task_id, seed):
     assert grade_answer(expected, None).reward == 0
     wrong = next(o for o in expected["options"] if o != expected["gold"])
     report = grade_answer(expected, ans(wrong))
+    assert report.reward == 0
+    assert report.layers["answer_accuracy"].score == 0.0
+
+
+def test_sc_special_journal_return_documented_trap():
+    """Documented trap: routing a credit-sale return to the sales journal."""
+    import re
+
+    for seed in range(1, 200):
+        instance = FAMILIES["sc-special-journal-routing"](seed)
+        if "returned merchandise sold on credit" in instance.app_files["question.md"]:
+            break
+    else:  # pragma: no cover - the case pool guarantees a hit quickly
+        raise AssertionError("return case not found in seeds 1..199")
+    expected = {**instance.expected, "format": instance.format}
+    by_label = dict(re.findall(r"- ([A-E])\. (.+)", instance.app_files["question.md"]))
+    sales_journal = next(oid for oid, name in by_label.items() if name == "Sales journal")
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    report = grade_answer(expected, ans(sales_journal))
     assert report.reward == 0
     assert report.layers["answer_accuracy"].score == 0.0

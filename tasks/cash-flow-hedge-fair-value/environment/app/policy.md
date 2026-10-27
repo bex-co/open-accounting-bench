@@ -10,6 +10,9 @@
   Only items with a useful life over one year are capitalized as assets.
 - Every transaction must balance (debits equal credits) and be dated
   within the reporting period unless the task states otherwise.
-- For a cash-flow hedge, the effective portion of the derivative's
-  fair-value change goes to other comprehensive income; any
-  ineffective portion is recognized immediately in profit or loss.
+- Cash-flow hedge (IFRS 9): the effective portion recognized in
+  other comprehensive income is the LOWER of (a) the cumulative
+  gain or loss on the hedging instrument and (b) the cumulative
+  change in the present value of the hedged forecast cash flows.
+  Any excess gain on the instrument is ineffectiveness,
+  recognized immediately in profit or loss.

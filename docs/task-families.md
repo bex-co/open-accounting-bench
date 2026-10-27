@@ -407,7 +407,7 @@ problem the task hands over. An analysis task can be vocational.
 | `internal-use-software-costs` | intangible-assets | journal-entry | us-gaap | application | `asc:350-40` | Capitalize all project costs |
 | `lessor-sales-type-lease` | leases | journal-entry | core | analysis | `asc:842`, `ifrs:16` | Record lease at cost |
 | `factoring-secured-borrowing` | receivables | journal-entry | core | analysis | `asc:860`, `ifrs:9` | Derecognize receivables |
-| `pension-expense-and-contribution` | employee-benefits | journal-entry | core | analysis | `asc:715`, `ias:19` | Expense cash contribution |
+| `pension-expense-and-contribution` | employee-benefits | journal-entry | us-gaap | analysis | `asc:715` | Amortization through the liability |
 | `irr-from-annuity-factor` | capital-budgeting | numeric | core | application | — | Answer payback factor |
 | `c-corporation-taxable-income` | income-taxes | numeric | core | application | — | Answer book income |
 | `s-corporation-aaa-ending` | passthrough-taxation | numeric | core | application | — | Tax-exempt income into AAA |
@@ -416,8 +416,8 @@ problem the task hands over. An analysis task can be vocational.
 | `cash-and-equivalents-total` | cash-controls | numeric | core | application | — | Include restricted cash and net overdraft |
 | `sc-investment-classification` | investments | single-choice | us-gaap | remembering-understanding | `asc:320` | Mismatch management intent |
 | `mc-reportable-segments` | segment-reporting | multiple-choice | core | application | `asc:280`, `ifrs:8` | Require all three 10% tests |
-| `cash-flow-hedge-fair-value` | derivatives-hedging | journal-entry | core | analysis | `asc:815`, `ifrs:9` | Whole gain to OCI |
-| `provision-rollforward-topup` | provisions-contingencies | journal-entry | core | application | `asc:712`, `ias:37` | Expense required ending balance |
+| `cash-flow-hedge-fair-value` | derivatives-hedging | journal-entry | ifrs | analysis | `ifrs:9` | Whole gain to OCI |
+| `provision-rollforward-topup` | provisions-contingencies | journal-entry | core | application | `asc:420`, `ias:37` | Expense required ending balance |
 | `partnership-admission-bonus` | partnerships | journal-entry | core | analysis | — | Credit new partner full contribution |
 | `governmental-encumbrance-entry` | governmental-accounting | journal-entry | us-gaap | application | — | Expenditure at PO estimate |
 | `contract-acquisition-cost` | revenue-recognition | journal-entry | core | application | `asc:340-40`, `ifrs:15` | Expense incremental commission |
@@ -446,7 +446,7 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 106 | 9 | 6 | planned |
+| financial-accounting | 104 | 10 | 7 | planned |
 | management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
 | audit-assurance | 6 | — | planned | — |

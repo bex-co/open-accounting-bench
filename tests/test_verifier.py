@@ -779,7 +779,7 @@ def test_dishonored_note_principal_only_fails():
     instance = FAMILIES["note-dishonored"](133)
     principal = -_deltas(instance)["Assets:NotesReceivable"]
     wrong = instance.initial_ledger + _entry(
-        "2026-01-31",
+        instance.expected["expected_period"][0],
         "Customer",
         [("Assets:AccountsReceivable", principal), ("Assets:NotesReceivable", -principal)],
     )
@@ -787,7 +787,7 @@ def test_dishonored_note_principal_only_fails():
 
 
 def test_capitalizing_whole_machine_invoice_fails():
-    """Trap: capitalize training and the service plan into the machine cost."""
+    """Trap: capitalize training and routine maintenance into machine cost."""
     instance = FAMILIES["capitalized-cost-bundle"](141)
     d = _deltas(instance)
     total = -d["Assets:Bank:Checking"]
@@ -1500,18 +1500,25 @@ def test_crediting_new_partner_full_contribution_fails():
     _assert_semantic_trap(instance, wrong)
 
 
-def test_governmental_expenditure_at_estimate_fails():
-    """Trap: record the expenditure at the purchase-order estimate."""
+def test_governmental_full_encumbrance_reversal_fails():
+    """Trap: reverse the WHOLE encumbrance on a partial receipt."""
     import re
     from decimal import Decimal
 
     instance = FAMILIES["governmental-encumbrance-entry"](254)
     doc = instance.app_files["documents/purchase_order.md"]
     estimate = Decimal(re.search(r"estimated at\s+USD ([\d]+\.[\d]{2})", doc)[1])
-    wrong = instance.initial_ledger + _entry(
-        "2026-01-20",
-        "Supplier",
-        [("Expenses:Expenditures", estimate), ("Liabilities:AccountsPayable", -estimate)],
+    actual = _deltas(instance)["Expenses:Expenditures"]
+    enc, res = "Expenses:Encumbrances", "Equity:BudgetaryFundBalanceAssigned"
+    wrong = (
+        instance.initial_ledger
+        + _entry("2026-01-05", "Purchasing", [(enc, estimate), (res, -estimate)])
+        + _entry("2026-01-20", "Purchasing", [(res, estimate), (enc, -estimate)])
+        + _entry(
+            "2026-01-20",
+            "Supplier",
+            [("Expenses:Expenditures", actual), ("Liabilities:AccountsPayable", -actual)],
+        )
     )
     _assert_semantic_trap(instance, wrong)
 
@@ -1632,6 +1639,31 @@ def test_sales_type_lease_at_cost_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_factoring_split_entries_pass():
+    """Booking the advance and the fee as two transactions is correct."""
+    instance = FAMILIES["factoring-secured-borrowing"](241)
+    d = _deltas(instance)
+    cash = d["Assets:Bank:Checking"]
+    fee = d["Expenses:FactoringFee"]
+    advance = -d["Liabilities:SecuredBorrowing"]
+    split = (
+        instance.initial_ledger
+        + _entry(
+            "2026-01-12",
+            "Factor",
+            [("Assets:Bank:Checking", advance), ("Liabilities:SecuredBorrowing", -advance)],
+        )
+        + _entry(
+            "2026-01-12",
+            "Factor",
+            [("Expenses:FactoringFee", fee), ("Assets:Bank:Checking", -fee)],
+        )
+    )
+    assert cash == advance - fee
+    report = verify(instance.initial_ledger, split, instance.expected)
+    assert report.reward == 1, report.to_report_json()
+
+
 def test_factoring_derecognizing_receivables_fails():
     """Trap: treat a with-recourse pledge as a sale of receivables."""
     instance = FAMILIES["factoring-secured-borrowing"](241)
@@ -1659,5 +1691,24 @@ def test_expensing_pension_contribution_fails():
         "2026-01-20",
         "Pension plan",
         [("Expenses:Pension", contribution), ("Assets:Bank:Checking", -contribution)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_pension_amortization_through_liability_fails():
+    """Trap: route the AOCI amortization leg through the pension liability."""
+    instance = FAMILIES["pension-expense-and-contribution"](242)
+    d = _deltas(instance)
+    expense = d["Expenses:Pension"]
+    contribution = -d["Assets:Bank:Checking"]
+    old_model_reduction = contribution - expense
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Pension plan",
+        [
+            ("Expenses:Pension", expense),
+            ("Liabilities:NetPensionLiability", old_model_reduction),
+            ("Assets:Bank:Checking", -contribution),
+        ],
     )
     _assert_semantic_trap(instance, wrong)

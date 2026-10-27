@@ -2,7 +2,7 @@
   "task_id": "cash-flow-hedge-fair-value",
   "family": "derivatives-hedging",
   "seed": 251,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -25,11 +25,10 @@
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",
-  "framework": "core",
+  "framework": "ifrs",
   "level": "university",
   "skill": "analysis",
   "standards": [
-    "asc:815",
     "ifrs:9"
   ]
 }

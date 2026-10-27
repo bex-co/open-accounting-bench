@@ -26,10 +26,10 @@ option "operating_currency" "USD"
   Expenses:Encumbrances  43500.00 USD
   Equity:BudgetaryFundBalanceAssigned  -43500.00 USD
 
-2026-01-20 * "Purchasing" "Reverse encumbrance on receipt"
-  Equity:BudgetaryFundBalanceAssigned  43500.00 USD
-  Expenses:Encumbrances  -43500.00 USD
+2026-01-20 * "Purchasing" "Reverse encumbrance for goods received"
+  Equity:BudgetaryFundBalanceAssigned  26100.00 USD
+  Expenses:Encumbrances  -26100.00 USD
 
 2026-01-20 * "Supplier" "Supplies received; invoice recorded"
-  Expenses:Expenditures  42500.00 USD
-  Liabilities:AccountsPayable  -42500.00 USD
+  Expenses:Expenditures  25100.00 USD
+  Liabilities:AccountsPayable  -25100.00 USD

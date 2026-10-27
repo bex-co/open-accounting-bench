@@ -12,6 +12,6 @@
   within the reporting period unless the task states otherwise.
 - Capitalized cost of equipment includes the invoice price and all
   costs needed to bring it to working condition (freight-in,
-  installation, testing). Staff training and post-commissioning
-  service plans are period expenses (`Expenses:Training` and
-  `Expenses:Repairs` respectively).
+  installation, testing). Staff training and routine maintenance
+  performed after the asset is in use are period expenses
+  (`Expenses:Training` and `Expenses:Repairs` respectively).

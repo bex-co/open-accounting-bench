@@ -14,4 +14,4 @@
 - `Expenses:Utilities` — Utilities
 - `Assets:InterestRateSwap` — Interest-rate swap at fair value
 - `Equity:AccumulatedOtherComprehensiveIncome` — Accumulated OCI — cash-flow hedges
-- `Income:UnrealizedGainLoss` — Hedgeineffectiveness gain in profit or loss
+- `Income:UnrealizedGainLoss` — Hedge ineffectiveness gain in profit or loss

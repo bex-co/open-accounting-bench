@@ -27,7 +27,7 @@ option "operating_currency" "USD"
   Assets:InterestReceivable  630.00 USD
   Equity:Opening-Balances  -84630.00 USD
 
-2026-01-31 * "Fjord Outfitters" "Dishonored note charged to customer account"
+2026-01-30 * "Fjord Outfitters" "Dishonored note charged to customer account"
   Assets:AccountsReceivable  85260.00 USD
   Assets:NotesReceivable  -84000.00 USD
   Assets:InterestReceivable  -630.00 USD

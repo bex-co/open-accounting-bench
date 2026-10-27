@@ -2,7 +2,7 @@
   "task_id": "aro-accretion",
   "family": "provisions-contingencies",
   "seed": 256,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

@@ -12,14 +12,14 @@ task_id = "pension-expense-and-contribution"
 family = "employee-benefits"
 difficulty = "hard"
 category = "financial-accounting"
-framework = "core"
+framework = "us-gaap"
 level = "university"
 format = "journal-entry"
 skill = "analysis"
-standards = ["asc:715", "ias:19"]
+standards = ["asc:715"]
 track = "stable"
 seed = 242
-generator_version = "0.3.0"
+generator_version = "0.4.0"
 ledger_engine = "beancount"
 
 [verifier]

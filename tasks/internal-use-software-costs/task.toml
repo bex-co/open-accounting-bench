@@ -19,7 +19,7 @@ skill = "application"
 standards = ["asc:350-40"]
 track = "stable"
 seed = 239
-generator_version = "0.3.0"
+generator_version = "0.4.0"
 ledger_engine = "beancount"
 
 [verifier]

@@ -2,7 +2,7 @@
   "task_id": "process-costing-equivalent-units",
   "family": "process-costing",
   "seed": 125,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

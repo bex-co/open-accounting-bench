@@ -2,7 +2,7 @@
   "task_id": "mgmt-break-even-units",
   "family": "cost-volume-profit",
   "seed": 106,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

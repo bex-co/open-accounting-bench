@@ -2,7 +2,7 @@
   "task_id": "small-stock-dividend",
   "family": "equity",
   "seed": 159,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

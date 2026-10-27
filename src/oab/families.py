@@ -1798,7 +1798,14 @@ def sales_return_restock(seed: int) -> TaskInstance:
         ),
         app_files={
             "ledger.beancount": initial,
-            "policy.md": MERCH_POLICY,
+            "policy.md": MERCH_POLICY
+            + (
+                "- Sales returns are recorded in the contra-revenue account\n"
+                "  `Income:SalesReturnsAndAllowances` at the selling price\n"
+                "  (debit), never netted directly against sales revenue;\n"
+                "  restocked goods return to inventory at unit cost with the\n"
+                "  offset to cost of goods sold.\n"
+            ),
             "chart_of_accounts.md": _chart_md(RETURN_ACCOUNTS),
             "documents/return_memo.md": memo,
         },
@@ -3050,8 +3057,8 @@ def note_dishonored(seed: int) -> TaskInstance:
     doc = (
         f"# Note status — {customer}\n\n"
         f"The customer's 2-month note (principal USD {money(principal)}, "
-        f"{annual * 100:.0f}% a year) was accepted on 2025-12-01 and accrued "
-        "for one month at 2026-01-01. It matured on 2026-01-31 and was "
+        f"{annual * 100:.0f}% a year) was accepted on 2025-11-30 and accrued "
+        "for one month (December) at 2026-01-01. It matured on 2026-01-30 and was "
         "dishonored: the maker did not pay. Charge the maker's account the "
         "full maturity value (principal plus 2 months of interest).\n"
     )
@@ -3063,7 +3070,7 @@ def note_dishonored(seed: int) -> TaskInstance:
         "  Interest uses a 12-month year (monthly = principal x rate / 12).\n"
     )
     solution = initial + _txn(
-        "2026-01-31",
+        "2026-01-30",
         customer,
         "Dishonored note charged to customer account",
         [
@@ -3080,7 +3087,7 @@ def note_dishonored(seed: int) -> TaskInstance:
         instruction=(
             "Record the dishonor described in `/app/documents/note_status.md` "
             "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
-            "balanced transactions dated 2026-01-31; do not edit existing "
+            "balanced transactions dated 2026-01-30; do not edit existing "
             "entries."
         ),
         app_files={
@@ -3100,7 +3107,7 @@ def note_dishonored(seed: int) -> TaskInstance:
                 INTEREST_INCOME: money(-monthly),
             },
             expected_new_transactions=[1, 2],
-            expected_period=["2026-01-31", "2026-01-31"],
+            expected_period=["2026-01-30", "2026-01-30"],
             required_final_balances={NOTE: "0.00", INTEREST_REC: "0.00"},
         ),
         solution_ledger=solution,
@@ -3490,8 +3497,9 @@ def capitalized_cost_bundle(seed: int) -> TaskInstance:
     """Scenario: machine invoice bundles capitalizable and period costs.
 
     Oracle: equipment = invoice price + freight-in + installation/testing;
-    staff training and the first-year service plan are expensed.
-    Trap: capitalizing the whole invoice (training/service inflate cost).
+    staff training and a routine maintenance visit performed after the
+    machine entered service are period expenses.
+    Trap: capitalizing the whole invoice (training/maintenance inflate cost).
     Level V/U/V/U/V/V/V -> vocational (borderline).
     """
     rng = random.Random(seed)
@@ -3514,16 +3522,18 @@ def capitalized_cost_bundle(seed: int) -> TaskInstance:
         f"| Freight-in | {money(freight)} |\n"
         f"| Installation and testing | {money(install)} |\n"
         f"| Operator training course | {money(training)} |\n"
-        f"| First-year service plan | {money(service)} |\n"
+        f"| Routine maintenance visit (after the machine entered service) | {money(service)} |\n"
         f"| **Total paid from checking** | **{money(total)}** |\n"
-        "\nThe machine was ready for use on the invoice date.\n"
+        "\nThe machine was ready for use on the invoice date; the training "
+        "course and the routine maintenance visit took place later the "
+        "same month, after it entered service.\n"
     )
     policy = POLICY + (
         "- Capitalized cost of equipment includes the invoice price and all\n"
         "  costs needed to bring it to working condition (freight-in,\n"
-        "  installation, testing). Staff training and post-commissioning\n"
-        "  service plans are period expenses (`Expenses:Training` and\n"
-        "  `Expenses:Repairs` respectively).\n"
+        "  installation, testing). Staff training and routine maintenance\n"
+        "  performed after the asset is in use are period expenses\n"
+        "  (`Expenses:Training` and `Expenses:Repairs` respectively).\n"
     )
     solution = initial + _txn(
         date,
@@ -5764,13 +5774,13 @@ def closing_drawing_account(seed: int) -> TaskInstance:
 TRADING = "Assets:TradingSecurities"
 UNREALIZED = "Income:UnrealizedGainLoss"
 TRADING_ACCOUNTS = [
-    (TRADING, "Trading securities at fair value"),
-    (UNREALIZED, "Unrealized gain (credit) or loss on trading securities"),
+    (TRADING, "Equity securities measured at fair value through net income"),
+    (UNREALIZED, "Unrealized gain (credit) or loss on equity securities"),
 ]
 
 
 def trading_securities_fair_value(seed: int) -> TaskInstance:
-    """Scenario: mark trading securities up to fair value at month-end.
+    """Scenario: mark equity securities (FV-NI) up to fair value at month-end.
 
     Oracle: debit the securities, credit unrealized gain in income for
     shares x (fair value - cost). Trap: leaving them at cost, or routing
@@ -5787,30 +5797,32 @@ def trading_securities_fair_value(seed: int) -> TaskInstance:
     initial = _ledger_header(opening, TRADING_ACCOUNTS) + _txn(
         "2026-01-05",
         "Broker",
-        f"Bought {shares} shares as trading securities",
+        f"Bought {shares} equity shares (fair value through net income)",
         [(TRADING, cost_total), (BANK, -cost_total)],
     )
     doc = (
         "# Month-end quotes — 2026-01-31\n\n"
         f"The {shares} shares bought on 2026-01-05 at USD {money(cost_each)} each "
         f"are quoted at USD {money(fair_each)} each at 2026-01-31. The shares are "
-        "held for trading (bought to sell at a short-term profit).\n"
+        "equity securities bought to sell at a short-term profit and "
+        "measured at fair value through net income.\n"
     )
     policy = POLICY + (
-        "- Trading securities are carried at fair value; unrealized gains and\n"
-        "  losses are recognized in current income "
-        "(`Income:UnrealizedGainLoss`) at each month-end.\n"
+        "- Equity securities measured at fair value through net income are\n"
+        "  carried at fair value; unrealized gains and losses are "
+        "recognized in current income (`Income:UnrealizedGainLoss`) at "
+        "each month-end.\n"
     )
     solution = initial + _txn(
         "2026-01-31",
         "Broker",
-        "Mark trading securities to fair value",
+        "Mark equity securities to fair value",
         [(TRADING, gain), (UNREALIZED, -gain)],
     )
     return TaskInstance(
         task_id="trading-securities-fair-value",
         family="investments",
-        title="Mark trading securities to fair value",
+        title="Mark equity securities to fair value through income",
         instruction=(
             "Record the month-end adjustment in "
             "`/app/documents/month_end_quotes.md` in `/app/ledger.beancount`, "
@@ -5832,7 +5844,7 @@ def trading_securities_fair_value(seed: int) -> TaskInstance:
             required_final_balances={TRADING: money(cost_total + gain)},
         ),
         solution_ledger=solution,
-        keywords=["trading-securities", "fair-value", "unrealized-gain"],
+        keywords=["equity-securities", "fair-value", "unrealized-gain"],
         level="vocational",
         standards=["asc:321", "ifrs:9"],
     )
@@ -6987,7 +6999,9 @@ SUBSEQUENT_CASES = [
         "Disclose only (do not adjust)",
     ),
     (
-        "The board approved a 2-for-1 stock split in February, after the reporting date.",
+        "In February, after the reporting date, the company signed a "
+        "material agreement to acquire a competitor for cash; the "
+        "acquisition has not yet closed.",
         "Disclose only (do not adjust)",
     ),
     (
@@ -7018,7 +7032,8 @@ def sc_subsequent_event_classification(seed: int) -> TaskInstance:
   EXISTED at the reporting date (e.g., bankruptcy proving a receivable
   was already impaired, settling pre-existing litigation).
 - DISCLOSE ONLY material events arising from conditions AFTER the
-  reporting date (e.g., a later fire, a later stock split).
+  reporting date (e.g., a later fire, a material post-period
+  acquisition agreement).
 - Immaterial later events are neither recognized nor disclosed.
 """
     question = _choice_question(
@@ -7436,8 +7451,8 @@ def inventory_error_correction(seed: int) -> TaskInstance:
         f"The 2025 year-end count omitted {omitted_units} {item} (cost "
         f"USD {money(unit_cost)} each) held in a side storeroom, so opening "
         "inventory and opening retained earnings are both understated. The "
-        "2025 statements have been issued. Ignore income-tax effects for "
-        "this correction (handled separately).\n"
+        "error is material to the 2025 statements, which have been issued. "
+        "Ignore income-tax effects for this correction (handled separately).\n"
     )
     policy = POLICY + (
         "- A material prior-period error is corrected retrospectively\n"
@@ -7963,13 +7978,12 @@ def sc_transaction_statement_impact(seed: int) -> TaskInstance:
     options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
     policy = """# Transaction effects (applies to this task)
 
-- Apply Assets = Liabilities + Equity. Revenues increase equity;
-  expenses and owner withdrawals/dividends decrease it.
-- Exchanging one asset for another of equal carrying amount (buying
-  equipment for cash; collecting a receivable) leaves TOTAL assets
-  unchanged.
-- Borrowing or buying on credit increases both assets and liabilities;
-  paying a payable decreases both.
+- Apply Assets = Liabilities + Equity to the transaction as a whole,
+  working out its immediate effect on each TOTAL. Revenues increase
+  equity; expenses and owner withdrawals/dividends decrease it.
+- Judge each transaction on its stated facts: what is given up, what
+  is received or owed, and whether any amount is revenue, an expense,
+  or a distribution to owners.
 """
     question = _choice_question(
         "effect on the accounting equation",
@@ -8326,7 +8340,7 @@ SHARE_COMP_ACCOUNTS = [
 
 
 def share_based_compensation_monthly(seed: int) -> TaskInstance:
-    """Scenario: employee options vest straight-line over several years.
+    """Scenario: employee options cliff-vest after several years of service.
 
     Oracle: January expense is grant-date fair value divided by vesting
     months, credited to APIC. Trap: expensing the entire grant in January.
@@ -8342,9 +8356,10 @@ def share_based_compensation_monthly(seed: int) -> TaskInstance:
     doc = (
         "# Equity award grant — 2026-01-01\n\n"
         f"Employee stock options with total grant-date fair value "
-        f"USD {money(total)} were granted on 2026-01-01. They vest "
-        f"straight-line over {years} years of service ({months} months). "
-        "No forfeitures are expected; no cash changed hands.\n"
+        f"USD {money(total)} were granted on 2026-01-01. The whole award "
+        f"cliff-vests after {years} years of service ({months} months); "
+        "there are no interim tranches. No forfeitures are expected; no "
+        "cash changed hands.\n"
     )
     policy = POLICY + (
         "- Equity-classified share-based compensation is expensed\n"
@@ -10687,6 +10702,7 @@ def factoring_secured_borrowing(seed: int) -> TaskInstance:
                 FINANCE_FEE: money(fee),
                 SECURED_BORROWING: money(-advance),
             },
+            expected_new_transactions=[1, 3],
             expected_period=["2026-01-12", "2026-01-12"],
             required_final_balances={AR: money(receivables)},
         ),
@@ -10704,16 +10720,19 @@ PENSION_LIABILITY = "Liabilities:NetPensionLiability"
 PENSION_ACCOUNTS = [
     (PENSION_EXPENSE, "Net periodic pension cost"),
     (PENSION_LIABILITY, "Net defined-benefit pension liability"),
+    (AOCI, "Accumulated other comprehensive income (debit = unrecognized loss)"),
 ]
 
 
 def pension_expense_and_contribution(seed: int) -> TaskInstance:
-    """Scenario: January pension cost components and a larger cash contribution.
+    """Scenario (US GAAP): January pension cost and a larger cash contribution.
 
     Oracle: net pension expense = service + interest - expected return
-    + amortization; the excess of the cash contribution over expense
-    reduces the pension liability. Trap: expensing the cash contribution.
-    Level V/U/U/U/U/U/U -> university.
+    + amortization of prior losses; the amortization is reclassified
+    OUT of AOCI (credit AOCI), not routed through the liability, so the
+    liability falls by contribution - (service + interest - return).
+    Trap: the old single-account model — booking the amortization leg
+    through the pension liability (or expensing the contribution).
     """
     rng = random.Random(seed)
     service = Decimal(rng.randrange(30, 91)) * 100
@@ -10725,35 +10744,61 @@ def pension_expense_and_contribution(seed: int) -> TaskInstance:
         service += Decimal("10000")
         expense += Decimal("10000")
     contribution = expense + Decimal(rng.randrange(10, 61)) * 100
-    reduction = contribution - expense
+    # Liability leg excludes the amortization: it is reclassified from AOCI.
+    reduction = contribution - (service + interest - expected_return)
     opening_liability = contribution * rng.randint(3, 5)
+    # Opening AOCI holds prior unrecognized losses (debit), well above
+    # the amount amortized this month, so the reclassification credit
+    # cannot flip it to a credit balance.
+    aoci_open = amortization * rng.randint(3, 6)
     opening = contribution + Decimal("30000.00")
-    initial = _ledger_header(opening, PENSION_ACCOUNTS) + _txn(
-        "2026-01-01",
-        "Opening",
-        "Opening net pension liability",
-        [("Equity:Opening-Balances", opening_liability), (PENSION_LIABILITY, -opening_liability)],
+    initial = (
+        _ledger_header(opening, PENSION_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Opening net pension liability",
+            [
+                ("Equity:Opening-Balances", opening_liability),
+                (PENSION_LIABILITY, -opening_liability),
+            ],
+        )
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Unrecognized actuarial losses in AOCI",
+            [(AOCI, aoci_open), ("Equity:Opening-Balances", -aoci_open)],
+        )
     )
     doc = (
-        "# Pension data — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        "# Pension data — January 2026 (US GAAP, ASC 715)\n\n| Item | USD |\n|---|---:|\n"
         f"| Service cost | {money(service)} |\n"
         f"| Interest cost on the obligation | {money(interest)} |\n"
         f"| Expected return on plan assets | {money(expected_return)} |\n"
         f"| Amortization of prior actuarial losses | {money(amortization)} |\n"
+        f"| Unrecognized actuarial losses in AOCI, 2026-01-01 (debit) | {money(aoci_open)} |\n"
         f"| Employer cash contribution (2026-01-20) | {money(contribution)} |\n"
     )
     policy = POLICY + (
         "- Net periodic pension cost = service cost + interest cost -\n"
-        "  expected return on plan assets + amortization amounts. Employer\n"
-        "  cash contributions are funding, not expense: any excess of the\n"
-        "  contribution over the period cost reduces the net pension\n"
-        "  liability (credit bank for the full contribution).\n"
+        "  expected return on plan assets + amortization amounts. The\n"
+        "  amortization of prior losses is reclassified OUT OF accumulated\n"
+        "  other comprehensive income (credit `Equity:AccumulatedOther-\n"
+        "  ComprehensiveIncome`); it does not pass through the pension\n"
+        "  liability. Service cost, interest cost, expected return, and\n"
+        "  the contribution do. Employer cash contributions are funding,\n"
+        "  not expense (credit bank for the full contribution).\n"
     )
     solution = initial + _txn(
         "2026-01-20",
         "Pension plan",
         "Pension cost and January funding",
-        [(PENSION_EXPENSE, expense), (PENSION_LIABILITY, reduction), (BANK, -contribution)],
+        [
+            (PENSION_EXPENSE, expense),
+            (PENSION_LIABILITY, reduction),
+            (AOCI, -amortization),
+            (BANK, -contribution),
+        ],
     )
     return TaskInstance(
         task_id="pension-expense-and-contribution",
@@ -10778,18 +10823,23 @@ def pension_expense_and_contribution(seed: int) -> TaskInstance:
             expected_deltas={
                 PENSION_EXPENSE: money(expense),
                 PENSION_LIABILITY: money(reduction),
+                AOCI: money(-amortization),
                 BANK: money(-contribution),
             },
             expected_new_transactions=[1, 3],
             expected_period=["2026-01-20", "2026-01-20"],
-            required_final_balances={PENSION_LIABILITY: money(-(opening_liability - reduction))},
+            required_final_balances={
+                PENSION_LIABILITY: money(-(opening_liability - reduction)),
+                AOCI: money(aoci_open - amortization),
+            },
         ),
         solution_ledger=solution,
         difficulty="hard",
         keywords=["defined-benefit", "pension-cost", "funding"],
         level="university",
         skill="analysis",
-        standards=["asc:715", "ias:19"],
+        framework="us-gaap",
+        standards=["asc:715"],
     )
 
 
@@ -11249,6 +11299,9 @@ def mc_reportable_segments(seed: int) -> TaskInstance:
   combined revenue, at least 10% of the greater of combined segment
   profits/losses, or at least 10% of combined segment assets.
 - Meeting two or all three tests is not required.
+- The separate 75% external-revenue sufficiency test is already met by
+  the segments passing a 10% test in this scenario (confirmed by
+  management); do not add segments on that basis.
 """
     question = _choice_question(
         "reportable operating segments",
@@ -11296,42 +11349,46 @@ DERIVATIVE = "Assets:InterestRateSwap"
 HEDGE_ACCOUNTS = [
     (DERIVATIVE, "Interest-rate swap at fair value"),
     (AOCI, "Accumulated OCI — cash-flow hedges"),
-    (UNREALIZED, "Hedgeineffectiveness gain in profit or loss"),
+    (UNREALIZED, "Hedge ineffectiveness gain in profit or loss"),
 ]
 
 
 def cash_flow_hedge_fair_value(seed: int) -> TaskInstance:
-    """Scenario: cash-flow hedge swap gains value; most is effective.
+    """Scenario (IFRS 9): cash-flow hedge swap gains more than the hedged item.
 
-    Oracle: debit derivative for the full fair-value increase; credit the
-    effective portion to OCI and only the ineffective portion to income.
-    Trap: putting the whole gain in OCI. Level V/U/U/U/U/U/U.
+    Oracle: debit derivative for the full fair-value increase; the
+    effective portion (lower of the cumulative instrument gain and the
+    cumulative change in the hedged item) goes to OCI, the excess to
+    profit or loss. Trap: putting the whole gain in OCI.
     """
     rng = random.Random(seed)
     total_gain = Decimal(rng.randrange(20, 101)) * 1000
     effective_pct = rng.choice([80, 90])
-    effective = total_gain * effective_pct / 100
-    ineffective = total_gain - effective
+    hedged_change = total_gain * effective_pct / 100
+    ineffective = total_gain - hedged_change
     opening = Decimal("50000.00")
     initial = _ledger_header(opening, HEDGE_ACCOUNTS)
     doc = (
         "# Hedge valuation — 2026-01-31\n\n"
         "The interest-rate swap (designated and documented as a cash-flow "
         f"hedge) had nil fair value at inception on 2026-01-01 and a fair "
-        f"value asset of USD {money(total_gain)} at January 31. Hedge "
-        f"accounting testing attributes {effective_pct}% of the change to "
-        "the effective portion; the rest is ineffectiveness.\n"
+        f"value asset of USD {money(total_gain)} at January 31. Since "
+        "inception the cumulative change in the present value of the "
+        f"hedged forecast cash flows is USD {money(hedged_change)}.\n"
     )
     policy = POLICY + (
-        "- For a cash-flow hedge, the effective portion of the derivative's\n"
-        "  fair-value change goes to other comprehensive income; any\n"
-        "  ineffective portion is recognized immediately in profit or loss.\n"
+        "- Cash-flow hedge (IFRS 9): the effective portion recognized in\n"
+        "  other comprehensive income is the LOWER of (a) the cumulative\n"
+        "  gain or loss on the hedging instrument and (b) the cumulative\n"
+        "  change in the present value of the hedged forecast cash flows.\n"
+        "  Any excess gain on the instrument is ineffectiveness,\n"
+        "  recognized immediately in profit or loss.\n"
     )
     solution = initial + _txn(
         "2026-01-31",
         "Hedge valuation",
         "Cash-flow hedge fair-value gain",
-        [(DERIVATIVE, total_gain), (AOCI, -effective), (UNREALIZED, -ineffective)],
+        [(DERIVATIVE, total_gain), (AOCI, -hedged_change), (UNREALIZED, -ineffective)],
     )
     return TaskInstance(
         task_id="cash-flow-hedge-fair-value",
@@ -11355,7 +11412,7 @@ def cash_flow_hedge_fair_value(seed: int) -> TaskInstance:
             seed,
             expected_deltas={
                 DERIVATIVE: money(total_gain),
-                AOCI: money(-effective),
+                AOCI: money(-hedged_change),
                 UNREALIZED: money(-ineffective),
             },
             expected_new_transactions=[1, 2],
@@ -11367,7 +11424,8 @@ def cash_flow_hedge_fair_value(seed: int) -> TaskInstance:
         keywords=["derivatives", "cash-flow-hedge", "oci", "ineffectiveness"],
         level="university",
         skill="analysis",
-        standards=["asc:815", "ifrs:9"],
+        framework="ifrs",
+        standards=["ifrs:9"],
     )
 
 
@@ -11462,7 +11520,7 @@ def provision_rollforward_topup(seed: int) -> TaskInstance:
         difficulty="medium",
         keywords=["provision", "rollforward", "restructuring"],
         level="university",
-        standards=["asc:712", "ias:37"],
+        standards=["asc:420", "ias:37"],
     )
 
 
@@ -11582,31 +11640,38 @@ ENCUMBRANCE_ACCOUNTS = [
 
 
 def governmental_encumbrance_entry(seed: int) -> TaskInstance:
-    """Scenario: general-fund purchase order issued, then goods received.
+    """Scenario: general-fund purchase order issued, then a PARTIAL receipt.
 
-    Oracle: encumber the estimate at order, reverse the whole encumbrance
-    on receipt, and record the expenditure/liability at the ACTUAL invoice.
-    Trap: recording the expenditure at the estimated order amount.
-    Level V/U/U/V/U/U/U -> university.
+    Oracle: encumber the full estimate at order; on the partial receipt
+    reverse only the estimated amount for the goods received and record
+    the expenditure at the ACTUAL invoice, leaving the undelivered
+    balance encumbered at month-end. Trap: reversing the whole
+    encumbrance, or reversing it at the actual invoice amount.
     """
     rng = random.Random(seed)
     estimate = Decimal(rng.randrange(40, 121)) * 500
+    received_estimate = estimate * 3 / 5
     saving = Decimal(rng.randrange(2, 11)) * 100
-    actual = estimate - saving
+    actual = received_estimate - saving
+    outstanding = estimate - received_estimate
     opening = Decimal("50000.00")
     initial = _ledger_header(opening, ENCUMBRANCE_ACCOUNTS)
     doc = (
         "# General fund purchase — January 2026\n\n"
         f"2026-01-05: purchase order issued for supplies estimated at "
         f"USD {money(estimate)}.\n"
-        f"2026-01-20: all goods received with an invoice for "
-        f"USD {money(actual)}, unpaid at month-end.\n"
+        f"2026-01-20: part of the order received — the goods received had "
+        f"been estimated at USD {money(received_estimate)} in the order — "
+        f"with an invoice for USD {money(actual)}, unpaid at month-end. "
+        "The rest of the order is still outstanding at month-end.\n"
     )
     policy = POLICY + (
         "- Governmental budgetary accounting: issuing a purchase order\n"
-        "  debits encumbrances and credits budgetary fund balance assigned.\n"
-        "  On receipt, reverse the ORIGINAL estimated encumbrance in full\n"
-        "  and record the expenditure and payable at the actual invoice.\n"
+        "  debits encumbrances and credits budgetary fund balance assigned\n"
+        "  for the full estimated amount. On a (partial) receipt, reverse\n"
+        "  the ORIGINAL estimated encumbrance for the goods received only,\n"
+        "  and record the expenditure and payable at the actual invoice;\n"
+        "  the undelivered balance stays encumbered.\n"
     )
     solution = (
         initial
@@ -11619,8 +11684,8 @@ def governmental_encumbrance_entry(seed: int) -> TaskInstance:
         + _txn(
             "2026-01-20",
             "Purchasing",
-            "Reverse encumbrance on receipt",
-            [(BUDGETARY_RESERVE, estimate), (ENCUMBRANCES, -estimate)],
+            "Reverse encumbrance for goods received",
+            [(BUDGETARY_RESERVE, received_estimate), (ENCUMBRANCES, -received_estimate)],
         )
         + _txn(
             "2026-01-20",
@@ -11650,13 +11715,16 @@ def governmental_encumbrance_entry(seed: int) -> TaskInstance:
             "governmental-accounting",
             seed,
             expected_deltas={
-                ENCUMBRANCES: "0.00",
-                BUDGETARY_RESERVE: "0.00",
+                ENCUMBRANCES: money(outstanding),
+                BUDGETARY_RESERVE: money(-outstanding),
                 EXPENDITURES: money(actual),
                 AP: money(-actual),
             },
             expected_new_transactions=[1, 4],
-            required_final_balances={AP: money(-actual)},
+            required_final_balances={
+                AP: money(-actual),
+                ENCUMBRANCES: money(outstanding),
+            },
         ),
         solution_ledger=solution,
         difficulty="hard",
@@ -11964,6 +12032,8 @@ def passthrough_loss_limitation(seed: int) -> TaskInstance:
         f"| Owner's adjusted basis before the loss | {money(basis)} |\n"
         f"| Amount at risk | {money(at_risk)} |\n"
         f"| Passive income from other activities | {money(passive_income)} |\n"
+        "\nThe activity is passive for this owner: the owner does not "
+        "materially participate.\n"
     )
     policy = """# Loss limitation conventions (applies to this task)
 

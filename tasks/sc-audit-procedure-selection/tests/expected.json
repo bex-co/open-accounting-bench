@@ -2,7 +2,7 @@
   "task_id": "sc-audit-procedure-selection",
   "family": "audit-evidence",
   "seed": 264,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

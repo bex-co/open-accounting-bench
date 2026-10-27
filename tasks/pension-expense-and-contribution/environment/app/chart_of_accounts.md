@@ -14,3 +14,4 @@
 - `Expenses:Utilities` — Utilities
 - `Expenses:Pension` — Net periodic pension cost
 - `Liabilities:NetPensionLiability` — Net defined-benefit pension liability
+- `Equity:AccumulatedOtherComprehensiveIncome` — Accumulated other comprehensive income (debit = unrecognized loss)

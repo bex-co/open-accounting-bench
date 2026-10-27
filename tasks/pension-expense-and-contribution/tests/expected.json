@@ -2,13 +2,14 @@
   "task_id": "pension-expense-and-contribution",
   "family": "employee-benefits",
   "seed": 242,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
     "Expenses:Pension": "3600.00",
-    "Liabilities:NetPensionLiability": "4900.00",
+    "Liabilities:NetPensionLiability": "5900.00",
+    "Equity:AccumulatedOtherComprehensiveIncome": "-1000.00",
     "Assets:Bank:Checking": "-8500.00"
   },
   "allowed_extra_accounts": [],
@@ -21,15 +22,15 @@
     "2026-01-20"
   ],
   "required_final_balances": {
-    "Liabilities:NetPensionLiability": "-29100.00"
+    "Liabilities:NetPensionLiability": "-28100.00",
+    "Equity:AccumulatedOtherComprehensiveIncome": "3000.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",
-  "framework": "core",
+  "framework": "us-gaap",
   "level": "university",
   "skill": "analysis",
   "standards": [
-    "asc:715",
-    "ias:19"
+    "asc:715"
   ]
 }

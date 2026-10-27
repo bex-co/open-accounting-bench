@@ -12,5 +12,5 @@
 - `Expenses:Rent` — Office rent
 - `Expenses:Repairs` — Repairs and maintenance
 - `Expenses:Utilities` — Utilities
-- `Assets:TradingSecurities` — Trading securities at fair value
-- `Income:UnrealizedGainLoss` — Unrealized gain (credit) or loss on trading securities
+- `Assets:TradingSecurities` — Equity securities measured at fair value through net income
+- `Income:UnrealizedGainLoss` — Unrealized gain (credit) or loss on equity securities

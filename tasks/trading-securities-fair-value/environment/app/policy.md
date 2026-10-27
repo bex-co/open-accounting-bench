@@ -10,5 +10,5 @@
   Only items with a useful life over one year are capitalized as assets.
 - Every transaction must balance (debits equal credits) and be dated
   within the reporting period unless the task states otherwise.
-- Trading securities are carried at fair value; unrealized gains and
-  losses are recognized in current income (`Income:UnrealizedGainLoss`) at each month-end.
+- Equity securities measured at fair value through net income are
+  carried at fair value; unrealized gains and losses are recognized in current income (`Income:UnrealizedGainLoss`) at each month-end.

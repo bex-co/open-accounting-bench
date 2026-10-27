@@ -11,6 +11,8 @@
 - Every transaction must balance (debits equal credits) and be dated
   within the reporting period unless the task states otherwise.
 - Governmental budgetary accounting: issuing a purchase order
-  debits encumbrances and credits budgetary fund balance assigned.
-  On receipt, reverse the ORIGINAL estimated encumbrance in full
-  and record the expenditure and payable at the actual invoice.
+  debits encumbrances and credits budgetary fund balance assigned
+  for the full estimated amount. On a (partial) receipt, reverse
+  the ORIGINAL estimated encumbrance for the goods received only,
+  and record the expenditure and payable at the actual invoice;
+  the undelivered balance stays encumbered.

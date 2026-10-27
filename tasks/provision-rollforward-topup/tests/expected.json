@@ -2,7 +2,7 @@
   "task_id": "provision-rollforward-topup",
   "family": "provisions-contingencies",
   "seed": 252,
-  "generator_version": "0.3.0",
+  "generator_version": "0.4.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -29,7 +29,7 @@
   "level": "university",
   "skill": "application",
   "standards": [
-    "asc:712",
+    "asc:420",
     "ias:37"
   ]
 }
