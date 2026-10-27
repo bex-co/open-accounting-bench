@@ -19799,6 +19799,649 @@ def varying_interest_allocation(seed: int) -> TaskInstance:
     )
 
 
+AUDIT_OPINION_OPTIONS = ["Unmodified", "Qualified", "Adverse", "Disclaimer"]
+AUDIT_OPINION_CASES = [
+    (
+        "A departure from the applicable framework misstates one "
+        "material line item; the rest of the statements are fairly "
+        "presented and the effect is confined.",
+        "Qualified",
+    ),
+    (
+        "Departures pervade the statements: revenue, receivables, "
+        "and equity are all materially misstated and the statements "
+        "as a whole are misleading.",
+        "Adverse",
+    ),
+    (
+        "Management prevented the auditor from observing inventory "
+        "and confirming receivables; possible effects of undetected "
+        "misstatements could be both material and pervasive.",
+        "Disclaimer",
+    ),
+    (
+        "A material uncertainty about going concern is adequately "
+        "disclosed and the statements are otherwise fairly presented.",
+        "Unmodified",
+    ),
+    (
+        "An accounting policy change was properly applied "
+        "retrospectively and adequately disclosed; statements are "
+        "fairly presented.",
+        "Unmodified",
+    ),
+]
+
+
+def _choice_task(task_id, family, title, narrative, options, correct, policy, seed, **kw):
+    rng = random.Random(seed)
+    labels = list(options)
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D", "E"][: len(labels)]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    question = _choice_question(
+        title.lower(),
+        f"**{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id=task_id,
+        family=family,
+        title=title,
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            task_id,
+            family,
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        **kw,
+    )
+
+
+def sc_audit_opinion_type(seed: int) -> TaskInstance:
+    """Single-choice: audit opinion from materiality/pervasiveness matrix.
+
+    Trap: issuing adverse for a material but confined departure, or
+    substituting an emphasis paragraph for a needed qualification.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(AUDIT_OPINION_CASES)
+    policy = """# Audit opinion matrix (applies to this task)
+
+- Departure from the framework: material but NOT pervasive ->
+  Qualified; material AND pervasive -> Adverse.
+- Inability to obtain sufficient evidence (scope limitation):
+  material but not pervasive -> Qualified; possible effects
+  material AND pervasive -> Disclaimer.
+- Adequately disclosed going-concern uncertainty or a properly
+  applied, disclosed accounting change does NOT modify the
+  opinion (it stays Unmodified; explanatory language never
+  substitutes for a required modification).
+"""
+    return _choice_task(
+        "sc-audit-opinion-type",
+        "audit-planning",
+        "Audit opinion type",
+        f"Findings: {narrative}",
+        AUDIT_OPINION_OPTIONS,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "audit-opinion", "modified-opinion"],
+    )
+
+
+def control_deviation_rate(seed: int) -> TaskInstance:
+    """Numeric: sample deviation rate against a tolerable rate.
+
+    Trap: reporting the raw deviation COUNT as if it were the rate.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    sample = rng.choice([40, 50, 60, 80])
+    deviations = rng.randint(1, 6)
+    gold = (Decimal(deviations) * 100 / sample).quantize(Decimal("0.1"))
+    data = (
+        "# Test of control: invoice approvals\n\n"
+        f"Sample of {sample} disbursements inspected. In "
+        f"{deviations} items the required independent approval evidence "
+        "was missing; the rest complied. The tolerable deviation rate "
+        "for planned reliance is 5.0%.\n"
+    )
+    policy = """# Deviation rates (stated for this task)
+
+- Sample deviation rate = deviations found / sample size,
+  expressed as a percentage (for example 4 deviations in 50 items
+  is 8.0 percent).
+- Answer the rate as a percentage number in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "sample deviation rate",
+        "Using `/app/documents/control_test.md` and `/app/policy.md`, "
+        "compute the **sample deviation rate** as a percentage number.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="control-deviation-rate",
+        family="audit-planning",
+        title="Sample deviation rate",
+        question=question,
+        policy=policy,
+        data_name="control_test.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "tests-of-controls", "deviation-rate"],
+        abs_tolerance="0.05",
+        trap_value=str(deviations),
+    )
+
+
+def uncorrected_misstatement_total(seed: int) -> TaskInstance:
+    """Numeric: aggregate uncorrected misstatement effect on income.
+
+    Trap: omitting projected misstatements (or the prior-year
+    rollover effect) when evaluating the total.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    known_up, known_down = amt(40, 151), amt(10, 61)
+    projected, prior_effect = amt(30, 121), amt(8, 51)
+    gold = known_up - known_down + projected + prior_effect
+    data = (
+        "# Summary of uncorrected misstatements (effect on pretax income)\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Known misstatements overstating income | {money(known_up)} |\n"
+        f"| Known misstatements understating income | {money(known_down)} |\n"
+        f"| Projected misstatement from sampling (overstates income) | {money(projected)} |\n"
+        f"| Prior-year uncorrected misstatement (overstates now) | {money(prior_effect)} |\n"
+    )
+    policy = """# Evaluating misstatements (stated for this task)
+
+- The aggregate effect on current income includes known
+  misstatements (net, by direction), projected misstatements from
+  sampling, AND the current-period effect of prior-period
+  uncorrected misstatements (rollover).
+- Answer the net amount by which pretax income is OVERSTATED.
+"""
+    question = _numeric_question(
+        "aggregate uncorrected misstatement",
+        "Using `/app/documents/misstatement_summary.md` and `/app/policy.md`, "
+        "compute the net **overstatement of pretax income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="uncorrected-misstatement-total",
+        family="audit-planning",
+        title="Aggregate uncorrected misstatements",
+        question=question,
+        policy=policy,
+        data_name="misstatement_summary.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "misstatements", "evaluation"],
+        abs_tolerance="0.01",
+        trap_value=money(known_up - known_down),
+    )
+
+
+DEFICIENCY_OPTIONS = ["Control deficiency", "Significant deficiency", "Material weakness"]
+DEFICIENCY_CASES = [
+    (
+        "A review control over journal entries does not operate; "
+        "there is a reasonable possibility that a material "
+        "misstatement of the statements would not be prevented or "
+        "detected. The actual misstatement found so far is small.",
+        "Material weakness",
+    ),
+    (
+        "One clerk can add vendors and approve small payments; other "
+        "controls make a material misstatement less than reasonably "
+        "possible, but the gap merits those charged with governance's "
+        "attention.",
+        "Significant deficiency",
+    ),
+    (
+        "A documentation lapse in one low-risk process with "
+        "effective compensating controls and only remote risk of an "
+        "inconsequential misstatement.",
+        "Control deficiency",
+    ),
+]
+
+
+def sc_control_deficiency_severity(seed: int) -> TaskInstance:
+    """Single-choice: severity of an internal control deficiency.
+
+    Trap: ruling out a material weakness because the misstatement
+    found so far is small.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(DEFICIENCY_CASES)
+    policy = """# Deficiency severity (applies to this task)
+
+Severity turns on (a) whether there is a REASONABLE POSSIBILITY
+of misstatement and (b) the potential MAGNITUDE — not on whether
+a material misstatement has actually occurred:
+- Material weakness: reasonable possibility of a MATERIAL
+  misstatement not prevented/detected.
+- Significant deficiency: less severe, but important enough to
+  merit governance attention.
+- (Plain) control deficiency: below significant deficiency.
+"""
+    return _choice_task(
+        "sc-control-deficiency-severity",
+        "internal-control",
+        "Control deficiency severity",
+        f"Finding: {narrative}",
+        DEFICIENCY_OPTIONS,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "material-weakness", "internal-control"],
+    )
+
+
+CONFIRMATION_OPTIONS = [
+    "Misstatement — propose adjustment",
+    "Timing difference — not a misstatement",
+    "Non-response — perform alternative procedures",
+]
+CONFIRMATION_CASES = [
+    (
+        "The customer confirms a lower balance because its payment, "
+        "mailed 30 December, had not yet been received by the client "
+        "at the confirmation date; bank records in January corroborate it.",
+        "Timing difference — not a misstatement",
+    ),
+    (
+        "The customer confirms a lower amount and provides an invoice "
+        "showing the client billed the wrong unit price.",
+        "Misstatement — propose adjustment",
+    ),
+    (
+        "No reply was received after a second confirmation request.",
+        "Non-response — perform alternative procedures",
+    ),
+    (
+        "The customer confirms it returned the goods before year-end; "
+        "the client recorded the return in January.",
+        "Misstatement — propose adjustment",
+    ),
+]
+
+
+def sc_confirmation_response_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify a confirmation outcome.
+
+    Trap: treating a non-response as evidence the balance is right,
+    or a corroborated timing difference as a misstatement.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(CONFIRMATION_CASES)
+    policy = """# Confirmation outcomes (applies to this task)
+
+- A confirmed difference explained and corroborated as timing
+  (cash/goods in transit across the cutoff) is not a misstatement.
+- A confirmed difference caused by a client error (price,
+  quantity, cutoff) is a misstatement to evaluate/propose.
+- A non-response provides NO evidence; perform alternative
+  procedures (subsequent receipts, shipping documents).
+"""
+    return _choice_task(
+        "sc-confirmation-response-classification",
+        "audit-evidence",
+        "Confirmation response classification",
+        f"Outcome: {narrative}",
+        CONFIRMATION_OPTIONS,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "confirmations", "audit-evidence"],
+    )
+
+
+def compliance_violations_count(seed: int) -> TaskInstance:
+    """Numeric: count grant transactions violating stated compliance rules.
+
+    Trap: flagging a transaction exactly AT the stated cap (the cap
+    is inclusive) as a violation.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    compliant = [
+        ("Training course", amt(20, 49), "Within period"),
+        ("Equipment at the cap", Decimal("5000"), "Within period"),
+    ]
+    violations = [
+        ("Equipment above the cap without pre-approval", Decimal("5200"), "Within period"),
+        ("Conference travel", amt(20, 60), "Within period — category PROHIBITED by terms"),
+        ("Consulting after period end", amt(20, 60), "OUTSIDE grant period"),
+    ]
+    rows = [("ok",) + rng.choice(compliant) for _ in range(rng.randint(3, 4))]
+    rows.append(("ok",) + compliant[1])
+    rows += [("bad",) + rng.choice(violations) for _ in range(rng.randint(2, 3))]
+    n_bad = sum(1 for r in rows if r[0] == "bad")
+    rng.shuffle(rows)
+    body = "".join(
+        f"| T{i} | {name} | {money(amount)} | {note} |\n"
+        for i, (_, name, amount, note) in enumerate(rows, 1)
+    )
+    data = (
+        "# Federal grant transactions tested\n\n"
+        "| Txn | Description | Amount (USD) | Timing/category |\n|---|---|---:|---|\n" + body
+    )
+    policy = """# Grant compliance rules (stated for this task)
+
+A transaction complies only if ALL hold:
+- incurred WITHIN the grant period;
+- for an allowable category (travel to conferences is expressly
+  prohibited by the grant terms stated in the data notes);
+- equipment purchases must not EXCEED USD 5,000 without prior
+  approval (exactly 5,000 is permitted).
+
+- Answer the number of violating transactions.
+"""
+    question = _numeric_question(
+        "grant compliance violations",
+        "Using `/app/documents/grant_transactions.md` and `/app/policy.md`, "
+        "compute the **number of violations**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="compliance-violations-count",
+        family="audit-planning",
+        title="Count grant compliance violations",
+        question=question,
+        policy=policy,
+        data_name="grant_transactions.md",
+        data=data,
+        gold=Decimal(n_bad),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "compliance-testing", "grants"],
+        abs_tolerance="0.01",
+        trap_value=str(n_bad + 1),
+    )
+
+
+def inventory_count_adjusted_balance(seed: int) -> TaskInstance:
+    """Numeric: year-end inventory from a count two days earlier (cutoff).
+
+    Trap: reporting the raw count without the cutoff roll-forward.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    count_qty = rng.randrange(800, 2001, 10)
+    receipts_qty, shipments_qty = rng.randrange(50, 301, 10), rng.randrange(40, 251, 10)
+    while abs(receipts_qty - shipments_qty) < 20:
+        shipments_qty = rng.randrange(40, 251, 10)
+    unit_cost = Decimal(rng.randrange(1000, 3001, 25)) / 100
+    gold = ((count_qty + receipts_qty - shipments_qty) * unit_cost).quantize(CENT)
+    data = (
+        "# Inventory count — 2025-12-29 count, year-end 2025-12-31\n\n"
+        "| Item | Units |\n|---|---:|\n"
+        f"| Physical count 29 Dec | {count_qty} |\n"
+        f"| Received 30-31 Dec (title passed, in purchases) | {receipts_qty} |\n"
+        f"| Shipped 30-31 Dec (title passed on shipment) | {shipments_qty} |\n"
+        f"| Unit cost | USD {money(unit_cost)} |\n"
+    )
+    policy = """# Count roll-forward (applies to this task)
+
+Year-end inventory = counted quantity + receipts after the count
+(to which title had passed) - shipments after the count (title
+passed on shipment), valued at the stated unit cost.
+
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "year-end inventory from the count",
+        "Using `/app/documents/inventory_count.md` and `/app/policy.md`, "
+        "compute **year-end inventory** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="inventory-count-adjusted-balance",
+        family="audit-evidence",
+        title="Count roll-forward to year-end",
+        question=question,
+        policy=policy,
+        data_name="inventory_count.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "inventory-count", "cutoff"],
+        abs_tolerance="0.01",
+        trap_value=money((count_qty * unit_cost).quantize(CENT)),
+    )
+
+
+EVIDENCE_CASES = [
+    (
+        "Existence of the year-end bank balance. Which single item is MOST reliable?",
+        [
+            "Original confirmation received directly from the bank",
+            "Photocopy of the bank statement supplied by the client",
+            "The client's bank reconciliation schedule",
+            "Oral assurance from the treasurer",
+        ],
+        "Original confirmation received directly from the bank",
+    ),
+    (
+        "Valuation of a specialized machine. Which single item is MOST reliable?",
+        [
+            "Report of an independent, qualified external appraiser",
+            "Management's internal estimate memo",
+            "The fixed-asset register's carrying amount",
+            "A prior-year insurance schedule",
+        ],
+        "Report of an independent, qualified external appraiser",
+    ),
+    (
+        "Ownership of land. Which single item is MOST reliable?",
+        [
+            "Original title deed inspected by the auditor",
+            "A copy of the deed supplied by management",
+            "Oral assurance from the CFO",
+            "Depreciation schedule listing the land",
+        ],
+        "Original title deed inspected by the auditor",
+    ),
+]
+
+
+def sc_evidence_reliability_choice(seed: int) -> TaskInstance:
+    """Single-choice: pick the most reliable evidence for an assertion.
+
+    Trap: preferring a client-supplied copy over an externally
+    sourced original obtained directly by the auditor.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, options, correct = rng.choice(EVIDENCE_CASES)
+    policy = """# Evidence reliability (applies to this task)
+
+Reliability increases when evidence is obtained from independent
+external sources, directly by the auditor, in original/documentary
+form, and when the source is knowledgeable and objective. Oral
+representations and client-supplied copies rank lowest.
+"""
+    return _choice_task(
+        "sc-evidence-reliability-choice",
+        "audit-evidence",
+        "Most reliable audit evidence",
+        narrative,
+        options,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "audit-evidence", "reliability"],
+    )
+
+
+def three_way_match_exceptions(seed: int) -> TaskInstance:
+    """Numeric: reperformance exceptions in a three-way-match sample.
+
+    Trap: trusting the client's "matched" stamps instead of the
+    independent quantity x price reperformance.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    rows, n_bad = [], 0
+    for _i in range(rng.randint(7, 9)):
+        qty = rng.randrange(10, 201, 10)
+        price = Decimal(rng.randrange(500, 2001, 25)) / 100
+        correct = qty * price
+        if rng.random() < 0.35:
+            paid = correct + Decimal(rng.choice([50, 100, 200]))
+            n_bad += 1
+        else:
+            paid = correct
+        rows.append((qty, price, paid))
+    while n_bad == 0:
+        q, p, _ = rows[0]
+        rows[0] = (q, p, q * p + Decimal("100"))
+        n_bad = 1
+    body = "".join(
+        f"| D{i} | {q} | {money(p)} | {q} | {money(paid)} | Matched (client stamp) |\n"
+        for i, (q, p, paid) in enumerate(rows, 1)
+    )
+    data = (
+        "# Disbursement sample (PO price = agreed price)\n\n"
+        "| Item | PO qty | PO unit price | Received qty | Amount paid | Client stamp |\n"
+        "|---|---:|---:|---:|---:|---|\n" + body
+    )
+    policy = """# Reperformance rules (stated for this task)
+
+- Independently reperform the match: the payment is correct only
+  if it equals received quantity x the purchase-order unit price.
+- The client's "matched" stamp is not evidence of a correct match.
+- Answer the number of exception items.
+"""
+    question = _numeric_question(
+        "three-way match exceptions",
+        "Using `/app/documents/disbursement_sample.md` and `/app/policy.md`, "
+        "compute the **number of exceptions**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="three-way-match-exceptions",
+        family="audit-evidence",
+        title="Reperform the three-way match",
+        question=question,
+        policy=policy,
+        data_name="disbursement_sample.md",
+        data=data,
+        gold=Decimal(n_bad),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "reperformance", "three-way-match"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
+def schedule_recalculation_difference(seed: int) -> TaskInstance:
+    """Numeric: footing/extension errors found by recalculating a schedule.
+
+    Trap: footing the stated extensions column, which merely
+    reproduces the client's arithmetic errors.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    rows, stated_total, true_total = [], Decimal(0), Decimal(0)
+    for _i in range(rng.randint(5, 7)):
+        qty = rng.randrange(20, 301, 10)
+        price = Decimal(rng.randrange(500, 1501, 25)) / 100
+        true_ext = (qty * price).quantize(CENT)
+        stated = true_ext + (
+            Decimal(rng.choice([100, 250, 500])) if rng.random() < 0.35 else Decimal(0)
+        )
+        rows.append((qty, price, stated))
+        stated_total += stated
+        true_total += true_ext
+    while stated_total == true_total:
+        q, p, s = rows[0]
+        rows[0] = (q, p, s + Decimal("250"))
+        stated_total += Decimal("250")
+    body = "".join(
+        f"| Line {i} | {q} | {money(p)} | {money(s)} |\n" for i, (q, p, s) in enumerate(rows, 1)
+    )
+    data = (
+        "# Client schedule of accrued charges\n\n"
+        "| Line | Quantity | Rate (USD) | Stated extension (USD) |\n|---|---:|---:|---:|\n"
+        + body
+        + f"| **Stated total** | | | **{money(stated_total)}** |\n"
+    )
+    policy = """# Recalculation (stated for this task)
+
+- Independently recompute every extension (quantity x rate) and
+  the total; the misstatement is the stated total minus the
+  recomputed total. Checking only that the stated extensions foot
+  to the stated total proves nothing.
+- Answer the overstatement in USD.
+"""
+    question = _numeric_question(
+        "schedule recalculation difference",
+        "Using `/app/documents/client_schedule.md` and `/app/policy.md`, "
+        "compute the **overstatement** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="schedule-recalculation-difference",
+        family="audit-evidence",
+        title="Recalculate the client schedule",
+        question=question,
+        policy=policy,
+        data_name="client_schedule.md",
+        data=data,
+        gold=(stated_total - true_total).quantize(CENT),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "recalculation", "reperformance"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -20070,6 +20713,16 @@ FAMILIES = {
     "fsa-tax-saving": fsa_tax_saving,
     "builtin-gains-tax-base": builtin_gains_tax_base,
     "varying-interest-allocation": varying_interest_allocation,
+    "sc-audit-opinion-type": sc_audit_opinion_type,
+    "control-deviation-rate": control_deviation_rate,
+    "uncorrected-misstatement-total": uncorrected_misstatement_total,
+    "sc-control-deficiency-severity": sc_control_deficiency_severity,
+    "sc-confirmation-response-classification": sc_confirmation_response_classification,
+    "compliance-violations-count": compliance_violations_count,
+    "inventory-count-adjusted-balance": inventory_count_adjusted_balance,
+    "sc-evidence-reliability-choice": sc_evidence_reliability_choice,
+    "three-way-match-exceptions": three_way_match_exceptions,
+    "schedule-recalculation-difference": schedule_recalculation_difference,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -20344,4 +20997,14 @@ STABLE_SEEDS = {
     "fsa-tax-saving": 368,
     "builtin-gains-tax-base": 369,
     "varying-interest-allocation": 370,
+    "sc-audit-opinion-type": 371,
+    "control-deviation-rate": 372,
+    "uncorrected-misstatement-total": 373,
+    "sc-control-deficiency-severity": 374,
+    "sc-confirmation-response-classification": 375,
+    "compliance-violations-count": 376,
+    "inventory-count-adjusted-balance": 377,
+    "sc-evidence-reliability-choice": 378,
+    "three-way-match-exceptions": 379,
+    "schedule-recalculation-difference": 380,
 }

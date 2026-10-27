@@ -219,6 +219,12 @@ NUMERIC_FAMILIES = [
     "fsa-tax-saving",
     "builtin-gains-tax-base",
     "varying-interest-allocation",
+    "control-deviation-rate",
+    "uncorrected-misstatement-total",
+    "compliance-violations-count",
+    "inventory-count-adjusted-balance",
+    "three-way-match-exceptions",
+    "schedule-recalculation-difference",
 ]
 
 
@@ -353,6 +359,10 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-filing-status",
         "sc-tax-practice-ethics",
         "sc-income-sourcing",
+        "sc-audit-opinion-type",
+        "sc-control-deficiency-severity",
+        "sc-confirmation-response-classification",
+        "sc-evidence-reliability-choice",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

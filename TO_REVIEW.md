@@ -300,6 +300,18 @@ crosswalk mappings.
   attribution percentages, sourcing and timing rules in
   particular). Level scores assigned under the strict reading. No
   crosswalk mappings proposed yet.
+- 2026-10-26 — ten further generator families (Stable seeds
+  371–380, audit slice 1 of 2): `sc-audit-opinion-type`,
+  `control-deviation-rate`, `uncorrected-misstatement-total`,
+  `sc-control-deficiency-severity`,
+  `sc-confirmation-response-classification`,
+  `compliance-violations-count`, `inventory-count-adjusted-balance`,
+  `sc-evidence-reliability-choice`, `three-way-match-exceptions`,
+  `schedule-recalculation-difference`. Audit rules are simplified
+  stated conventions in each policy (opinion matrix, severity
+  likelihood/magnitude, grant cap at-inclusive reading in
+  particular). Level scores assigned under the strict reading. No
+  crosswalk mappings proposed yet.
 
 
 ## Reviewed

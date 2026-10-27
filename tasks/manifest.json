@@ -693,6 +693,20 @@
       "digest": "sha256:149554992649b196797c8448bd169bfe2bf9230a9af3deadacedc881789efcc0"
     },
     {
+      "task_id": "compliance-violations-count",
+      "family": "audit-planning",
+      "seed": 376,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ebe46b44c934b773b5a688d4a3dbd65a1075232fb88437c365804326bbbc364b"
+    },
+    {
       "task_id": "consignment-sale-recognition",
       "family": "revenue-recognition",
       "seed": 237,
@@ -773,6 +787,20 @@
         "ifrs:15"
       ],
       "digest": "sha256:7400ddab3506d3ea543f1b7bacd32a1319a8dd7152c40c860a876b580b01ee4c"
+    },
+    {
+      "task_id": "control-deviation-rate",
+      "family": "audit-planning",
+      "seed": 372,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:08cb634daac45cf9ab7c1222b58706b89d4e080d44c09d644a8dd41fefa2fc5e"
     },
     {
       "task_id": "corporate-distribution-dividend",
@@ -1658,6 +1686,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:0f7473ada5c5232d2b8c5dffa244c4c2e914ad494b7387259ebe44801f62c3c2"
+    },
+    {
+      "task_id": "inventory-count-adjusted-balance",
+      "family": "audit-evidence",
+      "seed": 377,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a655cef5dbbc06afec531bbfb5648b2605406ddcf8603d41b503f50af83b1c59"
     },
     {
       "task_id": "inventory-days-on-hand",
@@ -3009,6 +3051,20 @@
       "digest": "sha256:127c9433ee705ce221612aad889b790eabff31e86f59146fe58ff8eca969aeb9"
     },
     {
+      "task_id": "sc-audit-opinion-type",
+      "family": "audit-planning",
+      "seed": 371,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:6e0a53555388555dce5d85cc6b6f1ab2c36d002bbcec800359e24712a94f4a37"
+    },
+    {
       "task_id": "sc-audit-procedure-selection",
       "family": "audit-evidence",
       "seed": 264,
@@ -3099,6 +3155,20 @@
       "digest": "sha256:8d64146ac1e9578dedccca21049f8f39c301688d885443f020d3cb4886bddb19"
     },
     {
+      "task_id": "sc-confirmation-response-classification",
+      "family": "audit-evidence",
+      "seed": 375,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:f73c7ee552921a869351923892f40466ee0bbf45397b8ad26609a18716d69de6"
+    },
+    {
       "task_id": "sc-control-assessment",
       "family": "consolidation",
       "seed": 276,
@@ -3113,6 +3183,20 @@
         "ifrs:10"
       ],
       "digest": "sha256:7fc4b14b5d9807d99dd8311053cbeb7f35f5b10a319b67b738aac4c309da07e7"
+    },
+    {
+      "task_id": "sc-control-deficiency-severity",
+      "family": "internal-control",
+      "seed": 374,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:32fff61c943afcfaba6242e3a1dd3c3e0c945b78bb745596d833eb398caaffe8"
     },
     {
       "task_id": "sc-control-design-gap",
@@ -3173,6 +3257,20 @@
         "ifrs:9"
       ],
       "digest": "sha256:d56f64d06216ad2947d57dcfc2e13aad260a58b04e2af647539f4f18290d7e96"
+    },
+    {
+      "task_id": "sc-evidence-reliability-choice",
+      "family": "audit-evidence",
+      "seed": 378,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:bd83d9e92a68dbbbf1c18c10b9e49dc954b049999a700bf046d5b6034d4c6fec"
     },
     {
       "task_id": "sc-fair-value-hierarchy",
@@ -3495,6 +3593,20 @@
       "digest": "sha256:689bace081fba3ff0fc4bb0257b11c91c5120b9b1ff976a141775e7813f7b8a8"
     },
     {
+      "task_id": "schedule-recalculation-difference",
+      "family": "audit-evidence",
+      "seed": 380,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:0e86adca2ee714dbc96f1021189728052cfdfa661d00ad0290cb2a81d0ba6c08"
+    },
+    {
       "task_id": "section1231-capital-amount",
       "family": "income-taxes",
       "seed": 347,
@@ -3783,6 +3895,20 @@
       "digest": "sha256:cb97219839f769532ca8d046ed7a37ea2b4241664cfc7d263ac44e1678f52ad5"
     },
     {
+      "task_id": "three-way-match-exceptions",
+      "family": "audit-evidence",
+      "seed": 379,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:90283c199e867b81f3ff7b4bffc7f6c208dd098ee5ed2a56955cbe2d835683c5"
+    },
+    {
       "task_id": "total-current-liabilities",
       "family": "financial-reporting",
       "seed": 179,
@@ -3882,6 +4008,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:6f026da0c2431944e981e08b5bb0ee8bcd63ee67e1f9bb11bc1e62d1da3c94e2"
+    },
+    {
+      "task_id": "uncorrected-misstatement-total",
+      "family": "audit-planning",
+      "seed": 373,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:1c75bf947cae344e3a193eddb59ee24aa6d0d08d49a66ee1090a58172209a2b0"
     },
     {
       "task_id": "unearned-revenue-release",

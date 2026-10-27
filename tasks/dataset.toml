@@ -197,6 +197,10 @@ name = "open-accounting-bench/closing-entries-income-summary"
 digest = "sha256:149554992649b196797c8448bd169bfe2bf9230a9af3deadacedc881789efcc0"
 
 [[tasks]]
+name = "open-accounting-bench/compliance-violations-count"
+digest = "sha256:ebe46b44c934b773b5a688d4a3dbd65a1075232fb88437c365804326bbbc364b"
+
+[[tasks]]
 name = "open-accounting-bench/consignment-sale-recognition"
 digest = "sha256:59e827683298b281c3d8acdb72e2f0ee06c2e7c01fa7deff56e58033146cb554"
 
@@ -215,6 +219,10 @@ digest = "sha256:4f33ac7a49f09b85fc181bc363bdf06e68c8e93a57d2114fd17b3cb8481e242
 [[tasks]]
 name = "open-accounting-bench/contract-modification-revenue"
 digest = "sha256:7400ddab3506d3ea543f1b7bacd32a1319a8dd7152c40c860a876b580b01ee4c"
+
+[[tasks]]
+name = "open-accounting-bench/control-deviation-rate"
+digest = "sha256:08cb634daac45cf9ab7c1222b58706b89d4e080d44c09d644a8dd41fefa2fc5e"
 
 [[tasks]]
 name = "open-accounting-bench/corporate-distribution-dividend"
@@ -451,6 +459,10 @@ digest = "sha256:79847bfec198aecdc657aedba5014af6a1fd16ffd5cc9bbbff3ba7a2405f9a6
 [[tasks]]
 name = "open-accounting-bench/inventory-costing-nrv"
 digest = "sha256:0f7473ada5c5232d2b8c5dffa244c4c2e914ad494b7387259ebe44801f62c3c2"
+
+[[tasks]]
+name = "open-accounting-bench/inventory-count-adjusted-balance"
+digest = "sha256:a655cef5dbbc06afec531bbfb5648b2605406ddcf8603d41b503f50af83b1c59"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-days-on-hand"
@@ -821,6 +833,10 @@ name = "open-accounting-bench/sample-misstatement-projection"
 digest = "sha256:127c9433ee705ce221612aad889b790eabff31e86f59146fe58ff8eca969aeb9"
 
 [[tasks]]
+name = "open-accounting-bench/sc-audit-opinion-type"
+digest = "sha256:6e0a53555388555dce5d85cc6b6f1ab2c36d002bbcec800359e24712a94f4a37"
+
+[[tasks]]
 name = "open-accounting-bench/sc-audit-procedure-selection"
 digest = "sha256:7174f92b229b26f952d818e3f180c60bff0cb2b65e672c1caa5a42a8ed3a0765"
 
@@ -845,8 +861,16 @@ name = "open-accounting-bench/sc-component-unit-presentation"
 digest = "sha256:8d64146ac1e9578dedccca21049f8f39c301688d885443f020d3cb4886bddb19"
 
 [[tasks]]
+name = "open-accounting-bench/sc-confirmation-response-classification"
+digest = "sha256:f73c7ee552921a869351923892f40466ee0bbf45397b8ad26609a18716d69de6"
+
+[[tasks]]
 name = "open-accounting-bench/sc-control-assessment"
 digest = "sha256:7fc4b14b5d9807d99dd8311053cbeb7f35f5b10a319b67b738aac4c309da07e7"
+
+[[tasks]]
+name = "open-accounting-bench/sc-control-deficiency-severity"
+digest = "sha256:32fff61c943afcfaba6242e3a1dd3c3e0c945b78bb745596d833eb398caaffe8"
 
 [[tasks]]
 name = "open-accounting-bench/sc-control-design-gap"
@@ -863,6 +887,10 @@ digest = "sha256:45aaf456cc959fb5fce4db4c07a19c148a9b20e61f61f757e8c940d270a067e
 [[tasks]]
 name = "open-accounting-bench/sc-derecognition-assessment"
 digest = "sha256:d56f64d06216ad2947d57dcfc2e13aad260a58b04e2af647539f4f18290d7e96"
+
+[[tasks]]
+name = "open-accounting-bench/sc-evidence-reliability-choice"
+digest = "sha256:bd83d9e92a68dbbbf1c18c10b9e49dc954b049999a700bf046d5b6034d4c6fec"
 
 [[tasks]]
 name = "open-accounting-bench/sc-fair-value-hierarchy"
@@ -953,6 +981,10 @@ name = "open-accounting-bench/sc-transaction-statement-impact"
 digest = "sha256:689bace081fba3ff0fc4bb0257b11c91c5120b9b1ff976a141775e7813f7b8a8"
 
 [[tasks]]
+name = "open-accounting-bench/schedule-recalculation-difference"
+digest = "sha256:0e86adca2ee714dbc96f1021189728052cfdfa661d00ad0290cb2a81d0ba6c08"
+
+[[tasks]]
 name = "open-accounting-bench/section1231-capital-amount"
 digest = "sha256:943b4f8ae189d40067ff98ee53b669cd6d842bc84c8c9c15c60b8d42bf38a62b"
 
@@ -1033,6 +1065,10 @@ name = "open-accounting-bench/taxable-gifts-total"
 digest = "sha256:cb97219839f769532ca8d046ed7a37ea2b4241664cfc7d263ac44e1678f52ad5"
 
 [[tasks]]
+name = "open-accounting-bench/three-way-match-exceptions"
+digest = "sha256:90283c199e867b81f3ff7b4bffc7f6c208dd098ee5ed2a56955cbe2d835683c5"
+
+[[tasks]]
 name = "open-accounting-bench/total-current-liabilities"
 digest = "sha256:d6e44612b750c0c9624c052e0fd4182342b53dd79bb98fe049cf10e4ef68a312"
 
@@ -1059,6 +1095,10 @@ digest = "sha256:641d2f4e540e6978f9f1448eac64fb3cae2a03abbc5e4d7985b16ed9675b2b5
 [[tasks]]
 name = "open-accounting-bench/trust-dni-computation"
 digest = "sha256:6f026da0c2431944e981e08b5bb0ee8bcd63ee67e1f9bb11bc1e62d1da3c94e2"
+
+[[tasks]]
+name = "open-accounting-bench/uncorrected-misstatement-total"
+digest = "sha256:1c75bf947cae344e3a193eddb59ee24aa6d0d08d49a66ee1090a58172209a2b0"
 
 [[tasks]]
 name = "open-accounting-bench/unearned-revenue-release"

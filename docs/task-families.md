@@ -354,6 +354,16 @@ D = standards depth):
 | `fsa-tax-saving` | V | V | V | U | V | V | V | vocational |
 | `builtin-gains-tax-base` | V | V | V | U | V | V | V | vocational |
 | `varying-interest-allocation` | V | V | V | V | V | V | V | vocational |
+| `sc-audit-opinion-type` | V | V | V | V | V | V | V | vocational |
+| `control-deviation-rate` | V | V | V | V | V | V | V | vocational |
+| `uncorrected-misstatement-total` | V | V | V | U | V | V | V | vocational |
+| `sc-control-deficiency-severity` | V | V | V | V | U | V | V | vocational |
+| `sc-confirmation-response-classification` | V | V | V | V | V | V | V | vocational |
+| `compliance-violations-count` | V | V | V | U | V | V | V | vocational |
+| `inventory-count-adjusted-balance` | V | V | V | V | V | V | V | vocational |
+| `sc-evidence-reliability-choice` | V | V | V | V | V | V | V | vocational |
+| `three-way-match-exceptions` | V | V | V | U | V | V | V | vocational |
+| `schedule-recalculation-difference` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -636,8 +646,18 @@ problem the task hands over. An analysis task can be vocational.
 | `fsa-tax-saving` | income-taxes | numeric | core | application | — | Saving counted on forfeited balance |
 | `builtin-gains-tax-base` | corporate-taxation | numeric | core | application | — | Post-conversion gains in the base |
 | `varying-interest-allocation` | passthrough-taxation | numeric | core | application | — | Year-end percentage all year |
+| `sc-audit-opinion-type` | audit-planning | single-choice | core | application | — | Adverse for confined departures |
+| `control-deviation-rate` | audit-planning | numeric | core | application | — | Deviation count reported as the rate |
+| `uncorrected-misstatement-total` | audit-planning | numeric | core | application | — | Projected/prior-year effects omitted |
+| `sc-control-deficiency-severity` | internal-control | single-choice | core | application | — | Small actual misstatement rules out weakness |
+| `sc-confirmation-response-classification` | audit-evidence | single-choice | core | application | — | Non-response treated as agreement |
+| `compliance-violations-count` | audit-planning | numeric | core | application | — | At-cap purchase flagged as violation |
+| `inventory-count-adjusted-balance` | audit-evidence | numeric | core | application | — | Raw count without cutoff roll-forward |
+| `sc-evidence-reliability-choice` | audit-evidence | single-choice | core | application | — | Client copies over external originals |
+| `three-way-match-exceptions` | audit-evidence | numeric | core | application | — | Client 'matched' stamps trusted |
+| `schedule-recalculation-difference` | audit-evidence | numeric | core | application | — | Stated extensions merely footed |
 
-Stable seeds: 101–370 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–380 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -649,10 +669,10 @@ placeholders tracked as issues, not directories.
 | financial-accounting | 140 | 17 | 12 | planned |
 | management-accounting | 37 | planned | planned | planned |
 | tax | 51 | — | — | planned |
-| audit-assurance | 13 | — | planned | — |
+| audit-assurance | 23 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×33,
-numeric ×143; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×37,
+numeric ×149; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
