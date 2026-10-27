@@ -1,0 +1,37 @@
+{
+  "task_id": "lessor-sales-type-lease",
+  "family": "leases",
+  "seed": 240,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:NetInvestmentInLease": "198.00",
+    "Income:Sales": "-198.00",
+    "Expenses:CostOfSales": "132.00",
+    "Assets:Inventory": "-132.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-10",
+    "2026-01-10"
+  ],
+  "required_final_balances": {
+    "Assets:Inventory": "0.00",
+    "Assets:NetInvestmentInLease": "198.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "analysis",
+  "standards": [
+    "asc:842",
+    "ifrs:16"
+  ]
+}

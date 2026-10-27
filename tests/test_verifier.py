@@ -1443,3 +1443,116 @@ def test_credit_allowance_for_full_fv_decline_fails():
         [("Expenses:CreditLoss", decline), ("Assets:AllowanceForCreditLosses", -decline)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_current_tax_only_ignores_deferred_benefit_fails():
+    """Trap: expense the full current tax and record no deferred tax asset."""
+    instance = FAMILIES["deferred-tax-asset-warranty"](236)
+    current = -_deltas(instance)["Liabilities:IncomeTaxPayable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Tax provision",
+        [("Expenses:IncomeTax", current), ("Liabilities:IncomeTaxPayable", -current)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_consignment_net_remittance_as_revenue_fails():
+    """Trap: book the consignee's net remittance as sales revenue."""
+    instance = FAMILIES["consignment-sale-recognition"](237)
+    d = _deltas(instance)
+    wrong = (
+        instance.initial_ledger
+        + _entry(
+            "2026-01-28",
+            "Gallery North",
+            [
+                ("Assets:Bank:Checking", d["Assets:Bank:Checking"]),
+                ("Income:Sales", -d["Assets:Bank:Checking"]),
+            ],
+        )
+        + _entry(
+            "2026-01-28",
+            "Gallery North",
+            [
+                ("Expenses:CostOfSales", d["Expenses:CostOfSales"]),
+                ("Assets:Inventory", d["Assets:Inventory"]),
+            ],
+        )
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_depleting_only_tons_sold_fails():
+    """Trap: deplete only sold tons, leaving extracted ore unrecognized."""
+    instance = FAMILIES["natural-resource-depletion"](238)
+    cogs = _deltas(instance)["Expenses:CostOfSales"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Mine",
+        [("Expenses:CostOfSales", cogs), ("Assets:AccumulatedDepletion", -cogs)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_capitalizing_all_software_costs_fails():
+    """Trap: capitalize preliminary-stage and training costs as software."""
+    instance = FAMILIES["internal-use-software-costs"](239)
+    total = -_deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Software project",
+        [("Assets:InternalUseSoftware", total), ("Assets:Bank:Checking", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_sales_type_lease_at_cost_fails():
+    """Trap: record a sales-type lease at inventory cost, hiding profit."""
+    instance = FAMILIES["lessor-sales-type-lease"](240)
+    cost = _deltas(instance)["Expenses:CostOfSales"]
+    wrong = (
+        instance.initial_ledger
+        + _entry(
+            "2026-01-10",
+            "Lessee",
+            [("Assets:NetInvestmentInLease", cost), ("Income:Sales", -cost)],
+        )
+        + _entry(
+            "2026-01-10",
+            "Lessee",
+            [("Expenses:CostOfSales", cost), ("Assets:Inventory", -cost)],
+        )
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_factoring_derecognizing_receivables_fails():
+    """Trap: treat a with-recourse pledge as a sale of receivables."""
+    instance = FAMILIES["factoring-secured-borrowing"](241)
+    d = _deltas(instance)
+    cash = d["Assets:Bank:Checking"]
+    fee = d["Expenses:FactoringFee"]
+    advance = -d["Liabilities:SecuredBorrowing"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-12",
+        "Factor",
+        [
+            ("Assets:Bank:Checking", cash),
+            ("Expenses:FactoringFee", fee),
+            ("Assets:AccountsReceivable", -advance),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_pension_contribution_fails():
+    """Trap: treat the employer's cash funding as pension expense."""
+    instance = FAMILIES["pension-expense-and-contribution"](242)
+    contribution = -_deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Pension plan",
+        [("Expenses:Pension", contribution), ("Assets:Bank:Checking", -contribution)],
+    )
+    _assert_semantic_trap(instance, wrong)

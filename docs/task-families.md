@@ -219,6 +219,21 @@ D = standards depth):
 | `debt-modification-percent-change` | V | U | V | U | V | V | U | vocational |
 | `mc-temporary-accounts` | V | V | V | U | V | V | V | vocational |
 | `sc-fair-value-hierarchy` | V | V | V | V | V | V | U | vocational |
+| `deferred-tax-asset-warranty` | V | U | U | U | U | V | U | university |
+| `consignment-sale-recognition` | V | U | U | U | U | V | U | university |
+| `natural-resource-depletion` | V | U | V | V | V | V | U | vocational |
+| `internal-use-software-costs` | V | U | V | U | U | V | U | university |
+| `lessor-sales-type-lease` | V | U | U | U | U | V | U | university |
+| `factoring-secured-borrowing` | V | U | U | U | U | V | U | university |
+| `pension-expense-and-contribution` | V | U | U | U | U | U | U | university |
+| `irr-from-annuity-factor` | V | U | V | V | V | V | V | vocational |
+| `c-corporation-taxable-income` | V | U | V | U | U | V | V | vocational |
+| `s-corporation-aaa-ending` | V | U | V | U | U | V | V | vocational |
+| `partnership-outside-basis` | V | U | V | U | U | V | V | vocational |
+| `performance-materiality` | V | U | V | V | V | V | V | vocational |
+| `cash-and-equivalents-total` | V | U | V | U | V | V | V | vocational |
+| `sc-investment-classification` | V | V | V | V | V | V | U | vocational |
+| `mc-reportable-segments` | V | U | V | U | V | V | U | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -366,8 +381,23 @@ problem the task hands over. An analysis task can be vocational.
 | `debt-modification-percent-change` | borrowings | numeric | core | application | `asc:470-50`, `ifrs:9` | Compare face amounts |
 | `mc-temporary-accounts` | ledger-integrity-reporting | multiple-choice | core | remembering-understanding | — | Permanent contra-assets as temporary |
 | `sc-fair-value-hierarchy` | fair-value-measurement | single-choice | core | remembering-understanding | `asc:820`, `ifrs:13` | Observable inputs as Level 3 |
+| `deferred-tax-asset-warranty` | income-taxes | journal-entry | core | application | `asc:740`, `ias:12` | Current tax only |
+| `consignment-sale-recognition` | revenue-recognition | journal-entry | core | analysis | `asc:606`, `ifrs:15` | Net remittance as revenue |
+| `natural-resource-depletion` | fixed-assets | journal-entry | core | application | — | Deplete only tons sold |
+| `internal-use-software-costs` | intangible-assets | journal-entry | us-gaap | application | `asc:350-40` | Capitalize all project costs |
+| `lessor-sales-type-lease` | leases | journal-entry | core | analysis | `asc:842`, `ifrs:16` | Record lease at cost |
+| `factoring-secured-borrowing` | receivables | journal-entry | core | analysis | `asc:860`, `ifrs:9` | Derecognize receivables |
+| `pension-expense-and-contribution` | employee-benefits | journal-entry | core | analysis | `asc:715`, `ias:19` | Expense cash contribution |
+| `irr-from-annuity-factor` | capital-budgeting | numeric | core | application | — | Answer payback factor |
+| `c-corporation-taxable-income` | income-taxes | numeric | core | application | — | Answer book income |
+| `s-corporation-aaa-ending` | passthrough-taxation | numeric | core | application | — | Tax-exempt income into AAA |
+| `partnership-outside-basis` | passthrough-taxation | numeric | core | application | — | Forget liability share |
+| `performance-materiality` | audit-planning | numeric | core | application | — | Answer overall materiality |
+| `cash-and-equivalents-total` | cash-controls | numeric | core | application | — | Include restricted cash and net overdraft |
+| `sc-investment-classification` | investments | single-choice | us-gaap | remembering-understanding | `asc:320` | Mismatch management intent |
+| `mc-reportable-segments` | segment-reporting | multiple-choice | core | application | `asc:280`, `ifrs:8` | Require all three 10% tests |
 
-Stable seeds: 101–235 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–250 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -376,13 +406,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 91 | 9 | 3 | planned |
-| management-accounting | 29 | planned | planned | planned |
-| tax | 3 | — | — | planned |
-| audit-assurance | planned | — | planned | — |
+| financial-accounting | 98 | 9 | 5 | planned |
+| management-accounting | 30 | planned | planned | planned |
+| tax | 7 | — | — | planned |
+| audit-assurance | 1 | — | planned | — |
 
-Format coverage: journal-entry ×72, multiple-choice ×3, single-choice ×6,
-numeric ×54; open-text is
+Format coverage: journal-entry ×79, multiple-choice ×4, single-choice ×7,
+numeric ×60; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

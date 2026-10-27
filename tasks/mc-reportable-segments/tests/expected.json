@@ -1,0 +1,32 @@
+{
+  "task_id": "mc-reportable-segments",
+  "family": "segment-reporting",
+  "seed": 250,
+  "generator_version": "0.3.0",
+  "format": "multiple-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": [
+    "D"
+  ],
+  "options": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:280",
+    "ifrs:8"
+  ]
+}

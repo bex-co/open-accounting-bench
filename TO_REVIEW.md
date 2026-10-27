@@ -65,6 +65,17 @@ crosswalk mappings.
   (in particular: stated annuity/PV factors used as given; the
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
+- 2026-10-26 — fifteen further generator families (Stable seeds
+  236–250): `deferred-tax-asset-warranty`, `consignment-sale-recognition`,
+  `natural-resource-depletion`, `internal-use-software-costs`,
+  `lessor-sales-type-lease`, `factoring-secured-borrowing`,
+  `pension-expense-and-contribution`, `irr-from-annuity-factor`,
+  `c-corporation-taxable-income`, `s-corporation-aaa-ending`,
+  `partnership-outside-basis`, `performance-materiality`,
+  `cash-and-equivalents-total`, `sc-investment-classification`,
+  `mc-reportable-segments`. Same checks as earlier batches (in
+  particular: simplified stated tax rules for AAA/outside basis and the
+  single-benchmark materiality setup). No crosswalk mappings proposed yet.
 - 2026-10-26 — fourteen further generator families (Stable seeds
   222–235): `government-grant-release`, `investment-property-fair-value`,
   `goodwill-impairment`, `fx-translation-adjustment`,

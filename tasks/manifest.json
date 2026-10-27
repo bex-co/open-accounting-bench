@@ -286,6 +286,20 @@
       "digest": "sha256:6a50ce946a4389a1883d32a141e54ba273fa99ca6ad7ac5ca1dfc68663818394"
     },
     {
+      "task_id": "c-corporation-taxable-income",
+      "family": "income-taxes",
+      "seed": 244,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:167e32c95a58f2a2ab3af1b45ce05978e837342b9cad46bbc1969a99009e69b4"
+    },
+    {
       "task_id": "capitalized-cost-bundle",
       "family": "fixed-assets",
       "seed": 141,
@@ -298,6 +312,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:d678209c43a09081b0b594c2326a74d0ab2ff40d87aee584418600f862fa365f"
+    },
+    {
+      "task_id": "cash-and-equivalents-total",
+      "family": "cash-controls",
+      "seed": 248,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:591063111f3fdc2d14678308ea072eb07c7846a0adfec9d9fbd77d6c95ab539d"
     },
     {
       "task_id": "cash-collected-from-customers",
@@ -399,6 +427,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:96373609e2633d0fe8aee0a756559fd1d13a1a83dc8db508bb2187f09bcd4810"
+    },
+    {
+      "task_id": "consignment-sale-recognition",
+      "family": "revenue-recognition",
+      "seed": 237,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:606",
+        "ifrs:15"
+      ],
+      "digest": "sha256:87e53c3c90a817c59b2fca741846e0ba22b8dd72196d831460584954e832948d"
     },
     {
       "task_id": "consolidation-intercompany-elimination",
@@ -566,6 +611,23 @@
       "digest": "sha256:698e20d57f965148bd12073038eb88c3978cf47860157cee1737275bea1e0f02"
     },
     {
+      "task_id": "deferred-tax-asset-warranty",
+      "family": "income-taxes",
+      "seed": 236,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:740",
+        "ias:12"
+      ],
+      "digest": "sha256:297719d03d684c5b26208d93fec92931684fd642e7e03ee0cb4437d8dc87f8c6"
+    },
+    {
       "task_id": "development-cost-capitalization",
       "family": "intangible-assets",
       "seed": 197,
@@ -670,6 +732,23 @@
         "ias:28"
       ],
       "digest": "sha256:76a52cc6771d0887c468ba0364c75a3e6fd4cf30260b99a3492ec7a722cbef5b"
+    },
+    {
+      "task_id": "factoring-secured-borrowing",
+      "family": "receivables",
+      "seed": 241,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:860",
+        "ifrs:9"
+      ],
+      "digest": "sha256:1f25c03ddf576676004d53dcaaaa91e9994563f06f38138d15d629bec14b3c8a"
     },
     {
       "task_id": "fixed-overhead-volume-variance",
@@ -876,6 +955,22 @@
       "digest": "sha256:fea11c20f88461bba0b72b3952f044d9d33cda5bd3dd7f6e2b865cbedeec3b3f"
     },
     {
+      "task_id": "internal-use-software-costs",
+      "family": "intangible-assets",
+      "seed": 239,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:350-40"
+      ],
+      "digest": "sha256:3db3709b95459eba2c88fed64197b87532a2b4a9d05081ee831d049c85835784"
+    },
+    {
       "task_id": "inventory-costing-nrv",
       "family": "inventory",
       "seed": 112,
@@ -965,6 +1060,20 @@
       "digest": "sha256:93add4fa53e6b185ab40ed876997c631f4b0ebe853088886da14249b776f13ad"
     },
     {
+      "task_id": "irr-from-annuity-factor",
+      "family": "capital-budgeting",
+      "seed": 243,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9221da1ae0d07a028a9bc96929fd62ce633a7133d79dc49108ebe4c5a15e312a"
+    },
+    {
       "task_id": "job-overhead-applied",
       "family": "job-order-costing",
       "seed": 132,
@@ -1025,6 +1134,23 @@
         "ifrs:16"
       ],
       "digest": "sha256:35d20e6bf31e9736ccd0e8098c10d936ebd3fd2cf51037932f36f5793888dda8"
+    },
+    {
+      "task_id": "lessor-sales-type-lease",
+      "family": "leases",
+      "seed": 240,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:842",
+        "ifrs:16"
+      ],
+      "digest": "sha256:ae2eaccc4aa22b9d42928139949f21bebc7c78b123498e1c49b42426ecc0df0c"
     },
     {
       "task_id": "lifo-ending-inventory",
@@ -1161,6 +1287,23 @@
       "digest": "sha256:67d650c45cbf9e0cd3902fdc7be808bd9407b93398164882600b7ce77ea17cbb"
     },
     {
+      "task_id": "mc-reportable-segments",
+      "family": "segment-reporting",
+      "seed": 250,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "multiple-choice",
+      "skill": "application",
+      "standards": [
+        "asc:280",
+        "ifrs:8"
+      ],
+      "digest": "sha256:c57a9a737848dfb25130571b0d8a3b094af037e7ba0c7912c7327912338205a4"
+    },
+    {
       "task_id": "mc-temporary-accounts",
       "family": "ledger-integrity-reporting",
       "seed": 234,
@@ -1229,6 +1372,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:050f81cb7df55965212fe1299a2b40269e97d15bb54db80cfd014f416c893587"
+    },
+    {
+      "task_id": "natural-resource-depletion",
+      "family": "fixed-assets",
+      "seed": 238,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:8f42b854819f6a6678b6c7ccb4470913be5596d5525f70e26fb5bb2ef0b5e486"
     },
     {
       "task_id": "nfp-conditional-vs-unconditional",
@@ -1334,6 +1491,20 @@
       "digest": "sha256:45000c1d5ca70117990c30a8d97f17ba7ca872f4190f328ce704dd29f8a4a04b"
     },
     {
+      "task_id": "partnership-outside-basis",
+      "family": "passthrough-taxation",
+      "seed": 246,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:02fcf030b614f65b0cac35f817210187823855a37fb6ff9fdaf39be15e99a567"
+    },
+    {
       "task_id": "patent-amortization",
       "family": "intangible-assets",
       "seed": 170,
@@ -1391,6 +1562,37 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:89750609bbb6bac4b9f27b6730819320591128f1272d0164a803b86c61155fa9"
+    },
+    {
+      "task_id": "pension-expense-and-contribution",
+      "family": "employee-benefits",
+      "seed": 242,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:715",
+        "ias:19"
+      ],
+      "digest": "sha256:067925580a76662cd981dcc0c5cdd63c5d93eb9912c717cd26dd42df3d0f7d45"
+    },
+    {
+      "task_id": "performance-materiality",
+      "family": "audit-planning",
+      "seed": 247,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a6d050fedc554ca4bf41060010eb1373e6ed8d5e96998153de6d7d902e7f9061"
     },
     {
       "task_id": "periodic-purchase-with-freight",
@@ -1606,6 +1808,20 @@
       "digest": "sha256:723c57ebce3bdb6396b75c5e71750669f80008fcb74b0da6ccac394c877c556c"
     },
     {
+      "task_id": "s-corporation-aaa-ending",
+      "family": "passthrough-taxation",
+      "seed": 245,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:2b38ee4a2e08d811b8352b8ca43403436bce26bbac32f8a7f3e16ba26dd9e34f"
+    },
+    {
       "task_id": "sale-and-leaseback-entry",
       "family": "leases",
       "seed": 226,
@@ -1682,6 +1898,22 @@
         "ifrs:13"
       ],
       "digest": "sha256:d3dcf157e03b4e392337208ad65f7dd52f9299881c7f5c6b6af5af7785dcd641"
+    },
+    {
+      "task_id": "sc-investment-classification",
+      "family": "investments",
+      "seed": 249,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [
+        "asc:320"
+      ],
+      "digest": "sha256:cdae82f1f9ac3d514fbd42a21503880ad0082077fbbb87425bc9c80ec91c05ce"
     },
     {
       "task_id": "sc-job-vs-process-costing",

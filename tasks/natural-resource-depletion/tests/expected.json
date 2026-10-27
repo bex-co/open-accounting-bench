@@ -1,0 +1,33 @@
+{
+  "task_id": "natural-resource-depletion",
+  "family": "fixed-assets",
+  "seed": 238,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:OreInventory": "8312.50",
+    "Assets:AccumulatedDepletion": "-36812.50",
+    "Expenses:CostOfSales": "28500.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:OreInventory": "8312.50",
+    "Assets:AccumulatedDepletion": "-36812.50"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

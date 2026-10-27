@@ -130,6 +130,12 @@ NUMERIC_FAMILIES = [
     "inventory-method-profit-difference",
     "minimum-transfer-price",
     "debt-modification-percent-change",
+    "irr-from-annuity-factor",
+    "c-corporation-taxable-income",
+    "s-corporation-aaa-ending",
+    "partnership-outside-basis",
+    "performance-materiality",
+    "cash-and-equivalents-total",
 ]
 
 
@@ -189,6 +195,19 @@ def test_mc_temporary_accounts_oracle_and_traps(seed):
     assert grade_answer(expected, ans(expected["options"])).reward == 0
 
 
+@pytest.mark.parametrize("seed", [1, 7, 42, 250])
+def test_mc_reportable_segments_oracle_and_traps(seed):
+    instance = FAMILIES["mc-reportable-segments"](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    gold = set(expected["gold"])
+    assert 0 < len(gold) < len(expected["options"])
+    inverse = sorted(set(expected["options"]) - gold)
+    assert grade_answer(expected, ans(inverse)).reward == 0
+    assert grade_answer(expected, ans(expected["options"])).reward == 0
+
+
 @pytest.mark.parametrize(
     "task_id",
     [
@@ -198,6 +217,7 @@ def test_mc_temporary_accounts_oracle_and_traps(seed):
         "sc-transaction-statement-impact",
         "sc-job-vs-process-costing",
         "sc-fair-value-hierarchy",
+        "sc-investment-classification",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

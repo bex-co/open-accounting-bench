@@ -1,0 +1,37 @@
+{
+  "task_id": "consignment-sale-recognition",
+  "family": "revenue-recognition",
+  "seed": 237,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Bank:Checking": "1338.75",
+    "Expenses:Commission": "236.25",
+    "Income:Sales": "-1575.00",
+    "Expenses:CostOfSales": "787.50",
+    "Assets:Inventory": "-787.50"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-28",
+    "2026-01-28"
+  ],
+  "required_final_balances": {
+    "Assets:Inventory": "1487.50"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "analysis",
+  "standards": [
+    "asc:606",
+    "ifrs:15"
+  ]
+}

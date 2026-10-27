@@ -1,0 +1,32 @@
+{
+  "task_id": "factoring-secured-borrowing",
+  "family": "receivables",
+  "seed": 241,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Bank:Checking": "83808.00",
+    "Expenses:FactoringFee": "2592.00",
+    "Liabilities:SecuredBorrowing": "-86400.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-12",
+    "2026-01-12"
+  ],
+  "required_final_balances": {
+    "Assets:AccountsReceivable": "108000.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "analysis",
+  "standards": [
+    "asc:860",
+    "ifrs:9"
+  ]
+}

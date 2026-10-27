@@ -10149,6 +10149,1156 @@ def sc_fair_value_hierarchy(seed: int) -> TaskInstance:
     )
 
 
+DTA = "Assets:DeferredTaxAsset"
+TAX_EXPENSE = "Expenses:IncomeTax"
+TAX_PAYABLE = "Liabilities:IncomeTaxPayable"
+DEFERRED_TAX_ACCOUNTS = [
+    (DTA, "Deferred tax asset (future deductible amounts)"),
+    (TAX_EXPENSE, "Income tax expense (current and deferred)"),
+    (TAX_PAYABLE, "Income taxes currently payable"),
+]
+
+
+def deferred_tax_asset_warranty(seed: int) -> TaskInstance:
+    """Scenario: warranty expense is deductible only when claims are paid.
+
+    Oracle: total tax expense = current tax payable less the deferred tax
+    benefit on the new deductible temporary difference. Trap: recording
+    only current tax. Level V/U/U/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    warranty = Decimal(rng.randrange(40, 161)) * 1000
+    rate = rng.choice([Decimal("0.20"), Decimal("0.25"), Decimal("0.30")])
+    dta = warranty * rate
+    taxable = Decimal(rng.randrange(200, 601)) * 1000
+    current_tax = taxable * rate
+    total_expense = current_tax - dta
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, DEFERRED_TAX_ACCOUNTS)
+    doc = (
+        "# Income-tax provision data — January 2026\n\n"
+        f"Taxable income for the month: USD {money(taxable)}. Enacted rate: "
+        f"{rate * 100:.0f}%. January book profit already deducted warranty "
+        f"expense of USD {money(warranty)}; for tax, warranty costs are "
+        "deductible only when claims are paid in a later period. No claims "
+        "were paid in January.\n"
+    )
+    policy = POLICY + (
+        "- A deductible temporary difference (expensed for books now,\n"
+        "  deductible for tax later) creates a deferred tax asset at the\n"
+        "  enacted rate. Income-tax expense = current tax payable on\n"
+        "  taxable income less the increase in the deferred tax asset.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Tax provision",
+        "Current and deferred income tax",
+        [(TAX_EXPENSE, total_expense), (DTA, dta), (TAX_PAYABLE, -current_tax)],
+    )
+    return TaskInstance(
+        task_id="deferred-tax-asset-warranty",
+        family="income-taxes",
+        title="Recognize a deferred tax asset on warranty accruals",
+        instruction=(
+            "Record January's tax provision in `/app/documents/tax_provision.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(DEFERRED_TAX_ACCOUNTS),
+            "documents/tax_provision.md": doc,
+        },
+        expected=_expected(
+            "deferred-tax-asset-warranty",
+            "income-taxes",
+            seed,
+            expected_deltas={
+                TAX_EXPENSE: money(total_expense),
+                DTA: money(dta),
+                TAX_PAYABLE: money(-current_tax),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={DTA: money(dta)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["deferred-tax", "temporary-difference", "warranty"],
+        level="university",
+        category="tax",
+        standards=["asc:740", "ias:12"],
+    )
+
+
+COMMISSION = "Expenses:Commission"
+CONSIGNMENT_ACCOUNTS = MERCH_ACCOUNTS + [(COMMISSION, "Consignment commission expense")]
+
+
+def consignment_sale_recognition(seed: int) -> TaskInstance:
+    """Scenario: consignee sells part of the consigned goods in January.
+
+    Oracle (consignor's books): revenue at the gross selling price when
+    the consignee sells, commission expensed, cost relieved only for the
+    units sold; unsold units remain the consignor's inventory. Trap:
+    treating shipment (or the net remittance) as the sale.
+    Level V/U/U/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    item = rng.choice(["handmade quilts", "ceramic vases", "wooden toys"])
+    shipped = rng.randrange(60, 141, 10)
+    sold = rng.randrange(20, shipped - 10, 5)
+    unit_cost = Decimal(rng.randrange(1000, 3001, 25)) / 100
+    price = (unit_cost * Decimal("2")).quantize(CENT)
+    commission_pct = rng.choice([10, 15, 20])
+    revenue = sold * price
+    commission = (revenue * commission_pct / 100).quantize(CENT)
+    remittance = revenue - commission
+    cost_sold = sold * unit_cost
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, CONSIGNMENT_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Goods held on consignment at Gallery North: {shipped} {item}",
+        [(INVENTORY, shipped * unit_cost), ("Equity:Opening-Balances", -shipped * unit_cost)],
+    )
+    doc = (
+        "# Consignee report — Gallery North, January 2026\n\n"
+        f"Of the {shipped} {item} held on consignment, the gallery sold "
+        f"{sold} units at USD {money(price)} each, withheld its "
+        f"{commission_pct}% commission, and remitted USD {money(remittance)} "
+        "to checking on 2026-01-28. The remaining units are still held by "
+        "the gallery unsold.\n"
+    )
+    policy = POLICY + (
+        "- Consigned goods remain the consignor's inventory until the\n"
+        "  consignee sells them. Revenue is recognized at the gross selling\n"
+        "  price on the consignee's sale; the commission is an expense and\n"
+        "  cost is relieved only for units sold.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-28",
+            "Gallery North",
+            "Consignment sales remitted net of commission",
+            [(BANK, remittance), (COMMISSION, commission), ("Income:Sales", -revenue)],
+        )
+        + _txn(
+            "2026-01-28",
+            "Gallery North",
+            "Cost of consigned goods sold",
+            [(COST_OF_SALES, cost_sold), (INVENTORY, -cost_sold)],
+        )
+    )
+    return TaskInstance(
+        task_id="consignment-sale-recognition",
+        family="revenue-recognition",
+        title="Recognize consignment sales on the consignor's books",
+        instruction=(
+            "Record the January activity in `/app/documents/consignee_report.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-28; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CONSIGNMENT_ACCOUNTS),
+            "documents/consignee_report.md": doc,
+        },
+        expected=_expected(
+            "consignment-sale-recognition",
+            "revenue-recognition",
+            seed,
+            expected_deltas={
+                BANK: money(remittance),
+                COMMISSION: money(commission),
+                "Income:Sales": money(-revenue),
+                COST_OF_SALES: money(cost_sold),
+                INVENTORY: money(-cost_sold),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-28", "2026-01-28"],
+            required_final_balances={INVENTORY: money((shipped - sold) * unit_cost)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["consignment", "revenue-recognition", "commission"],
+        level="university",
+        skill="analysis",
+        standards=["asc:606", "ifrs:15"],
+    )
+
+
+MINE_ASSET = "Assets:MineralDeposit"
+ACC_DEPLETION = "Assets:AccumulatedDepletion"
+ORE_INVENTORY = "Assets:OreInventory"
+DEPLETION_ACCOUNTS = [
+    (MINE_ASSET, "Mineral deposit at cost"),
+    (ACC_DEPLETION, "Accumulated depletion (contra-asset)"),
+    (ORE_INVENTORY, "Extracted ore inventory"),
+    (COST_OF_SALES, "Cost of ore sold"),
+]
+
+
+def natural_resource_depletion(seed: int) -> TaskInstance:
+    """Scenario: ore extracted in January, only part of it sold.
+
+    Oracle: deplete the deposit for ALL tons extracted into ore
+    inventory, then expense only the tons sold. Trap: depleting (or
+    expensing) only the sold tons so the asset/inventory split is wrong.
+    Level V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    rate = (Decimal(rng.randrange(200, 801, 25)) / 100).quantize(CENT)
+    total_tons = rng.randrange(50000, 160001, 5000)
+    residual = Decimal(rng.randrange(10, 61)) * 1000
+    cost = rate * total_tons + residual
+    extracted = rng.randrange(2000, 9001, 250)
+    sold = rng.randrange(1000, extracted - 250, 250)
+    depletion_total = rate * extracted
+    cogs = rate * sold
+    ore_left = depletion_total - cogs
+    opening = Decimal("30000.00")
+    initial = _ledger_header(opening, DEPLETION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Mineral deposit opening balance",
+        [(MINE_ASSET, cost), ("Equity:Opening-Balances", -cost)],
+    )
+    doc = (
+        "# Mine production report — January 2026\n\n"
+        f"Deposit cost USD {money(cost)}; expected residual land value "
+        f"USD {money(residual)}; estimated recoverable {total_tons} tons. "
+        f"January: {extracted} tons extracted, of which {sold} tons were "
+        "sold; the rest is ore inventory on hand.\n"
+    )
+    policy = POLICY + (
+        "- Depletion per ton = (cost - residual value) / estimated tons.\n"
+        "  Depletion on tons EXTRACTED is debited to ore inventory; the\n"
+        "  portion for tons SOLD moves to cost of goods sold.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            "Mine",
+            f"Depletion on {extracted} tons extracted",
+            [(ORE_INVENTORY, depletion_total), (ACC_DEPLETION, -depletion_total)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Mine",
+            f"Cost of {sold} tons sold",
+            [(COST_OF_SALES, cogs), (ORE_INVENTORY, -cogs)],
+        )
+    )
+    return TaskInstance(
+        task_id="natural-resource-depletion",
+        family="fixed-assets",
+        title="Deplete a mineral deposit and cost ore sold",
+        instruction=(
+            "Record January depletion in `/app/documents/mine_report.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(DEPLETION_ACCOUNTS),
+            "documents/mine_report.md": doc,
+        },
+        expected=_expected(
+            "natural-resource-depletion",
+            "fixed-assets",
+            seed,
+            expected_deltas={
+                ORE_INVENTORY: money(ore_left),
+                ACC_DEPLETION: money(-depletion_total),
+                COST_OF_SALES: money(cogs),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={
+                ORE_INVENTORY: money(ore_left),
+                ACC_DEPLETION: money(-depletion_total),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["depletion", "natural-resources", "units-of-production"],
+        level="vocational",
+    )
+
+
+SOFTWARE_ASSET = "Assets:InternalUseSoftware"
+SOFTWARE_EXPENSE = "Expenses:SoftwareProject"
+SOFTWARE_ACCOUNTS = [
+    (SOFTWARE_ASSET, "Capitalized internal-use software (application stage)"),
+    (SOFTWARE_EXPENSE, "Software project expense"),
+]
+
+
+def internal_use_software_costs(seed: int) -> TaskInstance:
+    """Scenario (US GAAP): January internal-use software project costs.
+
+    Oracle: preliminary-stage and post-implementation training costs are
+    expensed; application-development coding/configuration capitalize.
+    Trap: capitalizing every project cost. Level V/U/V/U/U/V/U.
+    """
+    rng = random.Random(seed)
+    preliminary = Decimal(rng.randrange(20, 81)) * 50
+    coding = Decimal(rng.randrange(60, 201)) * 50
+    configuration = Decimal(rng.randrange(30, 121)) * 50
+    training = Decimal(rng.randrange(10, 41)) * 25
+    capitalized = coding + configuration
+    expensed = preliminary + training
+    total = capitalized + expensed
+    opening = total + Decimal("20000.00")
+    initial = _ledger_header(opening, SOFTWARE_ACCOUNTS)
+    doc = (
+        "# Internal-use software project — January 2026 (all paid from checking)\n\n"
+        "| Cost | USD |\n|---|---:|\n"
+        f"| Vendor evaluation and formulation (preliminary) | {money(preliminary)} |\n"
+        f"| Application coding (development stage) | {money(coding)} |\n"
+        f"| Configuration and interfaces (development stage) | {money(configuration)} |\n"
+        f"| User training after go-live | {money(training)} |\n"
+    )
+    policy = POLICY + (
+        "- Internal-use software (US GAAP stages): preliminary-project-stage\n"
+        "  and post-implementation training costs are expensed; external\n"
+        "  application-development-stage coding and configuration costs are\n"
+        "  capitalized.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Software project",
+        "January internal-use software costs",
+        [(SOFTWARE_ASSET, capitalized), (SOFTWARE_EXPENSE, expensed), (BANK, -total)],
+    )
+    return TaskInstance(
+        task_id="internal-use-software-costs",
+        family="intangible-assets",
+        title="Capitalize application-stage software costs",
+        instruction=(
+            "Record the January costs in `/app/documents/software_project.md` "
+            "in `/app/ledger.beancount` under US GAAP as stated in "
+            "`/app/policy.md`. Append new balanced transactions dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(SOFTWARE_ACCOUNTS),
+            "documents/software_project.md": doc,
+        },
+        expected=_expected(
+            "internal-use-software-costs",
+            "intangible-assets",
+            seed,
+            expected_deltas={
+                SOFTWARE_ASSET: money(capitalized),
+                SOFTWARE_EXPENSE: money(expensed),
+                BANK: money(-total),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={SOFTWARE_ASSET: money(capitalized)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["internal-use-software", "capitalization-stages"],
+        level="university",
+        framework="us-gaap",
+        standards=["asc:350-40"],
+    )
+
+
+LEASE_RECEIVABLE = "Assets:NetInvestmentInLease"
+LESSOR_ACCOUNTS = MERCH_ACCOUNTS + [(LEASE_RECEIVABLE, "Net investment in sales-type lease")]
+
+
+def lessor_sales_type_lease(seed: int) -> TaskInstance:
+    """Scenario: dealer-lessor starts a sales-type lease in January.
+
+    Oracle: recognize selling profit at commencement (lease receivable at
+    fair value, inventory relieved at cost), like a sale. Trap: operating
+    -lease treatment (keep asset, book rent). Level V/U/U/U/U/V/U.
+    """
+    rng = random.Random(seed)
+    units = rng.randrange(5, 21)
+    unit_cost = Decimal(rng.randrange(2000, 6001, 100)) / 100
+    fair_each = (unit_cost * Decimal("1.5")).quantize(CENT)
+    cost_total = units * unit_cost
+    fair_total = units * fair_each
+    opening = Decimal("30000.00")
+    initial = _ledger_header(opening, LESSOR_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Equipment held for lease or sale: {units} units",
+        [(INVENTORY, cost_total), ("Equity:Opening-Balances", -cost_total)],
+    )
+    doc = (
+        "# Sales-type lease commencement — 2026-01-10\n\n"
+        f"The company leased out all {units} units (cost USD {money(unit_cost)} "
+        f"each, fair value USD {money(fair_each)} each). Ownership transfers "
+        "at the end of the lease; collectability is probable. The present "
+        f"value of lease payments is USD {money(fair_total)}; there is no "
+        "unguaranteed residual and no payment at commencement.\n"
+    )
+    policy = POLICY + (
+        "- A sales-type lease is treated as a sale at commencement: record\n"
+        "  the net investment in the lease and sales revenue at fair value,\n"
+        "  and relieve inventory through cost of goods sold.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-10",
+            "Lessee",
+            "Sales-type lease commencement",
+            [(LEASE_RECEIVABLE, fair_total), ("Income:Sales", -fair_total)],
+        )
+        + _txn(
+            "2026-01-10",
+            "Lessee",
+            "Cost of equipment leased",
+            [(COST_OF_SALES, cost_total), (INVENTORY, -cost_total)],
+        )
+    )
+    return TaskInstance(
+        task_id="lessor-sales-type-lease",
+        family="leases",
+        title="Record a lessor's sales-type lease commencement",
+        instruction=(
+            "Record the commencement in `/app/documents/lease_commencement.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-10; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(LESSOR_ACCOUNTS),
+            "documents/lease_commencement.md": doc,
+        },
+        expected=_expected(
+            "lessor-sales-type-lease",
+            "leases",
+            seed,
+            expected_deltas={
+                LEASE_RECEIVABLE: money(fair_total),
+                "Income:Sales": money(-fair_total),
+                COST_OF_SALES: money(cost_total),
+                INVENTORY: money(-cost_total),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-10", "2026-01-10"],
+            required_final_balances={
+                INVENTORY: "0.00",
+                LEASE_RECEIVABLE: money(fair_total),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["lessor", "sales-type-lease", "selling-profit"],
+        level="university",
+        skill="analysis",
+        standards=["asc:842", "ifrs:16"],
+    )
+
+
+SECURED_BORROWING = "Liabilities:SecuredBorrowing"
+FINANCE_FEE = "Expenses:FactoringFee"
+FACTORING_ACCOUNTS = [
+    (AR, "Trade receivables pledged as collateral"),
+    (SECURED_BORROWING, "Secured borrowing against pledged receivables"),
+    (FINANCE_FEE, "Factoring and financing fees"),
+]
+
+
+def factoring_secured_borrowing(seed: int) -> TaskInstance:
+    """Scenario: receivables pledged with full recourse and control kept.
+
+    Oracle: cash is a secured borrowing net of the factor's fee; the
+    receivables stay on the books. Trap: derecognizing receivables as a
+    sale. Level V/U/U/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    receivables = Decimal(rng.randrange(80, 241)) * 500
+    advance_pct = rng.choice([80, 90])
+    advance = receivables * advance_pct / 100
+    fee_pct = rng.choice([Decimal("0.02"), Decimal("0.03")])
+    fee = advance * fee_pct
+    cash = advance - fee
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, FACTORING_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening trade receivables",
+        [(AR, receivables), ("Equity:Opening-Balances", -receivables)],
+    )
+    doc = (
+        "# Factoring agreement — 2026-01-12\n\n"
+        f"The company pledged receivables of USD {money(receivables)} to a "
+        f"factor, which advanced {advance_pct}% (USD {money(advance)}) less a "
+        f"{fee_pct * 100:.0f}% fee on the advance (USD {money(fee)}), paying "
+        f"USD {money(cash)} into checking. The company retains full recourse "
+        "for uncollectible accounts and keeps control of collections; "
+        "customers were not notified.\n"
+    )
+    policy = POLICY + (
+        "- A transfer of receivables that does not surrender control (here:\n"
+        "  full recourse and retained collections) is a SECURED BORROWING,\n"
+        "  not a sale: cash is debited net of the fee, the fee is expensed,\n"
+        "  a secured-borrowing liability is credited for the advance, and\n"
+        "  receivables remain on the books.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-12",
+        "Factor",
+        "Advance against pledged receivables",
+        [(BANK, cash), (FINANCE_FEE, fee), (SECURED_BORROWING, -advance)],
+    )
+    return TaskInstance(
+        task_id="factoring-secured-borrowing",
+        family="receivables",
+        title="Treat a with-recourse factoring as a secured borrowing",
+        instruction=(
+            "Record the agreement in `/app/documents/factoring_agreement.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-12; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(FACTORING_ACCOUNTS),
+            "documents/factoring_agreement.md": doc,
+        },
+        expected=_expected(
+            "factoring-secured-borrowing",
+            "receivables",
+            seed,
+            expected_deltas={
+                BANK: money(cash),
+                FINANCE_FEE: money(fee),
+                SECURED_BORROWING: money(-advance),
+            },
+            expected_period=["2026-01-12", "2026-01-12"],
+            required_final_balances={AR: money(receivables)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["factoring", "secured-borrowing", "derecognition"],
+        level="university",
+        skill="analysis",
+        standards=["asc:860", "ifrs:9"],
+    )
+
+
+PENSION_EXPENSE = "Expenses:Pension"
+PENSION_LIABILITY = "Liabilities:NetPensionLiability"
+PENSION_ACCOUNTS = [
+    (PENSION_EXPENSE, "Net periodic pension cost"),
+    (PENSION_LIABILITY, "Net defined-benefit pension liability"),
+]
+
+
+def pension_expense_and_contribution(seed: int) -> TaskInstance:
+    """Scenario: January pension cost components and a larger cash contribution.
+
+    Oracle: net pension expense = service + interest - expected return
+    + amortization; the excess of the cash contribution over expense
+    reduces the pension liability. Trap: expensing the cash contribution.
+    Level V/U/U/U/U/U/U -> university.
+    """
+    rng = random.Random(seed)
+    service = Decimal(rng.randrange(30, 91)) * 100
+    interest = Decimal(rng.randrange(20, 71)) * 100
+    expected_return = Decimal(rng.randrange(15, 61)) * 100
+    amortization = Decimal(rng.randrange(2, 16)) * 100
+    expense = service + interest - expected_return + amortization
+    if expense <= 0:
+        service += Decimal("10000")
+        expense += Decimal("10000")
+    contribution = expense + Decimal(rng.randrange(10, 61)) * 100
+    reduction = contribution - expense
+    opening_liability = contribution * rng.randint(3, 5)
+    opening = contribution + Decimal("30000.00")
+    initial = _ledger_header(opening, PENSION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening net pension liability",
+        [("Equity:Opening-Balances", opening_liability), (PENSION_LIABILITY, -opening_liability)],
+    )
+    doc = (
+        "# Pension data — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Service cost | {money(service)} |\n"
+        f"| Interest cost on the obligation | {money(interest)} |\n"
+        f"| Expected return on plan assets | {money(expected_return)} |\n"
+        f"| Amortization of prior actuarial losses | {money(amortization)} |\n"
+        f"| Employer cash contribution (2026-01-20) | {money(contribution)} |\n"
+    )
+    policy = POLICY + (
+        "- Net periodic pension cost = service cost + interest cost -\n"
+        "  expected return on plan assets + amortization amounts. Employer\n"
+        "  cash contributions are funding, not expense: any excess of the\n"
+        "  contribution over the period cost reduces the net pension\n"
+        "  liability (credit bank for the full contribution).\n"
+    )
+    solution = initial + _txn(
+        "2026-01-20",
+        "Pension plan",
+        "Pension cost and January funding",
+        [(PENSION_EXPENSE, expense), (PENSION_LIABILITY, reduction), (BANK, -contribution)],
+    )
+    return TaskInstance(
+        task_id="pension-expense-and-contribution",
+        family="employee-benefits",
+        title="Record pension cost and employer funding",
+        instruction=(
+            "Record the January pension entries in "
+            "`/app/documents/pension_data.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions "
+            "dated 2026-01-20; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(PENSION_ACCOUNTS),
+            "documents/pension_data.md": doc,
+        },
+        expected=_expected(
+            "pension-expense-and-contribution",
+            "employee-benefits",
+            seed,
+            expected_deltas={
+                PENSION_EXPENSE: money(expense),
+                PENSION_LIABILITY: money(reduction),
+                BANK: money(-contribution),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-20", "2026-01-20"],
+            required_final_balances={PENSION_LIABILITY: money(-(opening_liability - reduction))},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["defined-benefit", "pension-cost", "funding"],
+        level="university",
+        skill="analysis",
+        standards=["asc:715", "ias:19"],
+    )
+
+
+def irr_from_annuity_factor(seed: int) -> TaskInstance:
+    """Numeric: identify IRR by matching the annuity factor.
+
+    Trap: answering the payback period (the same factor, mislabeled).
+    """
+    rng = random.Random(seed)
+    years = rng.choice([4, 5, 6])
+    rates = [Decimal("0.08"), Decimal("0.10"), Decimal("0.12")]
+    irr = rng.choice(rates)
+    factors = {
+        rate: sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
+            Decimal("0.0001")
+        )
+        for rate in rates
+    }
+    inflow = Decimal(rng.randrange(15, 61)) * 1000
+    initial = (inflow * factors[irr]).quantize(CENT)
+    payback = (initial / inflow).quantize(Decimal("0.0001"))
+    factor_rows = "\n".join(
+        f"| Annuity factor ({rate * 100:.0f}%, {years} years) | {factors[rate]} |" for rate in rates
+    )
+    data = (
+        "# Project data\n\n| Item | Value |\n|---|---:|\n"
+        f"| Initial investment | USD {money(initial)} |\n"
+        f"| Annual net cash inflow (even) | USD {money(inflow)} |\n"
+        f"| Life | {years} years |\n"
+        f"{factor_rows}\n\nNo salvage value.\n"
+    )
+    policy = """# IRR conventions (applies to this task)
+
+- The internal rate of return makes NPV zero: initial investment /
+  annual inflow gives the annuity factor for the project's life; the
+  IRR is the interest rate whose stated factor matches it (the initial
+  amount was built from one of the stated factors).
+- Answer as a percentage number (for example 10.00 for 10%).
+"""
+    question = _numeric_question(
+        "internal rate of return",
+        "Using `/app/documents/project_data.md` and `/app/policy.md`, compute "
+        "the project's **internal rate of return** as a percentage number.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="irr-from-annuity-factor",
+        family="capital-budgeting",
+        title="Identify a project's IRR from annuity factors",
+        question=question,
+        policy=policy,
+        data_name="project_data.md",
+        data=data,
+        gold=(irr * 100).quantize(Decimal("0.01")),
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "irr", "capital-budgeting"],
+        abs_tolerance="0.01",
+        trap_value=format(payback, "f"),
+    )
+
+
+def c_corporation_taxable_income(seed: int) -> TaskInstance:
+    """Numeric: book-to-tax adjustments to C-corporation taxable income.
+
+    Trap: deducting 100% of meals/fines or taxing municipal interest.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    book, muni, fines = amt(300, 801), amt(10, 61), amt(5, 31)
+    meals = amt(10, 41) * 2
+    excess_tax_dep = amt(20, 91)
+    gold = book - muni + fines + meals / 2 - excess_tax_dep
+    if gold == book:  # keep the unadjusted-book-income trap distinct
+        fines += 5000
+        gold += 5000
+    data = (
+        "# Book-to-tax schedule (Schedule M-1 style), 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Book (pre-tax financial) income | {money(book)} |\n"
+        f"| Municipal bond interest in book income | {money(muni)} |\n"
+        f"| Federal fines expensed in book income | {money(fines)} |\n"
+        f"| Business meals expensed in book income | {money(meals)} |\n"
+        f"| Excess of tax over book depreciation | {money(excess_tax_dep)} |\n"
+    )
+    policy = """# Taxable-income conventions (applies to this task)
+
+- Start with book income. Subtract tax-exempt municipal interest. Add
+  back nondeductible fines in full and 50% of business meals (only half
+  is deductible). Subtract tax depreciation in excess of book.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "C-corporation taxable income",
+        "Using `/app/documents/book_to_tax.md` and `/app/policy.md`, compute "
+        "**taxable income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="c-corporation-taxable-income",
+        family="income-taxes",
+        title="Compute C-corporation taxable income",
+        question=question,
+        policy=policy,
+        data_name="book_to_tax.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "book-tax-differences", "c-corporation"],
+        abs_tolerance="0.01",
+        trap_value=money(book),
+    )
+
+
+def s_corporation_aaa_ending(seed: int) -> TaskInstance:
+    """Numeric: ending accumulated adjustments account (AAA).
+
+    Trap: increasing AAA by tax-exempt income (which goes to OAA).
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    beginning, ordinary, exempt = amt(50, 201), amt(40, 161), amt(5, 31)
+    nondeductible, distributions = amt(2, 16), amt(20, 101)
+    gold = beginning + ordinary - nondeductible - distributions
+    while gold < 0:
+        ordinary += 50000
+        gold += 50000
+    data = (
+        "# S-corporation AAA data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| AAA, 2025-01-01 | {money(beginning)} |\n"
+        f"| Ordinary business income | {money(ordinary)} |\n"
+        f"| Tax-exempt interest income | {money(exempt)} |\n"
+        f"| Nondeductible expenses (not tax-exempt related) | {money(nondeductible)} |\n"
+        f"| Cash distributions to shareholders | {money(distributions)} |\n"
+    )
+    policy = """# AAA conventions (applies to this task)
+
+- AAA increases by taxable ordinary income and decreases by losses,
+  nondeductible expenses, and distributions. TAX-EXEMPT income goes to
+  the other adjustments account (OAA), never to AAA.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "ending accumulated adjustments account",
+        "Using `/app/documents/aaa_data.md` and `/app/policy.md`, compute "
+        "**AAA at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="s-corporation-aaa-ending",
+        family="passthrough-taxation",
+        title="Compute an S corporation's ending AAA",
+        question=question,
+        policy=policy,
+        data_name="aaa_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "s-corporation", "aaa"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + exempt),
+    )
+
+
+def partnership_outside_basis(seed: int) -> TaskInstance:
+    """Numeric: a partner's ending outside basis.
+
+    Trap: forgetting the increase for the partner's share of partnership
+    liabilities.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    beginning, contribution, income = amt(30, 121), amt(10, 61), amt(15, 81)
+    liability_increase, distributions, exempt = amt(5, 41), amt(10, 51), amt(2, 16)
+    gold = beginning + contribution + income + exempt + liability_increase - distributions
+    while gold < 0:
+        income += 50000
+        gold += 50000
+    trap = gold - liability_increase
+    data = (
+        "# Partner outside-basis data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Outside basis, 2025-01-01 | {money(beginning)} |\n"
+        f"| Additional cash contribution | {money(contribution)} |\n"
+        f"| Share of partnership ordinary income | {money(income)} |\n"
+        f"| Share of tax-exempt income | {money(exempt)} |\n"
+        f"| Increase in share of partnership liabilities | {money(liability_increase)} |\n"
+        f"| Cash distributions received | {money(distributions)} |\n"
+    )
+    policy = """# Outside-basis conventions (applies to this task)
+
+- Outside basis increases by contributions, shares of taxable AND
+  tax-exempt income, and increases in the partner's share of partnership
+  liabilities; it decreases by distributions (and loss shares).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "ending outside basis",
+        "Using `/app/documents/outside_basis.md` and `/app/policy.md`, compute "
+        "the partner's **outside basis at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="partnership-outside-basis",
+        family="passthrough-taxation",
+        title="Compute a partner's ending outside basis",
+        question=question,
+        policy=policy,
+        data_name="outside_basis.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "partnership", "outside-basis"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def performance_materiality(seed: int) -> TaskInstance:
+    """Numeric: performance materiality from an overall materiality base.
+
+    Trap: answering overall materiality.
+    """
+    rng = random.Random(seed)
+    benchmark = Decimal(rng.randrange(200, 801)) * 1000
+    overall_pct = rng.choice([1, 5])
+    performance_pct = rng.choice([50, 60, 75])
+    overall = benchmark * Decimal(overall_pct) / 100
+    gold = overall * Decimal(performance_pct) / 100
+    data = (
+        "# Audit planning data\n\n| Item | Value |\n|---|---:|\n"
+        f"| Profit before tax (benchmark) | USD {money(benchmark)} |\n"
+        f"| Overall materiality | {overall_pct}% of profit before tax |\n"
+        f"| Performance materiality | {performance_pct}% of overall materiality |\n"
+    )
+    policy = """# Materiality conventions (applies to this task)
+
+- Overall materiality = stated percentage of the benchmark.
+- Performance materiality is set BELOW overall materiality (here, the
+  stated percentage of overall materiality) to allow for aggregation
+  risk. Answer performance materiality in USD.
+"""
+    question = _numeric_question(
+        "performance materiality",
+        "Using `/app/documents/audit_planning.md` and `/app/policy.md`, compute "
+        "**performance materiality** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="performance-materiality",
+        family="audit-planning",
+        title="Compute performance materiality",
+        question=question,
+        policy=policy,
+        data_name="audit_planning.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "audit", "materiality"],
+        abs_tolerance="0.01",
+        trap_value=money(overall),
+    )
+
+
+def cash_and_equivalents_total(seed: int) -> TaskInstance:
+    """Numeric: total cash and cash equivalents from a list of balances.
+
+    Trap: including restricted cash/long-maturity deposits or netting an
+    overdraft instead of classifying it as a liability.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    cash, money_market, tbill = amt(80, 301), amt(30, 151), amt(20, 121)
+    restricted, cd, overdraft = amt(20, 101), amt(30, 141), amt(5, 41)
+    gold = cash + money_market + tbill
+    trap = gold + restricted + cd - overdraft
+    rows = [
+        ("Checking account", cash),
+        ("Money-market fund (withdrawable on demand)", money_market),
+        ("Treasury bill bought with 2 months to maturity", tbill),
+        ("Restricted cash for a plant expansion in 2 years", restricted),
+        ("Certificate of deposit, original maturity 9 months", cd),
+        ("Bank overdraft (separate account)", overdraft),
+    ]
+    rng.shuffle(rows)
+    data = _balances_table("Cash-related balances — 2026-01-31", rows)
+    policy = """# Cash-equivalent conventions (applies to this task)
+
+- Cash equivalents are short-term, highly liquid investments with an
+  ORIGINAL maturity of three months or less (including on-demand money
+  market funds). Restricted cash for a long-term purpose is not cash.
+- A bank overdraft is a liability; it is not netted against cash here.
+- Answer total cash and cash equivalents in USD.
+"""
+    question = _numeric_question(
+        "cash and cash equivalents",
+        "Using `/app/documents/cash_balances.md` and `/app/policy.md`, compute "
+        "**total cash and cash equivalents** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="cash-and-equivalents-total",
+        family="cash-controls",
+        title="Classify and total cash and cash equivalents",
+        question=question,
+        policy=policy,
+        data_name="cash_balances.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "cash-equivalents", "classification"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+INVESTMENT_CLASSES = [
+    "Trading (fair value through profit or loss)",
+    "Available-for-sale debt securities",
+    "Held-to-maturity (amortized cost)",
+]
+INVESTMENT_CASES = [
+    (
+        "Corporate bonds bought to sell within weeks for short-term price movements.",
+        "Trading (fair value through profit or loss)",
+    ),
+    (
+        "Corporate bonds the company has the positive intent and ability "
+        "to hold until they mature.",
+        "Held-to-maturity (amortized cost)",
+    ),
+    (
+        "Corporate bonds that may be sold if liquidity is needed, with no "
+        "intent to trade them actively or necessarily hold to maturity.",
+        "Available-for-sale debt securities",
+    ),
+    (
+        "A debt portfolio actively bought and sold to profit from short-term price differences.",
+        "Trading (fair value through profit or loss)",
+    ),
+]
+
+
+def sc_investment_classification(seed: int) -> TaskInstance:
+    """Single-choice: US GAAP debt-security classification by intent."""
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(INVESTMENT_CASES)
+    labels = INVESTMENT_CLASSES.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Debt-security classification (US GAAP; applies to this task)
+
+- Trading: bought and held principally to sell in the near term.
+- Held-to-maturity: positive intent AND ability to hold to maturity.
+- Available-for-sale: debt securities in neither category above.
+"""
+    question = _choice_question(
+        "debt-security classification",
+        f"Holding: **{narrative}**\n\nUsing `/app/policy.md`, how is it "
+        "classified? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-investment-classification",
+        family="investments",
+        title="Classify a debt security by intent",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-investment-classification",
+            "investments",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "debt-securities", "classification"],
+        level="vocational",
+        framework="us-gaap",
+        format="single-choice",
+        skill="remembering-understanding",
+        standards=["asc:320"],
+    )
+
+
+def mc_reportable_segments(seed: int) -> TaskInstance:
+    """Multiple-choice: apply the three 10% reportable-segment tests.
+
+    Segment A qualifies on revenue only, B on profit/assets, C never;
+    D (when present) qualifies on assets only. Trap: requiring all three.
+    """
+    rng = random.Random(seed)
+    # Percentage shares are fixed patterns scaled by a random base so the
+    # threshold outcomes are construction-guaranteed but amounts vary.
+    scale = Decimal(rng.randrange(80, 201)) * 10
+    segments = [
+        ("Alpha", 14, 4, 5, True),  # revenue alone
+        ("Beta", 5, 18, 12, True),  # profit and assets
+        ("Gamma", 6, 3, 4, False),  # none
+        ("Delta", 4, 2, 15, True),  # assets alone
+        ("Epsilon", 2, 1, 3, False),
+        ("Zeta", 3, 2, 2, False),
+    ]
+    chosen = segments[:]
+    rng.shuffle(chosen)
+    chosen = chosen[:4]
+    # Guarantee at least one qualifying and one non-qualifying case.
+    if all(q for *_, q in chosen):
+        chosen[-1] = segments[2]
+    if not any(q for *_, q in chosen):
+        chosen[0] = segments[0]
+    option_ids = ["A", "B", "C", "D"]
+    table_rows = []
+    gold = []
+    for oid, (name, rev_pct, profit_pct, asset_pct, qualifies) in zip(
+        option_ids, chosen, strict=True
+    ):
+        # Amounts are percentages of different stated totals; scale revenue.
+        revenue = (Decimal(rev_pct) * scale).quantize(CENT)
+        table_rows.append(
+            f"- {oid}. {name} is reportable — revenue USD {money(revenue)} "
+            f"({rev_pct}% of combined revenue), profit {profit_pct}% of the "
+            f"greater combined profit/loss measure, assets {asset_pct}%."
+        )
+        if qualifies:
+            gold.append(oid)
+    options_md = "\n".join(table_rows)
+    policy = """# Reportable-segment thresholds (applies to this task)
+
+- A segment is reportable if it meets ANY ONE 10% test: at least 10% of
+  combined revenue, at least 10% of the greater of combined segment
+  profits/losses, or at least 10% of combined segment assets.
+- Meeting two or all three tests is not required.
+"""
+    question = _choice_question(
+        "reportable operating segments",
+        "Using `/app/policy.md`, select **all** statements that are true. "
+        "Incorrect selections are penalized.",
+        options_md,
+        '["A", "C"]',
+    )
+    return TaskInstance(
+        task_id="mc-reportable-segments",
+        family="segment-reporting",
+        title="Apply the 10% reportable-segment tests",
+        instruction=(
+            "Answer the multiple-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": ["A"],\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "mc-reportable-segments",
+            "segment-reporting",
+            seed,
+            format="multiple-choice",
+            gold=sorted(gold),
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": sorted(gold), "confidence": 100},
+        keywords=["multiple-choice", "reportable-segments", "ten-percent-tests"],
+        level="vocational",
+        format="multiple-choice",
+        skill="application",
+        standards=["asc:280", "ifrs:8"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -10285,6 +11435,21 @@ FAMILIES = {
     "debt-modification-percent-change": debt_modification_percent_change,
     "mc-temporary-accounts": mc_temporary_accounts,
     "sc-fair-value-hierarchy": sc_fair_value_hierarchy,
+    "deferred-tax-asset-warranty": deferred_tax_asset_warranty,
+    "consignment-sale-recognition": consignment_sale_recognition,
+    "natural-resource-depletion": natural_resource_depletion,
+    "internal-use-software-costs": internal_use_software_costs,
+    "lessor-sales-type-lease": lessor_sales_type_lease,
+    "factoring-secured-borrowing": factoring_secured_borrowing,
+    "pension-expense-and-contribution": pension_expense_and_contribution,
+    "irr-from-annuity-factor": irr_from_annuity_factor,
+    "c-corporation-taxable-income": c_corporation_taxable_income,
+    "s-corporation-aaa-ending": s_corporation_aaa_ending,
+    "partnership-outside-basis": partnership_outside_basis,
+    "performance-materiality": performance_materiality,
+    "cash-and-equivalents-total": cash_and_equivalents_total,
+    "sc-investment-classification": sc_investment_classification,
+    "mc-reportable-segments": mc_reportable_segments,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -10424,4 +11589,19 @@ STABLE_SEEDS = {
     "debt-modification-percent-change": 233,
     "mc-temporary-accounts": 234,
     "sc-fair-value-hierarchy": 235,
+    "deferred-tax-asset-warranty": 236,
+    "consignment-sale-recognition": 237,
+    "natural-resource-depletion": 238,
+    "internal-use-software-costs": 239,
+    "lessor-sales-type-lease": 240,
+    "factoring-secured-borrowing": 241,
+    "pension-expense-and-contribution": 242,
+    "irr-from-annuity-factor": 243,
+    "c-corporation-taxable-income": 244,
+    "s-corporation-aaa-ending": 245,
+    "partnership-outside-basis": 246,
+    "performance-materiality": 247,
+    "cash-and-equivalents-total": 248,
+    "sc-investment-classification": 249,
+    "mc-reportable-segments": 250,
 }
