@@ -254,6 +254,18 @@ D = standards depth):
 | `sc-fraud-triangle-classification` | V | V | V | V | V | V | V | vocational |
 | `expected-profit-choice` | V | U | V | V | V | V | V | vocational |
 | `receivables-control-balance` | V | V | V | U | V | V | V | vocational |
+| `partnership-formation-capital` | V | V | V | U | V | V | V | vocational |
+| `partnership-liquidation-distribution` | V | U | V | V | V | V | V | vocational |
+| `partnership-retirement-settlement` | V | U | V | V | V | V | V | vocational |
+| `biological-asset-fair-value` | V | V | V | V | V | V | U | vocational |
+| `sc-debt-equity-classification` | V | V | V | V | V | V | U | vocational |
+| `sc-control-assessment` | V | V | V | V | V | V | U | vocational |
+| `profit-from-capital-movements` | V | V | V | V | V | V | V | vocational |
+| `sales-from-markup-reconstruction` | V | U | V | V | V | V | V | vocational |
+| `inventory-cost-inclusions` | V | V | V | U | V | V | U | university (borderline) |
+| `disposal-of-subsidiary-gain` | V | V | V | V | V | V | U | vocational |
+| `step-acquisition-remeasurement-gain` | V | V | V | V | V | V | U | vocational |
+| `weighted-average-ending-inventory` | V | U | V | V | V | V | U | university (borderline) |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -436,8 +448,20 @@ problem the task hands over. An analysis task can be vocational.
 | `sc-fraud-triangle-classification` | audit-planning | single-choice | core | application | — | Pressure read as opportunity |
 | `expected-profit-choice` | decision-analysis | numeric | core | application | — | Weaker alternative's expected profit |
 | `receivables-control-balance` | receivables | numeric | core | application | — | Cash sales swept into control account |
+| `partnership-formation-capital` | partnerships | journal-entry | core | application | — | Record contributed asset at old book value |
+| `partnership-liquidation-distribution` | partnerships | numeric | core | application | — | Allocate gain by capital ratio |
+| `partnership-retirement-settlement` | partnerships | journal-entry | core | application | — | Excess debited to goodwill |
+| `biological-asset-fair-value` | agriculture | journal-entry | ifrs | application | `ias:41` | Gain routed to OCI |
+| `sc-debt-equity-classification` | financial-instruments | single-choice | ifrs | application | `ias:32` | Follow legal label over substance |
+| `sc-control-assessment` | consolidation | single-choice | ifrs | application | `ifrs:10` | Treat 50% of votes as a bright line |
+| `profit-from-capital-movements` | ledger-integrity-reporting | numeric | core | application | — | Raw capital increase taken as profit |
+| `sales-from-markup-reconstruction` | ledger-integrity-reporting | numeric | core | application | — | Markup treated as margin on sales |
+| `inventory-cost-inclusions` | inventory | numeric | core | application | `asc:330`, `ias:2` | Capitalize abnormal waste and storage |
+| `disposal-of-subsidiary-gain` | consolidation | numeric | core | application | `asc:810`, `ifrs:10` | Gain on parent's share only |
+| `step-acquisition-remeasurement-gain` | business-combinations | numeric | core | application | `asc:805`, `ifrs:3` | Gain measured from original cost |
+| `weighted-average-ending-inventory` | inventory | numeric | core | application | `asc:330`, `ias:2` | Ending units at latest (FIFO) prices |
 
-Stable seeds: 101–270 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–282 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -446,13 +470,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 104 | 10 | 7 | planned |
+| financial-accounting | 113 | 13 | 7 | planned |
 | management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
 | audit-assurance | 6 | — | planned | — |
 
-Format coverage: journal-entry ×85, multiple-choice ×4, single-choice ×10,
-numeric ×71; open-text is
+Format coverage: journal-entry ×88, multiple-choice ×4, single-choice ×12,
+numeric ×78; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

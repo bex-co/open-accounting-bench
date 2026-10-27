@@ -1695,6 +1695,63 @@ def test_expensing_pension_contribution_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_formation_at_old_book_value_fails():
+    """Trap: record contributed equipment at the contributor's book value."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["partnership-formation-capital"](271)
+    doc = instance.app_files["documents/formation.md"]
+    book = Decimal(
+        re.search(r"book value in Ben's old sole-proprietor records was\s+USD ([\d.]+)", doc)[1]
+    )
+    d = _deltas(instance)
+    bank, ana = d["Assets:Bank:Checking"], -d["Equity:AnaCapital"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-02",
+        "Partners",
+        [
+            ("Assets:Bank:Checking", bank),
+            ("Assets:Equipment", book),
+            ("Equity:AnaCapital", -ana),
+            ("Equity:BenCapital", -(bank + book - ana)),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_retirement_excess_to_goodwill_fails():
+    """Trap: debit the retirement excess to goodwill (goodwill method)."""
+    instance = FAMILIES["partnership-retirement-settlement"](273)
+    d = _deltas(instance)
+    cara, settlement = d["Equity:CaraCapital"], -d["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Cara",
+        [
+            ("Equity:CaraCapital", cara),
+            ("Assets:Goodwill", settlement - cara),
+            ("Assets:Bank:Checking", -settlement),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_biological_gain_to_oci_fails():
+    """Trap: route a biological-asset gain to OCI as a revaluation."""
+    instance = FAMILIES["biological-asset-fair-value"](274)
+    gain = _deltas(instance)["Assets:BiologicalAssets"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Valuation",
+        [
+            ("Assets:BiologicalAssets", gain),
+            ("Equity:AccumulatedOtherComprehensiveIncome", -gain),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
 def test_pension_amortization_through_liability_fails():
     """Trap: route the AOCI amortization leg through the pension liability."""
     instance = FAMILIES["pension-expense-and-contribution"](242)

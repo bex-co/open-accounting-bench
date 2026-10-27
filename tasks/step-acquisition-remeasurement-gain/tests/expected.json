@@ -1,0 +1,27 @@
+{
+  "task_id": "step-acquisition-remeasurement-gain",
+  "family": "business-combinations",
+  "seed": 281,
+  "generator_version": "0.4.0",
+  "format": "numeric",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "47000",
+  "abs_tolerance": "0.01",
+  "rel_tolerance": "0",
+  "trap_value": "76000.00",
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:805",
+    "ifrs:3"
+  ]
+}

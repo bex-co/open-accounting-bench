@@ -147,6 +147,13 @@ NUMERIC_FAMILIES = [
     "inventory-lcm-value",
     "expected-profit-choice",
     "receivables-control-balance",
+    "partnership-liquidation-distribution",
+    "profit-from-capital-movements",
+    "sales-from-markup-reconstruction",
+    "inventory-cost-inclusions",
+    "disposal-of-subsidiary-gain",
+    "step-acquisition-remeasurement-gain",
+    "weighted-average-ending-inventory",
 ]
 
 
@@ -258,6 +265,8 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-audit-procedure-selection",
         "sc-control-design-gap",
         "sc-fraud-triangle-classification",
+        "sc-debt-equity-classification",
+        "sc-control-assessment",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

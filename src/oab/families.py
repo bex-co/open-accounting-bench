@@ -12922,6 +12922,911 @@ def receivables_control_balance(seed: int) -> TaskInstance:
     )
 
 
+FORMATION_ACCOUNTS = [
+    (CAPITAL_ANA, "Ana, capital"),
+    (CAPITAL_BEN, "Ben, capital"),
+]
+
+
+def partnership_formation_capital(seed: int) -> TaskInstance:
+    """Scenario: two partners form a partnership with cash and equipment.
+
+    Oracle: noncash assets contributed are recorded at their agreed
+    (fair) value, and the contributing partner's capital is credited
+    at that value. Trap: recording the equipment at the contributor's
+    old book value.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    ana_cash = Decimal(rng.randrange(40, 121)) * 1000
+    ben_cash = Decimal(rng.randrange(5, 31)) * 1000
+    book_value = Decimal(rng.randrange(20, 81)) * 1000
+    uplift = Decimal(rng.randrange(5, 41)) * 1000
+    fair_value = book_value + uplift
+    ben_capital = ben_cash + fair_value
+    opening = Decimal("5000.00")
+    initial = _ledger_header(opening, FORMATION_ACCOUNTS)
+    doc = (
+        "# Partnership formation — 2026-01-02\n\n"
+        f"Ana contributed cash of USD {money(ana_cash)}. Ben contributed "
+        f"cash of USD {money(ben_cash)} and workshop equipment. The "
+        f"equipment's book value in Ben's old sole-proprietor records was "
+        f"USD {money(book_value)}; the partners agreed its current fair "
+        f"value is USD {money(fair_value)}, and the partnership takes it "
+        "over at that agreed value.\n"
+    )
+    policy = POLICY + (
+        "- On formation, assets a partner contributes are recorded at\n"
+        "  their agreed (fair) value at the contribution date, and the\n"
+        "  partner's capital is credited for the total value contributed\n"
+        "  (cash and noncash). The contributor's former book value is\n"
+        "  irrelevant to the partnership's records.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-02",
+        "Partners",
+        "Formation contributions",
+        [
+            (BANK, ana_cash + ben_cash),
+            ("Assets:Equipment", fair_value),
+            (CAPITAL_ANA, -ana_cash),
+            (CAPITAL_BEN, -ben_capital),
+        ],
+    )
+    return TaskInstance(
+        task_id="partnership-formation-capital",
+        family="partnerships",
+        title="Record partnership formation contributions",
+        instruction=(
+            "Record the formation in `/app/documents/formation.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-02; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(FORMATION_ACCOUNTS),
+            "documents/formation.md": doc,
+        },
+        expected=_expected(
+            "partnership-formation-capital",
+            "partnerships",
+            seed,
+            expected_deltas={
+                BANK: money(ana_cash + ben_cash),
+                "Assets:Equipment": money(fair_value),
+                CAPITAL_ANA: money(-ana_cash),
+                CAPITAL_BEN: money(-ben_capital),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-02", "2026-01-02"],
+            required_final_balances={CAPITAL_BEN: money(-ben_capital)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["partnership", "formation", "capital"],
+        level="vocational",
+        skill="application",
+    )
+
+
+def partnership_liquidation_distribution(seed: int) -> TaskInstance:
+    """Numeric: cash to one partner on liquidation after a realization gain.
+
+    Trap: allocating the gain by capital ratio instead of the
+    profit-sharing ratio.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    # Capital ratio kept at least 10 points from the 60% P/L share so
+    # the capital-ratio trap never coincides with gold.
+    while True:
+        cap_ana, cap_ben = amt(30, 91), amt(30, 91)
+        if abs(cap_ana / (cap_ana + cap_ben) - Decimal("0.6")) >= Decimal("0.1"):
+            break
+    liabilities, cash = amt(10, 41), amt(5, 21)
+    noncash = cap_ana + cap_ben + liabilities - cash
+    gain = amt(5, 31)
+    proceeds = noncash + gain
+    gold = cap_ana + gain * Decimal("0.6")
+    trap = (cap_ana + gain * cap_ana / (cap_ana + cap_ben)).quantize(CENT)
+    data = (
+        "# Liquidation data — 2026-01-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Cash | {money(cash)} |\n"
+        f"| Noncash assets (book value) | {money(noncash)} |\n"
+        f"| Liabilities | {money(liabilities)} |\n"
+        f"| Ana, capital | {money(cap_ana)} |\n"
+        f"| Ben, capital | {money(cap_ben)} |\n"
+        f"| Noncash assets sold for | {money(proceeds)} |\n"
+        "| Profit-sharing ratio | Ana 60% / Ben 40% |\n"
+    )
+    policy = """# Liquidation conventions (applies to this task)
+
+- Order: sell the noncash assets, allocate the gain or loss on
+  realization to the partners in their PROFIT-SHARING ratio, pay all
+  liabilities, then distribute the remaining cash to the partners in
+  accordance with their resulting capital balances.
+- Answer the cash distributed to Ana in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "cash distributed to Ana on liquidation",
+        "Using `/app/documents/liquidation_data.md` and `/app/policy.md`, "
+        "compute the **cash distributed to Ana** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="partnership-liquidation-distribution",
+        family="partnerships",
+        title="Cash to a partner on liquidation",
+        question=question,
+        policy=policy,
+        data_name="liquidation_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "partnership", "liquidation"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+RETIREMENT_ACCOUNTS = [
+    (CAPITAL_ANA, "Ana, capital"),
+    (CAPITAL_BEN, "Ben, capital"),
+    (CAPITAL_CARA, "Cara, capital"),
+    ("Assets:Goodwill", "Goodwill"),
+]
+
+
+def partnership_retirement_settlement(seed: int) -> TaskInstance:
+    """Scenario: Cara retires and is paid more than her capital balance.
+
+    Oracle (bonus method): the excess over Cara's capital is a bonus
+    borne by the remaining partners, debited to their capital in
+    their relative profit ratio. Trap: debiting the excess to
+    goodwill as if the firm had acquired an asset.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    ana = Decimal(rng.randrange(80, 161)) * 1000
+    ben = Decimal(rng.randrange(60, 141)) * 1000
+    cara = Decimal(rng.randrange(40, 101)) * 1000
+    excess = Decimal(rng.randrange(1, 26)) * 800
+    settlement = cara + excess
+    ana_share, ben_share = excess * 5 / 8, excess * 3 / 8
+    opening = settlement + Decimal("30000.00")
+    initial = _ledger_header(opening, RETIREMENT_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening partner capital balances",
+        [
+            ("Equity:Opening-Balances", ana + ben + cara),
+            (CAPITAL_ANA, -ana),
+            (CAPITAL_BEN, -ben),
+            (CAPITAL_CARA, -cara),
+        ],
+    )
+    doc = (
+        "# Partner retirement — 2026-01-20\n\n"
+        f"Capital balances: Ana USD {money(ana)}, Ben USD {money(ben)}, "
+        f"Cara USD {money(cara)}. Profit ratio: Ana 5, Ben 3, Cara 2. "
+        f"Cara retires and is paid USD {money(settlement)} in cash in "
+        "full settlement of her interest. The bonus method applies (no "
+        "assets are revalued).\n"
+    )
+    policy = POLICY + (
+        "- Bonus method on retirement: a settlement above the retiring\n"
+        "  partner's capital balance is a bonus FROM the remaining\n"
+        "  partners, debited to their capital accounts in their relative\n"
+        "  profit-sharing ratio (here Ana 5 : Ben 3). No goodwill is\n"
+        "  recognized.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-20",
+        "Cara",
+        "Cara's retirement settlement",
+        [
+            (CAPITAL_CARA, cara),
+            (CAPITAL_ANA, ana_share),
+            (CAPITAL_BEN, ben_share),
+            (BANK, -settlement),
+        ],
+    )
+    return TaskInstance(
+        task_id="partnership-retirement-settlement",
+        family="partnerships",
+        title="Settle a retiring partner (bonus method)",
+        instruction=(
+            "Record the retirement in `/app/documents/retirement.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-20; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(RETIREMENT_ACCOUNTS),
+            "documents/retirement.md": doc,
+        },
+        expected=_expected(
+            "partnership-retirement-settlement",
+            "partnerships",
+            seed,
+            expected_deltas={
+                CAPITAL_CARA: money(cara),
+                CAPITAL_ANA: money(ana_share),
+                CAPITAL_BEN: money(ben_share),
+                BANK: money(-settlement),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-20", "2026-01-20"],
+            required_final_balances={CAPITAL_CARA: "0.00"},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["partnership", "retirement", "bonus-method"],
+        level="vocational",
+        skill="application",
+    )
+
+
+BIOLOGICAL = "Assets:BiologicalAssets"
+BIOLOGICAL_ACCOUNTS = [
+    (BIOLOGICAL, "Biological assets at fair value less costs to sell"),
+    (UNREALIZED, "Fair-value gain (credit) or loss on biological assets"),
+    (AOCI, "Accumulated other comprehensive income"),
+]
+
+
+def biological_asset_fair_value(seed: int) -> TaskInstance:
+    """Scenario (IFRS): a dairy herd's fair value less costs to sell rises.
+
+    Oracle: remeasure the biological asset with the gain in PROFIT OR
+    LOSS (IAS 41). Trap: routing the gain to OCI as if it were a PPE
+    revaluation.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    carrying = Decimal(rng.randrange(120, 361)) * 1000
+    gain = (carrying * Decimal(rng.randrange(20, 81)) / 1000).quantize(CENT)
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, BIOLOGICAL_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Dairy herd at fair value less costs to sell",
+        [(BIOLOGICAL, carrying), ("Equity:Opening-Balances", -carrying)],
+    )
+    doc = (
+        "# Herd valuation — 2026-01-31\n\n"
+        f"The dairy herd was carried at USD {money(carrying)} (fair value "
+        f"less costs to sell) at 2026-01-01. A valuation at 2026-01-31 "
+        f"puts fair value less costs to sell at USD {money(carrying + gain)}. "
+        "No animals were bought, sold, or born during January.\n"
+    )
+    policy = POLICY + (
+        "- Biological assets are measured at fair value less costs to sell\n"
+        "  (IAS 41); changes in that amount are recognized in PROFIT OR\n"
+        "  LOSS for the period, never in other comprehensive income.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Valuation",
+        "Biological asset fair-value gain",
+        [(BIOLOGICAL, gain), (UNREALIZED, -gain)],
+    )
+    return TaskInstance(
+        task_id="biological-asset-fair-value",
+        family="agriculture",
+        title="Remeasure a biological asset (IAS 41)",
+        instruction=(
+            "Record the month-end adjustment in `/app/documents/herd_valuation.md` "
+            "in `/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append new balanced transactions dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(BIOLOGICAL_ACCOUNTS),
+            "documents/herd_valuation.md": doc,
+        },
+        expected=_expected(
+            "biological-asset-fair-value",
+            "agriculture",
+            seed,
+            expected_deltas={BIOLOGICAL: money(gain), UNREALIZED: money(-gain)},
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={BIOLOGICAL: money(carrying + gain)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["biological-assets", "fair-value", "ias-41"],
+        level="vocational",
+        framework="ifrs",
+        standards=["ias:41"],
+    )
+
+
+DEBT_EQUITY_OPTIONS = ["Financial liability", "Equity", "Compound instrument (split)"]
+DEBT_EQUITY_CASES = [
+    (
+        "Preference shares the issuer must redeem for cash on a fixed "
+        "date five years from now, with a fixed cumulative dividend.",
+        "Financial liability",
+    ),
+    (
+        "Ordinary shares with no redemption rights; any dividends are "
+        "entirely at the directors' discretion.",
+        "Equity",
+    ),
+    (
+        "A note the holder can put back to the issuer for cash at any time at its face amount.",
+        "Financial liability",
+    ),
+    (
+        "Perpetual notes with no maturity date and coupons the issuer "
+        "may cancel forever at its sole discretion (non-cumulative).",
+        "Equity",
+    ),
+    (
+        "Shares redeemable only if the issuer chooses to redeem them; dividends are discretionary.",
+        "Equity",
+    ),
+    (
+        "Convertible notes paying a 4% cash coupon and redeemable at "
+        "par in four years, convertible at the holder's option into a "
+        "fixed number of the issuer's ordinary shares.",
+        "Compound instrument (split)",
+    ),
+]
+
+
+def sc_debt_equity_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify an instrument by contractual substance.
+
+    Trap: following the legal label ("shares") instead of the
+    obligation to deliver cash.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(DEBT_EQUITY_CASES)
+    labels = DEBT_EQUITY_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Debt vs equity (applies to this task)
+
+- Classify by contractual substance, not legal form or name.
+- A contractual obligation to deliver cash (or another financial
+  asset) that the issuer cannot unconditionally avoid — including
+  an obligation the holder can trigger — is a financial liability.
+- No such obligation (distributions and any return of capital are
+  at the issuer's discretion) means equity.
+- An instrument with both an unavoidable cash obligation and a
+  residual equity conversion right is compound and is split.
+"""
+    question = _choice_question(
+        "debt or equity classification",
+        f"Instrument: **{narrative}**\n\nUsing `/app/policy.md`, how is "
+        "it classified in the issuer's statements? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-debt-equity-classification",
+        family="financial-instruments",
+        title="Classify an instrument as debt or equity",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-debt-equity-classification",
+            "financial-instruments",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "debt-equity", "ias-32"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["ias:32"],
+    )
+
+
+CONTROL_OPTIONS = [
+    "Control — consolidate",
+    "Significant influence only — do not consolidate",
+    "Neither control nor significant influence",
+]
+CONTROL_CASES = [
+    (
+        "The investor holds 62% of the voting shares and appoints a "
+        "majority of the board, which directs the operating and "
+        "financing policies.",
+        "Control — consolidate",
+    ),
+    (
+        "The investor holds 45% of the votes; the rest are held by "
+        "thousands of small holders who have never acted together. The "
+        "investor has appointed the management team and directed "
+        "operations unopposed for years.",
+        "Control — consolidate",
+    ),
+    (
+        "The investor holds 48% of the votes and also holds currently "
+        "exercisable, deep in-the-money options over a further 10%, "
+        "which the other shareholders cannot block.",
+        "Control — consolidate",
+    ),
+    (
+        "The investor holds 30% of the votes and one of five board "
+        "seats; another shareholder holds 55% and appoints the rest "
+        "of the board.",
+        "Significant influence only — do not consolidate",
+    ),
+    (
+        "The investor holds 12% of the voting shares with no board "
+        "seat, no veto rights, and no other arrangements.",
+        "Neither control nor significant influence",
+    ),
+]
+
+
+def sc_control_assessment(seed: int) -> TaskInstance:
+    """Single-choice: assess control from voting power facts (IFRS 10).
+
+    Trap: treating 50% of votes as a bright line — de facto power
+    below it (dispersed holders, substantive options) still controls.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(CONTROL_CASES)
+    labels = CONTROL_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Control assessment (applies to this task)
+
+An investor controls an investee when it has power over the
+relevant activities, exposure to variable returns, and the ability
+to use that power to affect returns. Apply these conventions:
+
+- A majority of voting rights normally gives power.
+- Power can exist below 50%: widely dispersed other holders who do
+  not act together, or substantive currently exercisable potential
+  voting rights, can give the investor the practical ability to
+  direct the relevant activities.
+- Roughly 20-50% with board representation but another party
+  holding power is significant influence, not control.
+- Small holdings with no board seat or other rights are neither.
+"""
+    question = _choice_question(
+        "control assessment",
+        f"Facts: **{narrative}**\n\nUsing `/app/policy.md`, what is the "
+        "investor's relationship with the investee? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-control-assessment",
+        family="consolidation",
+        title="Assess control of an investee",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-control-assessment",
+            "consolidation",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "control", "consolidation"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["ifrs:10"],
+    )
+
+
+def profit_from_capital_movements(seed: int) -> TaskInstance:
+    """Numeric: profit from opening/closing capital (incomplete records).
+
+    Trap: reporting the raw increase in capital as profit.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    opening, introduced = amt(200, 801), amt(20, 201)
+    # Drawings kept well away from introductions so the trap differs.
+    while True:
+        drawings, profit = amt(30, 251), amt(40, 301)
+        if abs(drawings - introduced) >= Decimal("3000"):
+            break
+    closing = opening + introduced + profit - drawings
+    data = (
+        "# Sole trader's capital movements — year ended 2025-12-31\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Capital at 2025-01-01 | {money(opening)} |\n"
+        f"| Capital at 2025-12-31 | {money(closing)} |\n"
+        f"| Additional capital introduced during the year | {money(introduced)} |\n"
+        f"| Drawings during the year | {money(drawings)} |\n"
+    )
+    policy = """# Incomplete-records convention (applies to this task)
+
+- Closing capital = opening capital + capital introduced + profit
+  for the year - drawings. Solve for the profit.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "profit from capital movements",
+        "Using `/app/documents/capital_movements.md` and `/app/policy.md`, "
+        "compute the **profit for the year** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="profit-from-capital-movements",
+        family="ledger-integrity-reporting",
+        title="Profit from capital movements",
+        question=question,
+        policy=policy,
+        data_name="capital_movements.md",
+        data=data,
+        gold=profit,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "incomplete-records", "capital"],
+        abs_tolerance="0.01",
+        trap_value=money(closing - opening),
+    )
+
+
+def sales_from_markup_reconstruction(seed: int) -> TaskInstance:
+    """Numeric: reconstruct sales from cost of sales and a markup on cost.
+
+    Trap: treating the markup as a margin on sales.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    mark_pct = rng.choice([20, 25, 50])
+    opening, purchases, closing = amt(40, 161), amt(300, 901), amt(50, 181)
+    cost_of_sales = opening + purchases - closing
+    gold = (cost_of_sales * (100 + mark_pct) / 100).quantize(CENT)
+    trap = (cost_of_sales / (1 - Decimal(mark_pct) / 100)).quantize(CENT)
+    data = (
+        "# Trading data (sales figure missing) — 2025\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Inventory at 2025-01-01 | {money(opening)} |\n"
+        f"| Purchases | {money(purchases)} |\n"
+        f"| Inventory at 2025-12-31 | {money(closing)} |\n"
+        f"| Pricing policy | cost plus {mark_pct}% markup on cost |\n"
+    )
+    policy = """# Reconstruction conventions (applies to this task)
+
+- Cost of sales = opening inventory + purchases - closing inventory.
+- Markup is expressed on COST: selling price = cost x (1 + markup %).
+  A margin is a percentage of the selling price; the stated policy
+  here is a markup, not a margin.
+- Answer total sales in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "sales reconstructed from markup",
+        "Using `/app/documents/trading_data.md` and `/app/policy.md`, "
+        "compute **total sales** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="sales-from-markup-reconstruction",
+        family="ledger-integrity-reporting",
+        title="Reconstruct sales from a markup",
+        question=question,
+        policy=policy,
+        data_name="trading_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "incomplete-records", "markup"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def inventory_cost_inclusions(seed: int) -> TaskInstance:
+    """Numeric: inventoriable cost from a basket of cost items.
+
+    Trap: capitalizing abnormal waste and post-production storage.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/U -> university.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    price, duties, freight, rebates = amt(400, 1001), amt(15, 81), amt(10, 61), amt(5, 41)
+    waste, storage, admin, selling = amt(8, 51), amt(6, 41), amt(20, 81), amt(10, 51)
+    gold = price + duties + freight - rebates
+    data = (
+        "# Costs incurred for one batch of goods\n\n| Item | USD |\n|---|---:|\n"
+        f"| Purchase price | {money(price)} |\n"
+        f"| Import duties (non-refundable) | {money(duties)} |\n"
+        f"| Freight-in to the warehouse | {money(freight)} |\n"
+        f"| Volume rebates received | {money(rebates)} |\n"
+        f"| Abnormal spoilage during handling | {money(waste)} |\n"
+        f"| Storage of finished goods awaiting sale | {money(storage)} |\n"
+        f"| General administrative overhead | {money(admin)} |\n"
+        f"| Selling and distribution costs | {money(selling)} |\n"
+    )
+    policy = """# Inventoriable-cost conventions (applies to this task)
+
+- Inventory cost = purchase price + non-refundable duties and
+  transport/handling needed to bring the goods to their present
+  location and condition, LESS trade discounts and rebates.
+- Excluded (expensed): abnormal waste/spoilage, storage after the
+  goods are ready for sale, general administrative overhead, and
+  selling/distribution costs.
+- Answer the batch's inventory cost in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "inventoriable cost of a batch",
+        "Using `/app/documents/batch_costs.md` and `/app/policy.md`, compute "
+        "the **inventory cost of the batch** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="inventory-cost-inclusions",
+        family="inventory",
+        title="What belongs in inventory cost",
+        question=question,
+        policy=policy,
+        data_name="batch_costs.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "inventory", "inventoriable-cost"],
+        level="university",
+        abs_tolerance="0.01",
+        standards=["asc:330", "ias:2"],
+        trap_value=money(gold + waste + storage),
+    )
+
+
+def disposal_of_subsidiary_gain(seed: int) -> TaskInstance:
+    """Numeric: group gain on losing control of a subsidiary.
+
+    Trap: computing the gain on the parent's share only, ignoring the
+    noncontrolling interest derecognized and the retained interest.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    net_assets, goodwill = amt(300, 701), amt(20, 121)
+    nci = (net_assets * Decimal("0.2")).quantize(CENT)
+    retained_fv = amt(60, 181)
+    # Consideration large enough that the group result is a gain.
+    while True:
+        consideration = amt(400, 901)
+        gold = consideration + retained_fv + nci - (net_assets + goodwill)
+        if gold >= Decimal("20000"):
+            break
+    trap = (consideration - Decimal("0.8") * (net_assets + goodwill)).quantize(CENT)
+    data = (
+        "# Disposal of a subsidiary — 2026-01-31\n\n"
+        "The parent held 80% of the subsidiary. It now sells a 60% "
+        "stake and retains 20%, losing control.\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Cash consideration for the 60% stake sold | {money(consideration)} |\n"
+        f"| Fair value of the retained 20% interest | {money(retained_fv)} |\n"
+        f"| Carrying amount of the subsidiary's net assets (100%) | {money(net_assets)} |\n"
+        f"| Goodwill on the subsidiary | {money(goodwill)} |\n"
+        f"| Carrying amount of the noncontrolling interest (20%) | {money(nci)} |\n"
+    )
+    policy = """# Loss-of-control conventions (applies to this task)
+
+On losing control the group derecognizes 100% of the subsidiary's
+net assets and goodwill and the whole noncontrolling interest, and
+recognizes the consideration plus the retained interest at fair
+value:
+
+gain = consideration + fair value of retained interest
+       + carrying amount of noncontrolling interest
+       - (net assets + goodwill).
+
+- Answer the group gain in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "group gain on losing control",
+        "Using `/app/documents/disposal_data.md` and `/app/policy.md`, "
+        "compute the **group gain on disposal** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="disposal-of-subsidiary-gain",
+        family="consolidation",
+        title="Group gain on losing control",
+        question=question,
+        policy=policy,
+        data_name="disposal_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "consolidation", "disposal"],
+        abs_tolerance="0.01",
+        standards=["asc:810", "ifrs:10"],
+        trap_value=money(trap),
+    )
+
+
+def step_acquisition_remeasurement_gain(seed: int) -> TaskInstance:
+    """Numeric: remeasurement gain on a previously held interest.
+
+    Trap: measuring the gain from original cost instead of the
+    carrying amount immediately before control is obtained.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    cost = amt(80, 201)
+    equity_uplift = amt(10, 61)
+    carrying = cost + equity_uplift
+    fair_value = carrying + amt(15, 81)
+    new_consideration = amt(300, 601)
+    data = (
+        "# Step acquisition — 2026-01-31\n\n"
+        "The investor held 30% of the investee (an associate) and today "
+        "buys a further 45%, obtaining control.\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Original cost of the 30% interest | {money(cost)} |\n"
+        f"| Carrying amount of the 30% interest (equity method) | {money(carrying)} |\n"
+        f"| Fair value of the 30% interest at the control date | {money(fair_value)} |\n"
+        f"| Cash paid for the additional 45% | {money(new_consideration)} |\n"
+    )
+    policy = """# Step-acquisition convention (applies to this task)
+
+- When control is obtained in stages, the previously held interest
+  is remeasured to its fair value at the control date; the gain is
+  fair value minus its carrying amount immediately before control
+  (not minus its original cost). The consideration for the new
+  tranche does not enter this gain.
+- Answer the remeasurement gain in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "remeasurement gain on a step acquisition",
+        "Using `/app/documents/step_acquisition.md` and `/app/policy.md`, "
+        "compute the **remeasurement gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="step-acquisition-remeasurement-gain",
+        family="business-combinations",
+        title="Remeasure a previously held interest",
+        question=question,
+        policy=policy,
+        data_name="step_acquisition.md",
+        data=data,
+        gold=fair_value - carrying,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "step-acquisition", "remeasurement"],
+        abs_tolerance="0.01",
+        standards=["asc:805", "ifrs:3"],
+        trap_value=money(fair_value - cost),
+    )
+
+
+def weighted_average_ending_inventory(seed: int) -> TaskInstance:
+    """Numeric: periodic weighted-average cost of ending inventory.
+
+    Trap: valuing the ending units FIFO (at the latest prices).
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
+    """
+    rng = random.Random(seed)
+    open_units = rng.randrange(100, 401, 50)
+    lot1_units = rng.randrange(200, 601, 50)
+    lot2_units = rng.randrange(200, 601, 50)
+    c0 = Decimal(rng.randrange(800, 1601, 50)) / 100
+    c1 = c0 + Decimal(rng.randrange(100, 401, 50)) / 100
+    c2 = c1 + Decimal(rng.randrange(100, 401, 50)) / 100
+    total_units = open_units + lot1_units + lot2_units
+    total_cost = open_units * c0 + lot1_units * c1 + lot2_units * c2
+    ending_units = rng.randrange(100, lot2_units + 1, 50)
+    gold = (total_cost * ending_units / total_units).quantize(CENT)
+    trap = (ending_units * c2).quantize(CENT)
+    sold = total_units - ending_units
+    data = (
+        "# Inventory movements — 2025 (periodic system)\n\n"
+        "| Lot | Units | Unit cost (USD) |\n|---|---:|---:|\n"
+        f"| Opening inventory | {open_units} | {money(c0)} |\n"
+        f"| Purchase 1 | {lot1_units} | {money(c1)} |\n"
+        f"| Purchase 2 | {lot2_units} | {money(c2)} |\n"
+        f"| Units sold during the year | {sold} | — |\n"
+    )
+    policy = """# Weighted-average convention (applies to this task)
+
+- Periodic weighted-average unit cost = total cost of goods
+  available (opening + all purchases) / total units available.
+- Ending inventory = weighted-average unit cost x units on hand
+  (units available - units sold).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "weighted-average ending inventory",
+        "Using `/app/documents/inventory_movements.md` and `/app/policy.md`, "
+        "compute the **ending inventory value** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="weighted-average-ending-inventory",
+        family="inventory",
+        title="Periodic weighted-average ending inventory",
+        question=question,
+        policy=policy,
+        data_name="inventory_movements.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "inventory", "weighted-average"],
+        level="university",
+        abs_tolerance="5",
+        standards=["asc:330", "ias:2"],
+        trap_value=money(trap),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -13093,6 +13998,18 @@ FAMILIES = {
     "sc-fraud-triangle-classification": sc_fraud_triangle_classification,
     "expected-profit-choice": expected_profit_choice,
     "receivables-control-balance": receivables_control_balance,
+    "partnership-formation-capital": partnership_formation_capital,
+    "partnership-liquidation-distribution": partnership_liquidation_distribution,
+    "partnership-retirement-settlement": partnership_retirement_settlement,
+    "biological-asset-fair-value": biological_asset_fair_value,
+    "sc-debt-equity-classification": sc_debt_equity_classification,
+    "sc-control-assessment": sc_control_assessment,
+    "profit-from-capital-movements": profit_from_capital_movements,
+    "sales-from-markup-reconstruction": sales_from_markup_reconstruction,
+    "inventory-cost-inclusions": inventory_cost_inclusions,
+    "disposal-of-subsidiary-gain": disposal_of_subsidiary_gain,
+    "step-acquisition-remeasurement-gain": step_acquisition_remeasurement_gain,
+    "weighted-average-ending-inventory": weighted_average_ending_inventory,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -13267,4 +14184,16 @@ STABLE_SEEDS = {
     "sc-fraud-triangle-classification": 268,
     "expected-profit-choice": 269,
     "receivables-control-balance": 270,
+    "partnership-formation-capital": 271,
+    "partnership-liquidation-distribution": 272,
+    "partnership-retirement-settlement": 273,
+    "biological-asset-fair-value": 274,
+    "sc-debt-equity-classification": 275,
+    "sc-control-assessment": 276,
+    "profit-from-capital-movements": 277,
+    "sales-from-markup-reconstruction": 278,
+    "inventory-cost-inclusions": 279,
+    "disposal-of-subsidiary-gain": 280,
+    "step-acquisition-remeasurement-gain": 281,
+    "weighted-average-ending-inventory": 282,
 }

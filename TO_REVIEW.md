@@ -189,6 +189,19 @@ crosswalk mappings.
     answers recomputing exact factors may miss by up to USD 1.88 and
     score 0. Accepted as a stated-instruction convention, pending
     reviewer sign-off.
+- 2026-10-26 — twelve further generator families (Stable seeds
+  271–282): `partnership-formation-capital`,
+  `partnership-liquidation-distribution`,
+  `partnership-retirement-settlement`, `biological-asset-fair-value`,
+  `sc-debt-equity-classification`, `sc-control-assessment`,
+  `profit-from-capital-movements`, `sales-from-markup-reconstruction`,
+  `inventory-cost-inclusions`, `disposal-of-subsidiary-gain`,
+  `step-acquisition-remeasurement-gain`,
+  `weighted-average-ending-inventory`. Same checks as earlier batches
+  (in particular: the loss-of-control gain formula as stated, the
+  de-facto-control cases, and the IAS 32 compound-instrument case).
+  Level scores were assigned under the strict reading from the start.
+  No crosswalk mappings proposed yet.
 
 
 ## Reviewed
