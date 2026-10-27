@@ -1,0 +1,34 @@
+{
+  "task_id": "narrative-multi-transactions",
+  "family": "transaction-classification",
+  "seed": 154,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Bank:Checking": "5325.00",
+    "Equity:OwnerCapital": "-10200.00",
+    "Assets:Equipment": "7250.00",
+    "Income:Services": "-3650.00",
+    "Expenses:Rent": "1275.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    3,
+    6
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:Bank:Checking": "10325.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

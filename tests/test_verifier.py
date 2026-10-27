@@ -888,3 +888,89 @@ def test_discount_left_in_receivable_fails():
         [("Assets:Bank:Checking", net), ("Assets:AccountsReceivable", -net)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_equipment_in_narrative_set_fails():
+    """Trap: expense the multi-year equipment in the narrative transaction set."""
+    instance = FAMILIES["narrative-multi-transactions"](154)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace("  Assets:Equipment", "  Expenses:Repairs")
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_units_depreciation_ignoring_residual_fails():
+    """Trap: per-unit rate on full cost, ignoring residual value."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["units-of-production-depreciation"](155)
+    doc = instance.app_files["documents/asset_register.md"]
+    cost = Decimal(re.search(r"Cost USD ([\d]+\.[\d]{2})", doc)[1])
+    total = int(re.search(r"total output: (\d+)", doc)[1])
+    month = int(re.search(r"January output: (\d+)", doc)[1])
+    wrong_amount = (cost / total * month).quantize(Decimal("0.01"))
+    assert wrong_amount != _deltas(instance)["Expenses:Depreciation"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Depreciation",
+        [
+            ("Expenses:Depreciation", wrong_amount),
+            ("Assets:AccumulatedDepreciation", -wrong_amount),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_warranty_claims_paid_fails():
+    """Trap: cash-basis warranty (expense claims paid, no new estimate)."""
+    instance = FAMILIES["warranty-provision-and-claims"](156)
+    claims = -_deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-25",
+        "Customers",
+        [("Expenses:Warranty", claims), ("Assets:Bank:Checking", -claims)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_sales_tax_as_revenue_fails():
+    """Trap: record the tax-inclusive receipt as sales revenue."""
+    instance = FAMILIES["sales-tax-collection"](157)
+    d = _deltas(instance)
+    gross = d["Assets:Bank:Checking"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Register",
+        [("Assets:Bank:Checking", gross), ("Income:Sales", -gross)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_petty_replenish_receipts_only_fails():
+    """Trap: replenish only the receipts and ignore the cash shortage."""
+    instance = FAMILIES["petty-cash-replenishment"](158)
+    d = _deltas(instance)
+    receipts = d["Expenses:OfficeSupplies"] + d["Expenses:Postage"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Petty cash",
+        [
+            ("Expenses:OfficeSupplies", d["Expenses:OfficeSupplies"]),
+            ("Expenses:Postage", d["Expenses:Postage"]),
+            ("Assets:Bank:Checking", -receipts),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_stock_dividend_at_par_only_fails():
+    """Trap: capitalize a small stock dividend at par (large-dividend rule)."""
+    instance = FAMILIES["small-stock-dividend"](159)
+    par_total = -_deltas(instance)["Equity:CommonStock"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Board",
+        [("Equity:RetainedEarnings", par_total), ("Equity:CommonStock", -par_total)],
+    )
+    _assert_semantic_trap(instance, wrong)

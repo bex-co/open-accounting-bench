@@ -52,6 +52,19 @@ crosswalk mappings.
   `ending-retained-earnings`, `present-value-lump-sum`,
   `flexible-budget-total-cost`. Same checks as the earlier batches.
   No crosswalk mappings proposed yet.
+- 2026-10-26 — fourteen further generator families (Stable seeds
+  154–167), including the first committed single-choice family and the
+  first two `tax`-category tasks: `narrative-multi-transactions`,
+  `units-of-production-depreciation`, `warranty-provision-and-claims`,
+  `sales-tax-collection`, `petty-cash-replenishment`,
+  `small-stock-dividend`, `accounting-equation-missing-equity`,
+  `current-income-tax-expense`, `lease-liability-present-value`,
+  `equity-method-carrying-amount`, `bond-issue-price`,
+  `partnership-income-allocation`, `mc-normal-balances`,
+  `sc-special-journal-routing`. Same checks as the earlier batches
+  (in particular: stated annuity/PV factors used as given; the
+  small-vs-large stock-dividend threshold wording). No crosswalk
+  mappings proposed yet.
 
 
 ## Reviewed

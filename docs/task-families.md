@@ -137,6 +137,20 @@ D = standards depth):
 | `ending-retained-earnings` | V | U | V | U | V | V | V | vocational |
 | `present-value-lump-sum` | V | U | V | V | V | V | V | vocational |
 | `flexible-budget-total-cost` | V | U | V | V | V | V | V | vocational |
+| `narrative-multi-transactions` | V | U | V | V | V | U | V | vocational |
+| `units-of-production-depreciation` | V | U | V | V | V | V | V | vocational |
+| `warranty-provision-and-claims` | V | U | V | V | V | U | V | vocational |
+| `sales-tax-collection` | V | U | V | V | V | V | V | vocational |
+| `petty-cash-replenishment` | V | U | V | U | V | V | V | vocational |
+| `small-stock-dividend` | V | U | V | V | V | V | U | vocational |
+| `accounting-equation-missing-equity` | V | U | V | V | V | V | V | vocational |
+| `current-income-tax-expense` | V | U | V | V | V | V | U | vocational |
+| `lease-liability-present-value` | V | U | V | V | V | V | U | vocational |
+| `equity-method-carrying-amount` | V | U | V | V | V | V | U | vocational |
+| `bond-issue-price` | V | U | V | V | V | V | U | vocational |
+| `partnership-income-allocation` | V | U | V | V | V | V | V | vocational |
+| `mc-normal-balances` | V | V | V | U | V | V | V | vocational |
+| `sc-special-journal-routing` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -202,8 +216,22 @@ problem the task hands over. An analysis task can be vocational.
 | `ending-retained-earnings` | equity | numeric | core | application | — | Add share-issue proceeds |
 | `present-value-lump-sum` | time-value-of-money | numeric | core | application | — | Undiscounted face amount |
 | `flexible-budget-total-cost` | budgeting | numeric | core | application | — | Static-budget volume |
+| `narrative-multi-transactions` | transaction-classification | journal-entry | core | application | — | Expense the equipment |
+| `units-of-production-depreciation` | fixed-assets | journal-entry | core | application | — | Ignore residual in unit rate |
+| `warranty-provision-and-claims` | provisions-contingencies | journal-entry | core | application | — | Expense claims paid (cash basis) |
+| `sales-tax-collection` | transaction-classification | journal-entry | core | application | — | Tax-inclusive revenue |
+| `petty-cash-replenishment` | cash-controls | journal-entry | core | application | — | Replenish receipts only |
+| `small-stock-dividend` | equity | journal-entry | core | application | — | Capitalize at par only |
+| `accounting-equation-missing-equity` | financial-reporting | numeric | core | application | — | Beginning equity |
+| `current-income-tax-expense` | income-taxes | numeric | core | application | `asc:740`, `ias:12` | Book income x rate |
+| `lease-liability-present-value` | leases | numeric | core | application | `asc:842`, `ifrs:16` | Undiscounted payment sum |
+| `equity-method-carrying-amount` | investments | numeric | core | application | `asc:323`, `ias:28` | Forget dividends reduce carrying amount |
+| `bond-issue-price` | borrowings | numeric | core | application | `asc:835-30`, `ifrs:9` | Answer face value (par) |
+| `partnership-income-allocation` | partnerships | numeric | core | application | — | Ratio on whole income |
+| `mc-normal-balances` | transaction-classification | multiple-choice | core | remembering-understanding | — | Contra-assets as debit-normal |
+| `sc-special-journal-routing` | ledger-integrity-reporting | single-choice | core | remembering-understanding | — | Return routed to sales journal |
 
-Stable seeds: 101–153 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–167 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -212,13 +240,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 40 | 1 | planned | planned |
+| financial-accounting | 52 | 1 | planned | planned |
 | management-accounting | 12 | planned | planned | planned |
-| tax | planned | — | — | planned |
+| tax | 2 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×33, multiple-choice ×1, numeric ×19;
-single-choice grader exists without a committed family; open-text is
+Format coverage: journal-entry ×39, multiple-choice ×2, single-choice ×1,
+numeric ×25; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

@@ -95,6 +95,12 @@ NUMERIC_FAMILIES = [
     "ending-retained-earnings",
     "present-value-lump-sum",
     "flexible-budget-total-cost",
+    "accounting-equation-missing-equity",
+    "current-income-tax-expense",
+    "lease-liability-present-value",
+    "equity-method-carrying-amount",
+    "bond-issue-price",
+    "partnership-income-allocation",
 ]
 
 
@@ -122,3 +128,32 @@ def test_mgmt_family_oracle_and_wrong_formula_trap(seed):
     gold = Decimal(expected["gold"])
     # Trap scale: answering with current volume (gold + offset) fails.
     assert grade_answer(expected, ans(float(gold) + 500)).reward == 0
+
+
+@pytest.mark.parametrize("seed", [1, 7, 42, 166])
+def test_mc_normal_balances_oracle_and_traps(seed):
+    instance = FAMILIES["mc-normal-balances"](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    gold = set(expected["gold"])
+    assert 0 < len(gold) < 8
+    # Trap: pick the credit-normal accounts instead (contra-assets etc.).
+    inverse = sorted(set(expected["options"]) - gold)
+    assert grade_answer(expected, ans(inverse)).reward == 0
+    assert grade_answer(expected, ans(expected["options"])).reward == 0
+    question = instance.app_files["question.md"]
+    for oid in expected["options"]:
+        assert f"- {oid}." in question
+
+
+@pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])
+def test_sc_special_journal_oracle_and_wrong_journal(seed):
+    instance = FAMILIES["sc-special-journal-routing"](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    wrong = next(o for o in expected["options"] if o != expected["gold"])
+    report = grade_answer(expected, ans(wrong))
+    assert report.reward == 0
+    assert report.layers["answer_accuracy"].score == 0.0

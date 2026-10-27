@@ -31,6 +31,20 @@
       "digest": "sha256:1006dd55cecdda92493a6d05fe4d0f918d5724b7ee51e98513f5cf80e624e01f"
     },
     {
+      "task_id": "accounting-equation-missing-equity",
+      "family": "financial-reporting",
+      "seed": 160,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4a4f2ab2245b02ce3426e9902050be8bee0a4b6d3ce46474d9df3b945a36210e"
+    },
+    {
       "task_id": "accrual-deferral-reversal",
       "family": "accruals-deferrals",
       "seed": 109,
@@ -116,6 +130,23 @@
         "ifrs:9"
       ],
       "digest": "sha256:ee50ea0a435c66578fa903adb888b48bb3316153f2d18fdf95b715a8e0804aed"
+    },
+    {
+      "task_id": "bond-issue-price",
+      "family": "borrowings",
+      "seed": 164,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:835-30",
+        "ifrs:9"
+      ],
+      "digest": "sha256:a00ee2b6bf13ce3427c9560af71f4fce94bb726377ff23f229f8d9f8ed5746b9"
     },
     {
       "task_id": "capitalized-cost-bundle",
@@ -216,6 +247,23 @@
       "digest": "sha256:3efe9d7a6cd12d37a5b1e1f3d886d436399c14febd981bc05e884c3c4c94ad78"
     },
     {
+      "task_id": "current-income-tax-expense",
+      "family": "income-taxes",
+      "seed": 161,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:740",
+        "ias:12"
+      ],
+      "digest": "sha256:1f9a49a8bda2925061e6f4c9be59d0d9252376c1e05eef710d0646877c55523a"
+    },
+    {
       "task_id": "current-portion-reclass",
       "family": "borrowings",
       "seed": 143,
@@ -298,6 +346,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:3717965b62f46883972d5ef9355d14227cf745632fd24317983249ed4a375368"
+    },
+    {
+      "task_id": "equity-method-carrying-amount",
+      "family": "investments",
+      "seed": 163,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:323",
+        "ias:28"
+      ],
+      "digest": "sha256:76a52cc6771d0887c468ba0364c75a3e6fd4cf30260b99a3492ec7a722cbef5b"
     },
     {
       "task_id": "flexible-budget-total-cost",
@@ -400,6 +465,23 @@
       "digest": "sha256:2545d8c9bffee87cc214f91d0179b70f013b56d8e42ad031ba18df4c5a820cf1"
     },
     {
+      "task_id": "lease-liability-present-value",
+      "family": "leases",
+      "seed": 162,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:842",
+        "ifrs:16"
+      ],
+      "digest": "sha256:35d20e6bf31e9736ccd0e8098c10d936ebd3fd2cf51037932f36f5793888dda8"
+    },
+    {
       "task_id": "lifo-ending-inventory",
       "family": "inventory",
       "seed": 134,
@@ -473,6 +555,20 @@
       "digest": "sha256:c7e24dd5afec2eadb61bd6dbc72558f7e13af4065dd016a9b1712a6648f78f52"
     },
     {
+      "task_id": "mc-normal-balances",
+      "family": "transaction-classification",
+      "seed": 166,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "multiple-choice",
+      "skill": "remembering-understanding",
+      "standards": [],
+      "digest": "sha256:67d650c45cbf9e0cd3902fdc7be808bd9407b93398164882600b7ce77ea17cbb"
+    },
+    {
       "task_id": "mgmt-break-even-units",
       "family": "cost-volume-profit",
       "seed": 106,
@@ -485,6 +581,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:ce62e516b7c342014008a347a65258002baf6349eccfb8d19e54917462383321"
+    },
+    {
+      "task_id": "narrative-multi-transactions",
+      "family": "transaction-classification",
+      "seed": 154,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:050f81cb7df55965212fe1299a2b40269e97d15bb54db80cfd014f416c893587"
     },
     {
       "task_id": "note-dishonored",
@@ -546,6 +656,20 @@
       "digest": "sha256:53fd284e8ba7f270cfefb306bb59b220a910c9005fa4f52279acf747ba720366"
     },
     {
+      "task_id": "partnership-income-allocation",
+      "family": "partnerships",
+      "seed": 165,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:45000c1d5ca70117990c30a8d97f17ba7ca872f4190f328ce704dd29f8a4a04b"
+    },
+    {
       "task_id": "payables-statement-recon",
       "family": "payables-reconciliation",
       "seed": 110,
@@ -600,6 +724,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:c5cab64cf018098fb9849fcba11d489ed788a67c1a139bd46169a452545e3bdf"
+    },
+    {
+      "task_id": "petty-cash-replenishment",
+      "family": "cash-controls",
+      "seed": 158,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:82a813982051e191c11199ffeb46523145e84b446c8610e693fba07e69da7bd0"
     },
     {
       "task_id": "ppe-disposal",
@@ -703,6 +841,48 @@
       "digest": "sha256:0c6ef3b7cf51441410b5080d5c46cdc2068605114143579412012474a2aa649b"
     },
     {
+      "task_id": "sales-tax-collection",
+      "family": "transaction-classification",
+      "seed": 157,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:0a227d3a6af59e32b10ab43b57420c6cb09bf87f9b9fb1bf843eaa68dc213c6c"
+    },
+    {
+      "task_id": "sc-special-journal-routing",
+      "family": "ledger-integrity-reporting",
+      "seed": 167,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [],
+      "digest": "sha256:6740b723c25887cd56041eddfead1d057235e0144f70991c7cb8e8355940fc27"
+    },
+    {
+      "task_id": "small-stock-dividend",
+      "family": "equity",
+      "seed": 159,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:21d39483a78d376dc6615ecfb471c47089c0a8148d910631242509bf0e33e6f6"
+    },
+    {
       "task_id": "straight-line-depreciation",
       "family": "fixed-assets",
       "seed": 120,
@@ -757,6 +937,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:a6d93314b3a83ac30a4cae200a28229b48fe160d0b27e35c68307e87edeba70f"
+    },
+    {
+      "task_id": "units-of-production-depreciation",
+      "family": "fixed-assets",
+      "seed": 155,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:40a7eaee1b5b48b32127e0c222d3e30a03a788c07b30e66c3160ad1ae0d786b1"
+    },
+    {
+      "task_id": "warranty-provision-and-claims",
+      "family": "provisions-contingencies",
+      "seed": 156,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:af2931ec40ece55c3e89419d106568b53ba7896481d98ad2eab3619731cc9ded"
     }
   ]
 }

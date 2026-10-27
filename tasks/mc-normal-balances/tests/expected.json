@@ -1,0 +1,37 @@
+{
+  "task_id": "mc-normal-balances",
+  "family": "transaction-classification",
+  "seed": 166,
+  "generator_version": "0.3.0",
+  "format": "multiple-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "G"
+  ],
+  "options": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "remembering-understanding",
+  "standards": []
+}

@@ -4313,6 +4313,1008 @@ def flexible_budget_total_cost(seed: int) -> TaskInstance:
     )
 
 
+OWNER_CAPITAL = "Equity:OwnerCapital"
+NARRATIVE_ACCOUNTS = [
+    (OWNER_CAPITAL, "Owner capital contributed"),
+    (SERVICES, "Service revenue (recognized as delivered)"),
+]
+
+
+def narrative_multi_transactions(seed: int) -> TaskInstance:
+    """Scenario: four independent January events narrated in one document.
+
+    Oracle: owner investment, equipment bought for cash, services rendered
+    for cash, rent paid — each its own balanced entry (combined/split
+    equivalents accepted on state). Trap: expensing the equipment.
+    Level V/U/V/V/V/U/V -> vocational.
+    """
+    rng = random.Random(seed)
+    invest = Decimal(rng.randrange(100, 401)) * 50
+    equipment = Decimal(rng.randrange(40, 161)) * 50
+    services = Decimal(rng.randrange(50, 201)) * 25
+    rent = Decimal(rng.randrange(20, 81)) * 25
+    opening = Decimal("5000.00")
+    initial = _ledger_header(opening, NARRATIVE_ACCOUNTS)
+    doc = (
+        "# January 2026 transactions (none recorded yet)\n\n"
+        f"1. 2026-01-03 — The owner invested USD {money(invest)} cash in the business.\n"
+        f"2. 2026-01-07 — Bought equipment for USD {money(equipment)}, paid from "
+        "checking. The equipment will be used for several years.\n"
+        f"3. 2026-01-15 — Performed services for a customer and received "
+        f"USD {money(services)} cash.\n"
+        f"4. 2026-01-20 — Paid January office rent of USD {money(rent)} from checking.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-03",
+            "Owner",
+            "Cash invested by owner",
+            [(BANK, invest), (OWNER_CAPITAL, -invest)],
+        )
+        + _txn(
+            "2026-01-07",
+            "Vendor",
+            "Equipment purchased",
+            [("Assets:Equipment", equipment), (BANK, -equipment)],
+        )
+        + _txn(
+            "2026-01-15",
+            "Customer",
+            "Services rendered for cash",
+            [(BANK, services), (SERVICES, -services)],
+        )
+        + _txn(
+            "2026-01-20", "Landlord", "January rent paid", [("Expenses:Rent", rent), (BANK, -rent)]
+        )
+    )
+    return TaskInstance(
+        task_id="narrative-multi-transactions",
+        family="transaction-classification",
+        title="Journalize four January transactions",
+        instruction=(
+            "Record all four transactions in `/app/documents/transactions.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md` and "
+            "`/app/chart_of_accounts.md`. Append new balanced transactions on "
+            "their stated January dates; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": POLICY,
+            "chart_of_accounts.md": _chart_md(NARRATIVE_ACCOUNTS),
+            "documents/transactions.md": doc,
+        },
+        expected=_expected(
+            "narrative-multi-transactions",
+            "transaction-classification",
+            seed,
+            expected_deltas={
+                BANK: money(invest - equipment + services - rent),
+                OWNER_CAPITAL: money(-invest),
+                "Assets:Equipment": money(equipment),
+                SERVICES: money(-services),
+                "Expenses:Rent": money(rent),
+            },
+            expected_new_transactions=[3, 6],
+            required_final_balances={BANK: money(opening + invest - equipment + services - rent)},
+        ),
+        solution_ledger=solution,
+        keywords=["journal-entries", "narrative-transactions"],
+        level="vocational",
+    )
+
+
+def units_of_production_depreciation(seed: int) -> TaskInstance:
+    """Scenario: January depreciation under units-of-production.
+
+    Oracle: (cost - residual) / total estimated units x January units.
+    Trap: ignoring residual value in the per-unit rate.
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    asset = rng.choice(["printing press", "bottling machine", "delivery truck"])
+    unit_label = rng.choice(["units", "hours", "miles"])
+    rate = (Decimal(rng.randrange(25, 201, 25)) / 100).quantize(CENT)
+    total_units = rng.randrange(40000, 120001, 5000)
+    residual = Decimal(rng.randrange(5, 41)) * 100
+    cost = rate * total_units + residual
+    month_units = rng.randrange(800, 4001, 100)
+    expense = rate * month_units
+    opening = cost + Decimal("20000.00")
+    initial = _ledger_header(opening, DEPR_ACCOUNTS) + _txn(
+        "2026-01-02",
+        "Vendor",
+        f"Purchase of {asset}",
+        [("Assets:Equipment", cost), (BANK, -cost)],
+    )
+    doc = (
+        f"# Asset register — {asset}\n\n"
+        f"Placed in service 2026-01-02. Cost USD {money(cost)}; residual value "
+        f"USD {money(residual)}. Expected total output: {total_units} {unit_label}. "
+        f"January output: {month_units} {unit_label}. Method: units-of-production.\n"
+    )
+    policy = POLICY + (
+        "- Units-of-production depreciation: rate per unit = (cost - residual\n"
+        "  value) / total estimated output; the period charge is the rate\n"
+        "  times the period's actual output.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Depreciation",
+        f"January depreciation ({month_units} {unit_label}), {asset}",
+        [(DEPRECIATION, expense), (ACC_DEP, -expense)],
+    )
+    return TaskInstance(
+        task_id="units-of-production-depreciation",
+        family="fixed-assets",
+        title="Record units-of-production depreciation",
+        instruction=(
+            f"Record January depreciation for the {asset} in "
+            "`/app/ledger.beancount`, using `/app/documents/asset_register.md` "
+            "and `/app/policy.md`. Append exactly one balanced transaction "
+            "dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(DEPR_ACCOUNTS),
+            "documents/asset_register.md": doc,
+        },
+        expected=_expected(
+            "units-of-production-depreciation",
+            "fixed-assets",
+            seed,
+            expected_deltas={DEPRECIATION: money(expense), ACC_DEP: money(-expense)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={ACC_DEP: money(-expense)},
+        ),
+        solution_ledger=solution,
+        keywords=["depreciation", "units-of-production"],
+        level="vocational",
+    )
+
+
+WARRANTY_EXPENSE = "Expenses:Warranty"
+WARRANTY_LIABILITY = "Liabilities:WarrantyPayable"
+WARRANTY_ACCOUNTS = [
+    (WARRANTY_EXPENSE, "Estimated warranty cost of products sold"),
+    (WARRANTY_LIABILITY, "Estimated warranty claims payable"),
+]
+
+
+def warranty_provision_and_claims(seed: int) -> TaskInstance:
+    """Scenario: pay January warranty claims; accrue the estimate on new sales.
+
+    Oracle: claims paid debit the opening warranty liability (credit bank);
+    January sales x estimate % is warranty expense credited to the liability.
+    Trap: expensing the claims paid (cash-basis warranty accounting).
+    Level V/U/V/V/V/U/V -> vocational.
+    """
+    rng = random.Random(seed)
+    sales = Decimal(rng.randrange(80, 321)) * 500
+    pct = rng.choice([Decimal("0.02"), Decimal("0.03"), Decimal("0.04")])
+    estimate = sales * pct
+    claims = Decimal(rng.randrange(10, 51)) * 50
+    opening_liability = claims * rng.randint(2, 4)
+    opening = Decimal("50000.00")
+    initial = (
+        _ledger_header(opening, WARRANTY_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Opening estimated warranty liability",
+            [
+                ("Equity:Opening-Balances", opening_liability),
+                (WARRANTY_LIABILITY, -opening_liability),
+            ],
+        )
+        + _txn(
+            "2026-01-18",
+            "Customers",
+            "January product sales (cash)",
+            [(BANK, sales), ("Income:Sales", -sales)],
+        )
+    )
+    doc = (
+        "# Warranty activity — January 2026\n\n"
+        f"- Warranty repairs honored and paid in January (on earlier sales): "
+        f"USD {money(claims)} from checking. Not yet recorded.\n"
+        f"- January sales of USD {money(sales)} carry a warranty; expected future "
+        f"claims are {pct * 100:.0f}% of sales.\n"
+    )
+    policy = POLICY + (
+        "- Warranty cost is expensed in the period of sale at the estimated\n"
+        "  rate (credit the warranty liability). Claims honored later are\n"
+        "  charged against that liability, never expensed again.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-25",
+            "Customers",
+            "Warranty claims honored in January",
+            [(WARRANTY_LIABILITY, claims), (BANK, -claims)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Warranty",
+            "Estimated warranty cost on January sales",
+            [(WARRANTY_EXPENSE, estimate), (WARRANTY_LIABILITY, -estimate)],
+        )
+    )
+    return TaskInstance(
+        task_id="warranty-provision-and-claims",
+        family="provisions-contingencies",
+        title="Pay warranty claims and accrue the new estimate",
+        instruction=(
+            "Record the January warranty activity in "
+            "`/app/documents/warranty_activity.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions "
+            "dated in January 2026; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(WARRANTY_ACCOUNTS),
+            "documents/warranty_activity.md": doc,
+        },
+        expected=_expected(
+            "warranty-provision-and-claims",
+            "provisions-contingencies",
+            seed,
+            expected_deltas={
+                WARRANTY_LIABILITY: money(claims - estimate),
+                BANK: money(-claims),
+                WARRANTY_EXPENSE: money(estimate),
+            },
+            expected_new_transactions=[1, 3],
+            required_final_balances={
+                WARRANTY_LIABILITY: money(-(opening_liability - claims + estimate))
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["warranty", "provision", "matching"],
+        level="vocational",
+    )
+
+
+SALES_TAX_PAYABLE = "Liabilities:SalesTaxPayable"
+SALES_TAX_ACCOUNTS = [(SALES_TAX_PAYABLE, "Sales tax collected, due to the authority")]
+
+
+def sales_tax_collection(seed: int) -> TaskInstance:
+    """Scenario: cash sale with sales tax collected for the authority.
+
+    Oracle: bank at the tax-inclusive receipt; sales net; tax payable.
+    Trap: recording the whole receipt as sales revenue.
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    net_sales = Decimal(rng.randrange(20, 121)) * 1000
+    rate = rng.choice([Decimal("0.06"), Decimal("0.08"), Decimal("0.10")])
+    tax = net_sales * rate
+    day = rng.randint(4, 24)
+    date = f"2026-01-{day:02d}"
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, SALES_TAX_ACCOUNTS)
+    doc = (
+        f"# Register tape — {date}\n\n"
+        f"Merchandise sold for cash: USD {money(net_sales)} before tax.\n"
+        f"Sales tax collected from customers at {rate * 100:.0f}%: "
+        f"USD {money(tax)}. Total cash received: USD {money(net_sales + tax)}.\n"
+    )
+    policy = POLICY + (
+        "- Sales tax is collected as agent for the tax authority: it is a\n"
+        "  liability (`Liabilities:SalesTaxPayable`), never revenue. Sales\n"
+        "  are recorded at the pre-tax amount.\n"
+    )
+    solution = initial + _txn(
+        date,
+        "Register",
+        "Cash sales with sales tax collected",
+        [(BANK, net_sales + tax), ("Income:Sales", -net_sales), (SALES_TAX_PAYABLE, -tax)],
+    )
+    return TaskInstance(
+        task_id="sales-tax-collection",
+        family="transaction-classification",
+        title="Record a cash sale with sales tax collected",
+        instruction=(
+            "Record the register tape in `/app/documents/register_tape.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            f"balanced transactions dated {date}; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(SALES_TAX_ACCOUNTS),
+            "documents/register_tape.md": doc,
+        },
+        expected=_expected(
+            "sales-tax-collection",
+            "transaction-classification",
+            seed,
+            expected_deltas={
+                BANK: money(net_sales + tax),
+                "Income:Sales": money(-net_sales),
+                SALES_TAX_PAYABLE: money(-tax),
+            },
+            expected_period=[date, date],
+            required_final_balances={SALES_TAX_PAYABLE: money(-tax)},
+        ),
+        solution_ledger=solution,
+        keywords=["sales-tax", "agency-liability", "cash-sale"],
+        level="vocational",
+        category="tax",
+    )
+
+
+PETTY_CASH = "Assets:PettyCash"
+POSTAGE = "Expenses:Postage"
+CASH_SHORT = "Expenses:CashShortAndOver"
+PETTY_ACCOUNTS = [
+    (PETTY_CASH, "Petty cash fund (imprest)"),
+    (POSTAGE, "Postage expense"),
+    (CASH_SHORT, "Cash short and over"),
+]
+
+
+def petty_cash_replenishment(seed: int) -> TaskInstance:
+    """Scenario: replenish an imprest petty cash fund with a small shortage.
+
+    Oracle: expense the receipts, debit the shortage to CashShortAndOver,
+    credit bank for fund minus cash on hand. The PettyCash account itself
+    is untouched (imprest). Trap: crediting PettyCash or replenishing
+    only the receipts and losing the shortage.
+    Level V/U/V/U/V/V/V -> vocational (borderline).
+    """
+    rng = random.Random(seed)
+    fund = Decimal(rng.choice([200, 300, 400]))
+    supplies = Decimal(rng.randrange(30, 91))
+    postage = Decimal(rng.randrange(15, 61))
+    short = Decimal(rng.randrange(1, 9))
+    spent = supplies + postage + short
+    on_hand = fund - spent
+    replenish = spent
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, PETTY_ACCOUNTS) + _txn(
+        "2026-01-02",
+        "Bank",
+        "Establish petty cash fund",
+        [(PETTY_CASH, fund), (BANK, -fund)],
+    )
+    doc = (
+        "# Petty cash count — 2026-01-31\n\n"
+        f"Fund established at USD {money(fund)}. Receipts in the box: office "
+        f"supplies USD {money(supplies)}, postage USD {money(postage)}. "
+        f"Cash remaining in the box: USD {money(on_hand)}. Replenish the fund "
+        "to its imprest amount from checking.\n"
+    )
+    policy = POLICY + (
+        "- Imprest petty cash: the `Assets:PettyCash` balance never changes\n"
+        "  on replenishment. Debit each receipt's expense; any shortage "
+        "(fund - cash on hand - receipts) is debited to\n"
+        "  `Expenses:CashShortAndOver`; credit bank for the replenishment "
+        "(fund - cash on hand).\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Petty cash",
+        "Replenish petty cash fund",
+        [
+            ("Expenses:OfficeSupplies", supplies),
+            (POSTAGE, postage),
+            (CASH_SHORT, short),
+            (BANK, -replenish),
+        ],
+    )
+    return TaskInstance(
+        task_id="petty-cash-replenishment",
+        family="cash-controls",
+        title="Replenish petty cash with a cash shortage",
+        instruction=(
+            "Record the replenishment in `/app/documents/petty_cash_count.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "new balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(PETTY_ACCOUNTS),
+            "documents/petty_cash_count.md": doc,
+        },
+        expected=_expected(
+            "petty-cash-replenishment",
+            "cash-controls",
+            seed,
+            expected_deltas={
+                "Expenses:OfficeSupplies": money(supplies),
+                POSTAGE: money(postage),
+                CASH_SHORT: money(short),
+                BANK: money(-replenish),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={PETTY_CASH: money(fund)},
+        ),
+        solution_ledger=solution,
+        keywords=["petty-cash", "imprest", "cash-shortage"],
+        level="vocational",
+    )
+
+
+def small_stock_dividend(seed: int) -> TaskInstance:
+    """Scenario: small stock dividend capitalized at market value.
+
+    Oracle: retained earnings debited at market value of the new shares;
+    common stock at par; APIC for the excess. Trap: capitalizing at par
+    only (the large-stock-dividend rule). Level V/U/V/V/V/V/U.
+    """
+    rng = random.Random(seed)
+    outstanding = rng.randrange(4000, 16001, 500)
+    pct = rng.choice([5, 10])
+    new_shares = outstanding * pct // 100
+    par = Decimal(rng.choice([1, 2]))
+    market = par + Decimal(rng.randrange(6, 31))
+    total_market = new_shares * market
+    par_total = new_shares * par
+    retained_open = total_market * rng.randint(3, 5)
+    stock_open = Decimal(outstanding) * par
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, EQUITY_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening equity balances",
+        [
+            ("Equity:Opening-Balances", retained_open + stock_open),
+            (RETAINED, -retained_open),
+            (COMMON_STOCK, -stock_open),
+        ],
+    )
+    doc = (
+        "# Board resolution — 2026-01-20\n\n"
+        f"A {pct}% stock dividend was declared and issued on the {outstanding} "
+        f"common shares outstanding ({new_shares} new shares). Par value is "
+        f"USD {money(par)} per share; the market price on the declaration date "
+        f"was USD {money(market)} per share.\n"
+    )
+    policy = EQUITY_POLICY + (
+        "- A SMALL stock dividend (under 20-25% of shares outstanding) is\n"
+        "  capitalized at the market value of the shares issued: debit\n"
+        "  retained earnings at market, credit common stock at par and\n"
+        "  additional paid-in capital for the excess.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-20",
+        "Board",
+        f"{pct}% stock dividend issued at market",
+        [
+            (RETAINED, total_market),
+            (COMMON_STOCK, -par_total),
+            (APIC, -(total_market - par_total)),
+        ],
+    )
+    return TaskInstance(
+        task_id="small-stock-dividend",
+        family="equity",
+        title="Record a small stock dividend at market value",
+        instruction=(
+            "Record the stock dividend in `/app/documents/board_resolution.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "new balanced transactions dated 2026-01-20; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(EQUITY_ACCOUNTS),
+            "documents/board_resolution.md": doc,
+        },
+        expected=_expected(
+            "small-stock-dividend",
+            "equity",
+            seed,
+            expected_deltas={
+                RETAINED: money(total_market),
+                COMMON_STOCK: money(-par_total),
+                APIC: money(-(total_market - par_total)),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-20", "2026-01-20"],
+            required_final_balances={RETAINED: money(-(retained_open - total_market))},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["stock-dividend", "small-stock-dividend", "equity"],
+        level="vocational",
+    )
+
+
+def accounting_equation_missing_equity(seed: int) -> TaskInstance:
+    """Numeric: ending equity from A = L + E. Trap: beginning equity."""
+    rng = random.Random(seed)
+    assets = Decimal(rng.randrange(200, 901)) * 1000
+    liabilities = Decimal(rng.randrange(80, 401)) * 1000
+    d_assets = Decimal(rng.randrange(20, 151)) * 1000
+    d_liabilities = -Decimal(rng.randrange(10, 81)) * 1000
+    gold = (assets + d_assets) - (liabilities + d_liabilities)
+    trap = assets - liabilities
+    data = (
+        "# Position and changes — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Assets, 2025-01-01 | {money(assets)} |\n"
+        f"| Liabilities, 2025-01-01 | {money(liabilities)} |\n"
+        f"| Change in assets during the year | +{money(d_assets)} |\n"
+        f"| Change in liabilities during the year | {money(d_liabilities)} |\n"
+    )
+    policy = """# Accounting equation (applies to this task)
+
+- Assets = liabilities + equity at every date. Apply the year's changes
+  first, then solve for equity at 2025-12-31.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "equity at year-end (accounting equation)",
+        "Using `/app/documents/position_data.md` and `/app/policy.md`, compute "
+        "**equity at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="accounting-equation-missing-equity",
+        family="financial-reporting",
+        title="Solve for ending equity with the accounting equation",
+        question=question,
+        policy=policy,
+        data_name="position_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "accounting-equation"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def current_income_tax_expense(seed: int) -> TaskInstance:
+    """Numeric: current tax with permanent differences. Trap: book x rate."""
+    rng = random.Random(seed)
+    book = Decimal(rng.randrange(200, 801)) * 1000
+    exempt = Decimal(rng.randrange(10, 61)) * 1000
+    nondeductible = Decimal(rng.randrange(5, 41)) * 1000
+    if exempt == nondeductible:  # keep the book-income trap distinct from the gold
+        nondeductible += 1000
+    rate = rng.choice([Decimal("0.21"), Decimal("0.25")])
+    taxable = book - exempt + nondeductible
+    gold = taxable * rate
+    trap = book * rate
+    data = (
+        "# Tax computation extracts — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Pretax book income | {money(book)} |\n"
+        f"| Tax-exempt interest included in book income | {money(exempt)} |\n"
+        f"| Nondeductible fines included in book expenses | {money(nondeductible)} |\n"
+        f"| Enacted tax rate | {rate * 100:.0f}% |\n"
+        "\nThere are no temporary differences.\n"
+    )
+    policy = """# Current tax conventions (applies to this task)
+
+- Taxable income = pretax book income - tax-exempt income
+  + nondeductible expenses (permanent differences only).
+- Current income tax expense = taxable income x the enacted rate.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "current income tax expense",
+        "Using `/app/documents/tax_extracts.md` and `/app/policy.md`, compute "
+        "**current income tax expense** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="current-income-tax-expense",
+        family="income-taxes",
+        title="Compute current income tax from permanent differences",
+        question=question,
+        policy=policy,
+        data_name="tax_extracts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "income-tax", "permanent-differences"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+        standards=["asc:740", "ias:12"],
+    )
+
+
+def lease_liability_present_value(seed: int) -> TaskInstance:
+    """Numeric: initial lease liability from an annuity factor. Trap: sum."""
+    rng = random.Random(seed)
+    years = rng.choice([3, 4, 5, 6])
+    rate = rng.choice([Decimal("0.05"), Decimal("0.06"), Decimal("0.08")])
+    factor = sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
+        Decimal("0.0001")
+    )
+    payment = Decimal(rng.randrange(10, 61)) * 1000
+    gold = (payment * factor).quantize(CENT)
+    data = (
+        "# Lease terms (lessee)\n\n| Item | Value |\n|---|---:|\n"
+        f"| Annual payment, end of each year | USD {money(payment)} |\n"
+        f"| Lease term | {years} years |\n"
+        f"| Discount rate (rate implicit in the lease) | {rate * 100:.0f}% |\n"
+        f"| Annuity factor ({rate * 100:.0f}%, {years} years) | {factor} |\n"
+        "\nNo initial direct costs, incentives, or guaranteed residual.\n"
+    )
+    policy = """# Lessee measurement conventions (applies to this task)
+
+- The lease liability at commencement is the present value of the lease
+  payments: annual payment x the annuity factor given in the data
+  (use it as stated; do not recompute it).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "initial lease liability",
+        "Using `/app/documents/lease_terms.md` and `/app/policy.md`, compute the "
+        "**lease liability at commencement** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="lease-liability-present-value",
+        family="leases",
+        title="Compute the initial lease liability",
+        question=question,
+        policy=policy,
+        data_name="lease_terms.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "leases", "present-value"],
+        abs_tolerance="0.01",
+        trap_value=money(payment * years),
+        standards=["asc:842", "ifrs:16"],
+    )
+
+
+def equity_method_carrying_amount(seed: int) -> TaskInstance:
+    """Numeric: equity-method carrying amount. Trap: forget dividends."""
+    rng = random.Random(seed)
+    pct = rng.choice([20, 25, 30, 40])
+    cost = Decimal(rng.randrange(100, 601)) * 1000
+    investee_income = Decimal(rng.randrange(40, 201)) * 1000
+    investee_dividends = Decimal(rng.randrange(10, 81)) * 1000
+    share = Decimal(pct) / 100
+    gold = cost + share * investee_income - share * investee_dividends
+    trap = cost + share * investee_income
+    data = (
+        "# Associate investment\n\n| Item | Value |\n|---|---:|\n"
+        f"| Cost of {pct}% interest, 2025-01-01 | USD {money(cost)} |\n"
+        f"| Investee net income, 2025 | USD {money(investee_income)} |\n"
+        f"| Investee dividends paid, 2025 | USD {money(investee_dividends)} |\n"
+    )
+    policy = """# Equity method conventions (applies to this task)
+
+- Carrying amount = cost + share of investee net income - share of
+  investee dividends (dividends reduce the investment; they are not
+  income under the equity method).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "equity-method carrying amount",
+        "Using `/app/documents/associate_data.md` and `/app/policy.md`, compute "
+        "the investment's **carrying amount at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="equity-method-carrying-amount",
+        family="investments",
+        title="Compute an equity-method carrying amount",
+        question=question,
+        policy=policy,
+        data_name="associate_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "equity-method", "associate"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+        standards=["asc:323", "ias:28"],
+    )
+
+
+def bond_issue_price(seed: int) -> TaskInstance:
+    """Numeric: bond price from stated factors (market above coupon). Trap: par."""
+    rng = random.Random(seed)
+    face = Decimal(rng.randrange(100, 501)) * 1000
+    years = rng.choice([3, 5, 10])
+    coupon_rate = rng.choice([Decimal("0.04"), Decimal("0.05"), Decimal("0.06")])
+    market = coupon_rate + Decimal("0.02")
+    coupon = face * coupon_rate
+    annuity = sum(Decimal(1) / (1 + market) ** t for t in range(1, years + 1)).quantize(
+        Decimal("0.0001")
+    )
+    pv_factor = (Decimal(1) / (1 + market) ** years).quantize(Decimal("0.0001"))
+    gold = (coupon * annuity + face * pv_factor).quantize(CENT)
+    data = (
+        "# Bond issue terms\n\n| Item | Value |\n|---|---:|\n"
+        f"| Face value | USD {money(face)} |\n"
+        f"| Coupon rate (annual payments) | {coupon_rate * 100:.0f}% |\n"
+        f"| Term | {years} years |\n"
+        f"| Market (effective) rate at issue | {market * 100:.0f}% |\n"
+        f"| Annuity factor ({market * 100:.0f}%, {years} years) | {annuity} |\n"
+        f"| Single-sum factor ({market * 100:.0f}%, {years} years) | {pv_factor} |\n"
+    )
+    policy = """# Bond pricing conventions (applies to this task)
+
+- Issue price = annual coupon x the annuity factor + face value x the
+  single-sum factor, using the factors given in the data as stated
+  (do not recompute them). When the market rate exceeds the coupon
+  rate the bonds sell at a discount.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "bond issue price",
+        "Using `/app/documents/bond_terms.md` and `/app/policy.md`, compute the "
+        "**issue price** of the bonds in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="bond-issue-price",
+        family="borrowings",
+        title="Compute a bond's issue price",
+        question=question,
+        policy=policy,
+        data_name="bond_terms.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "bonds", "issue-price", "discount"],
+        abs_tolerance="0.01",
+        trap_value=money(face),
+        standards=["asc:835-30", "ifrs:9"],
+    )
+
+
+def partnership_income_allocation(seed: int) -> TaskInstance:
+    """Numeric: partner A's share after salaries. Trap: ratio on whole income."""
+    rng = random.Random(seed)
+    salary_a = Decimal(rng.randrange(20, 81)) * 1000
+    salary_b = Decimal(rng.randrange(15, 61)) * 1000
+    remainder = Decimal(rng.randrange(40, 201)) * 1000
+    pct_a = rng.choice([50, 60, 70])
+    if salary_a * (100 - pct_a) == salary_b * pct_a:
+        # whole-income-ratio trap would coincide with the gold; nudge B's salary
+        salary_b += 1000
+    net_income = salary_a + salary_b + remainder
+    gold = salary_a + remainder * pct_a / 100
+    trap = net_income * pct_a / 100
+    data = (
+        "# Partnership agreement and results\n\n| Item | Value |\n|---|---:|\n"
+        f"| Net income for the year | USD {money(net_income)} |\n"
+        f"| Salary allowance, Partner A | USD {money(salary_a)} |\n"
+        f"| Salary allowance, Partner B | USD {money(salary_b)} |\n"
+        f"| Remaining income split | A {pct_a}% / B {100 - pct_a}% |\n"
+    )
+    policy = """# Partnership allocation conventions (applies to this task)
+
+- Allocate salary allowances first; split only the REMAINING income by
+  the stated ratio. Partner A's total share = A's salary allowance
+  + A's percentage of the remainder.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "Partner A's income share",
+        "Using `/app/documents/partnership_data.md` and `/app/policy.md`, compute "
+        "**Partner A's total share of net income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="partnership-income-allocation",
+        family="partnerships",
+        title="Allocate partnership income after salary allowances",
+        question=question,
+        policy=policy,
+        data_name="partnership_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "partnership", "income-allocation"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def _choice_question(heading: str, body: str, options_md: str, select_note: str) -> str:
+    return f"""# Question — {heading}
+
+{body}
+
+{options_md}
+
+## Answer format
+
+Write `/app/answer.json` as a JSON object, for example:
+
+```json
+{{"final_answer": {select_note}, "confidence": 80}}
+```
+
+`confidence` is your self-assessed probability (0-100) that the answer
+is fully correct.
+"""
+
+
+NORMAL_BALANCE_POLICY = """# Normal balance conventions (applies to this task)
+
+- Normal DEBIT balances: assets, expenses, dividends/distributions,
+  and contra-revenue accounts.
+- Normal CREDIT balances: liabilities, equity (share capital, retained
+  earnings), revenue, and contra-asset accounts (accumulated
+  depreciation, allowance for doubtful accounts).
+"""
+
+
+def mc_normal_balances(seed: int) -> TaskInstance:
+    """Multiple-choice: select every normal-DEBIT-balance account.
+
+    Trap: contra-assets (accumulated depreciation, allowance) look like
+    assets but are credit-normal; dividends look like equity but are
+    debit-normal. Level: rule stated in policy -> vocational.
+    """
+    rng = random.Random(seed)
+    pool: list[tuple[str, bool]] = [
+        ("Cash", True),
+        ("Accounts receivable", True),
+        ("Supplies", True),
+        ("Rent expense", True),
+        ("Dividends declared", True),
+        ("Sales returns and allowances", True),
+        ("Accounts payable", False),
+        ("Service revenue", False),
+        ("Common stock", False),
+        ("Accumulated depreciation", False),
+        ("Allowance for doubtful accounts", False),
+        ("Unearned revenue", False),
+    ]
+    rng.shuffle(pool)
+    chosen = pool[:8]
+    option_ids = ["A", "B", "C", "D", "E", "F", "G", "H"]
+    gold = sorted(oid for oid, (_, is_debit) in zip(option_ids, chosen, strict=True) if is_debit)
+    options_md = "\n".join(
+        f"- {oid}. {name} has a normal DEBIT balance."
+        for oid, (name, _) in zip(option_ids, chosen, strict=True)
+    )
+    question = _choice_question(
+        "normal debit balances",
+        "Using `/app/policy.md`, select **all** statements that are true. "
+        "Incorrect selections are penalized, so select only statements you "
+        "believe are correct.",
+        options_md,
+        '["A", "C"]',
+    )
+    return TaskInstance(
+        task_id="mc-normal-balances",
+        family="transaction-classification",
+        title="Select the normal-debit-balance accounts",
+        instruction=(
+            "Answer the multiple-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": NORMAL_BALANCE_POLICY,
+            "chart_of_accounts.md": _chart_md(),
+            "answer.example.json": '{\n  "final_answer": ["A"],\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "mc-normal-balances",
+            "transaction-classification",
+            seed,
+            format="multiple-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["multiple-choice", "normal-balance", "debit-credit"],
+        level="vocational",
+        format="multiple-choice",
+        skill="remembering-understanding",
+    )
+
+
+SPECIAL_JOURNALS = [
+    "Sales journal",
+    "Purchases journal",
+    "Cash receipts journal",
+    "Cash payments journal",
+    "General journal",
+]
+SPECIAL_JOURNAL_CASES = [
+    ("Sold merchandise on credit to a customer.", "Sales journal"),
+    ("Purchased merchandise on credit from a supplier.", "Purchases journal"),
+    ("Received cash from a customer paying its account.", "Cash receipts journal"),
+    ("Paid a supplier by check for an account balance.", "Cash payments journal"),
+    ("Recorded the month-end depreciation adjustment.", "General journal"),
+    ("The owner withdrew cash for personal use (paid by check).", "Cash payments journal"),
+    ("A customer returned merchandise sold on credit (credit memo issued).", "General journal"),
+]
+
+
+def sc_special_journal_routing(seed: int) -> TaskInstance:
+    """Single-choice: route one transaction to its special journal.
+
+    Trap: returns/adjustments look like sales/purchases activity but
+    belong in the general journal. Level: policy lists each journal's
+    scope -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SPECIAL_JOURNAL_CASES)
+    journals = SPECIAL_JOURNALS.copy()
+    rng.shuffle(journals)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = option_ids[journals.index(correct)]
+    options_md = "\n".join(
+        f"- {oid}. {name}" for oid, name in zip(option_ids, journals, strict=True)
+    )
+    policy = """# Special journal conventions (applies to this task)
+
+- Sales journal: sales of merchandise ON CREDIT only.
+- Purchases journal: purchases of merchandise ON CREDIT only.
+- Cash receipts journal: every receipt of cash.
+- Cash payments journal: every payment of cash (including owner draws
+  paid in cash or by check).
+- General journal: everything else, including returns and allowances
+  on credit transactions and all adjusting/closing entries.
+"""
+    question = _choice_question(
+        "special journal routing",
+        f"Transaction: **{narrative}**\n\nUsing `/app/policy.md`, in which "
+        "journal is this transaction recorded? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-special-journal-routing",
+        family="ledger-integrity-reporting",
+        title="Route a transaction to its journal",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-special-journal-routing",
+            "ledger-integrity-reporting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "special-journals"],
+        level="vocational",
+        format="single-choice",
+        skill="remembering-understanding",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -4367,6 +5369,20 @@ FAMILIES = {
     "ending-retained-earnings": ending_retained_earnings,
     "present-value-lump-sum": present_value_lump_sum,
     "flexible-budget-total-cost": flexible_budget_total_cost,
+    "narrative-multi-transactions": narrative_multi_transactions,
+    "units-of-production-depreciation": units_of_production_depreciation,
+    "warranty-provision-and-claims": warranty_provision_and_claims,
+    "sales-tax-collection": sales_tax_collection,
+    "petty-cash-replenishment": petty_cash_replenishment,
+    "small-stock-dividend": small_stock_dividend,
+    "accounting-equation-missing-equity": accounting_equation_missing_equity,
+    "current-income-tax-expense": current_income_tax_expense,
+    "lease-liability-present-value": lease_liability_present_value,
+    "equity-method-carrying-amount": equity_method_carrying_amount,
+    "bond-issue-price": bond_issue_price,
+    "partnership-income-allocation": partnership_income_allocation,
+    "mc-normal-balances": mc_normal_balances,
+    "sc-special-journal-routing": sc_special_journal_routing,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -4424,4 +5440,18 @@ STABLE_SEEDS = {
     "ending-retained-earnings": 151,
     "present-value-lump-sum": 152,
     "flexible-budget-total-cost": 153,
+    "narrative-multi-transactions": 154,
+    "units-of-production-depreciation": 155,
+    "warranty-provision-and-claims": 156,
+    "sales-tax-collection": 157,
+    "petty-cash-replenishment": 158,
+    "small-stock-dividend": 159,
+    "accounting-equation-missing-equity": 160,
+    "current-income-tax-expense": 161,
+    "lease-liability-present-value": 162,
+    "equity-method-carrying-amount": 163,
+    "bond-issue-price": 164,
+    "partnership-income-allocation": 165,
+    "mc-normal-balances": 166,
+    "sc-special-journal-routing": 167,
 }
