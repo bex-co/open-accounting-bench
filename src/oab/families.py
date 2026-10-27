@@ -15070,6 +15070,608 @@ def separate_statements_investment(seed: int) -> TaskInstance:
     )
 
 
+BACKUP_OPTIONS = [
+    "Restore the full backup, then the latest differential only",
+    "Restore full backup, then incrementals up to the broken link; later changes lost",
+    "Restore the full backup, then every incremental in order",
+    "Restore the full backup and the most recent incremental only",
+]
+BACKUP_CASES = [
+    (
+        "Schedule: full backup every Sunday, a DIFFERENTIAL backup "
+        "each weekday night. The system fails on Thursday morning. "
+        "Which media restore the most recent recoverable state?",
+        "Restore the full backup, then the latest differential only",
+    ),
+    (
+        "Schedule: full backup on Sunday, INCREMENTAL backups Monday "
+        "to Saturday. Wednesday's incremental media is unreadable and "
+        "the system fails on Friday. What is the recovery outcome?",
+        "Restore full backup, then incrementals up to the broken link; later changes lost",
+    ),
+    (
+        "Schedule: full backup on Sunday, INCREMENTAL backups Monday "
+        "to Saturday, all media verified. The system fails on "
+        "Saturday. Which sequence restores through Friday night?",
+        "Restore the full backup, then every incremental in order",
+    ),
+]
+
+
+def sc_backup_recovery_selection(seed: int) -> TaskInstance:
+    """Single-choice: pick the correct restore sequence for a schedule.
+
+    Trap: assuming an incremental chain with a broken link can still
+    recover past the gap, or restoring only the newest incremental.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(BACKUP_CASES)
+    labels = BACKUP_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Backup types (applies to this task)
+
+- Full backup: everything. INCREMENTAL: only what changed since the
+  LAST backup of any type — restoring needs the full backup plus
+  EVERY incremental since, IN ORDER; a missing or unreadable
+  incremental breaks the chain and nothing after it can be
+  recovered from that chain.
+- DIFFERENTIAL: everything changed since the last FULL backup —
+  restoring needs only the full backup and the LATEST differential.
+"""
+    question = _choice_question(
+        "backup recovery selection",
+        f"Scenario: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-backup-recovery-selection",
+        family="it-controls",
+        title="Choose the restore sequence",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-backup-recovery-selection",
+            "it-controls",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "backup", "recovery", "it-controls"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def change_control_deviation_count(seed: int) -> TaskInstance:
+    """Numeric: count deviations in a change log against stated policy.
+
+    Trap: flagging emergency changes that carry documented
+    retrospective approval (compliant) while rating the log loosely.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    compliant = [
+        (
+            "Approved before implementation",
+            "Test evidence filed",
+            "Approver differs from implementer",
+        ),
+        (
+            "Emergency change, retrospective approval documented next day",
+            "Test evidence filed",
+            "Approver differs from implementer",
+        ),
+    ]
+    deviant = [
+        ("No approval recorded", "Test evidence filed", "Approver differs from implementer"),
+        (
+            "Approved before implementation",
+            "No testing evidence",
+            "Approver differs from implementer",
+        ),
+        (
+            "Approved before implementation",
+            "Test evidence filed",
+            "Implementer approved own change",
+        ),
+        (
+            "Emergency change, no retrospective approval",
+            "Test evidence filed",
+            "Approver differs from implementer",
+        ),
+    ]
+    n_ok, n_bad = rng.randint(3, 5), rng.randint(2, 4)
+    # At least one retro-approved emergency change, so the
+    # flag-every-emergency trap always differs from gold.
+    rows = (
+        [compliant[1]]
+        + [rng.choice(compliant) for _ in range(n_ok - 1)]
+        + [rng.choice(deviant) for _ in range(n_bad)]
+    )
+    rng.shuffle(rows)
+    body = "".join(f"| CHG-{100 + i} | {a} | {t} | {s} |\n" for i, (a, t, s) in enumerate(rows, 1))
+    data = (
+        "# Change log extract — January 2026\n\n"
+        "| Change | Approval | Testing | Segregation |\n|---|---|---|---|\n" + body
+    )
+    policy = """# Change-control policy (applies to this task)
+
+A change is compliant only if ALL of these hold:
+- approved before implementation, OR an emergency change with
+  documented retrospective approval;
+- testing evidence filed;
+- the approver is not the implementer.
+
+- Answer the number of NON-compliant (deviation) changes.
+"""
+    question = _numeric_question(
+        "change-control deviations",
+        "Using `/app/documents/change_log.md` and `/app/policy.md`, compute "
+        "the **number of deviation changes**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="change-control-deviation-count",
+        family="it-controls",
+        title="Count change-control deviations",
+        question=question,
+        policy=policy,
+        data_name="change_log.md",
+        data=data,
+        gold=Decimal(n_bad),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "change-control", "deviations"],
+        abs_tolerance="0.01",
+        trap_value=str(n_bad + sum(1 for r in rows if "retrospective approval documented" in r[0])),
+    )
+
+
+DATABASE_OPTIONS = [
+    "Entity-integrity violation",
+    "Referential-integrity violation",
+    "Normalization violation (repeating group)",
+    "No integrity violation",
+]
+DATABASE_CASES = [
+    (
+        "The ORDERS table has no primary key, and the same order_id "
+        "appears on three different rows for different customers.",
+        "Entity-integrity violation",
+    ),
+    (
+        "ORDER_ITEMS has a product_id column, but no foreign-key "
+        "constraint is declared, and rows reference product IDs that "
+        "do not exist in PRODUCTS.",
+        "Referential-integrity violation",
+    ),
+    (
+        "The CUSTOMERS table stores phone numbers in three columns: phone_1, phone_2, phone_3.",
+        "Normalization violation (repeating group)",
+    ),
+    (
+        "ORDERS has a primary key and a declared foreign key to "
+        "CUSTOMERS; the optional discount_code column is allowed to "
+        "be NULL when no promotion applies.",
+        "No integrity violation",
+    ),
+]
+
+
+def sc_database_integrity_gap(seed: int) -> TaskInstance:
+    """Single-choice: name the database integrity problem in a schema.
+
+    Trap: treating a nullable optional column as an integrity gap,
+    or an unconstrained reference column as referential integrity.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(DATABASE_CASES)
+    labels = DATABASE_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Database integrity (applies to this task)
+
+- Entity integrity: every table needs a primary key whose value is
+  unique and never null; duplicate key values violate it.
+- Referential integrity: a foreign key must be enforced by a
+  declared constraint so referenced values must exist in the
+  referenced table. Merely having a reference-shaped column does
+  not enforce anything.
+- Normalization (first normal form): repeating groups (the same
+  fact stored in numbered columns like phone_1, phone_2) violate it.
+- A nullable column for a genuinely optional attribute is not, by
+  itself, an integrity violation.
+"""
+    question = _choice_question(
+        "database integrity gap",
+        f"Schema finding: **{narrative}**\n\nUsing `/app/policy.md`, "
+        "classify the finding. Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-database-integrity-gap",
+        family="it-controls",
+        title="Name the database integrity problem",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-database-integrity-gap",
+            "it-controls",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "database", "integrity", "normalization"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def incident_response_deviation_count(seed: int) -> TaskInstance:
+    """Numeric: count incident-response deviations from the stated plan.
+
+    Trap: counting only late notifications and missing the
+    escalations that never happened.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    # (notify_minutes, escalated_at_4h_if_unresolved, hours_open)
+    compliant = [(30, "n/a — resolved in 2h", 2), (45, "Yes, at 4h", 9), (15, "Yes, at 4h", 6)]
+    late_notify = [(150, "n/a — resolved in 3h", 3), (95, "Yes, at 4h", 8)]
+    no_escalation = [(20, "No escalation recorded", 11), (40, "No escalation recorded", 7)]
+    rows = (
+        [("ok",) + rng.choice(compliant) for _ in range(rng.randint(2, 3))]
+        + [("bad",) + rng.choice(late_notify) for _ in range(rng.randint(1, 2))]
+        + [("bad",) + rng.choice(no_escalation) for _ in range(rng.randint(1, 2))]
+    )
+    n_bad = sum(1 for r in rows if r[0] == "bad")
+    n_late = sum(1 for r in rows if r[1] > 60)
+    rng.shuffle(rows)
+    body = "".join(
+        f"| INC-{200 + i} | {notify} min | {esc} | {hours}h |\n"
+        for i, (_, notify, esc, hours) in enumerate(rows, 1)
+    )
+    data = (
+        "# Incident log extract — January 2026\n\n"
+        "| Incident | Time to notify on-call | Escalation if unresolved at 4h | Total time open |\n"
+        "|---|---|---|---|\n" + body
+    )
+    policy = """# Incident-response plan (applies to this task)
+
+- The on-call responder must be notified within 60 minutes of
+  detection.
+- Any incident still unresolved after 4 hours must be escalated to
+  the duty manager (and the escalation recorded). Incidents
+  resolved within 4 hours need no escalation.
+
+- Answer the number of incidents that deviated from the plan.
+"""
+    question = _numeric_question(
+        "incident-response deviations",
+        "Using `/app/documents/incident_log.md` and `/app/policy.md`, compute "
+        "the **number of deviation incidents**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="incident-response-deviation-count",
+        family="it-controls",
+        title="Count incident-response deviations",
+        question=question,
+        policy=policy,
+        data_name="incident_log.md",
+        data=data,
+        gold=Decimal(n_bad),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "incident-response", "deviations"],
+        abs_tolerance="0.01",
+        trap_value=str(n_late),
+    )
+
+
+SOC_OPINION_OPTIONS = ["Unqualified", "Qualified", "Adverse", "Disclaimer"]
+SOC_OPINION_CASES = [
+    (
+        "Testing found one isolated control deviation, evaluated as "
+        "not material to the opinion on controls' effectiveness.",
+        "Unqualified",
+    ),
+    (
+        "A material departure from the applicable criteria affects "
+        "one commitment area, but the rest of the system is fairly "
+        "described and controls otherwise operate effectively.",
+        "Qualified",
+    ),
+    (
+        "Material departures pervade the description: controls over "
+        "most processes do not operate, and the description omits "
+        "whole system components.",
+        "Adverse",
+    ),
+    (
+        "Management refused access to the people and records for a "
+        "material part of the system, and the auditor could not "
+        "obtain sufficient evidence by other means; possible effects "
+        "could be pervasive.",
+        "Disclaimer",
+    ),
+]
+
+
+def sc_soc_opinion_modification(seed: int) -> TaskInstance:
+    """Single-choice: choose the SOC opinion type from the findings.
+
+    Trap: qualifying for any deviation (however isolated) or using
+    adverse for what is really a scope limitation.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SOC_OPINION_CASES)
+    labels = SOC_OPINION_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# SOC opinion types (applies to this task)
+
+- Unqualified: no material departure (isolated, immaterial
+  deviations do not modify the opinion).
+- Qualified: a material departure OR scope limitation that is
+  material but NOT pervasive.
+- Adverse: departures that are material AND pervasive.
+- Disclaimer: a scope limitation whose possible effects could be
+  material AND pervasive, so no opinion can be formed.
+"""
+    question = _choice_question(
+        "SOC opinion type",
+        f"Findings: **{narrative}**\n\nUsing `/app/policy.md`, which "
+        "opinion is issued? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-soc-opinion-modification",
+        family="audit-planning",
+        title="Choose the SOC opinion type",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-soc-opinion-modification",
+            "audit-planning",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "soc", "opinion-modification"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def sql_join_excluded_count(seed: int) -> TaskInstance:
+    """Numeric: rows an INNER JOIN silently drops from a payment extract.
+
+    Trap: answering the rows the query RETURNS (or assuming none are
+    dropped) instead of the completeness gap.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    vendors = [f"V{10 + i}" for i in range(rng.randint(5, 7))]
+    ghost_vendors = ["V77", "V88", "V99"]
+    payments = []
+    gold = 0
+    for _i in range(rng.randint(9, 12)):
+        if rng.random() < 0.3:
+            payments.append(rng.choice(ghost_vendors))
+            gold += 1
+        else:
+            payments.append(rng.choice(vendors))
+    while gold == 0 or gold == len(payments) - gold:
+        payments.append(rng.choice(ghost_vendors))
+        gold += 1
+    pay_rows = "".join(
+        f"| P{1000 + i} | {v} | {money(Decimal(rng.randrange(10, 201)) * 10)} |\n"
+        for i, v in enumerate(payments, 1)
+    )
+    ven_rows = "".join(f"| {v} | Vendor {v} |\n" for v in vendors)
+    data = (
+        "# Data extract\n\nPAYMENTS:\n\n| payment_id | vendor_id | amount (USD) |\n"
+        "|---|---|---:|\n" + pay_rows + "\nVENDORS (approved master file):\n\n"
+        "| vendor_id | name |\n|---|---|\n" + ven_rows + "\nAudit query under review:\n\n```sql\n"
+        "SELECT p.* FROM payments p\n"
+        "INNER JOIN vendors v ON v.vendor_id = p.vendor_id;\n```\n"
+    )
+    policy = """# Join completeness (applies to this task)
+
+- An INNER JOIN returns only rows that match in BOTH tables. Any
+  payment whose vendor_id is absent from the vendor master is
+  silently excluded from the result.
+- Answer how many payment rows the query EXCLUDES.
+"""
+    question = _numeric_question(
+        "payments excluded by an inner join",
+        "Using `/app/documents/data_extract.md` and `/app/policy.md`, "
+        "compute the **number of payment rows excluded**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="sql-join-excluded-count",
+        family="audit-analytics",
+        title="Rows dropped by an inner join",
+        question=question,
+        policy=policy,
+        data_name="data_extract.md",
+        data=data,
+        gold=Decimal(gold),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "sql", "completeness", "joins"],
+        abs_tolerance="0.01",
+        trap_value=str(len(payments) - gold),
+    )
+
+
+SYSTEM_DESC_OPTIONS = [
+    "System boundaries / scope",
+    "Complementary user-entity controls",
+    "Linkage of controls to the commitments they address",
+    "Infrastructure and software components",
+]
+SYSTEM_DESC_CASES = [
+    (
+        "The description lists the services, infrastructure, controls "
+        "(each mapped to the commitments they address), and the "
+        "controls user entities must implement — but never states "
+        "which locations, systems, or subprocessors are in or out of "
+        "the described system.",
+        "System boundaries / scope",
+    ),
+    (
+        "The description defines its boundaries, infrastructure, "
+        "and controls mapped to commitments, but says nothing about "
+        "the controls user entities are expected to operate for the "
+        "commitments to be met.",
+        "Complementary user-entity controls",
+    ),
+    (
+        "The description defines its boundaries, infrastructure, and "
+        "user-entity responsibilities, and lists many controls — but "
+        "never identifies which commitment or criterion each control "
+        "is meant to address.",
+        "Linkage of controls to the commitments they address",
+    ),
+    (
+        "The description defines its boundaries, maps controls to "
+        "commitments, and covers user-entity controls, but never "
+        "describes the network, hardware, or software the service "
+        "runs on.",
+        "Infrastructure and software components",
+    ),
+]
+
+
+def sc_system_description_gap(seed: int) -> TaskInstance:
+    """Single-choice: which required description element is missing?
+
+    Trap: rating a description complete while its system boundary
+    (or another required element) was never defined.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SYSTEM_DESC_CASES)
+    labels = SYSTEM_DESC_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# System-description criteria (applies to this task)
+
+A complete system description must cover ALL of:
+1. system boundaries / scope — what is in and out of the system;
+2. the infrastructure and software components used;
+3. each control linked to the commitment/criterion it addresses;
+4. complementary controls user entities are expected to operate.
+"""
+    question = _choice_question(
+        "missing description element",
+        f"Description under review: **{narrative}**\n\nUsing "
+        "`/app/policy.md`, which required element is MISSING? "
+        "Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-system-description-gap",
+        family="audit-planning",
+        title="Find the missing system-description element",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-system-description-gap",
+            "audit-planning",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "soc", "system-description"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -15270,6 +15872,13 @@ FAMILIES = {
     "sc-offsetting-assessment": sc_offsetting_assessment,
     "sc-related-party-identification": sc_related_party_identification,
     "separate-statements-investment": separate_statements_investment,
+    "sc-backup-recovery-selection": sc_backup_recovery_selection,
+    "change-control-deviation-count": change_control_deviation_count,
+    "sc-database-integrity-gap": sc_database_integrity_gap,
+    "incident-response-deviation-count": incident_response_deviation_count,
+    "sc-soc-opinion-modification": sc_soc_opinion_modification,
+    "sql-join-excluded-count": sql_join_excluded_count,
+    "sc-system-description-gap": sc_system_description_gap,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -15473,4 +16082,11 @@ STABLE_SEEDS = {
     "sc-offsetting-assessment": 297,
     "sc-related-party-identification": 298,
     "separate-statements-investment": 299,
+    "sc-backup-recovery-selection": 300,
+    "change-control-deviation-count": 301,
+    "sc-database-integrity-gap": 302,
+    "incident-response-deviation-count": 303,
+    "sc-soc-opinion-modification": 304,
+    "sql-join-excluded-count": 305,
+    "sc-system-description-gap": 306,
 }

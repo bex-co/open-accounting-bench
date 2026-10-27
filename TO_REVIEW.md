@@ -222,6 +222,15 @@ crosswalk mappings.
   simplified stated-convention versions of IFRS 9/10 and IAS 32).
   Level scores assigned under the strict reading. No crosswalk
   mappings proposed yet.
+- 2026-10-26 — seven further generator families (Stable seeds
+  300–306, ISC/IT-controls slice): `sc-backup-recovery-selection`,
+  `change-control-deviation-count`, `sc-database-integrity-gap`,
+  `incident-response-deviation-count`, `sc-soc-opinion-modification`,
+  `sql-join-excluded-count`, `sc-system-description-gap`. Same checks
+  as earlier batches (in particular: the stated SOC opinion matrix
+  and backup-chain conventions are simplified versions of AT-C
+  practice, stated in full in each policy). Level scores assigned
+  under the strict reading. No crosswalk mappings proposed yet.
 
 
 ## Reviewed

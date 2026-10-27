@@ -164,6 +164,9 @@ NUMERIC_FAMILIES = [
     "contract-modification-revenue",
     "lease-component-allocation",
     "separate-statements-investment",
+    "change-control-deviation-count",
+    "incident-response-deviation-count",
+    "sql-join-excluded-count",
 ]
 
 
@@ -283,6 +286,10 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-derecognition-assessment",
         "sc-offsetting-assessment",
         "sc-related-party-identification",
+        "sc-backup-recovery-selection",
+        "sc-database-integrity-gap",
+        "sc-soc-opinion-modification",
+        "sc-system-description-gap",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

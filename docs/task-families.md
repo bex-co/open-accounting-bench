@@ -283,6 +283,13 @@ D = standards depth):
 | `sc-offsetting-assessment` | V | V | V | V | V | V | U | vocational |
 | `sc-related-party-identification` | V | V | V | V | V | V | U | vocational |
 | `separate-statements-investment` | V | V | V | V | V | V | U | vocational |
+| `sc-backup-recovery-selection` | V | V | V | V | V | V | V | vocational |
+| `change-control-deviation-count` | V | V | V | U | V | V | V | vocational |
+| `sc-database-integrity-gap` | V | V | V | V | V | V | V | vocational |
+| `incident-response-deviation-count` | V | V | V | U | V | V | V | vocational |
+| `sc-soc-opinion-modification` | V | V | V | V | V | V | V | vocational |
+| `sql-join-excluded-count` | V | V | V | U | V | V | V | vocational |
+| `sc-system-description-gap` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -494,8 +501,15 @@ problem the task hands over. An analysis task can be vocational.
 | `sc-offsetting-assessment` | financial-instruments | single-choice | ifrs | application | `ias:32` | Netting on same counterparty alone |
 | `sc-related-party-identification` | financial-reporting | single-choice | ifrs | application | `ias:24` | Only named group companies recognized |
 | `separate-statements-investment` | financial-reporting | numeric | core | application | `ias:27` | Dividends netted off the investment |
+| `sc-backup-recovery-selection` | it-controls | single-choice | core | application | — | Newest incremental alone / recover past broken link |
+| `change-control-deviation-count` | it-controls | numeric | core | application | — | Flagging retro-approved emergency changes |
+| `sc-database-integrity-gap` | it-controls | single-choice | core | application | — | Nullable optional column called a gap |
+| `incident-response-deviation-count` | it-controls | numeric | core | application | — | Counting only late notifications |
+| `sc-soc-opinion-modification` | audit-planning | single-choice | core | application | — | Modifying for isolated immaterial deviations |
+| `sql-join-excluded-count` | audit-analytics | numeric | core | application | — | Answering rows returned by the query |
+| `sc-system-description-gap` | audit-planning | single-choice | core | application | — | Rating a boundary-less description complete |
 
-Stable seeds: 101–299 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–306 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -507,10 +521,10 @@ placeholders tracked as issues, not directories.
 | financial-accounting | 126 | 17 | 7 | planned |
 | management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
-| audit-assurance | 6 | — | planned | — |
+| audit-assurance | 13 | — | planned | — |
 
-Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×18,
-numeric ×88; open-text is
+Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×22,
+numeric ×91; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

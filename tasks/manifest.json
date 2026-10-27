@@ -495,6 +495,20 @@
       "digest": "sha256:fe9e7b84eadb035722dcc4089dc8125a9fe8715957c8a4d8216a933b061f8ef6"
     },
     {
+      "task_id": "change-control-deviation-count",
+      "family": "it-controls",
+      "seed": 301,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4dbf401a6d7d2ab6eaca1f16a8bda9a73228c4f04b6267b432d26b76bc15b96e"
+    },
+    {
       "task_id": "classify-operating-expense",
       "family": "transaction-classification",
       "seed": 101,
@@ -1154,6 +1168,20 @@
         "ias:23"
       ],
       "digest": "sha256:faf9d530e59e2c828ec64fcba2a49bb5d16809111fd36cf425daddaf0dc5e849"
+    },
+    {
+      "task_id": "incident-response-deviation-count",
+      "family": "it-controls",
+      "seed": 303,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:f919473f108283fc4894c1c131b92e7cc92ab479c25242b65075c9f0e93c6e6f"
     },
     {
       "task_id": "interim-income-tax-expense",
@@ -2380,6 +2408,20 @@
       "digest": "sha256:7174f92b229b26f952d818e3f180c60bff0cb2b65e672c1caa5a42a8ed3a0765"
     },
     {
+      "task_id": "sc-backup-recovery-selection",
+      "family": "it-controls",
+      "seed": 300,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5f4d6311dbe5cc2befebe11206f2001252300dd201abe34012c31f0177040210"
+    },
+    {
       "task_id": "sc-business-vs-asset-acquisition",
       "family": "business-combinations",
       "seed": 293,
@@ -2442,6 +2484,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:34c4901317302cf029cc9b537829263572750bcd714ebce33bec8b7691a725ea"
+    },
+    {
+      "task_id": "sc-database-integrity-gap",
+      "family": "it-controls",
+      "seed": 302,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:154bdd32ff0d7dc526e02cec54625fec6bd08c200e93b911bc6ec0a3ee421f1f"
     },
     {
       "task_id": "sc-debt-equity-classification",
@@ -2583,6 +2639,20 @@
       "digest": "sha256:40056d7548acb0c1c05608e942ed37cdb0a6e6c25f5a46697edaf244876dcc8c"
     },
     {
+      "task_id": "sc-soc-opinion-modification",
+      "family": "audit-planning",
+      "seed": 304,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:afe64d330acbf6e2da79ab0205486264e7bc71d3bf94efd2a160b3f29fe2a5af"
+    },
+    {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
@@ -2626,6 +2696,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:aba7a236b834ca9bfdd0036c9600b3af40aa3a28274c66d511a1a063892099dc"
+    },
+    {
+      "task_id": "sc-system-description-gap",
+      "family": "audit-planning",
+      "seed": 306,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:48aef96f6538b8a28ec45c76ca07b6f8f7828478b86bd79f16ad263b38cd4b1e"
     },
     {
       "task_id": "sc-transaction-statement-impact",
@@ -2715,6 +2799,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:3cb4ca36d2ac1790484b2403420684e30d0c1e796a662491eef35731e65f93f4"
+    },
+    {
+      "task_id": "sql-join-excluded-count",
+      "family": "audit-analytics",
+      "seed": 305,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7a6f503829aab1f9c00bc8df836d0e697f8aecd2228a4be5bf062aa486dd745e"
     },
     {
       "task_id": "standard-cost-per-unit",
