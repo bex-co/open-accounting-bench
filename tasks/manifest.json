@@ -87,6 +87,20 @@
       "digest": "sha256:4a981827d8b7fe62c33c17a95ae9760adb316becdc1192aa8eef57d34f39ace2"
     },
     {
+      "task_id": "adjusted-wage-expense",
+      "family": "adjustments-corrections",
+      "seed": 230,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9434da9b5af85706a3c4be0b646387f901b4bc9cea3c94394ea151ab96bd6cf1"
+    },
+    {
       "task_id": "asset-revaluation-surplus",
       "family": "fixed-assets",
       "seed": 212,
@@ -519,6 +533,39 @@
       "digest": "sha256:f10e3a4c1c85d886915e5200c0864cbca992daed0a78032480195623cd21ec99"
     },
     {
+      "task_id": "debt-modification-percent-change",
+      "family": "borrowings",
+      "seed": 233,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:470-50",
+        "ifrs:9"
+      ],
+      "digest": "sha256:f740f861cfe92be2f396ac2cc843898b8de53497024f74357d313816b2fd59cf"
+    },
+    {
+      "task_id": "debt-security-credit-loss",
+      "family": "investments",
+      "seed": 227,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:326"
+      ],
+      "digest": "sha256:698e20d57f965148bd12073038eb88c3978cf47860157cee1737275bea1e0f02"
+    },
+    {
       "task_id": "development-cost-capitalization",
       "family": "intangible-assets",
       "seed": 197,
@@ -703,6 +750,55 @@
       "digest": "sha256:4a1fd44d152530de16af7976129d4435bbfc59ff877527cd0916044d4d786526"
     },
     {
+      "task_id": "fx-translation-adjustment",
+      "family": "foreign-currency",
+      "seed": 225,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:830",
+        "ias:21"
+      ],
+      "digest": "sha256:e11dc63bef684a654abd271236e6a3ddd90946753afd9ed1d4b2c6abc558e1bc"
+    },
+    {
+      "task_id": "goodwill-impairment",
+      "family": "business-combinations",
+      "seed": 224,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ias:36"
+      ],
+      "digest": "sha256:481db3a4eb8b1095366e117ded176023d6c5296167bbd6c97c216021eba54e92"
+    },
+    {
+      "task_id": "government-grant-release",
+      "family": "government-grants",
+      "seed": 222,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ias:20"
+      ],
+      "digest": "sha256:ee9f57f72dcb6627d3d0594a4d9bcfd0da6c142d4ce230ca4ca5feeeb996622b"
+    },
+    {
       "task_id": "gross-profit-from-trial-balance",
       "family": "financial-reporting",
       "seed": 150,
@@ -825,6 +921,20 @@
       "digest": "sha256:dcadadba8956483d269548c846b826ffc36eec5d3452a657039661acc3da075c"
     },
     {
+      "task_id": "inventory-method-profit-difference",
+      "family": "inventory",
+      "seed": 231,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7b99f9058c7c4a971246e072eaf2c04fde61018ced5852ceaec841a7683e4415"
+    },
+    {
       "task_id": "inventory-shrinkage-adjustment",
       "family": "inventory",
       "seed": 181,
@@ -837,6 +947,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:0d94d0a6b27074b4cd27ca96d8a5ad0bd22556e98866431eee0f15549afe7aab"
+    },
+    {
+      "task_id": "investment-property-fair-value",
+      "family": "investment-property",
+      "seed": 223,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ias:40"
+      ],
+      "digest": "sha256:93add4fa53e6b185ab40ed876997c631f4b0ebe853088886da14249b776f13ad"
     },
     {
       "task_id": "job-overhead-applied",
@@ -1035,6 +1161,20 @@
       "digest": "sha256:67d650c45cbf9e0cd3902fdc7be808bd9407b93398164882600b7ce77ea17cbb"
     },
     {
+      "task_id": "mc-temporary-accounts",
+      "family": "ledger-integrity-reporting",
+      "seed": 234,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "multiple-choice",
+      "skill": "remembering-understanding",
+      "standards": [],
+      "digest": "sha256:dfbfafe155a8cff819b2b1c91c6f19c4d93875d51e294a11af1e58bad9e5e6b7"
+    },
+    {
       "task_id": "mgmt-break-even-units",
       "family": "cost-volume-profit",
       "seed": 106,
@@ -1047,6 +1187,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:ce62e516b7c342014008a347a65258002baf6349eccfb8d19e54917462383321"
+    },
+    {
+      "task_id": "minimum-transfer-price",
+      "family": "responsibility-accounting",
+      "seed": 232,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:86ca190ff13eda462813d825bf9bdd07d6f1f3565bc1a4a37fb6bff3f57f2982"
     },
     {
       "task_id": "multiproduct-breakeven-units",
@@ -1281,6 +1435,20 @@
       "digest": "sha256:82a813982051e191c11199ffeb46523145e84b446c8610e693fba07e69da7bd0"
     },
     {
+      "task_id": "post-closing-debit-total",
+      "family": "ledger-integrity-reporting",
+      "seed": 229,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e95b0ff2c30e2f417d8ec29952fdd2e24450fa5d17732186f5cf2453f0c2a643"
+    },
+    {
       "task_id": "ppe-additions-inferred",
       "family": "fixed-assets",
       "seed": 216,
@@ -1438,6 +1606,22 @@
       "digest": "sha256:723c57ebce3bdb6396b75c5e71750669f80008fcb74b0da6ccac394c877c556c"
     },
     {
+      "task_id": "sale-and-leaseback-entry",
+      "family": "leases",
+      "seed": 226,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:842"
+      ],
+      "digest": "sha256:c46ec5d74ab6c6bc801a6ba7dcb54e42a1b915f51a070227abad45e30f783216"
+    },
+    {
       "task_id": "sales-return-restock",
       "family": "inventory",
       "seed": 117,
@@ -1481,6 +1665,23 @@
         "ias:7"
       ],
       "digest": "sha256:ef3dd327bdf816493f9c029107e831a979a41bf13101fa351b4ce889131f1fa8"
+    },
+    {
+      "task_id": "sc-fair-value-hierarchy",
+      "family": "fair-value-measurement",
+      "seed": 235,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [
+        "asc:820",
+        "ifrs:13"
+      ],
+      "digest": "sha256:d3dcf157e03b4e392337208ad65f7dd52f9299881c7f5c6b6af5af7785dcd641"
     },
     {
       "task_id": "sc-job-vs-process-costing",
@@ -1714,6 +1915,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:a6d93314b3a83ac30a4cae200a28229b48fe160d0b27e35c68307e87edeba70f"
+    },
+    {
+      "task_id": "trial-balance-debit-total",
+      "family": "ledger-integrity-reporting",
+      "seed": 228,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:49b54cc858948a4d02565acb8ac1221ae75228b448a24209390930523aaf06b8"
     },
     {
       "task_id": "unearned-revenue-release",

@@ -124,6 +124,12 @@ NUMERIC_FAMILIES = [
     "cumulative-preferred-dividend",
     "weighted-average-cost-of-capital",
     "standard-cost-per-unit",
+    "trial-balance-debit-total",
+    "post-closing-debit-total",
+    "adjusted-wage-expense",
+    "inventory-method-profit-difference",
+    "minimum-transfer-price",
+    "debt-modification-percent-change",
 ]
 
 
@@ -170,6 +176,19 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         assert f"- {oid}." in question
 
 
+@pytest.mark.parametrize("seed", [1, 7, 42, 234])
+def test_mc_temporary_accounts_oracle_and_traps(seed):
+    instance = FAMILIES["mc-temporary-accounts"](seed)
+    expected = {**instance.expected, "format": instance.format}
+    assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
+    assert grade_answer(expected, None).reward == 0
+    gold = set(expected["gold"])
+    assert 0 < len(gold) < 8
+    inverse = sorted(set(expected["options"]) - gold)
+    assert grade_answer(expected, ans(inverse)).reward == 0
+    assert grade_answer(expected, ans(expected["options"])).reward == 0
+
+
 @pytest.mark.parametrize(
     "task_id",
     [
@@ -178,6 +197,7 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         "sc-subsequent-event-classification",
         "sc-transaction-statement-impact",
         "sc-job-vs-process-costing",
+        "sc-fair-value-hierarchy",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

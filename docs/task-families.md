@@ -205,6 +205,20 @@ D = standards depth):
 | `weighted-average-cost-of-capital` | V | U | V | V | V | V | V | vocational |
 | `standard-cost-per-unit` | V | U | V | V | V | V | V | vocational |
 | `sc-job-vs-process-costing` | V | V | V | V | V | V | V | vocational |
+| `government-grant-release` | V | U | V | V | V | V | U | vocational |
+| `investment-property-fair-value` | V | U | V | V | U | V | U | vocational |
+| `goodwill-impairment` | V | U | U | U | U | V | U | university |
+| `fx-translation-adjustment` | V | U | V | U | U | V | U | university |
+| `sale-and-leaseback-entry` | V | U | U | U | U | U | U | university |
+| `debt-security-credit-loss` | V | U | V | U | U | V | U | university |
+| `trial-balance-debit-total` | V | U | V | U | V | V | V | vocational |
+| `post-closing-debit-total` | V | U | V | U | V | V | V | vocational |
+| `adjusted-wage-expense` | V | U | V | V | V | V | V | vocational |
+| `inventory-method-profit-difference` | V | U | V | V | V | V | V | vocational |
+| `minimum-transfer-price` | V | U | V | U | U | V | V | vocational |
+| `debt-modification-percent-change` | V | U | V | U | V | V | U | vocational |
+| `mc-temporary-accounts` | V | V | V | U | V | V | V | vocational |
+| `sc-fair-value-hierarchy` | V | V | V | V | V | V | U | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -338,8 +352,22 @@ problem the task hands over. An analysis task can be vocational.
 | `weighted-average-cost-of-capital` | cost-of-capital | numeric | core | application | — | Use pre-tax debt cost |
 | `standard-cost-per-unit` | standard-costing | numeric | core | application | — | Use actual materials price |
 | `sc-job-vs-process-costing` | product-costing | single-choice | core | remembering-understanding | — | Mismatch production pattern |
+| `government-grant-release` | government-grants | journal-entry | ifrs | application | `ias:20` | Recognize whole grant at once |
+| `investment-property-fair-value` | investment-property | journal-entry | ifrs | application | `ias:40` | Route gain to OCI |
+| `goodwill-impairment` | business-combinations | journal-entry | ifrs | application | `ias:36` | Write equipment down first |
+| `fx-translation-adjustment` | foreign-currency | journal-entry | core | application | `asc:830`, `ias:21` | Translation gain to income |
+| `sale-and-leaseback-entry` | leases | journal-entry | us-gaap | analysis | `asc:842` | Defer qualifying sale gain |
+| `debt-security-credit-loss` | investments | journal-entry | us-gaap | application | `asc:326` | Provide for full FV decline |
+| `trial-balance-debit-total` | ledger-integrity-reporting | numeric | core | application | — | Contra-assets as debits |
+| `post-closing-debit-total` | ledger-integrity-reporting | numeric | core | application | — | Pre-closing debit total |
+| `adjusted-wage-expense` | adjustments-corrections | numeric | core | application | — | Answer cash paid |
+| `inventory-method-profit-difference` | inventory | numeric | core | application | — | Answer FIFO COGS |
+| `minimum-transfer-price` | responsibility-accounting | numeric | core | application | — | Variable production cost only |
+| `debt-modification-percent-change` | borrowings | numeric | core | application | `asc:470-50`, `ifrs:9` | Compare face amounts |
+| `mc-temporary-accounts` | ledger-integrity-reporting | multiple-choice | core | remembering-understanding | — | Permanent contra-assets as temporary |
+| `sc-fair-value-hierarchy` | fair-value-measurement | single-choice | core | remembering-understanding | `asc:820`, `ifrs:13` | Observable inputs as Level 3 |
 
-Stable seeds: 101–221 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–235 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -348,13 +376,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 83 | 6 | 1 | planned |
-| management-accounting | 28 | planned | planned | planned |
+| financial-accounting | 91 | 9 | 3 | planned |
+| management-accounting | 29 | planned | planned | planned |
 | tax | 3 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×66, multiple-choice ×2, single-choice ×5,
-numeric ×48; open-text is
+Format coverage: journal-entry ×72, multiple-choice ×3, single-choice ×6,
+numeric ×54; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

@@ -66,6 +66,17 @@ crosswalk mappings.
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
 - 2026-10-26 — fourteen further generator families (Stable seeds
+  222–235): `government-grant-release`, `investment-property-fair-value`,
+  `goodwill-impairment`, `fx-translation-adjustment`,
+  `sale-and-leaseback-entry`, `debt-security-credit-loss`,
+  `trial-balance-debit-total`, `post-closing-debit-total`,
+  `adjusted-wage-expense`, `inventory-method-profit-difference`,
+  `minimum-transfer-price`, `debt-modification-percent-change`,
+  `mc-temporary-accounts`, `sc-fair-value-hierarchy`. Same checks as
+  earlier batches (in particular: no-transaction simplification in
+  the translation task and sale qualification stated as a fact in the
+  sale-and-leaseback task). No crosswalk mappings proposed yet.
+- 2026-10-26 — fourteen further generator families (Stable seeds
   208–221): `business-combination-acquisition`,
   `consolidation-intercompany-elimination`, `held-for-sale-measurement`,
   `share-based-compensation-monthly`, `asset-revaluation-surplus`,

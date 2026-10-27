@@ -1,0 +1,30 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Assets:DebtSecurities USD
+2026-01-01 open Assets:AllowanceForCreditLosses USD
+2026-01-01 open Expenses:CreditLoss USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  222000.00 USD
+  Equity:Opening-Balances  -222000.00 USD
+
+2026-01-02 * "Broker" "Corporate bonds purchased"
+  Assets:DebtSecurities  202000.00 USD
+  Assets:Bank:Checking  -202000.00 USD
+
+2026-01-02 * "Credit review" "Initial allowance for expected credit losses"
+  Expenses:CreditLoss  3500.00 USD
+  Assets:AllowanceForCreditLosses  -3500.00 USD

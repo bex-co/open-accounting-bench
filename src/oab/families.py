@@ -9054,6 +9054,1101 @@ def sc_job_vs_process_costing(seed: int) -> TaskInstance:
     )
 
 
+DEFERRED_GRANT = "Liabilities:DeferredGovernmentGrant"
+GRANT_INCOME = "Income:GovernmentGrant"
+GOV_GRANT_ACCOUNTS = [
+    (DEFERRED_GRANT, "Government grant deferred income"),
+    (GRANT_INCOME, "Government grant income recognized"),
+]
+
+
+def government_grant_release(seed: int) -> TaskInstance:
+    """Scenario (IFRS): asset grant released over the asset's useful life.
+
+    Oracle: one month of the deferred grant (total / life months) to
+    income. Trap: recognizing the whole grant in January. Level
+    V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    years = rng.choice([4, 5, 8, 10])
+    monthly = Decimal(rng.randrange(50, 301)) * 5
+    total = monthly * years * 12
+    asset_cost = total * rng.choice([Decimal("1.5"), Decimal("2")])
+    opening = asset_cost + Decimal("20000.00")
+    initial = (
+        _ledger_header(opening, GOV_GRANT_ACCOUNTS)
+        + _txn(
+            "2026-01-02",
+            "Government",
+            "Grant received toward equipment purchase",
+            [(BANK, total), (DEFERRED_GRANT, -total)],
+        )
+        + _txn(
+            "2026-01-02",
+            "Vendor",
+            "Equipment purchased and placed in service",
+            [("Assets:Equipment", asset_cost), (BANK, -asset_cost)],
+        )
+    )
+    doc = (
+        "# Government grant — January 2026\n\n"
+        f"A USD {money(total)} grant toward equipment costing "
+        f"USD {money(asset_cost)} was received on 2026-01-02. All grant "
+        f"conditions have been met. The equipment's useful life is {years} "
+        "years from January 2026.\n"
+    )
+    policy = POLICY + (
+        "- Asset-related government grants are deferred income recognized\n"
+        "  in profit or loss evenly over the related asset's useful life\n"
+        "  (monthly from the month the asset enters service).\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Government grant",
+        "January grant income (one month)",
+        [(DEFERRED_GRANT, monthly), (GRANT_INCOME, -monthly)],
+    )
+    return TaskInstance(
+        task_id="government-grant-release",
+        family="government-grants",
+        title="Release one month of an asset government grant",
+        instruction=(
+            "Record January's grant income in `/app/documents/government_grant.md` "
+            "in `/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append exactly one balanced transaction dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(GOV_GRANT_ACCOUNTS),
+            "documents/government_grant.md": doc,
+        },
+        expected=_expected(
+            "government-grant-release",
+            "government-grants",
+            seed,
+            expected_deltas={DEFERRED_GRANT: money(monthly), GRANT_INCOME: money(-monthly)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={DEFERRED_GRANT: money(-(total - monthly))},
+        ),
+        solution_ledger=solution,
+        keywords=["government-grant", "deferred-income", "ias-20"],
+        level="vocational",
+        framework="ifrs",
+        standards=["ias:20"],
+    )
+
+
+INVESTMENT_PROPERTY = "Assets:InvestmentProperty"
+IP_ACCOUNTS = [
+    (INVESTMENT_PROPERTY, "Investment property at fair value (IAS 40)"),
+    (UNREALIZED, "Fair-value gain or loss in profit or loss"),
+    (AOCI, "Accumulated other comprehensive income"),
+]
+
+
+def investment_property_fair_value(seed: int) -> TaskInstance:
+    """Scenario (IFRS): rental property rises in fair value by Jan 31.
+
+    Oracle: gain recognized in profit or loss under the IAS 40 fair-value
+    model. Trap: routing it to OCI as if it were a PPE revaluation.
+    Level V/U/V/V/U/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    cost = Decimal(rng.randrange(150, 401)) * 1000
+    gain = Decimal(rng.randrange(10, 61)) * 1000
+    fair_value = cost + gain
+    opening = cost + Decimal("20000.00")
+    initial = _ledger_header(opening, IP_ACCOUNTS) + _txn(
+        "2026-01-03",
+        "Seller",
+        "Rental building acquired as investment property",
+        [(INVESTMENT_PROPERTY, cost), (BANK, -cost)],
+    )
+    doc = (
+        "# Valuation — rental building, 2026-01-31\n\n"
+        f"Acquired 2026-01-03 for USD {money(cost)} to earn rentals. An "
+        f"independent valuation at 2026-01-31 puts fair value at "
+        f"USD {money(fair_value)}. The company applies the IAS 40 fair-value "
+        "model to investment property.\n"
+    )
+    policy = POLICY + (
+        "- Investment property under the fair-value model is remeasured to\n"
+        "  fair value at each reporting date with gains and losses in\n"
+        "  PROFIT OR LOSS (not OCI). It is not depreciated.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Valuation",
+        "Investment property fair-value gain",
+        [(INVESTMENT_PROPERTY, gain), (UNREALIZED, -gain)],
+    )
+    return TaskInstance(
+        task_id="investment-property-fair-value",
+        family="investment-property",
+        title="Remeasure investment property to fair value (IFRS)",
+        instruction=(
+            "Record the month-end adjustment in `/app/documents/valuation.md` "
+            "in `/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append exactly one balanced transaction dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(IP_ACCOUNTS),
+            "documents/valuation.md": doc,
+        },
+        expected=_expected(
+            "investment-property-fair-value",
+            "investment-property",
+            seed,
+            expected_deltas={INVESTMENT_PROPERTY: money(gain), UNREALIZED: money(-gain)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={INVESTMENT_PROPERTY: money(fair_value)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["investment-property", "ias-40", "fair-value-gain"],
+        level="vocational",
+        framework="ifrs",
+        standards=["ias:40"],
+    )
+
+
+GOODWILL_ACCOUNTS = DISPOSAL_ACCOUNTS + [
+    (GOODWILL, "Goodwill allocated to the cash-generating unit"),
+    (IMPAIRMENT_LOSS, "Impairment loss"),
+]
+
+
+def goodwill_impairment(seed: int) -> TaskInstance:
+    """Scenario (IFRS): a CGU's recoverable amount falls below carrying amount.
+
+    Oracle: the shortfall is allocated first to goodwill (shortfall here
+    is smaller than goodwill). Trap: writing equipment down first.
+    Level V/U/U/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    equipment_cost = Decimal(rng.randrange(100, 251)) * 1000
+    acc_dep = Decimal(rng.randrange(20, 81)) * 1000
+    equipment_net = equipment_cost - acc_dep
+    goodwill = Decimal(rng.randrange(40, 121)) * 1000
+    shortfall = Decimal(rng.randrange(5, 36)) * 1000
+    if shortfall >= goodwill:
+        shortfall = goodwill / 2
+    carrying = equipment_net + goodwill
+    recoverable = carrying - shortfall
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, GOODWILL_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening CGU carrying amounts",
+        [
+            ("Assets:Equipment", equipment_cost),
+            (GOODWILL, goodwill),
+            (ACC_DEP, -acc_dep),
+            ("Equity:Opening-Balances", acc_dep - equipment_cost - goodwill),
+        ],
+    )
+    doc = (
+        "# Annual goodwill impairment test — 2026-01-31\n\n"
+        f"Cash-generating unit carrying amounts: equipment net "
+        f"USD {money(equipment_net)} (cost USD {money(equipment_cost)}, "
+        f"accumulated depreciation USD {money(acc_dep)}), goodwill "
+        f"USD {money(goodwill)}; total USD {money(carrying)}. Recoverable "
+        f"amount of the unit: USD {money(recoverable)}.\n"
+    )
+    policy = POLICY + (
+        "- A CGU impairment loss (carrying amount above recoverable amount)\n"
+        "  is allocated FIRST to goodwill; only any excess above the\n"
+        "  goodwill balance reduces other assets.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Impairment test",
+        "Impair goodwill to recoverable amount",
+        [(IMPAIRMENT_LOSS, shortfall), (GOODWILL, -shortfall)],
+    )
+    return TaskInstance(
+        task_id="goodwill-impairment",
+        family="business-combinations",
+        title="Impair goodwill allocated to a CGU (IFRS)",
+        instruction=(
+            "Record the impairment in `/app/documents/impairment_test.md` in "
+            "`/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append exactly one balanced transaction dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(GOODWILL_ACCOUNTS),
+            "documents/impairment_test.md": doc,
+        },
+        expected=_expected(
+            "goodwill-impairment",
+            "business-combinations",
+            seed,
+            expected_deltas={IMPAIRMENT_LOSS: money(shortfall), GOODWILL: money(-shortfall)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={GOODWILL: money(goodwill - shortfall)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["goodwill-impairment", "cgu", "ias-36"],
+        level="university",
+        framework="ifrs",
+        standards=["ias:36"],
+    )
+
+
+SUB_INVESTMENT = "Assets:InvestmentInForeignSubsidiary"
+FX_TRANSLATION_ACCOUNTS = [
+    (SUB_INVESTMENT, "Investment in foreign subsidiary (translated net assets)"),
+    (AOCI, "Accumulated OCI — cumulative translation adjustment"),
+]
+
+
+def fx_translation_adjustment(seed: int) -> TaskInstance:
+    """Scenario: foreign sub's currency strengthens; translate net assets.
+
+    Oracle: retranslation increase on unchanged FC net assets goes to
+    OCI (cumulative translation adjustment), not profit or loss. Trap:
+    crediting an FX gain in income. Level V/U/V/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    euros = Decimal(rng.randrange(10, 31)) * 10000
+    initial_spot = rng.choice([Decimal("1.05"), Decimal("1.08"), Decimal("1.10"), Decimal("1.12")])
+    uplift = Decimal(rng.randrange(2, 11)) / 100
+    closing_spot = initial_spot + uplift
+    initial_amount = euros * initial_spot
+    gain = euros * uplift
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, FX_TRANSLATION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Investment in foreign subsidiary at opening spot",
+        [(SUB_INVESTMENT, initial_amount), ("Equity:Opening-Balances", -initial_amount)],
+    )
+    doc = (
+        "# Foreign subsidiary translation — 2026-01-31\n\n"
+        f"The subsidiary's functional currency is the euro; its net assets "
+        f"were EUR {money(euros)} throughout January (no transactions). "
+        f"Spot: USD {initial_spot:.2f} per EUR at 2026-01-01; "
+        f"USD {closing_spot:.2f} per EUR at 2026-01-31. Presentation "
+        "currency is USD.\n"
+    )
+    policy = POLICY + (
+        "- Translation differences on a foreign operation's net assets are\n"
+        "  recognized in other comprehensive income (cumulative translation\n"
+        "  adjustment), not in profit or loss.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Translation",
+        "Retranslate foreign net assets at closing spot",
+        [(SUB_INVESTMENT, gain), (AOCI, -gain)],
+    )
+    return TaskInstance(
+        task_id="fx-translation-adjustment",
+        family="foreign-currency",
+        title="Record a foreign-operation translation adjustment",
+        instruction=(
+            "Record the January 31 adjustment in "
+            "`/app/documents/fx_translation.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append exactly one balanced "
+            "transaction dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(FX_TRANSLATION_ACCOUNTS),
+            "documents/fx_translation.md": doc,
+        },
+        expected=_expected(
+            "fx-translation-adjustment",
+            "foreign-currency",
+            seed,
+            expected_deltas={SUB_INVESTMENT: money(gain), AOCI: money(-gain)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={SUB_INVESTMENT: money(euros * closing_spot)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["foreign-currency", "translation", "oci", "cta"],
+        level="university",
+        standards=["asc:830", "ias:21"],
+    )
+
+
+SALE_LEASEBACK_ACCOUNTS = DISPOSAL_ACCOUNTS + [
+    (ROU_ASSET, "Right-of-use asset (leaseback)"),
+    (LEASE_LIABILITY, "Lease liability (leaseback)"),
+    (DEFERRED, "Deferred revenue (not used for a qualifying sale)"),
+]
+
+
+def sale_and_leaseback_entry(seed: int) -> TaskInstance:
+    """Scenario (US GAAP): qualifying sale at fair value with a leaseback.
+
+    Oracle: derecognize the asset, recognize the full sale gain, and book
+    the leaseback ROU asset/liability at the stated present value. Trap:
+    deferring the gain as if the sale had failed. Level V/U/U/U/U/U/U.
+    """
+    rng = random.Random(seed)
+    carrying = Decimal(rng.randrange(80, 221)) * 1000
+    acc_dep = Decimal(rng.randrange(20, 81)) * 1000
+    cost = carrying + acc_dep
+    gain = Decimal(rng.randrange(10, 61)) * 1000
+    proceeds = carrying + gain
+    lease_pv = Decimal(rng.randrange(30, 121)) * 1000
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, SALE_LEASEBACK_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening carrying amount: headquarters building",
+        [
+            ("Assets:Equipment", cost),
+            (ACC_DEP, -acc_dep),
+            ("Equity:Opening-Balances", acc_dep - cost),
+        ],
+    )
+    doc = (
+        "# Sale and leaseback — 2026-01-15 (US GAAP)\n\n"
+        f"The company sold its headquarters building (cost USD {money(cost)}, "
+        f"accumulated depreciation USD {money(acc_dep)}) for USD {money(proceeds)} "
+        "cash, its fair value, and immediately leased it back. The transfer "
+        "qualifies as a sale. Present value of leaseback payments: "
+        f"USD {money(lease_pv)}.\n"
+    )
+    policy = POLICY + (
+        "- When a sale-and-leaseback transfer qualifies as a sale at fair\n"
+        "  value, the seller-lessee derecognizes the asset, recognizes the\n"
+        "  full gain (proceeds above carrying amount), and records the\n"
+        "  leaseback right-of-use asset and liability at the stated present\n"
+        "  value.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-15",
+        "Buyer-lessor",
+        "Sale of building and leaseback recognition",
+        [
+            (BANK, proceeds),
+            (ACC_DEP, acc_dep),
+            (ROU_ASSET, lease_pv),
+            ("Assets:Equipment", -cost),
+            (LEASE_LIABILITY, -lease_pv),
+            (DISPOSAL, -gain),
+        ],
+    )
+    return TaskInstance(
+        task_id="sale-and-leaseback-entry",
+        family="leases",
+        title="Record a qualifying sale and leaseback (US GAAP)",
+        instruction=(
+            "Record the transaction in `/app/documents/sale_leaseback.md` in "
+            "`/app/ledger.beancount` under US GAAP as stated in "
+            "`/app/policy.md`. Append new balanced transactions dated "
+            "2026-01-15; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(SALE_LEASEBACK_ACCOUNTS),
+            "documents/sale_leaseback.md": doc,
+        },
+        expected=_expected(
+            "sale-and-leaseback-entry",
+            "leases",
+            seed,
+            expected_deltas={
+                BANK: money(proceeds),
+                ACC_DEP: money(acc_dep),
+                ROU_ASSET: money(lease_pv),
+                "Assets:Equipment": money(-cost),
+                LEASE_LIABILITY: money(-lease_pv),
+                DISPOSAL: money(-gain),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-15", "2026-01-15"],
+            required_final_balances={
+                "Assets:Equipment": "0.00",
+                ROU_ASSET: money(lease_pv),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["sale-leaseback", "asc-842", "right-of-use"],
+        level="university",
+        skill="analysis",
+        framework="us-gaap",
+        standards=["asc:842"],
+    )
+
+
+DEBT_SECURITY = "Assets:DebtSecurities"
+CREDIT_ALLOWANCE = "Assets:AllowanceForCreditLosses"
+CREDIT_LOSS = "Expenses:CreditLoss"
+CECL_ACCOUNTS = [
+    (DEBT_SECURITY, "Debt securities at amortized cost"),
+    (CREDIT_ALLOWANCE, "Allowance for credit losses (contra-asset)"),
+    (CREDIT_LOSS, "Credit loss expense"),
+]
+
+
+def debt_security_credit_loss(seed: int) -> TaskInstance:
+    """Scenario: expected credit losses on debt securities rise in January.
+
+    Oracle: top the allowance up to the new expected-credit-loss estimate.
+    Trap: providing for the whole fair-value decline (including the
+    interest-rate component). Level V/U/V/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    amortized = Decimal(rng.randrange(100, 301)) * 1000
+    opening_allowance = Decimal(rng.randrange(2, 11)) * 500
+    increase = Decimal(rng.randrange(4, 21)) * 500
+    required = opening_allowance + increase
+    fv_decline = required + Decimal(rng.randrange(10, 41)) * 500
+    opening = amortized + Decimal("20000.00")
+    initial = (
+        _ledger_header(opening, CECL_ACCOUNTS)
+        + _txn(
+            "2026-01-02",
+            "Broker",
+            "Corporate bonds purchased",
+            [(DEBT_SECURITY, amortized), (BANK, -amortized)],
+        )
+        + _txn(
+            "2026-01-02",
+            "Credit review",
+            "Initial allowance for expected credit losses",
+            [(CREDIT_LOSS, opening_allowance), (CREDIT_ALLOWANCE, -opening_allowance)],
+        )
+    )
+    doc = (
+        "# Credit review — corporate bonds, 2026-01-31\n\n"
+        f"Amortized cost USD {money(amortized)}. At January 31 expected credit "
+        f"losses are re-estimated at USD {money(required)} in total. The bonds' "
+        f"fair value has fallen USD {money(fv_decline)} below amortized cost, "
+        "mostly because market interest rates rose.\n"
+    )
+    policy = POLICY + (
+        "- Securities at amortized cost carry an allowance for EXPECTED\n"
+        "  CREDIT losses only, adjusted to the current estimate through\n"
+        "  credit-loss expense. Fair-value declines caused by interest-rate\n"
+        "  movements are not credit losses.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Credit review",
+        "Increase allowance to expected credit losses",
+        [(CREDIT_LOSS, increase), (CREDIT_ALLOWANCE, -increase)],
+    )
+    return TaskInstance(
+        task_id="debt-security-credit-loss",
+        family="investments",
+        title="Adjust the credit-loss allowance on debt securities",
+        instruction=(
+            "Record the January adjustment in `/app/documents/credit_review.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "exactly one balanced transaction dated 2026-01-31; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CECL_ACCOUNTS),
+            "documents/credit_review.md": doc,
+        },
+        expected=_expected(
+            "debt-security-credit-loss",
+            "investments",
+            seed,
+            expected_deltas={CREDIT_LOSS: money(increase), CREDIT_ALLOWANCE: money(-increase)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={CREDIT_ALLOWANCE: money(-required)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["cecl", "credit-losses", "debt-securities"],
+        level="university",
+        framework="us-gaap",
+        standards=["asc:326"],
+    )
+
+
+def _balances_table(title: str, rows: list[tuple[str, Decimal]]) -> str:
+    body = "\n".join(f"| {name} | {money(amount)} |" for name, amount in rows)
+    return f"# {title}\n\n| Account | Balance (USD) |\n|---|---:|\n{body}\n"
+
+
+def trial_balance_debit_total(seed: int) -> TaskInstance:
+    """Numeric: extract the debit column total from account balances.
+
+    Trap: treating contra-assets (accumulated depreciation, allowance)
+    as debits.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    cash, ar, supplies, rent, wages, dividends = (
+        amt(100, 301),
+        amt(80, 241),
+        amt(10, 51),
+        amt(30, 101),
+        amt(60, 181),
+        amt(10, 61),
+    )
+    acc_dep, allowance, ap, stock, sales, retained = (
+        amt(30, 121),
+        amt(5, 31),
+        amt(50, 161),
+        amt(100, 301),
+        amt(200, 501),
+        amt(80, 241),
+    )
+    other_debits = cash + ar + supplies + rent + wages + dividends
+    credits = acc_dep + allowance + ap + stock + sales + retained
+    equipment = credits - other_debits
+    while equipment < Decimal("30000"):
+        retained += 20000
+        credits += 20000
+        equipment += 20000
+    gold = credits
+    trap = gold + acc_dep + allowance
+    rows = [
+        ("Cash", cash),
+        ("Accounts receivable", ar),
+        ("Supplies", supplies),
+        ("Equipment", equipment),
+        ("Accumulated depreciation", acc_dep),
+        ("Allowance for doubtful accounts", allowance),
+        ("Accounts payable", ap),
+        ("Common stock", stock),
+        ("Retained earnings", retained),
+        ("Sales revenue", sales),
+        ("Rent expense", rent),
+        ("Wages expense", wages),
+        ("Dividends", dividends),
+    ]
+    rng.shuffle(rows)
+    data = _balances_table("Account balances — 2026-01-31", rows)
+    policy = NORMAL_BALANCE_POLICY + (
+        "\nThe balances above foot to a balanced trial balance. Total debits is "
+        "the sum of every debit-balance account.\n"
+    )
+    question = _numeric_question(
+        "trial balance debit total",
+        "Using `/app/documents/account_balances.md` and `/app/policy.md`, compute "
+        "**total debits** on the trial balance in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="trial-balance-debit-total",
+        family="ledger-integrity-reporting",
+        title="Extract the trial-balance debit total",
+        question=question,
+        policy=policy,
+        data_name="account_balances.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "trial-balance", "normal-balances"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def post_closing_debit_total(seed: int) -> TaskInstance:
+    """Numeric: post-closing debit total excludes temporary accounts.
+
+    Trap: answering the pre-closing debit total (temporary debits remain).
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    cash, ar, inventory, equipment, treasury = (
+        amt(80, 241),
+        amt(60, 201),
+        amt(70, 221),
+        amt(200, 501),
+        amt(10, 61),
+    )
+    permanent_debits = cash + ar + inventory + equipment + treasury
+    acc_dep, ap, stock, retained = amt(40, 141), amt(50, 171), amt(100, 301), amt(80, 241)
+    permanent_credits = acc_dep + ap + stock + retained
+    expenses, dividends = amt(150, 401), amt(10, 61)
+    temporary_debits = expenses + dividends
+    sales = permanent_debits + temporary_debits - permanent_credits
+    while sales < Decimal("20000"):
+        retained += 20000
+        permanent_credits += 20000
+        sales -= 20000
+        equipment += 40000
+        permanent_debits += 40000
+        sales += 40000
+    rows = [
+        ("Cash", cash),
+        ("Accounts receivable", ar),
+        ("Inventory", inventory),
+        ("Equipment", equipment),
+        ("Treasury stock", treasury),
+        ("Accumulated depreciation", acc_dep),
+        ("Accounts payable", ap),
+        ("Common stock", stock),
+        ("Retained earnings (beginning)", retained),
+        ("Sales revenue", sales),
+        ("Operating expenses", expenses),
+        ("Dividends", dividends),
+    ]
+    rng.shuffle(rows)
+    data = _balances_table("Pre-closing balances — 2025-12-31", rows)
+    policy = """# Closing conventions (applies to this task)
+
+- Temporary accounts (revenues, expenses, dividends) are closed to zero
+  and do not appear on the post-closing trial balance.
+- Permanent accounts carry forward: assets (including Treasury stock as
+  a debit contra-equity account), contra-assets (credits), liabilities,
+  share capital, and retained earnings.
+- Post-closing total debits is the sum of permanent DEBIT balances only.
+"""
+    question = _numeric_question(
+        "post-closing trial balance debit total",
+        "Using `/app/documents/preclosing_balances.md` and `/app/policy.md`, "
+        "compute **post-closing trial balance total debits** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="post-closing-debit-total",
+        family="ledger-integrity-reporting",
+        title="Compute the post-closing debit total",
+        question=question,
+        policy=policy,
+        data_name="preclosing_balances.md",
+        data=data,
+        gold=permanent_debits,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "post-closing-trial-balance", "permanent-accounts"],
+        abs_tolerance="0.01",
+        trap_value=money(permanent_debits + temporary_debits),
+    )
+
+
+def adjusted_wage_expense(seed: int) -> TaskInstance:
+    """Numeric: convert cash wages paid to accrual wage expense.
+
+    Trap: answering cash paid.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    paid, beginning, ending = amt(300, 801), amt(20, 101), amt(25, 121)
+    if beginning == ending:
+        ending += 1000
+    gold = paid + ending - beginning
+    data = (
+        "# Wages data — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Cash wages paid | {money(paid)} |\n"
+        f"| Wages payable, 2026-01-01 | {money(beginning)} |\n"
+        f"| Wages payable, 2026-01-31 | {money(ending)} |\n"
+    )
+    policy = """# Accrual conversion conventions (applies to this task)
+
+- Wage expense = cash wages paid + ending wages payable - beginning
+  wages payable. The beginning balance was expensed last period; the
+  ending balance was earned (expensed) this period but is unpaid.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "accrual wage expense",
+        "Using `/app/documents/wages_data.md` and `/app/policy.md`, compute "
+        "**January wage expense** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="adjusted-wage-expense",
+        family="adjustments-corrections",
+        title="Convert cash wages paid to wage expense",
+        question=question,
+        policy=policy,
+        data_name="wages_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "accrual-conversion", "wages-payable"],
+        abs_tolerance="0.01",
+        trap_value=money(paid),
+    )
+
+
+def inventory_method_profit_difference(seed: int) -> TaskInstance:
+    """Numeric: FIFO gross profit minus LIFO gross profit in rising costs.
+
+    Trap: answering one method's cost of goods sold instead of the gap.
+    """
+    rng = random.Random(seed)
+    q0 = rng.randrange(100, 401, 25)
+    q1 = rng.randrange(150, 501, 25)
+    q2 = rng.randrange(150, 501, 25)
+    c0 = Decimal(rng.randrange(800, 1801, 25)) / 100
+    c1 = c0 + Decimal(rng.randrange(100, 401, 25)) / 100
+    c2 = c1 + Decimal(rng.randrange(100, 401, 25)) / 100
+    total_units = q0 + q1 + q2
+    ending = rng.randrange(q0 // 2, q0 + q1, 25)
+    sold = total_units - ending
+
+    def take_value(layers, units):
+        value, left = Decimal("0"), units
+        for qty, cost in layers:
+            take = min(qty, left)
+            value += take * cost
+            left -= take
+            if left == 0:
+                break
+        return value
+
+    layers = [(q0, c0), (q1, c1), (q2, c2)]
+    available = sum(q * c for q, c in layers)
+    lifo_ending = take_value(layers, ending)
+    fifo_ending = take_value(list(reversed(layers)), ending)
+    fifo_cogs = available - fifo_ending
+    gold = fifo_ending - lifo_ending
+    data = (
+        "# Inventory layers — January 2026 (costs rising)\n\n"
+        "| Layer | Units | Unit cost (USD) |\n|---|---:|---:|\n"
+        f"| Beginning inventory | {q0} | {money(c0)} |\n"
+        f"| First purchase | {q1} | {money(c1)} |\n"
+        f"| Second purchase | {q2} | {money(c2)} |\n\n"
+        f"Units sold: {sold}. Units on hand at month-end: {ending}. "
+        "Periodic inventory system under each method.\n"
+    )
+    policy = """# FIFO/LIFO profit comparison (applies to this task)
+
+- With the same sales revenue, FIFO gross profit - LIFO gross profit
+  = LIFO cost of goods sold - FIFO cost of goods sold
+  = FIFO ending inventory - LIFO ending inventory.
+- Periodic FIFO charges the earliest costs to COGS; periodic LIFO
+  charges the latest costs. Answer in USD.
+"""
+    question = _numeric_question(
+        "FIFO versus LIFO gross profit",
+        "Using `/app/documents/inventory_layers.md` and `/app/policy.md`, compute "
+        "**FIFO gross profit minus LIFO gross profit** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="inventory-method-profit-difference",
+        family="inventory",
+        title="Compute the FIFO/LIFO gross-profit difference",
+        question=question,
+        policy=policy,
+        data_name="inventory_layers.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "fifo", "lifo", "gross-profit-impact"],
+        abs_tolerance="0.01",
+        trap_value=money(fifo_cogs),
+    )
+
+
+def minimum_transfer_price(seed: int) -> TaskInstance:
+    """Numeric: minimum transfer price at full capacity.
+
+    Trap: variable production cost only (ignores lost external margin).
+    """
+    rng = random.Random(seed)
+    production_vc = Decimal(rng.randrange(800, 2501, 25)) / 100
+    saved_selling = Decimal(rng.randrange(100, 501, 25)) / 100
+    external_margin = Decimal(rng.randrange(500, 2001, 25)) / 100
+    external_price = production_vc + saved_selling + external_margin
+    gold = external_price - saved_selling
+    data = (
+        "# Selling division data (per unit)\n\n| Item | USD |\n|---|---:|\n"
+        f"| Variable production cost | {money(production_vc)} |\n"
+        f"| Variable selling cost on external sales | {money(saved_selling)} |\n"
+        f"| External selling price | {money(external_price)} |\n\n"
+        "The selling division is operating at full capacity; every internal "
+        "unit displaces an external sale. The variable selling cost is not "
+        "incurred on internal transfers.\n"
+    )
+    policy = """# Transfer pricing conventions (applies to this task)
+
+- Minimum transfer price = incremental variable cost of the internal
+  sale + opportunity cost per unit. At full capacity the opportunity
+  cost is the lost external contribution margin (external price minus
+  all variable costs of an external sale), so the minimum equals the
+  external price less variable costs saved internally.
+- Answer in USD per unit.
+"""
+    question = _numeric_question(
+        "minimum transfer price at full capacity",
+        "Using `/app/documents/transfer_data.md` and `/app/policy.md`, compute "
+        "the **minimum transfer price per unit** in USD.",
+        "the USD amount per unit",
+    )
+    return _numeric_instance(
+        task_id="minimum-transfer-price",
+        family="responsibility-accounting",
+        title="Compute the minimum transfer price",
+        question=question,
+        policy=policy,
+        data_name="transfer_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "transfer-pricing", "opportunity-cost"],
+        abs_tolerance="0.01",
+        trap_value=money(production_vc),
+    )
+
+
+def debt_modification_percent_change(seed: int) -> TaskInstance:
+    """Numeric: 10% cash-flow test percentage for a debt modification.
+
+    Trap: comparing face amounts instead of present values at the
+    original effective rate.
+    """
+    rng = random.Random(seed)
+    pct = rng.choice(
+        [Decimal("7.50"), Decimal("9.00"), Decimal("11.50"), Decimal("12.50"), Decimal("14.00")]
+    )
+    old_pv = Decimal(rng.randrange(100, 401)) * 1000
+    new_pv = (old_pv * (100 - pct) / 100).quantize(CENT)
+    old_face = old_pv + Decimal(rng.randrange(10, 51)) * 1000
+    new_face = old_face - Decimal(rng.randrange(0, 21)) * 1000
+    trap = ((old_face - new_face) / old_face * 100).quantize(Decimal("0.0001"))
+    if abs(trap - pct) <= Decimal("0.01"):
+        trap += Decimal("1")
+    data = (
+        "# Debt modification analysis\n\n| Item | USD |\n|---|---:|\n"
+        f"| PV of remaining cash flows, original terms | {money(old_pv)} |\n"
+        f"| PV of cash flows, modified terms | {money(new_pv)} |\n"
+        f"| Face amount, original debt | {money(old_face)} |\n"
+        f"| Face amount, modified debt | {money(new_face)} |\n\n"
+        "Both present values use the original effective interest rate and "
+        "include fees paid net of fees received.\n"
+    )
+    policy = """# Debt modification test (applies to this task)
+
+- Percentage change = |PV under modified terms - PV under original
+  terms| / PV under original terms x 100, both discounted at the
+  ORIGINAL effective rate. Face amounts are not used in the test.
+- Answer as a percentage number (for example 12.50 for 12.50%).
+"""
+    question = _numeric_question(
+        "debt modification cash-flow change",
+        "Using `/app/documents/debt_modification.md` and `/app/policy.md`, "
+        "compute the **percentage change in present value**.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="debt-modification-percent-change",
+        family="borrowings",
+        title="Compute the debt-modification PV percentage change",
+        question=question,
+        policy=policy,
+        data_name="debt_modification.md",
+        data=data,
+        gold=pct,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "debt-modification", "ten-percent-test"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+        standards=["asc:470-50", "ifrs:9"],
+    )
+
+
+TEMPORARY_POLICY = """# Temporary and permanent accounts (applies to this task)
+
+- TEMPORARY (closed to zero each period): revenues, expenses, gains,
+  losses, dividends/drawings, and the income summary.
+- PERMANENT (carried forward): assets, contra-assets, liabilities,
+  share capital, additional paid-in capital, retained earnings, and
+  Treasury stock.
+"""
+
+
+def mc_temporary_accounts(seed: int) -> TaskInstance:
+    """Multiple-choice: select every temporary (closed) account.
+
+    Traps: dividends look like equity but are temporary, and the
+    allowance/accumulated depreciation look like adjustments but are
+    permanent contra-assets. Level: policy states the classes.
+    """
+    rng = random.Random(seed)
+    pool: list[tuple[str, bool]] = [
+        ("Sales revenue", True),
+        ("Cost of goods sold", True),
+        ("Rent expense", True),
+        ("Dividends", True),
+        ("Income summary", True),
+        ("Gain on disposal", True),
+        ("Cash", False),
+        ("Accounts payable", False),
+        ("Common stock", False),
+        ("Retained earnings", False),
+        ("Accumulated depreciation", False),
+        ("Treasury stock", False),
+    ]
+    rng.shuffle(pool)
+    chosen = pool[:8]
+    option_ids = ["A", "B", "C", "D", "E", "F", "G", "H"]
+    gold = sorted(oid for oid, (_, is_temp) in zip(option_ids, chosen, strict=True) if is_temp)
+    options_md = "\n".join(
+        f"- {oid}. {name} is a TEMPORARY account."
+        for oid, (name, _) in zip(option_ids, chosen, strict=True)
+    )
+    question = _choice_question(
+        "temporary accounts",
+        "Using `/app/policy.md`, select **all** statements that are true. "
+        "Incorrect selections are penalized.",
+        options_md,
+        '["A", "C"]',
+    )
+    return TaskInstance(
+        task_id="mc-temporary-accounts",
+        family="ledger-integrity-reporting",
+        title="Select the temporary accounts",
+        instruction=(
+            "Answer the multiple-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": TEMPORARY_POLICY,
+            "chart_of_accounts.md": _chart_md(),
+            "answer.example.json": '{\n  "final_answer": ["A"],\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "mc-temporary-accounts",
+            "ledger-integrity-reporting",
+            seed,
+            format="multiple-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["multiple-choice", "temporary-accounts", "closing"],
+        level="vocational",
+        format="multiple-choice",
+        skill="remembering-understanding",
+    )
+
+
+FV_LEVELS = ["Level 1", "Level 2", "Level 3"]
+FV_CASES = [
+    (
+        "Shares of a listed company valued at the unadjusted quoted price "
+        "on an active stock exchange.",
+        "Level 1",
+    ),
+    (
+        "An exchange-traded futures contract valued at its quoted "
+        "settlement price in an active market.",
+        "Level 1",
+    ),
+    (
+        "A plain-vanilla interest-rate swap valued from an observable yield curve.",
+        "Level 2",
+    ),
+    (
+        "Corporate bonds valued using quoted prices for similar bonds and "
+        "observable credit spreads.",
+        "Level 2",
+    ),
+    (
+        "An unlisted startup investment valued from management's own "
+        "cash-flow forecasts and an unobservable growth rate.",
+        "Level 3",
+    ),
+    (
+        "A bespoke structured note valued with internally modelled, "
+        "unobservable default correlations.",
+        "Level 3",
+    ),
+]
+
+
+def sc_fair_value_hierarchy(seed: int) -> TaskInstance:
+    """Single-choice: classify a valuation into the fair-value hierarchy."""
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(FV_CASES)
+    labels = FV_LEVELS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Fair-value hierarchy (applies to this task)
+
+- Level 1: unadjusted quoted prices in active markets for IDENTICAL
+  assets or liabilities.
+- Level 2: other observable inputs, including quoted prices for similar
+  items and market-corroborated curves.
+- Level 3: significant UNOBSERVABLE inputs based on the entity's own
+  assumptions and models.
+"""
+    question = _choice_question(
+        "fair-value hierarchy level",
+        f"Valuation: **{narrative}**\n\nUsing `/app/policy.md`, which level "
+        "applies? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-fair-value-hierarchy",
+        family="fair-value-measurement",
+        title="Classify a fair-value measurement",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-fair-value-hierarchy",
+            "fair-value-measurement",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "fair-value-hierarchy", "level-1-2-3"],
+        level="vocational",
+        format="single-choice",
+        skill="remembering-understanding",
+        standards=["asc:820", "ifrs:13"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -9176,6 +10271,20 @@ FAMILIES = {
     "weighted-average-cost-of-capital": weighted_average_cost_of_capital,
     "standard-cost-per-unit": standard_cost_per_unit,
     "sc-job-vs-process-costing": sc_job_vs_process_costing,
+    "government-grant-release": government_grant_release,
+    "investment-property-fair-value": investment_property_fair_value,
+    "goodwill-impairment": goodwill_impairment,
+    "fx-translation-adjustment": fx_translation_adjustment,
+    "sale-and-leaseback-entry": sale_and_leaseback_entry,
+    "debt-security-credit-loss": debt_security_credit_loss,
+    "trial-balance-debit-total": trial_balance_debit_total,
+    "post-closing-debit-total": post_closing_debit_total,
+    "adjusted-wage-expense": adjusted_wage_expense,
+    "inventory-method-profit-difference": inventory_method_profit_difference,
+    "minimum-transfer-price": minimum_transfer_price,
+    "debt-modification-percent-change": debt_modification_percent_change,
+    "mc-temporary-accounts": mc_temporary_accounts,
+    "sc-fair-value-hierarchy": sc_fair_value_hierarchy,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -9301,4 +10410,18 @@ STABLE_SEEDS = {
     "weighted-average-cost-of-capital": 219,
     "standard-cost-per-unit": 220,
     "sc-job-vs-process-costing": 221,
+    "government-grant-release": 222,
+    "investment-property-fair-value": 223,
+    "goodwill-impairment": 224,
+    "fx-translation-adjustment": 225,
+    "sale-and-leaseback-entry": 226,
+    "debt-security-credit-loss": 227,
+    "trial-balance-debit-total": 228,
+    "post-closing-debit-total": 229,
+    "adjusted-wage-expense": 230,
+    "inventory-method-profit-difference": 231,
+    "minimum-transfer-price": 232,
+    "debt-modification-percent-change": 233,
+    "mc-temporary-accounts": 234,
+    "sc-fair-value-hierarchy": 235,
 }

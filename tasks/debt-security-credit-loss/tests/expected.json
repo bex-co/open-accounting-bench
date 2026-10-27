@@ -1,0 +1,30 @@
+{
+  "task_id": "debt-security-credit-loss",
+  "family": "investments",
+  "seed": 227,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Expenses:CreditLoss": "3000.00",
+    "Assets:AllowanceForCreditLosses": "-3000.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:AllowanceForCreditLosses": "-6500.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "us-gaap",
+  "level": "university",
+  "skill": "application",
+  "standards": [
+    "asc:326"
+  ]
+}

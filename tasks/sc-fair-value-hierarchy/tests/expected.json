@@ -1,0 +1,29 @@
+{
+  "task_id": "sc-fair-value-hierarchy",
+  "family": "fair-value-measurement",
+  "seed": 235,
+  "generator_version": "0.3.0",
+  "format": "single-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "A",
+  "options": [
+    "A",
+    "B",
+    "C"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "remembering-understanding",
+  "standards": [
+    "asc:820",
+    "ifrs:13"
+  ]
+}

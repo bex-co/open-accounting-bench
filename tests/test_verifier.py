@@ -1369,3 +1369,77 @@ def test_conditional_grant_as_revenue_fails():
         "  Income:ContributionRevenueWithDonorRestrictions",
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_recognizing_whole_government_grant_fails():
+    """Trap: release the entire asset grant to income in month one."""
+    from decimal import Decimal
+
+    instance = FAMILIES["government-grant-release"](222)
+    monthly = _deltas(instance)["Liabilities:DeferredGovernmentGrant"]
+    remaining = -Decimal(
+        instance.expected["required_final_balances"]["Liabilities:DeferredGovernmentGrant"]
+    )
+    total = monthly + remaining
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Government grant",
+        [("Liabilities:DeferredGovernmentGrant", total), ("Income:GovernmentGrant", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_investment_property_gain_to_oci_fails():
+    """Trap: route an IAS 40 fair-value gain to OCI like a PPE revaluation."""
+    instance = FAMILIES["investment-property-fair-value"](223)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace(
+        "  Income:UnrealizedGainLoss", "  Equity:AccumulatedOtherComprehensiveIncome"
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_goodwill_impairment_charged_to_equipment_fails():
+    """Trap: allocate a CGU impairment to equipment before goodwill."""
+    instance = FAMILIES["goodwill-impairment"](224)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace("  Assets:Goodwill", "  Assets:Equipment")
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_translation_gain_to_income_fails():
+    """Trap: credit a foreign-operation translation gain to income."""
+    instance = FAMILIES["fx-translation-adjustment"](225)
+    gain = _deltas(instance)["Assets:InvestmentInForeignSubsidiary"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Translation",
+        [("Assets:InvestmentInForeignSubsidiary", gain), ("Income:Sales", -gain)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_deferring_sale_leaseback_gain_fails():
+    """Trap: defer the gain although the transfer qualifies as a sale."""
+    instance = FAMILIES["sale-and-leaseback-entry"](226)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace(
+        "  Income:GainLossOnDisposal", "  Liabilities:DeferredRevenue"
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_credit_allowance_for_full_fv_decline_fails():
+    """Trap: provide for the rate-driven fair-value decline, not credit losses."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["debt-security-credit-loss"](227)
+    doc = instance.app_files["documents/credit_review.md"]
+    decline = Decimal(re.search(r"fallen USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Credit review",
+        [("Expenses:CreditLoss", decline), ("Assets:AllowanceForCreditLosses", -decline)],
+    )
+    _assert_semantic_trap(instance, wrong)

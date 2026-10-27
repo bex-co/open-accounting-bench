@@ -1,0 +1,20 @@
+# Chart of accounts
+
+- `Assets:Bank:Checking` — Operating bank account
+- `Assets:Equipment` — Capitalized equipment (multi-year useful life)
+- `Assets:PrepaidInsurance` — Insurance paid in advance
+- `Equity:Opening-Balances` — Opening balances
+- `Income:Sales` — Sales revenue
+- `Expenses:BankFees` — Bank service charges
+- `Expenses:Insurance` — Insurance expense for the current period
+- `Expenses:Interest` — Interest expense (non-capitalized borrowing costs)
+- `Expenses:OfficeSupplies` — Consumable office supplies
+- `Expenses:Rent` — Office rent
+- `Expenses:Repairs` — Repairs and maintenance
+- `Expenses:Utilities` — Utilities
+- `Assets:AccumulatedDepreciation` — Accumulated depreciation on equipment (contra-asset; credit balance)
+- `Expenses:Depreciation` — Depreciation expense
+- `Income:GainLossOnDisposal` — Gain (credit) or loss (debit) on disposal of non-current assets
+- `Assets:RightOfUseAsset` — Right-of-use asset (leaseback)
+- `Liabilities:LeaseLiability` — Lease liability (leaseback)
+- `Liabilities:DeferredRevenue` — Deferred revenue (not used for a qualifying sale)
