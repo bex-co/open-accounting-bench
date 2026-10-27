@@ -231,6 +231,17 @@ crosswalk mappings.
   and backup-chain conventions are simplified versions of AT-C
   practice, stated in full in each policy). Level scores assigned
   under the strict reading. No crosswalk mappings proposed yet.
+- 2026-10-26 — eleven further generator families (Stable seeds
+  307–317): `budget-vs-actual-net-variance`, `cash-to-accrual-profit`,
+  `debt-covenant-ratio`, `exit-obligation-january-amount`,
+  `sc-governmental-fund-assignment`, `htm-premium-amortization`,
+  `nfp-program-expense-allocation`, `nfp-operating-cash-flow`,
+  `nfp-restricted-net-assets`, `notes-figures-difference`,
+  `tax-basis-net-income`. Same checks as earlier batches (in
+  particular: the ASC 420 ratable-accrual slice and the NFP
+  financing classification of restricted contributions). Level
+  scores assigned under the strict reading. No crosswalk mappings
+  proposed yet.
 
 
 ## Reviewed
