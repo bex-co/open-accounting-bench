@@ -1,0 +1,44 @@
+schema_version = "1.3"
+artifacts = ["/app/answer.json"]
+
+[task]
+name = "open-accounting-bench/govt-conversion-net-position"
+description = "Reconcile fund balances to net position"
+authors = []
+keywords = ["numeric", "governmental", "conversion", "net-position"]
+
+[metadata]
+task_id = "govt-conversion-net-position"
+family = "governmental-accounting"
+difficulty = "easy"
+category = "financial-accounting"
+framework = "core"
+level = "vocational"
+format = "numeric"
+skill = "application"
+standards = []
+track = "stable"
+seed = 321
+generator_version = "0.4.0"
+ledger_engine = "beancount"
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 300.0
+
+[verifier.environment]
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 1800.0
+
+[environment]
+network_mode = "no-network"
+os = "linux"
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120

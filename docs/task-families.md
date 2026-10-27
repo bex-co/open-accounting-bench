@@ -301,6 +301,20 @@ D = standards depth):
 | `nfp-restricted-net-assets` | V | V | V | U | V | V | V | vocational |
 | `notes-figures-difference` | V | V | V | U | V | V | V | vocational |
 | `tax-basis-net-income` | V | V | V | U | V | V | V | vocational |
+| `benefit-plan-net-assets` | V | V | V | U | V | V | V | vocational |
+| `sc-component-unit-presentation` | V | V | V | V | V | V | V | vocational |
+| `sc-fund-balance-classification` | V | V | V | V | V | V | V | vocational |
+| `govt-conversion-net-position` | V | V | V | V | V | V | V | vocational |
+| `govt-capitalized-costs-total` | V | V | V | U | V | V | V | vocational |
+| `govt-expenditures-december` | V | V | V | U | V | V | V | vocational |
+| `govt-long-term-debt-total` | V | V | V | U | V | V | V | vocational |
+| `govt-net-investment-capital` | V | V | V | U | V | V | V | vocational |
+| `sc-interfund-activity-type` | V | V | V | V | V | V | V | vocational |
+| `nonexchange-revenue-recognized` | V | V | V | V | V | V | V | vocational |
+| `adjusted-ebitda-computation` | V | V | V | U | V | V | V | vocational |
+| `sc-option-value-sensitivity` | V | V | V | V | V | V | V | vocational |
+| `percent-of-sales-afn` | V | U | V | U | V | V | V | university (borderline) |
+| `sales-mix-variance` | V | U | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -530,8 +544,22 @@ problem the task hands over. An analysis task can be vocational.
 | `nfp-restricted-net-assets` | not-for-profit | numeric | core | application | `asc:958` | Board designation counted as restricted |
 | `notes-figures-difference` | financial-reporting | numeric | core | application | — | Gross note total vs net statement line |
 | `tax-basis-net-income` | income-taxes | numeric | core | application | — | GAAP depreciation in tax-basis statements |
+| `benefit-plan-net-assets` | employee-benefits | numeric | core | application | `asc:962` | Deducting a DC-plan benefit obligation |
+| `sc-component-unit-presentation` | governmental-accounting | single-choice | us-gaap | application | — | Fiscal dependency alone blended |
+| `sc-fund-balance-classification` | governmental-accounting | single-choice | us-gaap | application | — | Management intent called committed |
+| `govt-conversion-net-position` | governmental-accounting | numeric | core | application | — | Unavailable revenue subtracted again |
+| `govt-capitalized-costs-total` | governmental-accounting | numeric | core | application | — | Below-threshold outlays capitalized |
+| `govt-expenditures-december` | governmental-accounting | numeric | core | application | — | Unmatured principal expensed early |
+| `govt-long-term-debt-total` | governmental-accounting | numeric | core | application | — | Current portion counted twice |
+| `govt-net-investment-capital` | governmental-accounting | numeric | core | application | — | Unrelated debt deducted |
+| `sc-interfund-activity-type` | governmental-accounting | single-choice | us-gaap | application | — | Repayable advance called a transfer |
+| `nonexchange-revenue-recognized` | governmental-accounting | numeric | core | application | — | Whole advance taken as revenue |
+| `adjusted-ebitda-computation` | financial-analysis | numeric | core | application | — | One-off loss left inside EBITDA |
+| `sc-option-value-sensitivity` | financial-analysis | single-choice | core | application | — | Volatility/dividend directions reversed |
+| `percent-of-sales-afn` | budgeting | numeric | core | application | — | Non-spontaneous items grown with sales |
+| `sales-mix-variance` | standard-costing | numeric | core | application | — | Quantity variance reported as mix |
 
-Stable seeds: 101–317 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–331 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -540,13 +568,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 133 | 17 | 9 | planned |
-| management-accounting | 33 | planned | planned | planned |
+| financial-accounting | 140 | 17 | 12 | planned |
+| management-accounting | 37 | planned | planned | planned |
 | tax | 12 | — | — | planned |
 | audit-assurance | 13 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×23,
-numeric ×100; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×27,
+numeric ×110; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

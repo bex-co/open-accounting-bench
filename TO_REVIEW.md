@@ -242,6 +242,26 @@ crosswalk mappings.
   financing classification of restricted contributions). Level
   scores assigned under the strict reading. No crosswalk mappings
   proposed yet.
+- 2026-10-26 — fourteen further generator families (Stable seeds
+  318–331): `benefit-plan-net-assets`,
+  `sc-component-unit-presentation`,
+  `sc-fund-balance-classification`,
+  `govt-conversion-net-position`,
+  `govt-capitalized-costs-total`,
+  `govt-expenditures-december`,
+  `govt-long-term-debt-total`,
+  `govt-net-investment-capital`,
+  `sc-interfund-activity-type`,
+  `nonexchange-revenue-recognized`,
+  `adjusted-ebitda-computation`,
+  `sc-option-value-sensitivity`,
+  `percent-of-sales-afn`,
+  `sales-mix-variance`. Same
+  checks as earlier batches (in particular: the stated GASB
+  conventions for component units, fund balance, modified-accrual
+  exceptions, and net-position components are simplified versions
+  stated in each policy). Level scores assigned under the strict
+  reading. No crosswalk mappings proposed yet.
 
 
 ## Reviewed

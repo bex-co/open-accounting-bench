@@ -176,6 +176,16 @@ NUMERIC_FAMILIES = [
     "nfp-restricted-net-assets",
     "notes-figures-difference",
     "tax-basis-net-income",
+    "benefit-plan-net-assets",
+    "govt-conversion-net-position",
+    "govt-capitalized-costs-total",
+    "govt-expenditures-december",
+    "govt-long-term-debt-total",
+    "govt-net-investment-capital",
+    "nonexchange-revenue-recognized",
+    "adjusted-ebitda-computation",
+    "percent-of-sales-afn",
+    "sales-mix-variance",
 ]
 
 
@@ -300,6 +310,10 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-soc-opinion-modification",
         "sc-system-description-gap",
         "sc-governmental-fund-assignment",
+        "sc-component-unit-presentation",
+        "sc-fund-balance-classification",
+        "sc-interfund-activity-type",
+        "sc-option-value-sensitivity",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

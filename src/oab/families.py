@@ -16420,6 +16420,1003 @@ def tax_basis_net_income(seed: int) -> TaskInstance:
     )
 
 
+def benefit_plan_net_assets(seed: int) -> TaskInstance:
+    """Numeric: DC plan net assets available for benefits.
+
+    Trap: subtracting an accrued benefit obligation (a
+    defined-benefit concept) from a defined-contribution plan.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    investments, recv_er, recv_ee = amt(900, 2101), amt(20, 91), amt(15, 71)
+    payable, obligation = amt(10, 61), amt(300, 901)
+    gold = investments + recv_er + recv_ee - payable
+    data = (
+        "# Defined-contribution plan — 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Investments at fair value | {money(investments)} |\n"
+        f"| Employer contributions receivable | {money(recv_er)} |\n"
+        f"| Employee contributions receivable | {money(recv_ee)} |\n"
+        f"| Benefits payable to terminated participants | {money(payable)} |\n"
+        f"| Actuary's estimate of total future benefits (memo) | {money(obligation)} |\n"
+    )
+    policy = """# Defined-contribution plan conventions (applies to this task)
+
+- Net assets available for benefits = plan investments at fair
+  value + contributions receivable - benefits and amounts payable.
+- A defined-contribution plan recognizes NO accrued benefit
+  obligation liability: benefits are whatever the accounts hold,
+  so actuarial estimates of future benefits are not deducted.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "net assets available for benefits",
+        "Using `/app/documents/plan_data.md` and `/app/policy.md`, compute "
+        "**net assets available for benefits** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="benefit-plan-net-assets",
+        family="employee-benefits",
+        title="DC plan net assets available for benefits",
+        question=question,
+        policy=policy,
+        data_name="plan_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "benefit-plans", "net-assets"],
+        abs_tolerance="0.01",
+        standards=["asc:962"],
+        trap_value=money(gold - obligation),
+    )
+
+
+COMPONENT_UNIT_OPTIONS = [
+    "Blended component unit",
+    "Discretely presented component unit",
+    "Not a component unit",
+]
+COMPONENT_UNIT_CASES = [
+    (
+        "The city council itself serves as the building authority's "
+        "board, city management runs its day-to-day operations, and "
+        "it exists solely to finance and own city buildings.",
+        "Blended component unit",
+    ),
+    (
+        "A legally separate housing authority whose board the city "
+        "appoints and whose deficits the city must cover; it has its "
+        "own management and serves the general public.",
+        "Discretely presented component unit",
+    ),
+    (
+        "A nonprofit museum that receives an annual city grant but "
+        "has a self-perpetuating board the city cannot appoint or "
+        "remove, and the city has no obligation for its debts.",
+        "Not a component unit",
+    ),
+    (
+        "A separate transit district cannot adopt its budget or set "
+        "fares without county approval (fiscally dependent), and the "
+        "county is entitled to its surpluses.",
+        "Discretely presented component unit",
+    ),
+]
+
+
+def sc_component_unit_presentation(seed: int) -> TaskInstance:
+    """Single-choice: blended, discrete, or not a component unit?
+
+    Trap: treating fiscal dependency alone as a reason to blend.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(COMPONENT_UNIT_CASES)
+    labels = COMPONENT_UNIT_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Component units (applies to this task)
+
+- A legally separate entity is a component unit when the primary
+  government is financially accountable: it appoints a voting
+  majority AND can impose its will or has a financial
+  benefit/burden relationship; or the entity is fiscally dependent
+  on the government AND there is a financial benefit/burden.
+- It is BLENDED (reported as if part of the primary government)
+  only when its governing body is substantively the same as the
+  primary government's (with benefit/burden or operational
+  responsibility), or it serves the primary government almost
+  exclusively. Otherwise it is DISCRETELY presented.
+- No financial accountability means not a component unit.
+"""
+    question = _choice_question(
+        "component unit presentation",
+        f"Entity: **{narrative}**\n\nUsing `/app/policy.md`, how is it "
+        "reported? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-component-unit-presentation",
+        family="governmental-accounting",
+        title="Blended, discrete, or not a component unit?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-component-unit-presentation",
+            "governmental-accounting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "component-units", "governmental"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="us-gaap",
+    )
+
+
+FUND_BALANCE_OPTIONS = [
+    "Nonspendable",
+    "Restricted",
+    "Committed",
+    "Assigned",
+    "Unassigned",
+]
+FUND_BALANCE_CASES = [
+    (
+        "Inventories and prepaid items reported in the general fund "
+        "at year-end (resources not in spendable form).",
+        "Nonspendable",
+    ),
+    (
+        "Gas-tax proceeds that state enabling legislation requires "
+        "to be spent only on road maintenance.",
+        "Restricted",
+    ),
+    (
+        "An amount the city council, by formal ordinance (its highest "
+        "level of decision-making), set aside for a new fire station; "
+        "only another ordinance can redirect it.",
+        "Committed",
+    ),
+    (
+        "An amount the city manager intends to use for next year's "
+        "vehicle replacements, recorded under the manager's delegated "
+        "authority, with no council action.",
+        "Assigned",
+    ),
+    (
+        "The general fund's residual balance after all other "
+        "classifications, with no constraint or stated intent.",
+        "Unassigned",
+    ),
+]
+
+
+def sc_fund_balance_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify governmental fund balance by constraint.
+
+    Trap: elevating management's intent to a council commitment.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(FUND_BALANCE_CASES)
+    labels = FUND_BALANCE_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Fund-balance classifications (applies to this task)
+
+- Nonspendable: not in spendable form (inventories, prepaids) or
+  legally required to stay intact.
+- Restricted: constraints imposed externally or by enabling
+  legislation.
+- Committed: constraints the government's highest decision-making
+  authority imposed by formal action, removable only the same way.
+- Assigned: intended uses established by the governing body or a
+  delegated official — intent, not formal commitment.
+- Unassigned: the residual in the general fund.
+"""
+    question = _choice_question(
+        "fund balance classification",
+        f"Amount: **{narrative}**\n\nUsing `/app/policy.md`, how is "
+        "it classified? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-fund-balance-classification",
+        family="governmental-accounting",
+        title="Classify governmental fund balance",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-fund-balance-classification",
+            "governmental-accounting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "fund-balance", "governmental"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="us-gaap",
+    )
+
+
+def govt_conversion_net_position(seed: int) -> TaskInstance:
+    """Numeric: reconcile total fund balances to governmental net position.
+
+    Trap: subtracting the unavailable-revenue deferred inflow
+    instead of adding it back on the full-accrual basis.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    gold = amt(500, 1501)
+    capital_net, lt_debt, accrued_interest, unavailable = (
+        amt(2000, 4001),
+        amt(1200, 2801),
+        amt(20, 81),
+        amt(60, 201),
+    )
+    fund_balance = gold - capital_net + lt_debt + accrued_interest - unavailable
+    while fund_balance <= 0:
+        gold += Decimal("500000")
+        fund_balance = gold - capital_net + lt_debt + accrued_interest - unavailable
+    data = (
+        "# Conversion data — governmental activities, 2025-12-31\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Total governmental fund balances (modified accrual) | {money(fund_balance)} |\n"
+        f"| Capital assets, net of depreciation (not in the funds) | {money(capital_net)} |\n"
+        f"| Long-term bonds payable (not in the funds) | {money(lt_debt)} |\n"
+        f"| Accrued interest payable (not in the funds) | {money(accrued_interest)} |\n"
+        f"| Property taxes deferred in the funds as unavailable (recognized government-wide) | "
+        f"{money(unavailable)} |\n"
+    )
+    policy = """# Conversion conventions (applies to this task)
+
+Net position of governmental activities = total fund balances
++ capital assets (net) - long-term liabilities (including accrued
+interest) + revenues deferred in the funds only because they were
+not "available" (full accrual recognizes them).
+
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "governmental activities net position",
+        "Using `/app/documents/conversion_data.md` and `/app/policy.md`, "
+        "compute **net position of governmental activities** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="govt-conversion-net-position",
+        family="governmental-accounting",
+        title="Reconcile fund balances to net position",
+        question=question,
+        policy=policy,
+        data_name="conversion_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "conversion", "net-position"],
+        abs_tolerance="0.01",
+        trap_value=money(gold - 2 * unavailable),
+    )
+
+
+def govt_capitalized_costs_total(seed: int) -> TaskInstance:
+    """Numeric: amounts capitalized under a stated capitalization threshold.
+
+    Trap: capitalizing every purchase, including items below the
+    threshold that are expensed.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    threshold = Decimal("5000")
+    names = [
+        "Patrol vehicles",
+        "Office chairs",
+        "Bridge resurfacing",
+        "Laptop computers",
+        "HVAC system replacement",
+        "Hand tools",
+    ]
+    # At least one item on each side of the threshold.
+    while True:
+        items = [
+            (
+                name,
+                Decimal(rng.randrange(7, 301)) * 1000
+                if rng.random() < 0.55
+                else Decimal(rng.randrange(4, 49)) * 100,
+            )
+            for name in names
+        ]
+        gold = sum(v for _, v in items if v >= threshold)
+        trap = sum(v for _, v in items)
+        if 0 < gold < trap:
+            break
+    rows = "".join(f"| {n} | {money(v)} |\n" for n, v in items)
+    data = (
+        "# Capital outlay purchases — 2025\n\n"
+        f"Capitalization threshold: USD {money(threshold)} per unit/project.\n\n"
+        "| Purchase | Cost (USD) |\n|---|---:|\n" + rows
+    )
+    policy = """# Capitalization conventions (applies to this task)
+
+- Capitalize only purchases whose per-unit/project cost meets or
+  exceeds the stated capitalization threshold; smaller outlays are
+  expensed in the period.
+- Answer the total amount capitalized as capital assets, in USD.
+"""
+    question = _numeric_question(
+        "amount capitalized this year",
+        "Using `/app/documents/capital_outlay.md` and `/app/policy.md`, "
+        "compute the **total capitalized** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="govt-capitalized-costs-total",
+        family="governmental-accounting",
+        title="Apply the capitalization threshold",
+        question=question,
+        policy=policy,
+        data_name="capital_outlay.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "capital-assets"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def govt_expenditures_december(seed: int) -> TaskInstance:
+    """Numeric: December expenditures under modified accrual.
+
+    Trap: recognizing next year's unmatured debt principal as a
+    current expenditure.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    salaries, goods, principal_next, insurance_next = (
+        amt(300, 801),
+        amt(100, 401),
+        amt(200, 601),
+        amt(30, 121),
+    )
+    gold = salaries + goods
+    data = (
+        "# December items — general fund (modified accrual)\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Salaries earned by employees in December, paid 2026-01-05 | {money(salaries)} |\n"
+        f"| Supplies received in December, invoice unpaid at 31 Dec | {money(goods)} |\n"
+        f"| Bond principal maturing 2026-03-01 (budgeted, not yet due) | "
+        f"{money(principal_next)} |\n"
+        f"| Insurance premium paid in December covering 2026 | {money(insurance_next)} |\n"
+    )
+    policy = """# Modified-accrual expenditure conventions (applies to this task)
+
+- Expenditures are recognized when the related liability is
+  incurred and will be paid from current financial resources:
+  salaries earned and goods received count, even if paid shortly
+  after year-end.
+- EXCEPTIONS: unmatured general long-term debt principal (and
+  interest) is an expenditure only WHEN DUE; prepayments for
+  future periods are assets, not current expenditures.
+- Answer December expenditures in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "December expenditures (modified accrual)",
+        "Using `/app/documents/december_items.md` and `/app/policy.md`, "
+        "compute **December expenditures** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="govt-expenditures-december",
+        family="governmental-accounting",
+        title="Modified-accrual December expenditures",
+        question=question,
+        policy=policy,
+        data_name="december_items.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "modified-accrual"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + principal_next),
+    )
+
+
+def govt_long_term_debt_total(seed: int) -> TaskInstance:
+    """Numeric: government-wide long-term debt carrying amount.
+
+    Trap: adding the current portion again on top of the full
+    face amount, double-counting it.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    face, premium, discount_notes, current_portion = (
+        amt(2000, 5001),
+        amt(30, 151),
+        amt(5, 41),
+        amt(100, 401),
+    )
+    notes = amt(300, 901)
+    gold = face + premium - discount_notes + notes
+    data = (
+        "# Long-term debt — governmental activities, 2025-12-31\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| General obligation bonds, face amount | {money(face)} |\n"
+        f"| Unamortized premium on the bonds | {money(premium)} |\n"
+        f"| Notes payable, face amount | {money(notes)} |\n"
+        f"| Unamortized discount on the notes | {money(discount_notes)} |\n"
+        f"| Portion of the bonds due within one year (included in face above) | "
+        f"{money(current_portion)} |\n"
+    )
+    policy = """# Government-wide debt conventions (applies to this task)
+
+- Carrying amount of long-term debt = face amounts + unamortized
+  premiums - unamortized discounts, for ALL maturities. The
+  current portion is PART of the face amount (a classification of
+  it), not an addition to it.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "total long-term debt carrying amount",
+        "Using `/app/documents/debt_data.md` and `/app/policy.md`, compute "
+        "the **total long-term debt carrying amount** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="govt-long-term-debt-total",
+        family="governmental-accounting",
+        title="Government-wide long-term debt total",
+        question=question,
+        policy=policy,
+        data_name="debt_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "long-term-debt"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + current_portion),
+    )
+
+
+def govt_net_investment_capital(seed: int) -> TaskInstance:
+    """Numeric: net investment in capital assets (net position component).
+
+    Trap: subtracting ALL outstanding debt, including borrowings
+    unrelated to capital assets.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    capital_net, related_debt, other_debt = amt(3000, 6001), amt(800, 2001), amt(200, 801)
+    gold = capital_net - related_debt
+    data = (
+        "# Governmental activities — 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Capital assets, net of depreciation | {money(capital_net)} |\n"
+        f"| Bonds issued to acquire/construct capital assets, outstanding | "
+        f"{money(related_debt)} |\n"
+        f"| Judgment/claims notes payable (operating settlements) | {money(other_debt)} |\n"
+    )
+    policy = """# Net-position components (applies to this task)
+
+- Net investment in capital assets = capital assets (net of
+  depreciation) LESS outstanding borrowings attributable to
+  acquiring, constructing, or improving those assets. Debt
+  incurred for other purposes (e.g. settling operating claims)
+  is NOT deducted here.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "net investment in capital assets",
+        "Using `/app/documents/net_position_data.md` and `/app/policy.md`, "
+        "compute **net investment in capital assets** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="govt-net-investment-capital",
+        family="governmental-accounting",
+        title="Net investment in capital assets",
+        question=question,
+        policy=policy,
+        data_name="net_position_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "net-position"],
+        abs_tolerance="0.01",
+        trap_value=money(gold - other_debt),
+    )
+
+
+INTERFUND_OPTIONS = [
+    "Interfund loan (receivable/payable)",
+    "Interfund transfer (non-reciprocal)",
+    "Exchange-like interfund services (revenue/expenditure)",
+]
+INTERFUND_CASES = [
+    (
+        "The general fund advances cash to the capital projects fund "
+        "under a written schedule requiring full repayment with "
+        "interest within two years.",
+        "Interfund loan (receivable/payable)",
+    ),
+    (
+        "The general fund permanently subsidizes the transit fund's "
+        "operating deficit; no repayment is expected or required.",
+        "Interfund transfer (non-reciprocal)",
+    ),
+    (
+        "The internal print shop charges the police department its "
+        "usual external rate for printing services actually provided.",
+        "Exchange-like interfund services (revenue/expenditure)",
+    ),
+    (
+        "The water utility fund lends cash to the general fund for "
+        "90 days under a council resolution requiring repayment.",
+        "Interfund loan (receivable/payable)",
+    ),
+]
+
+
+def sc_interfund_activity_type(seed: int) -> TaskInstance:
+    """Single-choice: interfund loan, transfer, or exchange-like service?
+
+    Trap: treating a repayable advance as a transfer.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(INTERFUND_CASES)
+    labels = INTERFUND_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Interfund activity (applies to this task)
+
+- Interfund LOANS: amounts provided with a requirement for
+  repayment — reported as interfund receivables/payables.
+- Interfund TRANSFERS: flows of assets without equivalent flows in
+  return and without a repayment requirement (subsidies).
+- Interfund SERVICES provided and used: exchange-like sales of
+  goods/services between funds at prices approximating external
+  value — reported as revenue and expenditure/expense.
+"""
+    question = _choice_question(
+        "interfund activity type",
+        f"Activity: **{narrative}**\n\nUsing `/app/policy.md`, how is "
+        "it classified? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-interfund-activity-type",
+        family="governmental-accounting",
+        title="Loan, transfer, or interfund service?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-interfund-activity-type",
+            "governmental-accounting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "interfund", "governmental"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="us-gaap",
+    )
+
+
+def nonexchange_revenue_recognized(seed: int) -> TaskInstance:
+    """Numeric: grant revenue when eligibility is met by spending.
+
+    Trap: recognizing the whole cash advance as revenue on receipt.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    advance = Decimal(rng.randrange(300, 801)) * 1000
+    gold = Decimal(rng.randrange(80, 281)) * 1000
+    while gold >= advance:
+        gold = Decimal(rng.randrange(80, 281)) * 1000
+    data = (
+        "# State grant — 2025\n\n"
+        f"Cash received in advance on 2025-03-01: USD {money(advance)}. "
+        "The grant is expenditure-driven: revenue is earned only as "
+        f"qualifying expenditures are incurred. Qualifying "
+        f"expenditures incurred by 2025-12-31: USD {money(gold)}. The "
+        "unspent balance must be returned if not spent by 2026-06-30.\n"
+    )
+    policy = """# Nonexchange revenue conventions (applies to this task)
+
+- For expenditure-driven (eligibility-based) grants, revenue is
+  recognized only when the eligibility requirement is met — here,
+  as qualifying expenditures are incurred. Cash received before
+  eligibility is met is a liability (unearned revenue), not
+  revenue.
+- Answer 2025 grant revenue in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "grant revenue recognized in 2025",
+        "Using `/app/documents/grant_data.md` and `/app/policy.md`, "
+        "compute **2025 grant revenue** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="nonexchange-revenue-recognized",
+        family="governmental-accounting",
+        title="Expenditure-driven grant revenue",
+        question=question,
+        policy=policy,
+        data_name="grant_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "governmental", "nonexchange-revenue", "grants"],
+        abs_tolerance="0.01",
+        trap_value=money(advance),
+    )
+
+
+def adjusted_ebitda_computation(seed: int) -> TaskInstance:
+    """Numeric: adjusted EBITDA from net income.
+
+    Trap: leaving the stated one-off loss inside adjusted EBITDA.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(400, 1001)
+    interest, tax, dna, one_off = amt(30, 121), amt(40, 151), amt(50, 181), amt(15, 91)
+    net_income = gold - interest - tax - dna - one_off
+    data = (
+        "# Earnings data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Net income | {money(net_income)} |\n"
+        f"| Interest expense | {money(interest)} |\n"
+        f"| Income tax expense | {money(tax)} |\n"
+        f"| Depreciation and amortization | {money(dna)} |\n"
+        f"| One-off plant-closure loss (in net income) | {money(one_off)} |\n"
+    )
+    policy = """# Adjusted EBITDA (applies to this task)
+
+- Adjusted EBITDA = net income + interest + income tax +
+  depreciation & amortization + the stated one-off, non-recurring
+  loss (added back).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "adjusted EBITDA",
+        "Using `/app/documents/earnings_data.md` and `/app/policy.md`, "
+        "compute **adjusted EBITDA** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="adjusted-ebitda-computation",
+        family="financial-analysis",
+        title="Adjusted EBITDA from net income",
+        question=question,
+        policy=policy,
+        data_name="earnings_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "ebitda", "non-gaap"],
+        abs_tolerance="0.01",
+        trap_value=money(gold - one_off),
+    )
+
+
+OPTION_SENSITIVITY_OPTIONS = ["Increases", "Decreases", "No change"]
+OPTION_SENSITIVITY_CASES = [
+    (
+        "All else equal, the expected volatility of the underlying "
+        "share price rises. Effect on a CALL option's value?",
+        "Increases",
+    ),
+    (
+        "All else equal, the underlying share price rises. Effect on a PUT option's value?",
+        "Decreases",
+    ),
+    (
+        "All else equal, the exercise (strike) price is higher. Effect on a CALL option's value?",
+        "Decreases",
+    ),
+    (
+        "All else equal, the time to expiration of an American CALL "
+        "option is longer. Effect on its value?",
+        "Increases",
+    ),
+    (
+        "All else equal, expected dividends on the underlying shares "
+        "rise. Effect on a CALL option's value?",
+        "Decreases",
+    ),
+]
+
+
+def sc_option_value_sensitivity(seed: int) -> TaskInstance:
+    """Single-choice: direction of an option value when an input moves.
+
+    Trap: reversing the volatility/dividend directions.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(OPTION_SENSITIVITY_CASES)
+    labels = OPTION_SENSITIVITY_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Option-value sensitivities (applies to this task)
+
+- Volatility up: call and put values both increase (more chance of
+  a favorable move).
+- Underlying price up: calls increase, puts decrease.
+- Exercise price up: calls decrease, puts increase.
+- Longer time to expiration: American option values increase.
+- Higher expected dividends on the underlying: calls decrease,
+  puts increase.
+"""
+    question = _choice_question(
+        "option value sensitivity",
+        f"Question: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-option-value-sensitivity",
+        family="financial-analysis",
+        title="Option value sensitivity direction",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-option-value-sensitivity",
+            "financial-analysis",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="management-accounting",
+        keywords=["single-choice", "options", "sensitivity"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def percent_of_sales_afn(seed: int) -> TaskInstance:
+    """Numeric: additional funds needed (percent-of-sales forecast).
+
+    Trap: growing non-spontaneous items (mortgage notes) with sales.
+    Level scores R/S/I/E/J/C/D = V/U/V/U/V/V/V -> university.
+    """
+    rng = random.Random(seed)
+    sales0 = Decimal(rng.choice([1000, 1200, 1500, 2000])) * 1000
+    growth = rng.choice([Decimal("0.1"), Decimal("0.2"), Decimal("0.25")])
+    sales1 = sales0 * (1 + growth)
+    ar0 = sales0 * Decimal("0.12")
+    inv0 = sales0 * Decimal("0.15")
+    ap0 = sales0 * Decimal("0.08")
+    fixed = Decimal(rng.randrange(300, 701)) * 1000
+    mortgage = Decimal(rng.randrange(100, 301)) * 1000
+    margin = rng.choice([Decimal("0.05"), Decimal("0.08")])
+    payout = rng.choice([Decimal("0.3"), Decimal("0.5")])
+    asset_increase = (ar0 + inv0 + fixed) * growth
+    spontaneous_increase = ap0 * growth
+    retained = sales1 * margin * (1 - payout)
+    gold = (asset_increase - spontaneous_increase - retained).quantize(CENT)
+    trap = (gold - mortgage * growth).quantize(CENT)
+    data = (
+        "# Percent-of-sales forecast inputs\n\n"
+        f"Current sales: USD {money(sales0)}; forecast growth: "
+        f"{growth * 100:.0f}% (forecast sales USD {money(sales1)}).\n\n"
+        "| Balance-sheet item | Current (USD) | Behavior |\n|---|---:|---|\n"
+        f"| Accounts receivable | {money(ar0)} | Varies with sales |\n"
+        f"| Inventory | {money(inv0)} | Varies with sales |\n"
+        f"| Fixed assets (at full capacity) | {money(fixed)} | Varies with sales |\n"
+        f"| Accounts payable | {money(ap0)} | Varies with sales |\n"
+        f"| Mortgage notes payable | {money(mortgage)} | Does NOT vary with sales |\n"
+        f"\nProfit margin on sales: {margin * 100:.0f}%; dividend payout: "
+        f"{payout * 100:.0f}% of profit.\n"
+    )
+    policy = """# AFN conventions (applies to this task)
+
+Additional funds needed = (increase in assets that vary with
+sales) - (increase in liabilities that vary spontaneously with
+sales) - (forecast profit retained: forecast sales x margin x
+(1 - payout ratio)).
+
+- Items stated not to vary with sales never enter the calculation.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "additional funds needed",
+        "Using `/app/documents/forecast_inputs.md` and `/app/policy.md`, "
+        "compute **additional funds needed** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="percent-of-sales-afn",
+        family="budgeting",
+        title="Additional funds needed forecast",
+        question=question,
+        policy=policy,
+        data_name="forecast_inputs.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "percent-of-sales", "afn", "forecasting"],
+        level="university",
+        abs_tolerance="1",
+        trap_value=money(trap),
+    )
+
+
+def sales_mix_variance(seed: int) -> TaskInstance:
+    """Numeric: sales mix variance for two products.
+
+    Trap: reporting the sales QUANTITY variance (or computing mix
+    with the attribution order reversed).
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    budget_a, budget_b = rng.choice([(600, 400), (500, 500), (700, 300)])
+    actual_total = rng.choice([1000, 1100, 1200])
+    actual_a = rng.randrange(300, 901, 50)
+    actual_b = actual_total - actual_a
+    margin_a = Decimal(rng.choice([20, 25, 30]))
+    margin_b = Decimal(rng.choice([10, 12, 15]))
+    total_budget = budget_a + budget_b
+    exp_a = Decimal(actual_total * budget_a) / total_budget
+    exp_b = Decimal(actual_total * budget_b) / total_budget
+    gold = (
+        (Decimal(actual_a) - exp_a) * margin_a + (Decimal(actual_b) - exp_b) * margin_b
+    ).quantize(CENT)
+    quantity_var = ((exp_a - budget_a) * margin_a + (exp_b - budget_b) * margin_b).quantize(CENT)
+    while gold == 0 or gold == quantity_var:
+        actual_a = rng.randrange(300, 901, 50)
+        actual_b = actual_total - actual_a
+        gold = (
+            (Decimal(actual_a) - exp_a) * margin_a + (Decimal(actual_b) - exp_b) * margin_b
+        ).quantize(CENT)
+    data = (
+        "# Sales by product — 2025\n\n"
+        "| Product | Budgeted units | Actual units | Standard margin/unit (USD) |\n"
+        "|---|---:|---:|---:|\n"
+        f"| Kestrel | {budget_a} | {actual_a} | {money(margin_a)} |\n"
+        f"| Marlin | {budget_b} | {actual_b} | {money(margin_b)} |\n"
+    )
+    policy = """# Sales mix/quantity conventions (applies to this task)
+
+- Sales MIX variance per product = (actual units - actual total
+  units x budgeted mix %) x standard margin; sum over products.
+  It isolates selling a different PROPORTION than budgeted.
+- The sales QUANTITY variance uses (actual total at budgeted mix
+  - budgeted units); do not report that here.
+- Answer the sales mix variance in USD (positive = favorable).
+"""
+    question = _numeric_question(
+        "sales mix variance",
+        "Using `/app/documents/sales_by_product.md` and `/app/policy.md`, "
+        "compute the **sales mix variance** in USD.",
+        "the signed USD amount",
+    )
+    return _numeric_instance(
+        task_id="sales-mix-variance",
+        family="standard-costing",
+        title="Sales mix variance",
+        question=question,
+        policy=policy,
+        data_name="sales_by_product.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "sales-mix", "variances"],
+        abs_tolerance="0.01",
+        trap_value=money(quantity_var),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -16638,6 +17635,20 @@ FAMILIES = {
     "nfp-restricted-net-assets": nfp_restricted_net_assets,
     "notes-figures-difference": notes_figures_difference,
     "tax-basis-net-income": tax_basis_net_income,
+    "benefit-plan-net-assets": benefit_plan_net_assets,
+    "sc-component-unit-presentation": sc_component_unit_presentation,
+    "sc-fund-balance-classification": sc_fund_balance_classification,
+    "govt-conversion-net-position": govt_conversion_net_position,
+    "govt-capitalized-costs-total": govt_capitalized_costs_total,
+    "govt-expenditures-december": govt_expenditures_december,
+    "govt-long-term-debt-total": govt_long_term_debt_total,
+    "govt-net-investment-capital": govt_net_investment_capital,
+    "sc-interfund-activity-type": sc_interfund_activity_type,
+    "nonexchange-revenue-recognized": nonexchange_revenue_recognized,
+    "adjusted-ebitda-computation": adjusted_ebitda_computation,
+    "sc-option-value-sensitivity": sc_option_value_sensitivity,
+    "percent-of-sales-afn": percent_of_sales_afn,
+    "sales-mix-variance": sales_mix_variance,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -16859,4 +17870,18 @@ STABLE_SEEDS = {
     "nfp-restricted-net-assets": 315,
     "notes-figures-difference": 316,
     "tax-basis-net-income": 317,
+    "benefit-plan-net-assets": 318,
+    "sc-component-unit-presentation": 319,
+    "sc-fund-balance-classification": 320,
+    "govt-conversion-net-position": 321,
+    "govt-capitalized-costs-total": 322,
+    "govt-expenditures-december": 323,
+    "govt-long-term-debt-total": 324,
+    "govt-net-investment-capital": 325,
+    "sc-interfund-activity-type": 326,
+    "nonexchange-revenue-recognized": 327,
+    "adjusted-ebitda-computation": 328,
+    "sc-option-value-sensitivity": 329,
+    "percent-of-sales-afn": 330,
+    "sales-mix-variance": 331,
 }

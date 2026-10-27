@@ -73,6 +73,20 @@
       "digest": "sha256:b265236af89f2f146397c507cb7529daf98678e0b8e4441fab5693da64259be4"
     },
     {
+      "task_id": "adjusted-ebitda-computation",
+      "family": "financial-analysis",
+      "seed": 328,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:beb1d1b037ac98692b66d35ea5e21700e5522342609314d705f37c8137f6a873"
+    },
+    {
       "task_id": "adjusted-profit-from-draft",
       "family": "financial-reporting",
       "seed": 289,
@@ -247,6 +261,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:6f208447ffb24cb0062a929e6b7863ab5eecf52cba4def5e3a575cb1107052ad"
+    },
+    {
+      "task_id": "benefit-plan-net-assets",
+      "family": "employee-benefits",
+      "seed": 318,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:962"
+      ],
+      "digest": "sha256:435bbfa3752031560a1f4a2f2b46e0e8836727cc23775a71ee673ca7bcaf3aa7"
     },
     {
       "task_id": "biological-asset-fair-value",
@@ -1168,6 +1198,76 @@
       "digest": "sha256:3534c608e85870165e49c92d43d2f7e6a0f46bfc3b5b01cdc8d5880b4a787788"
     },
     {
+      "task_id": "govt-capitalized-costs-total",
+      "family": "governmental-accounting",
+      "seed": 322,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ee4dc41c6fa91066e4af80e0010e812e4abe5c89f7f1b4f22ab1177ec6b54e88"
+    },
+    {
+      "task_id": "govt-conversion-net-position",
+      "family": "governmental-accounting",
+      "seed": 321,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:41d96edbe4c94606c9415add2452c2a01ff176cc59caea7a7302af400c424727"
+    },
+    {
+      "task_id": "govt-expenditures-december",
+      "family": "governmental-accounting",
+      "seed": 323,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:2c070b74e1fc13b6598a376498aedf0ddd85704c12ea68386b5014717a25d2ff"
+    },
+    {
+      "task_id": "govt-long-term-debt-total",
+      "family": "governmental-accounting",
+      "seed": 324,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a2125ddc3b559086465a62e4cc496de28413a1f38cf8d9fbe7d4a6ec60098e7b"
+    },
+    {
+      "task_id": "govt-net-investment-capital",
+      "family": "governmental-accounting",
+      "seed": 325,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:aaedb7ee863a784dd895a4e73afd70fcfd8b8a41a8a237297a08982c03311d0d"
+    },
+    {
       "task_id": "gross-profit-from-trial-balance",
       "family": "financial-reporting",
       "seed": 150,
@@ -1854,6 +1954,20 @@
       "digest": "sha256:a3e1be28e16213767a603bdd5e7cabc3ec76d91d8ebd5cdc488f9a0bbde47c7d"
     },
     {
+      "task_id": "nonexchange-revenue-recognized",
+      "family": "governmental-accounting",
+      "seed": 327,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:da01302a7b3846ddd34ef0d8db1a676d8dc6089584398704f376ad8918c7f14d"
+    },
+    {
       "task_id": "note-dishonored",
       "family": "receivables",
       "seed": 133,
@@ -2140,6 +2254,20 @@
         "asc:715"
       ],
       "digest": "sha256:d96b66e414e728c00eaf513390789c09eb5583425f6862b075d2a566a05f5577"
+    },
+    {
+      "task_id": "percent-of-sales-afn",
+      "family": "budgeting",
+      "seed": 330,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:70d650b48429ee8de7f4553fb6c00c7366d8791494f9240c9f28d25bd425b346"
     },
     {
       "task_id": "performance-materiality",
@@ -2489,6 +2617,20 @@
       "digest": "sha256:f92c56e04306aff2411a6deded64b778c6dde19485060db921bbbbddfb20c2d1"
     },
     {
+      "task_id": "sales-mix-variance",
+      "family": "standard-costing",
+      "seed": 331,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:2cd6e5595815872d79a56047cb3aed91baf525ea6d9c16399594deaef3e5c5c0"
+    },
+    {
       "task_id": "sales-return-restock",
       "family": "inventory",
       "seed": 117,
@@ -2591,6 +2733,20 @@
         "ias:7"
       ],
       "digest": "sha256:20d01fc2ccae672c7c302cc0727c7c40937f5f62719874c590d3c91356292bdf"
+    },
+    {
+      "task_id": "sc-component-unit-presentation",
+      "family": "governmental-accounting",
+      "seed": 319,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:8d64146ac1e9578dedccca21049f8f39c301688d885443f020d3cb4886bddb19"
     },
     {
       "task_id": "sc-control-assessment",
@@ -2700,6 +2856,20 @@
       "digest": "sha256:2f1c886e9f14ce293d3a7d7226211a9a7da72c19e34a9f2ff613e72dd5015bd7"
     },
     {
+      "task_id": "sc-fund-balance-classification",
+      "family": "governmental-accounting",
+      "seed": 320,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:b97e725608128db6c5d84ff341c43a420833bb00ddbde4525e226804f322f850"
+    },
+    {
       "task_id": "sc-governmental-fund-assignment",
       "family": "governmental-accounting",
       "seed": 311,
@@ -2712,6 +2882,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:70ead64f0916a41d192e10471ee32577ebc4b4d9cff99c099bc95d665577a147"
+    },
+    {
+      "task_id": "sc-interfund-activity-type",
+      "family": "governmental-accounting",
+      "seed": 326,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:d9c354c76a8228ec08946461eca93121e2cc70bcd02e69048741b4c505645c47"
     },
     {
       "task_id": "sc-investment-classification",
@@ -2772,6 +2956,20 @@
         "ias:32"
       ],
       "digest": "sha256:927133aa231d03675e607253b6d621d14dbd874309e715d3a3efaf3402a8f427"
+    },
+    {
+      "task_id": "sc-option-value-sensitivity",
+      "family": "financial-analysis",
+      "seed": 329,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:8782bb8059fdc73061951f5c591a9e1f986db17d1a2e33a234c48f771f1b1a0b"
     },
     {
       "task_id": "sc-related-party-identification",
