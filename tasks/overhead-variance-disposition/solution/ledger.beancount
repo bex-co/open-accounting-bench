@@ -1,0 +1,34 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Assets:WorkInProcess USD
+2026-01-01 open Expenses:ManufacturingOverhead USD
+2026-01-01 open Expenses:CostOfSales USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  60000.00 USD
+  Equity:Opening-Balances  -60000.00 USD
+
+2026-01-20 * "Factory" "Actual manufacturing overhead incurred"
+  Expenses:ManufacturingOverhead  8075.00 USD
+  Assets:Bank:Checking  -8075.00 USD
+
+2026-01-25 * "Jobs" "Overhead applied to jobs in January"
+  Assets:WorkInProcess  7750.00 USD
+  Expenses:ManufacturingOverhead  -7750.00 USD
+
+2026-01-31 * "Overhead" "Close underapplied overhead to cost of goods sold"
+  Expenses:CostOfSales  325.00 USD
+  Expenses:ManufacturingOverhead  -325.00 USD

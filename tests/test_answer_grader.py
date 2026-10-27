@@ -106,6 +106,11 @@ NUMERIC_FAMILIES = [
     "payback-period-years",
     "multiproduct-breakeven-units",
     "total-current-liabilities",
+    "labor-efficiency-variance",
+    "diluted-eps",
+    "asset-turnover-ratio",
+    "breakeven-sales-dollars",
+    "direct-materials-used",
 ]
 
 
@@ -152,7 +157,14 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         assert f"- {oid}." in question
 
 
-@pytest.mark.parametrize("task_id", ["sc-special-journal-routing", "sc-cash-flow-classification"])
+@pytest.mark.parametrize(
+    "task_id",
+    [
+        "sc-special-journal-routing",
+        "sc-cash-flow-classification",
+        "sc-subsequent-event-classification",
+    ],
+)
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])
 def test_single_choice_families_oracle_and_wrong_option(task_id, seed):
     instance = FAMILIES[task_id](seed)

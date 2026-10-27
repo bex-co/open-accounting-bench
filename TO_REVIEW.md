@@ -66,6 +66,16 @@ crosswalk mappings.
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
 - 2026-10-26 — thirteen further generator families (Stable seeds
+  181–193): `inventory-shrinkage-adjustment`, `purchase-return-perpetual`,
+  `overhead-variance-disposition`, `unearned-revenue-release`,
+  `bond-early-retirement`, `fvoci-fair-value-adjustment`,
+  `basket-purchase-allocation`, `labor-efficiency-variance`,
+  `diluted-eps`, `asset-turnover-ratio`, `breakeven-sales-dollars`,
+  `direct-materials-used`, `sc-subsequent-event-classification`.
+  Same checks as the earlier batches (in particular: diluted-EPS answers
+  grade within one cent of the exact treasury-method value). No
+  crosswalk mappings proposed yet.
+- 2026-10-26 — thirteen further generator families (Stable seeds
   168–180): `short-term-note-payment`, `credit-card-sale-fee`,
   `patent-amortization`, `loss-contingency-accrual`,
   `bond-issued-at-premium`, `closing-drawing-account`,

@@ -1,0 +1,28 @@
+{
+  "task_id": "purchase-return-perpetual",
+  "family": "inventory",
+  "seed": 182,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Liabilities:AccountsPayable": "103.50",
+    "Assets:Inventory": "-103.50"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-14",
+    "2026-01-14"
+  ],
+  "required_final_balances": {
+    "Liabilities:AccountsPayable": "-1535.25"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

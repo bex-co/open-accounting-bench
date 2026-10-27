@@ -1076,3 +1076,108 @@ def test_trading_gain_routed_to_sales_fails():
         [("Assets:TradingSecurities", gain), ("Income:Sales", -gain)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_shrinkage_at_selling_price_fails():
+    """Trap: write shrinkage off at selling price instead of cost."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["inventory-shrinkage-adjustment"](181)
+    doc = instance.app_files["documents/inventory_count.md"]
+    recorded = int(re.search(r"records: (\d+) units", doc)[1])
+    counted = int(re.search(r"Physical count: (\d+) units", doc)[1])
+    price = Decimal(re.search(r"selling price USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong_amount = (recorded - counted) * price
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Count",
+        [("Expenses:CostOfSales", wrong_amount), ("Assets:Inventory", -wrong_amount)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_purchase_return_at_selling_price_fails():
+    """Trap: credit inventory at selling price on a purchase return."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["purchase-return-perpetual"](182)
+    doc = instance.app_files["documents/return_memo.md"]
+    returned = int(re.search(r"\n(\d+) of the", doc)[1])
+    price = Decimal(re.search(r"would have sold for\s+USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong_amount = returned * price
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-14",
+        "Supplier",
+        [("Liabilities:AccountsPayable", wrong_amount), ("Assets:Inventory", -wrong_amount)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_overhead_treated_as_overapplied_fails():
+    """Trap: reverse the underapplied-overhead closing entry."""
+    instance = FAMILIES["overhead-variance-disposition"](183)
+    under = _deltas(instance)["Expenses:CostOfSales"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Overhead",
+        [("Expenses:ManufacturingOverhead", under), ("Expenses:CostOfSales", -under)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_releasing_full_advance_fails():
+    """Trap: recognize the whole 4-month advance in January."""
+    instance = FAMILIES["unearned-revenue-release"](184)
+    monthly = _deltas(instance)["Liabilities:DeferredRevenue"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Client",
+        [("Liabilities:DeferredRevenue", monthly * 4), ("Income:Services", -monthly * 4)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_bond_loss_measured_against_face_fails():
+    """Trap: loss = call price - face, abandoning the unamortized discount."""
+    instance = FAMILIES["bond-early-retirement"](185)
+    d = _deltas(instance)
+    face = d["Liabilities:BondsPayable"]
+    call = -d["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-15",
+        "Bondholders",
+        [
+            ("Liabilities:BondsPayable", face),
+            ("Expenses:LossOnBondRetirement", call - face),
+            ("Assets:Bank:Checking", -call),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_fvoci_gain_to_income_fails():
+    """Trap: credit the FVOCI gain to income (trading treatment)."""
+    instance = FAMILIES["fvoci-fair-value-adjustment"](186)
+    gain = _deltas(instance)["Assets:FVOCIInvestments"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Broker",
+        [("Assets:FVOCIInvestments", gain), ("Income:UnrealizedGainLoss", -gain)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_basket_split_evenly_fails():
+    """Trap: split the lump sum 50/50 instead of by relative appraised values."""
+    instance = FAMILIES["basket-purchase-allocation"](187)
+    lump = -_deltas(instance)["Assets:Bank:Checking"]
+    half = lump / 2
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Seller",
+        [("Assets:Land", half), ("Assets:Building", half), ("Assets:Bank:Checking", -lump)],
+    )
+    _assert_semantic_trap(instance, wrong)

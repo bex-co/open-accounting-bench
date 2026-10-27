@@ -73,6 +73,20 @@
       "digest": "sha256:fc701e9a6be8f5db9a11b64a0215fdbb71f7dd0d3caefb1f25ef51a78f720989"
     },
     {
+      "task_id": "asset-turnover-ratio",
+      "family": "financial-analysis",
+      "seed": 190,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a8d7c9acaf59091a91fb1f24e216f6aab494f241aa9006ec3e39ee6a1c89382f"
+    },
+    {
       "task_id": "bad-debt-percent-of-sales",
       "family": "receivables",
       "seed": 145,
@@ -115,6 +129,20 @@
       "digest": "sha256:151b31899e420c15ac2c545ddafbdc487a7383deb6c53cce81b2ca6bcc05a749"
     },
     {
+      "task_id": "basket-purchase-allocation",
+      "family": "fixed-assets",
+      "seed": 187,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:bf51627c66e5272ad1150cbea478c9ccd34267bfd5f1c38546a897dcb7d66152"
+    },
+    {
       "task_id": "bond-discount-amortization",
       "family": "borrowings",
       "seed": 123,
@@ -130,6 +158,23 @@
         "ifrs:9"
       ],
       "digest": "sha256:ee50ea0a435c66578fa903adb888b48bb3316153f2d18fdf95b715a8e0804aed"
+    },
+    {
+      "task_id": "bond-early-retirement",
+      "family": "borrowings",
+      "seed": 185,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:405-20",
+        "ifrs:9"
+      ],
+      "digest": "sha256:c612a0fc17f7c2cf135a9272a002f58c90f092bc51243092f9a41dc99896d467"
     },
     {
       "task_id": "bond-issue-price",
@@ -164,6 +209,20 @@
         "ifrs:9"
       ],
       "digest": "sha256:70bdfc1f9bdf683ca5521c209eaae22bb8f7f669856b3d0a19705d623af851ed"
+    },
+    {
+      "task_id": "breakeven-sales-dollars",
+      "family": "cost-volume-profit",
+      "seed": 191,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:44f15c4158c43910103afae700f23e635d70a016309a2d9a6ac825ae741027c5"
     },
     {
       "task_id": "capitalized-cost-bundle",
@@ -365,6 +424,37 @@
       "digest": "sha256:f10e3a4c1c85d886915e5200c0864cbca992daed0a78032480195623cd21ec99"
     },
     {
+      "task_id": "diluted-eps",
+      "family": "financial-analysis",
+      "seed": 189,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:260",
+        "ias:33"
+      ],
+      "digest": "sha256:8621a59b23c6957bc396f0e8b512e8760161dc300c6600eb4ae78e7e7892f7cd"
+    },
+    {
+      "task_id": "direct-materials-used",
+      "family": "job-order-costing",
+      "seed": 192,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ede4d063523e2fdc5720e29ad37f11e9de3b02eb681622bfdd0028975875c1b7"
+    },
+    {
       "task_id": "employer-payroll-taxes",
       "family": "payroll",
       "seed": 142,
@@ -436,6 +526,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:6a689f285ef11a3f85c51ce2383064f2d25893f9b111512297b852f2a184e3f9"
+    },
+    {
+      "task_id": "fvoci-fair-value-adjustment",
+      "family": "investments",
+      "seed": 186,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ifrs:9"
+      ],
+      "digest": "sha256:e6959ed99e9e35708f0a6afeebb7650c385b66103dff5e158d9e6f681876ac49"
     },
     {
       "task_id": "gross-profit-from-trial-balance",
@@ -510,6 +616,20 @@
       "digest": "sha256:943cc361452f8d59ea59938da6264fc4ee8c11f9002c9b7d02db1f1a6e1c3ad7"
     },
     {
+      "task_id": "inventory-shrinkage-adjustment",
+      "family": "inventory",
+      "seed": 181,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:0d94d0a6b27074b4cd27ca96d8a5ad0bd22556e98866431eee0f15549afe7aab"
+    },
+    {
       "task_id": "job-overhead-applied",
       "family": "job-order-costing",
       "seed": 132,
@@ -522,6 +642,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:2545d8c9bffee87cc214f91d0179b70f013b56d8e42ad031ba18df4c5a820cf1"
+    },
+    {
+      "task_id": "labor-efficiency-variance",
+      "family": "standard-costing",
+      "seed": 188,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4f6a02d0e6bb9f75d01b4b74b5a256cadc9386b7757dde70f837d727d3c0869a"
     },
     {
       "task_id": "lease-liability-present-value",
@@ -760,6 +894,20 @@
       "digest": "sha256:53fd284e8ba7f270cfefb306bb59b220a910c9005fa4f52279acf747ba720366"
     },
     {
+      "task_id": "overhead-variance-disposition",
+      "family": "job-order-costing",
+      "seed": 183,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7351a66aa5b79220f38cf97e93ba565ff474a2748e08e2e95c1341126e5d82a6"
+    },
+    {
       "task_id": "partnership-income-allocation",
       "family": "partnerships",
       "seed": 165,
@@ -931,6 +1079,20 @@
       "digest": "sha256:3ceebf6649cc087b2cc97164c20f094b7980e1e1af418e266a83537e2287e639"
     },
     {
+      "task_id": "purchase-return-perpetual",
+      "family": "inventory",
+      "seed": 182,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:da41d55f2c21fb9a4fc4d7387b9706dffa3066bc3006030ee8b4db9e52ceb002"
+    },
+    {
       "task_id": "receivable-allowance-trueup",
       "family": "receivables",
       "seed": 108,
@@ -1019,6 +1181,23 @@
       "skill": "remembering-understanding",
       "standards": [],
       "digest": "sha256:6740b723c25887cd56041eddfead1d057235e0144f70991c7cb8e8355940fc27"
+    },
+    {
+      "task_id": "sc-subsequent-event-classification",
+      "family": "financial-reporting",
+      "seed": 193,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [
+        "asc:855",
+        "ias:10"
+      ],
+      "digest": "sha256:c9f78dd182f9d0be1313259982a04316af6d263c6ce871ae4802b1310a4a2b68"
     },
     {
       "task_id": "short-term-note-payment",
@@ -1134,6 +1313,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:a6d93314b3a83ac30a4cae200a28229b48fe160d0b27e35c68307e87edeba70f"
+    },
+    {
+      "task_id": "unearned-revenue-release",
+      "family": "accruals-deferrals",
+      "seed": 184,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:661e1dfd892577740fc766c9384a623e1c5c2ef5d86a79246aa4a6c6c20a2d03"
     },
     {
       "task_id": "units-of-production-depreciation",

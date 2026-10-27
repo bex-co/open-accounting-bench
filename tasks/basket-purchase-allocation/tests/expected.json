@@ -1,0 +1,32 @@
+{
+  "task_id": "basket-purchase-allocation",
+  "family": "fixed-assets",
+  "seed": 187,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:Land": "72000.00",
+    "Assets:Building": "104000.00",
+    "Assets:Bank:Checking": "-176000.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-21",
+    "2026-01-21"
+  ],
+  "required_final_balances": {
+    "Assets:Land": "72000.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

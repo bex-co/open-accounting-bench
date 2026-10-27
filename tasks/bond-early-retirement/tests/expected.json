@@ -1,0 +1,37 @@
+{
+  "task_id": "bond-early-retirement",
+  "family": "borrowings",
+  "seed": 185,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Liabilities:BondsPayable": "72000.00",
+    "Expenses:LossOnBondRetirement": "2448.00",
+    "Liabilities:DiscountOnBondsPayable": "-1008.00",
+    "Assets:Bank:Checking": "-73440.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    2
+  ],
+  "expected_period": [
+    "2026-01-15",
+    "2026-01-15"
+  ],
+  "required_final_balances": {
+    "Liabilities:BondsPayable": "0.00",
+    "Liabilities:DiscountOnBondsPayable": "0.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:405-20",
+    "ifrs:9"
+  ]
+}

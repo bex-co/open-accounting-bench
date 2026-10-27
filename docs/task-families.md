@@ -164,6 +164,19 @@ D = standards depth):
 | `multiproduct-breakeven-units` | V | U | V | V | V | V | V | vocational |
 | `total-current-liabilities` | V | U | V | U | V | V | V | vocational |
 | `sc-cash-flow-classification` | V | V | V | V | V | V | U | vocational |
+| `inventory-shrinkage-adjustment` | V | U | V | V | V | V | V | vocational |
+| `purchase-return-perpetual` | V | U | V | V | V | V | V | vocational |
+| `overhead-variance-disposition` | V | U | V | V | V | V | V | vocational |
+| `unearned-revenue-release` | V | U | V | V | V | V | V | vocational |
+| `bond-early-retirement` | V | U | V | V | V | V | U | vocational |
+| `fvoci-fair-value-adjustment` | V | U | V | V | U | V | U | vocational |
+| `basket-purchase-allocation` | V | U | V | U | V | V | V | vocational |
+| `labor-efficiency-variance` | V | U | V | U | V | V | V | vocational |
+| `diluted-eps` | V | U | V | V | V | V | U | vocational |
+| `asset-turnover-ratio` | V | U | V | V | V | V | V | vocational |
+| `breakeven-sales-dollars` | V | U | V | V | V | V | V | vocational |
+| `direct-materials-used` | V | U | V | V | V | V | V | vocational |
+| `sc-subsequent-event-classification` | V | V | V | U | U | V | U | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -256,8 +269,21 @@ problem the task hands over. An analysis task can be vocational.
 | `multiproduct-breakeven-units` | cost-volume-profit | numeric | core | application | — | Simple-average margin |
 | `total-current-liabilities` | financial-reporting | numeric | core | application | — | Include long-term note |
 | `sc-cash-flow-classification` | cash-flow-statement | single-choice | core | remembering-understanding | `asc:230`, `ias:7` | Dividends paid as operating |
+| `inventory-shrinkage-adjustment` | inventory | journal-entry | core | application | — | Shrinkage at selling price |
+| `purchase-return-perpetual` | inventory | journal-entry | core | application | — | Return at selling price |
+| `overhead-variance-disposition` | job-order-costing | journal-entry | core | application | — | Reversed (overapplied) entry |
+| `unearned-revenue-release` | accruals-deferrals | journal-entry | core | application | — | Release the whole advance |
+| `bond-early-retirement` | borrowings | journal-entry | core | application | `asc:405-20`, `ifrs:9` | Loss measured against face |
+| `fvoci-fair-value-adjustment` | investments | journal-entry | ifrs | application | `ifrs:9` | Gain credited to income |
+| `basket-purchase-allocation` | fixed-assets | journal-entry | core | application | — | Split the lump sum evenly |
+| `labor-efficiency-variance` | standard-costing | numeric | core | application | — | Rate-variance formula |
+| `diluted-eps` | financial-analysis | numeric | core | application | `asc:260`, `ias:33` | Basic EPS |
+| `asset-turnover-ratio` | financial-analysis | numeric | core | application | — | Ending assets |
+| `breakeven-sales-dollars` | cost-volume-profit | numeric | core | application | — | Answer break-even units |
+| `direct-materials-used` | job-order-costing | numeric | core | application | — | Purchases only |
+| `sc-subsequent-event-classification` | financial-reporting | single-choice | core | remembering-understanding | `asc:855`, `ias:10` | Later fire treated as adjusting |
 
-Stable seeds: 101–180 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–193 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -266,13 +292,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 61 | 1 | planned | planned |
-| management-accounting | 16 | planned | planned | planned |
+| financial-accounting | 69 | 2 | planned | planned |
+| management-accounting | 20 | planned | planned | planned |
 | tax | 2 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×46, multiple-choice ×2, single-choice ×2,
-numeric ×30; open-text is
+Format coverage: journal-entry ×53, multiple-choice ×2, single-choice ×3,
+numeric ×35; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
