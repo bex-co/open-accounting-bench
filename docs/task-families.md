@@ -234,6 +234,21 @@ D = standards depth):
 | `cash-and-equivalents-total` | V | U | V | U | V | V | V | vocational |
 | `sc-investment-classification` | V | V | V | V | V | V | U | vocational |
 | `mc-reportable-segments` | V | U | V | U | V | V | U | vocational |
+| `cash-flow-hedge-fair-value` | V | U | U | U | U | U | U | university |
+| `provision-rollforward-topup` | V | U | U | V | U | U | V | university |
+| `partnership-admission-bonus` | V | U | U | V | U | U | U | university |
+| `governmental-encumbrance-entry` | V | U | U | V | U | U | U | university |
+| `contract-acquisition-cost` | V | U | V | U | U | V | U | university |
+| `aro-accretion` | V | U | V | V | V | V | U | vocational |
+| `tax-return-crossfoot-difference` | V | U | V | U | V | V | V | vocational |
+| `tax-cost-recovery-deduction` | V | U | V | V | V | V | V | vocational |
+| `passthrough-loss-limitation` | V | U | V | U | U | V | V | vocational |
+| `partnership-distribution-gain` | V | U | V | V | V | V | V | vocational |
+| `sample-misstatement-projection` | V | U | V | V | V | V | V | vocational |
+| `capm-expected-return` | V | U | V | V | V | V | V | vocational |
+| `duplicate-payments-total` | V | U | V | U | V | V | V | vocational |
+| `sc-audit-procedure-selection` | V | V | V | V | V | V | V | vocational |
+| `sc-control-design-gap` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -396,8 +411,23 @@ problem the task hands over. An analysis task can be vocational.
 | `cash-and-equivalents-total` | cash-controls | numeric | core | application | — | Include restricted cash and net overdraft |
 | `sc-investment-classification` | investments | single-choice | us-gaap | remembering-understanding | `asc:320` | Mismatch management intent |
 | `mc-reportable-segments` | segment-reporting | multiple-choice | core | application | `asc:280`, `ifrs:8` | Require all three 10% tests |
+| `cash-flow-hedge-fair-value` | derivatives-hedging | journal-entry | core | analysis | `asc:815`, `ifrs:9` | Whole gain to OCI |
+| `provision-rollforward-topup` | provisions-contingencies | journal-entry | core | application | `asc:712`, `ias:37` | Expense required ending balance |
+| `partnership-admission-bonus` | partnerships | journal-entry | core | analysis | — | Credit new partner full contribution |
+| `governmental-encumbrance-entry` | governmental-accounting | journal-entry | us-gaap | application | — | Expenditure at PO estimate |
+| `contract-acquisition-cost` | revenue-recognition | journal-entry | core | application | `asc:340-40`, `ifrs:15` | Expense incremental commission |
+| `aro-accretion` | provisions-contingencies | journal-entry | core | application | `asc:410`, `ias:37` | Accrete undiscounted amount |
+| `tax-return-crossfoot-difference` | income-taxes | numeric | core | application | — | Subtract below-total adjustment |
+| `tax-cost-recovery-deduction` | income-taxes | numeric | core | application | — | Use book depreciation |
+| `passthrough-loss-limitation` | passthrough-taxation | numeric | core | application | — | Stop at basis limit |
+| `partnership-distribution-gain` | passthrough-taxation | numeric | core | application | — | Tax whole distribution |
+| `sample-misstatement-projection` | audit-sampling | numeric | core | application | — | Known sample error only |
+| `capm-expected-return` | cost-of-capital | numeric | core | application | — | Beta times market return |
+| `duplicate-payments-total` | audit-analytics | numeric | core | application | — | Include first legitimate payment |
+| `sc-audit-procedure-selection` | audit-evidence | single-choice | core | application | — | Mismatch assertion and procedure |
+| `sc-control-design-gap` | internal-control | single-choice | core | application | — | Generic control not matching gap |
 
-Stable seeds: 101–250 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–265 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -406,13 +436,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 98 | 9 | 5 | planned |
-| management-accounting | 30 | planned | planned | planned |
-| tax | 7 | — | — | planned |
-| audit-assurance | 1 | — | planned | — |
+| financial-accounting | 103 | 9 | 6 | planned |
+| management-accounting | 31 | planned | planned | planned |
+| tax | 11 | — | — | planned |
+| audit-assurance | 5 | — | planned | — |
 
-Format coverage: journal-entry ×79, multiple-choice ×4, single-choice ×7,
-numeric ×60; open-text is
+Format coverage: journal-entry ×85, multiple-choice ×4, single-choice ×9,
+numeric ×67; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

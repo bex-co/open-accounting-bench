@@ -101,6 +101,23 @@
       "digest": "sha256:9434da9b5af85706a3c4be0b646387f901b4bc9cea3c94394ea151ab96bd6cf1"
     },
     {
+      "task_id": "aro-accretion",
+      "family": "provisions-contingencies",
+      "seed": 256,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:410",
+        "ias:37"
+      ],
+      "digest": "sha256:d42a12121d112ddcdb2a27d121ad0f7bd49d9c372b2a4ab5a358876360173ae8"
+    },
+    {
       "task_id": "asset-revaluation-surplus",
       "family": "fixed-assets",
       "seed": 212,
@@ -314,6 +331,20 @@
       "digest": "sha256:d678209c43a09081b0b594c2326a74d0ab2ff40d87aee584418600f862fa365f"
     },
     {
+      "task_id": "capm-expected-return",
+      "family": "cost-of-capital",
+      "seed": 262,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:77c606af31c25943507f4d8cda4fda2d60cc901ead7625d4a99cd6c9d0d3e9b3"
+    },
+    {
       "task_id": "cash-and-equivalents-total",
       "family": "cash-controls",
       "seed": 248,
@@ -385,6 +416,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:6be547d899f69e37a35efbd17ebc9910538a448b923433990bb7db03c48f756e"
+    },
+    {
+      "task_id": "cash-flow-hedge-fair-value",
+      "family": "derivatives-hedging",
+      "seed": 251,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:815",
+        "ifrs:9"
+      ],
+      "digest": "sha256:f33407c624dd681fc93229153234a71c696263a45db25f0436f4364971a7e9c7"
     },
     {
       "task_id": "classify-operating-expense",
@@ -461,6 +509,23 @@
         "ifrs:10"
       ],
       "digest": "sha256:083be7637633b863cccc2ce274cb0bc2eb9291649449460caf43bc84e18c93e6"
+    },
+    {
+      "task_id": "contract-acquisition-cost",
+      "family": "revenue-recognition",
+      "seed": 255,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:340-40",
+        "ifrs:15"
+      ],
+      "digest": "sha256:4c479753cdeee3eeccc1de184ecf5d5ce3000a5c345929ddcc21c10485dbb9eb"
     },
     {
       "task_id": "correct-misclassification",
@@ -675,6 +740,20 @@
       "digest": "sha256:ede4d063523e2fdc5720e29ad37f11e9de3b02eb681622bfdd0028975875c1b7"
     },
     {
+      "task_id": "duplicate-payments-total",
+      "family": "audit-analytics",
+      "seed": 263,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:07b4dc7eeaea9c28ae43892559a06bf3eb7b75924d9905b70c1007f05174c7f8"
+    },
+    {
       "task_id": "employer-payroll-taxes",
       "family": "payroll",
       "seed": 142,
@@ -876,6 +955,20 @@
         "ias:20"
       ],
       "digest": "sha256:ee9f57f72dcb6627d3d0594a4d9bcfd0da6c142d4ce230ca4ca5feeeb996622b"
+    },
+    {
+      "task_id": "governmental-encumbrance-entry",
+      "family": "governmental-accounting",
+      "seed": 254,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:25c25d2f051c1dbb0438ae6dd2b3d51ec2940bea7d31df4120a7fe1ad9333e89"
     },
     {
       "task_id": "gross-profit-from-trial-balance",
@@ -1477,6 +1570,34 @@
       "digest": "sha256:7351a66aa5b79220f38cf97e93ba565ff474a2748e08e2e95c1341126e5d82a6"
     },
     {
+      "task_id": "partnership-admission-bonus",
+      "family": "partnerships",
+      "seed": 253,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [],
+      "digest": "sha256:62763853f98f651378e9a1e931b278533d9c5260c0e3ad96a9377e35f9fd4461"
+    },
+    {
+      "task_id": "partnership-distribution-gain",
+      "family": "passthrough-taxation",
+      "seed": 260,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:67858f3e835710de89a8f09cdec7dfd1b27fb688706de99c85997c27edf5abcc"
+    },
+    {
       "task_id": "partnership-income-allocation",
       "family": "partnerships",
       "seed": 165,
@@ -1503,6 +1624,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:02fcf030b614f65b0cac35f817210187823855a37fb6ff9fdaf39be15e99a567"
+    },
+    {
+      "task_id": "passthrough-loss-limitation",
+      "family": "passthrough-taxation",
+      "seed": 259,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:d53976d99cc35c059baa3c0e0b75e609bf36f03f32ced07e1a9d47e7fe870921"
     },
     {
       "task_id": "patent-amortization",
@@ -1749,6 +1884,23 @@
       "digest": "sha256:26a303b664d6a7ba6e0176d0bdd08b6bc1614c09ec48eeb09faa5364d4402b22"
     },
     {
+      "task_id": "provision-rollforward-topup",
+      "family": "provisions-contingencies",
+      "seed": 252,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:712",
+        "ias:37"
+      ],
+      "digest": "sha256:fd7c0b00e3139bb76f5450f6bb16f113819cd0f6361d8f3827cd341e4b305fbf"
+    },
+    {
       "task_id": "purchase-return-perpetual",
       "family": "inventory",
       "seed": 182,
@@ -1866,6 +2018,34 @@
       "digest": "sha256:0a227d3a6af59e32b10ab43b57420c6cb09bf87f9b9fb1bf843eaa68dc213c6c"
     },
     {
+      "task_id": "sample-misstatement-projection",
+      "family": "audit-sampling",
+      "seed": 261,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:97783c8bb389b54dcfa325ed7d5a41b039408c53db369a6632454db9687cf6cf"
+    },
+    {
+      "task_id": "sc-audit-procedure-selection",
+      "family": "audit-evidence",
+      "seed": 264,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9ee50c4152c4a3f4f267590ba455f21bbd72bec5878af17cc916ec9129ee859e"
+    },
+    {
       "task_id": "sc-cash-flow-classification",
       "family": "cash-flow-statement",
       "seed": 180,
@@ -1881,6 +2061,20 @@
         "ias:7"
       ],
       "digest": "sha256:ef3dd327bdf816493f9c029107e831a979a41bf13101fa351b4ce889131f1fa8"
+    },
+    {
+      "task_id": "sc-control-design-gap",
+      "family": "internal-control",
+      "seed": 265,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:bf55e7514e28f4e4b8ea8a01edb34b3b53ced58cf236586b145388867ecc1857"
     },
     {
       "task_id": "sc-fair-value-hierarchy",
@@ -2088,6 +2282,34 @@
       "skill": "analysis",
       "standards": [],
       "digest": "sha256:dbee78686ec1e54fa861a98a67e8592c60bd1400187835aeac3219cb15419a85"
+    },
+    {
+      "task_id": "tax-cost-recovery-deduction",
+      "family": "income-taxes",
+      "seed": 258,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:1fc2bc1735b5492ab42752dc50a9f8817cca1ba9923c890f32294ba1d8d4d061"
+    },
+    {
+      "task_id": "tax-return-crossfoot-difference",
+      "family": "income-taxes",
+      "seed": 257,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:bf3ca99206b9e71642c3e1bfdb3bf6a296177fc85e4f67d70eb4b0111901df57"
     },
     {
       "task_id": "total-current-liabilities",

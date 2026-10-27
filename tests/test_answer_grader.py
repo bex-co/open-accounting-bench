@@ -136,6 +136,13 @@ NUMERIC_FAMILIES = [
     "partnership-outside-basis",
     "performance-materiality",
     "cash-and-equivalents-total",
+    "tax-return-crossfoot-difference",
+    "tax-cost-recovery-deduction",
+    "passthrough-loss-limitation",
+    "partnership-distribution-gain",
+    "sample-misstatement-projection",
+    "capm-expected-return",
+    "duplicate-payments-total",
 ]
 
 
@@ -218,6 +225,8 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-job-vs-process-costing",
         "sc-fair-value-hierarchy",
         "sc-investment-classification",
+        "sc-audit-procedure-selection",
+        "sc-control-design-gap",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

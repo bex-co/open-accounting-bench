@@ -11299,6 +11299,1105 @@ def mc_reportable_segments(seed: int) -> TaskInstance:
     )
 
 
+DERIVATIVE = "Assets:InterestRateSwap"
+HEDGE_ACCOUNTS = [
+    (DERIVATIVE, "Interest-rate swap at fair value"),
+    (AOCI, "Accumulated OCI — cash-flow hedges"),
+    (UNREALIZED, "Hedgeineffectiveness gain in profit or loss"),
+]
+
+
+def cash_flow_hedge_fair_value(seed: int) -> TaskInstance:
+    """Scenario: cash-flow hedge swap gains value; most is effective.
+
+    Oracle: debit derivative for the full fair-value increase; credit the
+    effective portion to OCI and only the ineffective portion to income.
+    Trap: putting the whole gain in OCI. Level V/U/U/U/U/U/U.
+    """
+    rng = random.Random(seed)
+    total_gain = Decimal(rng.randrange(20, 101)) * 1000
+    effective_pct = rng.choice([80, 90])
+    effective = total_gain * effective_pct / 100
+    ineffective = total_gain - effective
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, HEDGE_ACCOUNTS)
+    doc = (
+        "# Hedge valuation — 2026-01-31\n\n"
+        "The interest-rate swap (designated and documented as a cash-flow "
+        f"hedge) had nil fair value at inception on 2026-01-01 and a fair "
+        f"value asset of USD {money(total_gain)} at January 31. Hedge "
+        f"accounting testing attributes {effective_pct}% of the change to "
+        "the effective portion; the rest is ineffectiveness.\n"
+    )
+    policy = POLICY + (
+        "- For a cash-flow hedge, the effective portion of the derivative's\n"
+        "  fair-value change goes to other comprehensive income; any\n"
+        "  ineffective portion is recognized immediately in profit or loss.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Hedge valuation",
+        "Cash-flow hedge fair-value gain",
+        [(DERIVATIVE, total_gain), (AOCI, -effective), (UNREALIZED, -ineffective)],
+    )
+    return TaskInstance(
+        task_id="cash-flow-hedge-fair-value",
+        family="derivatives-hedging",
+        title="Split a cash-flow hedge gain between OCI and income",
+        instruction=(
+            "Record the January valuation in `/app/documents/hedge_valuation.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(HEDGE_ACCOUNTS),
+            "documents/hedge_valuation.md": doc,
+        },
+        expected=_expected(
+            "cash-flow-hedge-fair-value",
+            "derivatives-hedging",
+            seed,
+            expected_deltas={
+                DERIVATIVE: money(total_gain),
+                AOCI: money(-effective),
+                UNREALIZED: money(-ineffective),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={DERIVATIVE: money(total_gain)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["derivatives", "cash-flow-hedge", "oci", "ineffectiveness"],
+        level="university",
+        skill="analysis",
+        standards=["asc:815", "ifrs:9"],
+    )
+
+
+RESTRUCTURING_PROVISION = "Liabilities:RestructuringProvision"
+RESTRUCTURING_EXPENSE = "Expenses:Restructuring"
+PROVISION_ACCOUNTS = [
+    (RESTRUCTURING_PROVISION, "Provision for restructuring costs"),
+    (RESTRUCTURING_EXPENSE, "Restructuring expense"),
+]
+
+
+def provision_rollforward_topup(seed: int) -> TaskInstance:
+    """Scenario: use part of a restructuring provision, then re-estimate it.
+
+    Oracle: payments debit the provision; the January expense is only the
+    top-up needed to reach the revised required ending balance. Trap:
+    expensing the whole required ending balance (or the payments).
+    Level V/U/U/V/U/U/V -> university.
+    """
+    rng = random.Random(seed)
+    opening_provision = Decimal(rng.randrange(80, 201)) * 1000
+    used = Decimal(rng.randrange(20, 71)) * 1000
+    required = opening_provision - used + Decimal(rng.randrange(10, 61)) * 1000
+    topup = required - (opening_provision - used)
+    opening = Decimal("80000.00")
+    initial = _ledger_header(opening, PROVISION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening restructuring provision",
+        [
+            ("Equity:Opening-Balances", opening_provision),
+            (RESTRUCTURING_PROVISION, -opening_provision),
+        ],
+    )
+    doc = (
+        "# Restructuring provision — January 2026\n\n"
+        f"Opening provision: USD {money(opening_provision)}. Severance "
+        f"payments of USD {money(used)} were made from checking in January "
+        "and are not yet recorded. At January 31 management re-estimates "
+        f"the remaining obligation at USD {money(required)} in total, which "
+        "is the provision balance that should remain.\n"
+    )
+    policy = POLICY + (
+        "- Amounts used are charged against the provision (never expensed\n"
+        "  again). The period expense is only the adjustment needed to move\n"
+        "  the post-use balance to the revised required ending estimate.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-20",
+            "Severance",
+            "Restructuring payments charged to provision",
+            [(RESTRUCTURING_PROVISION, used), (BANK, -used)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Management",
+            "Top provision up to revised estimate",
+            [(RESTRUCTURING_EXPENSE, topup), (RESTRUCTURING_PROVISION, -topup)],
+        )
+    )
+    return TaskInstance(
+        task_id="provision-rollforward-topup",
+        family="provisions-contingencies",
+        title="Use and re-estimate a restructuring provision",
+        instruction=(
+            "Record the January activity in `/app/documents/provision_update.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated in January 2026; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(PROVISION_ACCOUNTS),
+            "documents/provision_update.md": doc,
+        },
+        expected=_expected(
+            "provision-rollforward-topup",
+            "provisions-contingencies",
+            seed,
+            expected_deltas={
+                RESTRUCTURING_PROVISION: money(used - topup),
+                BANK: money(-used),
+                RESTRUCTURING_EXPENSE: money(topup),
+            },
+            expected_new_transactions=[1, 3],
+            required_final_balances={RESTRUCTURING_PROVISION: money(-required)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["provision", "rollforward", "restructuring"],
+        level="university",
+        standards=["asc:712", "ias:37"],
+    )
+
+
+CAPITAL_ANA = "Equity:AnaCapital"
+CAPITAL_BEN = "Equity:BenCapital"
+CAPITAL_CARA = "Equity:CaraCapital"
+ADMISSION_ACCOUNTS = [
+    (CAPITAL_ANA, "Ana, capital"),
+    (CAPITAL_BEN, "Ben, capital"),
+    (CAPITAL_CARA, "Cara, capital"),
+]
+
+
+def partnership_admission_bonus(seed: int) -> TaskInstance:
+    """Scenario: Cara buys into a partnership for more than her book share.
+
+    Oracle (bonus method): Cara is credited only her stated percentage of
+    post-admission book capital; the difference is a bonus credited to
+    Ana and Ben in their profit ratio. Trap: crediting Cara with her
+    full cash contribution. Level V/U/U/V/U/U/U -> university.
+    """
+    rng = random.Random(seed)
+    ana = Decimal(rng.randrange(60, 141)) * 1000
+    ben = Decimal(rng.randrange(60, 141)) * 1000
+    contribution = Decimal(rng.randrange(80, 181)) * 1000
+    share_pct = rng.choice([20, 25])
+    # Ensure the contribution exceeds the book share acquired (bonus to old).
+    while contribution <= (ana + ben + contribution) * share_pct / 100:
+        contribution += 20000
+    total_capital = ana + ben + contribution
+    cara_credit = total_capital * share_pct / 100
+    bonus = contribution - cara_credit
+    ana_bonus = bonus * Decimal("0.6")
+    ben_bonus = bonus - ana_bonus
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, ADMISSION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening partner capital balances",
+        [
+            ("Equity:Opening-Balances", ana + ben),
+            (CAPITAL_ANA, -ana),
+            (CAPITAL_BEN, -ben),
+        ],
+    )
+    doc = (
+        "# Partnership admission — 2026-01-15\n\n"
+        f"Existing capital: Ana USD {money(ana)}, Ben USD {money(ben)} "
+        "(profit ratio Ana 60%, Ben 40%). Cara contributed "
+        f"USD {money(contribution)} cash for a {share_pct}% interest in "
+        "total capital. No assets were revalued; the bonus method applies.\n"
+    )
+    policy = POLICY + (
+        "- Bonus method on admission: the new partner's capital is credited\n"
+        "  with the agreed percentage of total book capital AFTER the\n"
+        "  contribution. Any difference from the cash paid is a bonus to or\n"
+        "  from the old partners in their profit-sharing ratio.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-15",
+        "Cara",
+        "Cara admitted with bonus to old partners",
+        [
+            (BANK, contribution),
+            (CAPITAL_CARA, -cara_credit),
+            (CAPITAL_ANA, -ana_bonus),
+            (CAPITAL_BEN, -ben_bonus),
+        ],
+    )
+    return TaskInstance(
+        task_id="partnership-admission-bonus",
+        family="partnerships",
+        title="Admit a partner under the bonus method",
+        instruction=(
+            "Record the admission in `/app/documents/admission.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-15; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ADMISSION_ACCOUNTS),
+            "documents/admission.md": doc,
+        },
+        expected=_expected(
+            "partnership-admission-bonus",
+            "partnerships",
+            seed,
+            expected_deltas={
+                BANK: money(contribution),
+                CAPITAL_CARA: money(-cara_credit),
+                CAPITAL_ANA: money(-ana_bonus),
+                CAPITAL_BEN: money(-ben_bonus),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-15", "2026-01-15"],
+            required_final_balances={CAPITAL_CARA: money(-cara_credit)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["partnership", "admission", "bonus-method"],
+        level="university",
+        skill="analysis",
+    )
+
+
+ENCUMBRANCES = "Expenses:Encumbrances"
+BUDGETARY_RESERVE = "Equity:BudgetaryFundBalanceAssigned"
+EXPENDITURES = "Expenses:Expenditures"
+ENCUMBRANCE_ACCOUNTS = [
+    (AP, "Vouchers/accounts payable"),
+    (ENCUMBRANCES, "Budgetary encumbrances outstanding"),
+    (BUDGETARY_RESERVE, "Budgetary fund balance assigned for encumbrances"),
+    (EXPENDITURES, "General fund expenditures"),
+]
+
+
+def governmental_encumbrance_entry(seed: int) -> TaskInstance:
+    """Scenario: general-fund purchase order issued, then goods received.
+
+    Oracle: encumber the estimate at order, reverse the whole encumbrance
+    on receipt, and record the expenditure/liability at the ACTUAL invoice.
+    Trap: recording the expenditure at the estimated order amount.
+    Level V/U/U/V/U/U/U -> university.
+    """
+    rng = random.Random(seed)
+    estimate = Decimal(rng.randrange(40, 121)) * 500
+    saving = Decimal(rng.randrange(2, 11)) * 100
+    actual = estimate - saving
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, ENCUMBRANCE_ACCOUNTS)
+    doc = (
+        "# General fund purchase — January 2026\n\n"
+        f"2026-01-05: purchase order issued for supplies estimated at "
+        f"USD {money(estimate)}.\n"
+        f"2026-01-20: all goods received with an invoice for "
+        f"USD {money(actual)}, unpaid at month-end.\n"
+    )
+    policy = POLICY + (
+        "- Governmental budgetary accounting: issuing a purchase order\n"
+        "  debits encumbrances and credits budgetary fund balance assigned.\n"
+        "  On receipt, reverse the ORIGINAL estimated encumbrance in full\n"
+        "  and record the expenditure and payable at the actual invoice.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-05",
+            "Purchasing",
+            "Encumber purchase order",
+            [(ENCUMBRANCES, estimate), (BUDGETARY_RESERVE, -estimate)],
+        )
+        + _txn(
+            "2026-01-20",
+            "Purchasing",
+            "Reverse encumbrance on receipt",
+            [(BUDGETARY_RESERVE, estimate), (ENCUMBRANCES, -estimate)],
+        )
+        + _txn(
+            "2026-01-20",
+            "Supplier",
+            "Supplies received; invoice recorded",
+            [(EXPENDITURES, actual), (AP, -actual)],
+        )
+    )
+    return TaskInstance(
+        task_id="governmental-encumbrance-entry",
+        family="governmental-accounting",
+        title="Encumber and then record a general-fund purchase",
+        instruction=(
+            "Record the January entries in `/app/documents/purchase_order.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions on their stated January dates; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ENCUMBRANCE_ACCOUNTS),
+            "documents/purchase_order.md": doc,
+        },
+        expected=_expected(
+            "governmental-encumbrance-entry",
+            "governmental-accounting",
+            seed,
+            expected_deltas={
+                ENCUMBRANCES: "0.00",
+                BUDGETARY_RESERVE: "0.00",
+                EXPENDITURES: money(actual),
+                AP: money(-actual),
+            },
+            expected_new_transactions=[1, 4],
+            required_final_balances={AP: money(-actual)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["governmental", "encumbrance", "budgetary-accounting"],
+        level="university",
+        skill="application",
+        framework="us-gaap",
+    )
+
+
+CONTRACT_COST = "Assets:ContractAcquisitionCost"
+COMMISSION_AMORT = "Expenses:CommissionAmortization"
+CONTRACT_COST_ACCOUNTS = [
+    (CONTRACT_COST, "Capitalized incremental cost of obtaining a contract"),
+    (COMMISSION_AMORT, "Amortization of contract acquisition costs"),
+    (WAGES, "Sales staff salaries expense"),
+]
+
+
+def contract_acquisition_cost(seed: int) -> TaskInstance:
+    """Scenario: incremental sales commission and ordinary sales salaries.
+
+    Oracle: capitalize the incremental commission and amortize one month
+    over the 24-month contract; non-incremental salaries are expensed.
+    Trap: expensing the commission immediately. Level V/U/V/U/U/V/U.
+    """
+    rng = random.Random(seed)
+    monthly_amort = Decimal(rng.randrange(20, 81)) * 10
+    commission = monthly_amort * 24
+    salaries = Decimal(rng.randrange(30, 91)) * 100
+    opening = commission + salaries + Decimal("20000.00")
+    initial = _ledger_header(opening, CONTRACT_COST_ACCOUNTS)
+    doc = (
+        "# January sales costs (paid from checking)\n\n"
+        f"- Commission of USD {money(commission)} paid only because a new "
+        "24-month customer contract was signed on 2026-01-01. The cost is "
+        "expected to be recovered from the contract.\n"
+        f"- Ordinary sales-staff salaries for January: USD {money(salaries)}.\n"
+    )
+    policy = POLICY + (
+        "- Incremental costs of obtaining a contract that are expected to\n"
+        "  be recovered are capitalized and amortized straight-line over\n"
+        "  the contract term (here 24 months, starting January). Costs that\n"
+        "  would be incurred anyway (ordinary salaries) are expensed.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-01",
+            "Sales team",
+            "Capitalize incremental commission; expense salaries",
+            [(CONTRACT_COST, commission), (WAGES, salaries), (BANK, -(commission + salaries))],
+        )
+        + _txn(
+            "2026-01-31",
+            "Sales team",
+            "January amortization of contract cost",
+            [(COMMISSION_AMORT, monthly_amort), (CONTRACT_COST, -monthly_amort)],
+        )
+    )
+    return TaskInstance(
+        task_id="contract-acquisition-cost",
+        family="revenue-recognition",
+        title="Capitalize and amortize a contract commission",
+        instruction=(
+            "Record the January costs in `/app/documents/sales_costs.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated in January 2026; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CONTRACT_COST_ACCOUNTS),
+            "documents/sales_costs.md": doc,
+        },
+        expected=_expected(
+            "contract-acquisition-cost",
+            "revenue-recognition",
+            seed,
+            expected_deltas={
+                CONTRACT_COST: money(commission - monthly_amort),
+                WAGES: money(salaries),
+                BANK: money(-(commission + salaries)),
+                COMMISSION_AMORT: money(monthly_amort),
+            },
+            expected_new_transactions=[1, 3],
+            required_final_balances={CONTRACT_COST: money(commission - monthly_amort)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["contract-costs", "incremental-commission", "amortization"],
+        level="university",
+        standards=["asc:340-40", "ifrs:15"],
+    )
+
+
+ARO = "Liabilities:AssetRetirementObligation"
+ACCRETION = "Expenses:Accretion"
+ARO_ACCOUNTS = [
+    (ARO, "Asset retirement obligation at present value"),
+    (ACCRETION, "Accretion expense on retirement obligations"),
+]
+
+
+def aro_accretion(seed: int) -> TaskInstance:
+    """Scenario: one month of accretion on an asset retirement obligation.
+
+    Oracle: accretion = opening ARO carrying amount x the stated monthly
+    credit-adjusted risk-free rate. Trap: applying the rate to the future
+    undiscounted settlement amount. Level V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    monthly_rate = rng.choice([Decimal("0.004"), Decimal("0.005"), Decimal("0.006")])
+    accretion = Decimal(rng.randrange(20, 101)) * 10
+    carrying = (accretion / monthly_rate).quantize(CENT)
+    settlement = carrying * rng.choice([Decimal("1.6"), Decimal("2")])
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, ARO_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening asset retirement obligation",
+        [("Equity:Opening-Balances", carrying), (ARO, -carrying)],
+    )
+    doc = (
+        "# Asset retirement obligation — January 2026\n\n"
+        f"Carrying amount at 2026-01-01: USD {money(carrying)}. Expected "
+        f"undiscounted settlement cost in 10 years: USD {money(settlement)}. "
+        f"Credit-adjusted risk-free rate: {monthly_rate * 100:.1f}% per month. "
+        "No settlement or estimate revision occurred in January.\n"
+    )
+    policy = POLICY + (
+        "- Accretion for a period is the OPENING carrying amount of the\n"
+        "  obligation x the credit-adjusted risk-free rate for that period;\n"
+        "  it increases the obligation. The undiscounted settlement amount\n"
+        "  is never the accretion base.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "ARO",
+        "January accretion expense",
+        [(ACCRETION, accretion), (ARO, -accretion)],
+    )
+    return TaskInstance(
+        task_id="aro-accretion",
+        family="provisions-contingencies",
+        title="Accrete an asset retirement obligation",
+        instruction=(
+            "Record January's accretion in `/app/documents/aro_data.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "exactly one balanced transaction dated 2026-01-31; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ARO_ACCOUNTS),
+            "documents/aro_data.md": doc,
+        },
+        expected=_expected(
+            "aro-accretion",
+            "provisions-contingencies",
+            seed,
+            expected_deltas={ACCRETION: money(accretion), ARO: money(-accretion)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={ARO: money(-(carrying + accretion))},
+        ),
+        solution_ledger=solution,
+        keywords=["asset-retirement-obligation", "accretion"],
+        level="vocational",
+        standards=["asc:410", "ias:37"],
+    )
+
+
+def tax_return_crossfoot_difference(seed: int) -> TaskInstance:
+    """Numeric: recompute total income and size the reported understatement.
+
+    Trap: subtracting a below-total adjustment that is not an income line.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    wages, interest, dividends, business = amt(250, 801), amt(5, 51), amt(5, 41), amt(30, 161)
+    omitted = amt(10, 71)
+    adjustment = amt(5, 31)
+    correct = wages + interest + dividends + business + omitted
+    reported = correct - omitted
+    data = (
+        "# Draft individual return — income section (review copy)\n\n"
+        "| Line | USD |\n|---|---:|\n"
+        f"| Wages | {money(wages)} |\n"
+        f"| Taxable interest | {money(interest)} |\n"
+        f"| Ordinary dividends | {money(dividends)} |\n"
+        f"| Business income | {money(business)} |\n"
+        f"| Capital gain | {money(omitted)} |\n"
+        f"| TOTAL income as reported on the draft | {money(reported)} |\n"
+        f"| Educator-expense adjustment (below total income) | {money(adjustment)} |\n"
+    )
+    policy = """# Crossfooting conventions (applies to this task)
+
+- Correct total income is the sum of the five income lines only.
+  Adjustments presented below total income do not enter that total.
+- Understatement = correct total income - total income as reported.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "understatement in reported total income",
+        "Using `/app/documents/draft_return.md` and `/app/policy.md`, compute "
+        "the **understatement in reported total income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="tax-return-crossfoot-difference",
+        family="income-taxes",
+        title="Crossfoot a draft return's total income",
+        question=question,
+        policy=policy,
+        data_name="draft_return.md",
+        data=data,
+        gold=omitted,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "tax-review", "crossfoot"],
+        abs_tolerance="0.01",
+        trap_value=money(omitted - adjustment),
+    )
+
+
+def tax_cost_recovery_deduction(seed: int) -> TaskInstance:
+    """Numeric: cost recovery from a stated recovery table.
+
+    Trap: using book straight-line depreciation.
+    """
+    rng = random.Random(seed)
+    basis = Decimal(rng.randrange(50, 201)) * 1000
+    table = {
+        5: [Decimal("20.00"), Decimal("32.00"), Decimal("19.20")],
+        7: [Decimal("14.29"), Decimal("24.49"), Decimal("17.49")],
+    }
+    life = rng.choice([5, 7])
+    year = rng.choice([2, 3])
+    pct = table[life][year - 1]
+    gold = (basis * pct / 100).quantize(CENT)
+    book = (basis / (life + 3)).quantize(CENT)
+    rows = "\n".join(f"| Year {y} | {p}% |" for y, p in enumerate(table[life], start=1))
+    data = (
+        "# Cost-recovery data\n\n| Item | Value |\n|---|---:|\n"
+        f"| Asset basis | USD {money(basis)} |\n"
+        f"| Recovery period | {life} years |\n"
+        f"| Current recovery year | Year {year} |\n"
+        f"| Book life (financial reporting) | {life + 3} years, straight-line |\n\n"
+        f"Applicable recovery table ({life}-year):\n\n"
+        f"| Recovery year | Rate |\n|---|---:|\n{rows}\n"
+    )
+    policy = """# Cost-recovery conventions (applies to this task)
+
+- The tax deduction for a recovery year is asset basis x the table rate
+  for that recovery year (use the rates exactly as given). Book
+  straight-line depreciation over the longer book life is not the tax
+  deduction.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "cost-recovery deduction",
+        "Using `/app/documents/cost_recovery.md` and `/app/policy.md`, compute "
+        f"the **Year {year} cost-recovery deduction** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="tax-cost-recovery-deduction",
+        family="income-taxes",
+        title="Compute a tax cost-recovery deduction",
+        question=question,
+        policy=policy,
+        data_name="cost_recovery.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "cost-recovery", "macrs-table"],
+        abs_tolerance="0.01",
+        trap_value=money(book),
+    )
+
+
+def passthrough_loss_limitation(seed: int) -> TaskInstance:
+    """Numeric: currently deductible passthrough loss through three limits.
+
+    Trap: stopping at the basis limitation.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    passive_income = amt(10, 51)
+    at_risk = passive_income + amt(10, 51)
+    basis = at_risk + amt(10, 61)
+    loss = basis + amt(10, 71)
+    data = (
+        "# Passthrough loss data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Share of passthrough ordinary loss | {money(loss)} |\n"
+        f"| Owner's adjusted basis before the loss | {money(basis)} |\n"
+        f"| Amount at risk | {money(at_risk)} |\n"
+        f"| Passive income from other activities | {money(passive_income)} |\n"
+    )
+    policy = """# Loss limitation conventions (applies to this task)
+
+Apply the limits in this order, each capping the deductible amount:
+1. Basis limit: no more than adjusted basis.
+2. At-risk limit: no more than the amount at risk.
+3. Passive limit: a passive loss is currently deductible only up to
+   passive income. The currently deductible loss is the smallest of
+   the loss and the three limits. Answer in USD.
+"""
+    question = _numeric_question(
+        "currently deductible passthrough loss",
+        "Using `/app/documents/loss_limits.md` and `/app/policy.md`, compute "
+        "the **currently deductible loss** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="passthrough-loss-limitation",
+        family="passthrough-taxation",
+        title="Apply passthrough loss limitations",
+        question=question,
+        policy=policy,
+        data_name="loss_limits.md",
+        data=data,
+        gold=passive_income,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "loss-limitations", "basis", "at-risk", "passive"],
+        abs_tolerance="0.01",
+        trap_value=money(basis),
+    )
+
+
+def partnership_distribution_gain(seed: int) -> TaskInstance:
+    """Numeric: gain when a cash distribution exceeds outside basis.
+
+    Trap: treating the whole distribution as taxable income.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    basis = amt(20, 101)
+    gain = amt(5, 51)
+    distribution = basis + gain
+    data = (
+        "# Partnership distribution — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Partner's outside basis before the distribution | {money(basis)} |\n"
+        f"| Cash distribution received | {money(distribution)} |\n"
+    )
+    policy = """# Partnership distribution conventions (applies to this task)
+
+- A cash distribution is tax-free up to outside basis; only cash in
+  EXCESS of basis is recognized as gain. Basis cannot go below zero.
+- Answer the gain in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "gain on a partnership cash distribution",
+        "Using `/app/documents/distribution.md` and `/app/policy.md`, compute "
+        "the partner's **gain on the distribution** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="partnership-distribution-gain",
+        family="passthrough-taxation",
+        title="Compute gain on an excess cash distribution",
+        question=question,
+        policy=policy,
+        data_name="distribution.md",
+        data=data,
+        gold=gain,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "partnership", "distribution-gain", "outside-basis"],
+        abs_tolerance="0.01",
+        trap_value=money(distribution),
+    )
+
+
+def sample_misstatement_projection(seed: int) -> TaskInstance:
+    """Numeric: ratio projection of a sample misstatement.
+
+    Trap: reporting only the known sample misstatement.
+    """
+    rng = random.Random(seed)
+    population = Decimal(rng.randrange(400, 1201)) * 1000
+    sample_book = Decimal(rng.randrange(50, 201)) * 1000
+    pct = rng.choice([Decimal("0.02"), Decimal("0.03"), Decimal("0.05")])
+    sample_error = sample_book * pct
+    gold = population * pct
+    sample_audited = sample_book - sample_error
+    data = (
+        "# Audit sampling results\n\n| Item | USD |\n|---|---:|\n"
+        f"| Recorded population book value | {money(population)} |\n"
+        f"| Book value of items sampled | {money(sample_book)} |\n"
+        f"| Audited value of items sampled | {money(sample_audited)} |\n"
+    )
+    policy = """# Ratio projection conventions (applies to this task)
+
+- Projected misstatement = (sample book value - sample audited value)
+  / sample book value x recorded population book value.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "projected population misstatement",
+        "Using `/app/documents/sampling_results.md` and `/app/policy.md`, compute "
+        "the **projected misstatement** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="sample-misstatement-projection",
+        family="audit-sampling",
+        title="Project a sample misstatement to the population",
+        question=question,
+        policy=policy,
+        data_name="sampling_results.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "audit-sampling", "projection"],
+        abs_tolerance="0.01",
+        trap_value=money(sample_error),
+    )
+
+
+def capm_expected_return(seed: int) -> TaskInstance:
+    """Numeric: expected return under CAPM. Trap: adding beta x market return."""
+    rng = random.Random(seed)
+    risk_free = rng.choice([Decimal("2.00"), Decimal("3.00"), Decimal("4.00")])
+    market = risk_free + Decimal(rng.randrange(4, 9))
+    beta = (Decimal(rng.randrange(6, 17)) / 10).quantize(Decimal("0.1"))
+    gold = (risk_free + beta * (market - risk_free)).quantize(Decimal("0.0001"))
+    trap = (risk_free + beta * market).quantize(Decimal("0.0001"))
+    data = (
+        "# Market data\n\n| Item | Value |\n|---|---:|\n"
+        f"| Risk-free rate | {risk_free:.2f}% |\n"
+        f"| Expected market return | {market:.2f}% |\n"
+        f"| Stock beta | {format(beta, 'f')} |\n"
+    )
+    policy = """# CAPM conventions (applies to this task)
+
+- Expected return = risk-free rate + beta x (expected market return
+  - risk-free rate). The market risk premium is the excess over the
+  risk-free rate, not the whole market return.
+- Answer as a percentage number (for example 9.60 for 9.60%).
+"""
+    question = _numeric_question(
+        "expected return under CAPM",
+        "Using `/app/documents/market_data.md` and `/app/policy.md`, compute "
+        "the stock's **expected return** as a percentage number.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="capm-expected-return",
+        family="cost-of-capital",
+        title="Compute expected return under CAPM",
+        question=question,
+        policy=policy,
+        data_name="market_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "capm", "expected-return", "beta"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def duplicate_payments_total(seed: int) -> TaskInstance:
+    """Numeric: duplicate-payment overpayment from an audit data extract.
+
+    Trap: counting the first legitimate payment in each duplicate set.
+    """
+    rng = random.Random(seed)
+    vendors = ["Acme", "Beacon", "Cobalt", "Delta", "Ember", "Fjord"]
+    rows: list[tuple[str, str, Decimal]] = []
+    gold = Decimal("0")
+    all_duplicate_payments = Decimal("0")
+    for i, vendor in enumerate(vendors[:3]):
+        amount = Decimal(rng.randrange(20, 121)) * 25
+        copies = rng.choice([2, 3])
+        gold += amount * (copies - 1)
+        all_duplicate_payments += amount * copies
+        rows.extend([(vendor, f"INV-10{i + 1}", amount)] * copies)
+    for i, vendor in enumerate(vendors[3:]):
+        amount = Decimal(rng.randrange(20, 121)) * 25
+        rows.append((vendor, f"INV-20{i + 1}", amount))
+        # Same amount but a different invoice is not a duplicate.
+        rows.append((vendor, f"INV-30{i + 1}", amount))
+    rng.shuffle(rows)
+    body = "\n".join(
+        f"| {vendor} | {invoice} | {money(amount)} |" for vendor, invoice, amount in rows
+    )
+    data = (
+        "# Accounts-payable payment extract\n\n"
+        "| Vendor | Invoice | Paid (USD) |\n|---|---|---:|\n" + body + "\n"
+    )
+    policy = """# Duplicate-payment conventions (applies to this task)
+
+- A duplicate payment is a repeated payment of the same vendor, same
+  invoice number, and same amount. The overpayment is the amount paid
+  BEYOND the first legitimate payment in each duplicate set.
+- Different invoice numbers are not duplicates even if amounts match.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "duplicate-payment overpayment",
+        "Using `/app/documents/payment_extract.md` and `/app/policy.md`, compute "
+        "**total duplicate overpayments** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="duplicate-payments-total",
+        family="audit-analytics",
+        title="Total duplicate payments in an AP extract",
+        question=question,
+        policy=policy,
+        data_name="payment_extract.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "audit-analytics", "duplicate-payments"],
+        abs_tolerance="0.01",
+        trap_value=money(all_duplicate_payments),
+    )
+
+
+AUDIT_PROCEDURES = [
+    "External confirmation with the bank/customer",
+    "Physical inspection / observation of the asset",
+    "Recalculation of the client's computation",
+    "Inspection of supporting documents (vouching)",
+    "Cutoff testing around the reporting date",
+]
+AUDIT_PROCEDURE_CASES = [
+    (
+        "Verify the EXISTENCE and rights of the year-end bank balance.",
+        "External confirmation with the bank/customer",
+    ),
+    (
+        "Verify the EXISTENCE of inventory recorded on the balance sheet.",
+        "Physical inspection / observation of the asset",
+    ),
+    (
+        "Check the ACCURACY of the depreciation charge for the year.",
+        "Recalculation of the client's computation",
+    ),
+    (
+        "Verify that a recorded purchase OCCURRED and is supported by a "
+        "supplier invoice and receiving report.",
+        "Inspection of supporting documents (vouching)",
+    ),
+    (
+        "Check that sales around year-end are recorded in the CORRECT "
+        "period (neither early nor late).",
+        "Cutoff testing around the reporting date",
+    ),
+    (
+        "Confirm accounts receivable balances directly with customers for existence and rights.",
+        "External confirmation with the bank/customer",
+    ),
+]
+
+
+def sc_audit_procedure_selection(seed: int) -> TaskInstance:
+    """Single-choice: select the audit procedure for a stated assertion."""
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(AUDIT_PROCEDURE_CASES)
+    labels = AUDIT_PROCEDURES.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Audit procedure selection (applies to this task)
+
+Match the procedure to its primary purpose:
+- External confirmation: existence/rights evidence from third parties.
+- Physical inspection/observation: existence of tangible assets.
+- Recalculation: mathematical accuracy of client computations.
+- Vouching to documents: occurrence/support for recorded transactions.
+- Cutoff testing: transactions recorded in the correct period.
+"""
+    question = _choice_question(
+        "most appropriate audit procedure",
+        f"Audit objective: **{narrative}**\n\nUsing `/app/policy.md`, select "
+        "the most appropriate procedure. Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-audit-procedure-selection",
+        family="audit-evidence",
+        title="Select an audit procedure for an assertion",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-audit-procedure-selection",
+            "audit-evidence",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "audit-procedures", "assertions"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+CONTROL_RESPONSES = [
+    "Segregate authorization, custody, and recording duties",
+    "Require independent bank reconciliation and review",
+    "Restrict and log privileged system access with periodic review",
+    "Require documented approval before payment release",
+    "Perform periodic surprise counts and reconcile to records",
+]
+CONTROL_GAP_CASES = [
+    (
+        "One clerk can create a vendor, enter its invoice, and release "
+        "payment without anyone else involved.",
+        "Segregate authorization, custody, and recording duties",
+    ),
+    (
+        "The person who signs checks also prepares the only bank "
+        "reconciliation, and differences are never reviewed.",
+        "Require independent bank reconciliation and review",
+    ),
+    (
+        "Several former employees still have administrator access, and "
+        "no one reviews who can change prices in the sales system.",
+        "Restrict and log privileged system access with periodic review",
+    ),
+    (
+        "Payments leave the bank on a clerk's say-so; no evidence shows a "
+        "manager approved the disbursement beforehand.",
+        "Require documented approval before payment release",
+    ),
+    (
+        "Warehouse stock records are accepted without ever counting the "
+        "physical goods or investigating differences.",
+        "Perform periodic surprise counts and reconcile to records",
+    ),
+]
+
+
+def sc_control_design_gap(seed: int) -> TaskInstance:
+    """Single-choice: choose the control that best addresses a stated gap."""
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(CONTROL_GAP_CASES)
+    labels = CONTROL_RESPONSES.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Control design (applies to this task)
+
+Match the remedy to the weakness:
+- Incompatible duties concentrated in one person: segregation of duties.
+- Reconciliations prepared by the person handling cash, unreviewed:
+  independent preparation/review.
+- Excess or stale privileged access: restrict, log, and review access.
+- Payments released without evidence of approval: prior documented
+  authorization.
+- Records never checked to physical assets: periodic surprise counts
+  reconciled to records, with differences investigated.
+"""
+    question = _choice_question(
+        "best control for a design gap",
+        f"Control weakness: **{narrative}**\n\nUsing `/app/policy.md`, which "
+        "control best addresses it? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-control-design-gap",
+        family="internal-control",
+        title="Match a control weakness to its remedy",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-control-design-gap",
+            "internal-control",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "internal-control", "segregation-of-duties"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -11450,6 +12549,21 @@ FAMILIES = {
     "cash-and-equivalents-total": cash_and_equivalents_total,
     "sc-investment-classification": sc_investment_classification,
     "mc-reportable-segments": mc_reportable_segments,
+    "cash-flow-hedge-fair-value": cash_flow_hedge_fair_value,
+    "provision-rollforward-topup": provision_rollforward_topup,
+    "partnership-admission-bonus": partnership_admission_bonus,
+    "governmental-encumbrance-entry": governmental_encumbrance_entry,
+    "contract-acquisition-cost": contract_acquisition_cost,
+    "aro-accretion": aro_accretion,
+    "tax-return-crossfoot-difference": tax_return_crossfoot_difference,
+    "tax-cost-recovery-deduction": tax_cost_recovery_deduction,
+    "passthrough-loss-limitation": passthrough_loss_limitation,
+    "partnership-distribution-gain": partnership_distribution_gain,
+    "sample-misstatement-projection": sample_misstatement_projection,
+    "capm-expected-return": capm_expected_return,
+    "duplicate-payments-total": duplicate_payments_total,
+    "sc-audit-procedure-selection": sc_audit_procedure_selection,
+    "sc-control-design-gap": sc_control_design_gap,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -11604,4 +12718,19 @@ STABLE_SEEDS = {
     "cash-and-equivalents-total": 248,
     "sc-investment-classification": 249,
     "mc-reportable-segments": 250,
+    "cash-flow-hedge-fair-value": 251,
+    "provision-rollforward-topup": 252,
+    "partnership-admission-bonus": 253,
+    "governmental-encumbrance-entry": 254,
+    "contract-acquisition-cost": 255,
+    "aro-accretion": 256,
+    "tax-return-crossfoot-difference": 257,
+    "tax-cost-recovery-deduction": 258,
+    "passthrough-loss-limitation": 259,
+    "partnership-distribution-gain": 260,
+    "sample-misstatement-projection": 261,
+    "capm-expected-return": 262,
+    "duplicate-payments-total": 263,
+    "sc-audit-procedure-selection": 264,
+    "sc-control-design-gap": 265,
 }

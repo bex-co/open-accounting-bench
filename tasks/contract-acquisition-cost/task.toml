@@ -1,0 +1,44 @@
+schema_version = "1.3"
+artifacts = ["/app/ledger.beancount"]
+
+[task]
+name = "open-accounting-bench/contract-acquisition-cost"
+description = "Capitalize and amortize a contract commission"
+authors = []
+keywords = ["contract-costs", "incremental-commission", "amortization"]
+
+[metadata]
+task_id = "contract-acquisition-cost"
+family = "revenue-recognition"
+difficulty = "medium"
+category = "financial-accounting"
+framework = "core"
+level = "university"
+format = "journal-entry"
+skill = "application"
+standards = ["asc:340-40", "ifrs:15"]
+track = "stable"
+seed = 255
+generator_version = "0.3.0"
+ledger_engine = "beancount"
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 300.0
+
+[verifier.environment]
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 1800.0
+
+[environment]
+network_mode = "no-network"
+os = "linux"
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120

@@ -66,6 +66,17 @@ crosswalk mappings.
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
 - 2026-10-26 — fifteen further generator families (Stable seeds
+  251–265): `cash-flow-hedge-fair-value`, `provision-rollforward-topup`,
+  `partnership-admission-bonus`, `governmental-encumbrance-entry`,
+  `contract-acquisition-cost`, `aro-accretion`,
+  `tax-return-crossfoot-difference`, `tax-cost-recovery-deduction`,
+  `passthrough-loss-limitation`, `partnership-distribution-gain`,
+  `sample-misstatement-projection`, `capm-expected-return`,
+  `duplicate-payments-total`, `sc-audit-procedure-selection`,
+  `sc-control-design-gap`. Same checks as earlier batches (in
+  particular: simplified stated tax and audit rules used exactly as
+  given). No crosswalk mappings proposed yet.
+- 2026-10-26 — fifteen further generator families (Stable seeds
   236–250): `deferred-tax-asset-warranty`, `consignment-sale-recognition`,
   `natural-resource-depletion`, `internal-use-software-costs`,
   `lessor-sales-type-lease`, `factoring-secured-borrowing`,

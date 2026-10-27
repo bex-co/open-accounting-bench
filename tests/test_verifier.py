@@ -1445,6 +1445,111 @@ def test_credit_allowance_for_full_fv_decline_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_hedge_gain_all_to_oci_fails():
+    """Trap: put the ineffective portion of a hedge gain in OCI too."""
+    instance = FAMILIES["cash-flow-hedge-fair-value"](251)
+    total = _deltas(instance)["Assets:InterestRateSwap"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Hedge valuation",
+        [
+            ("Assets:InterestRateSwap", total),
+            ("Equity:AccumulatedOtherComprehensiveIncome", -total),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_whole_required_provision_fails():
+    """Trap: expense the required ending provision instead of the top-up."""
+    from decimal import Decimal
+
+    instance = FAMILIES["provision-rollforward-topup"](252)
+    required = -Decimal(
+        instance.expected["required_final_balances"]["Liabilities:RestructuringProvision"]
+    )
+    used = -_deltas(instance)["Assets:Bank:Checking"]
+    wrong = (
+        instance.initial_ledger
+        + _entry(
+            "2026-01-20",
+            "Severance",
+            [("Liabilities:RestructuringProvision", used), ("Assets:Bank:Checking", -used)],
+        )
+        + _entry(
+            "2026-01-31",
+            "Management",
+            [
+                ("Expenses:Restructuring", required),
+                ("Liabilities:RestructuringProvision", -required),
+            ],
+        )
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_crediting_new_partner_full_contribution_fails():
+    """Trap: credit the new partner with all cash paid (no old-partner bonus)."""
+    instance = FAMILIES["partnership-admission-bonus"](253)
+    contribution = _deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-15",
+        "Cara",
+        [("Assets:Bank:Checking", contribution), ("Equity:CaraCapital", -contribution)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_governmental_expenditure_at_estimate_fails():
+    """Trap: record the expenditure at the purchase-order estimate."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["governmental-encumbrance-entry"](254)
+    doc = instance.app_files["documents/purchase_order.md"]
+    estimate = Decimal(re.search(r"estimated at\s+USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Supplier",
+        [("Expenses:Expenditures", estimate), ("Liabilities:AccountsPayable", -estimate)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_incremental_commission_fails():
+    """Trap: expense a recoverable contract commission immediately."""
+    instance = FAMILIES["contract-acquisition-cost"](255)
+    d = _deltas(instance)
+    total_paid = -d["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-01",
+        "Sales team",
+        [("Expenses:Wages", total_paid), ("Assets:Bank:Checking", -total_paid)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_accretion_on_undiscounted_amount_fails():
+    """Trap: accrete on the future undiscounted settlement cost."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["aro-accretion"](256)
+    doc = instance.app_files["documents/aro_data.md"]
+    settlement = Decimal(re.search(r"settlement cost.*?USD ([\d]+\.[\d]{2})", doc)[1])
+    rate = Decimal(re.search(r"rate: ([\d.]+)% per month", doc)[1]) / 100
+    wrong_amount = (settlement * rate).quantize(Decimal("0.01"))
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "ARO",
+        [
+            ("Expenses:Accretion", wrong_amount),
+            ("Liabilities:AssetRetirementObligation", -wrong_amount),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
 def test_current_tax_only_ignores_deferred_benefit_fails():
     """Trap: expense the full current tax and record no deferred tax asset."""
     instance = FAMILIES["deferred-tax-asset-warranty"](236)
