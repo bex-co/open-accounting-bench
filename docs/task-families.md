@@ -330,6 +330,19 @@ D = standards depth):
 | `qbi-deduction-amount` | V | V | V | U | V | V | V | vocational |
 | `passthrough-ordinary-income` | V | V | V | U | V | V | V | vocational |
 | `owner-ordinary-from-k1` | V | V | V | U | V | V | V | vocational |
+| `section1231-capital-amount` | V | U | V | V | V | V | V | vocational |
+| `depreciation-recapture-ordinary` | V | V | V | V | V | V | V | vocational |
+| `estimated-tax-installment` | V | V | V | V | V | V | V | vocational |
+| `installment-sale-gain-year` | V | V | V | U | V | V | V | vocational |
+| `likekind-exchange-gain` | V | V | V | V | V | V | V | vocational |
+| `below-market-imputed-interest` | V | V | V | V | V | V | V | vocational |
+| `tax-equivalent-yield` | V | V | V | V | V | V | V | vocational |
+| `taxable-gifts-total` | V | V | V | U | V | V | V | vocational |
+| `charitable-noncash-deduction` | V | V | V | V | U | V | V | vocational |
+| `corporate-distribution-dividend` | V | V | V | V | V | V | V | vocational |
+| `liquidation-shareholder-gain` | V | V | V | U | V | V | V | vocational |
+| `corporate-formation-gain` | V | V | V | V | V | V | V | vocational |
+| `partnership-contribution-gain` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -588,8 +601,21 @@ problem the task hands over. An analysis task can be vocational.
 | `qbi-deduction-amount` | income-taxes | numeric | core | application | — | Capital gain left in limit base |
 | `passthrough-ordinary-income` | passthrough-taxation | numeric | core | application | — | Portfolio interest in ordinary income |
 | `owner-ordinary-from-k1` | passthrough-taxation | numeric | core | application | — | Separately stated items in ordinary income |
+| `section1231-capital-amount` | income-taxes | numeric | core | application | — | Full net gain as capital |
+| `depreciation-recapture-ordinary` | income-taxes | numeric | core | application | — | Larger of gain/depreciation as ordinary |
+| `estimated-tax-installment` | income-taxes | numeric | core | application | — | Paying the higher safe harbor |
+| `installment-sale-gain-year` | income-taxes | numeric | core | application | — | Percentage applied to cash incl. interest |
+| `likekind-exchange-gain` | income-taxes | numeric | core | application | — | Whole realized gain recognized |
+| `below-market-imputed-interest` | income-taxes | numeric | core | application | — | No credit for interest actually paid |
+| `tax-equivalent-yield` | income-taxes | numeric | core | application | — | Grossing up by (1 + rate) |
+| `taxable-gifts-total` | income-taxes | numeric | core | application | — | Exclusion granted to future interests |
+| `charitable-noncash-deduction` | income-taxes | numeric | core | application | — | FMV deducted for ordinary property |
+| `corporate-distribution-dividend` | corporate-taxation | numeric | core | application | — | Whole distribution as dividend |
+| `liquidation-shareholder-gain` | corporate-taxation | numeric | core | application | — | Assumed liabilities ignored |
+| `corporate-formation-gain` | corporate-taxation | numeric | core | application | — | Complete nonrecognition assumed |
+| `partnership-contribution-gain` | passthrough-taxation | numeric | core | application | — | Contributions assumed always tax-free |
 
-Stable seeds: 101–346 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–359 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -600,11 +626,11 @@ placeholders tracked as issues, not directories.
 |---|---:|---:|---:|---|
 | financial-accounting | 140 | 17 | 12 | planned |
 | management-accounting | 37 | planned | planned | planned |
-| tax | 27 | — | — | planned |
+| tax | 40 | — | — | planned |
 | audit-assurance | 13 | — | planned | — |
 
 Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×32,
-numeric ×120; open-text is
+numeric ×133; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

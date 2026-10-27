@@ -196,6 +196,19 @@ NUMERIC_FAMILIES = [
     "qbi-deduction-amount",
     "passthrough-ordinary-income",
     "owner-ordinary-from-k1",
+    "section1231-capital-amount",
+    "depreciation-recapture-ordinary",
+    "estimated-tax-installment",
+    "installment-sale-gain-year",
+    "likekind-exchange-gain",
+    "below-market-imputed-interest",
+    "tax-equivalent-yield",
+    "taxable-gifts-total",
+    "charitable-noncash-deduction",
+    "corporate-distribution-dividend",
+    "liquidation-shareholder-gain",
+    "corporate-formation-gain",
+    "partnership-contribution-gain",
 ]
 
 

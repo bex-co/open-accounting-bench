@@ -276,6 +276,19 @@ crosswalk mappings.
   simplifications are acceptable stand-ins and the stated-rule
   outcomes. Level scores assigned under the strict reading. No
   crosswalk mappings proposed yet.
+- 2026-10-26 — thirteen further generator families (Stable seeds
+  347–359): `section1231-capital-amount`,
+  `depreciation-recapture-ordinary`, `estimated-tax-installment`,
+  `installment-sale-gain-year`, `likekind-exchange-gain`,
+  `below-market-imputed-interest`, `tax-equivalent-yield`,
+  `taxable-gifts-total`, `charitable-noncash-deduction`,
+  `corporate-distribution-dividend`, `liquidation-shareholder-gain`,
+  `corporate-formation-gain`, `partnership-contribution-gain`. All
+  tax rules are simplified stated conventions in each policy (the
+  1231 lookback, 1245 recapture cap, penalty caps, and Section 351 /
+  partnership debt-relief slices in particular). Level scores
+  assigned under the strict reading. No crosswalk mappings proposed
+  yet.
 
 
 ## Reviewed

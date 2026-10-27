@@ -277,6 +277,20 @@
       "digest": "sha256:6f208447ffb24cb0062a929e6b7863ab5eecf52cba4def5e3a575cb1107052ad"
     },
     {
+      "task_id": "below-market-imputed-interest",
+      "family": "income-taxes",
+      "seed": 352,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:258c9d89b7ca9587005a40ac71ddd02ea509f1e1d8056e37b0ba34d7bdedde09"
+    },
+    {
       "task_id": "benefit-plan-net-assets",
       "family": "employee-benefits",
       "seed": 318,
@@ -595,6 +609,20 @@
       "digest": "sha256:4dbf401a6d7d2ab6eaca1f16a8bda9a73228c4f04b6267b432d26b76bc15b96e"
     },
     {
+      "task_id": "charitable-noncash-deduction",
+      "family": "income-taxes",
+      "seed": 355,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:1dc566502bce86e7a0a865bb266b127ddf46ec6d99afc83d73cd3e22ccc880eb"
+    },
+    {
       "task_id": "classify-operating-expense",
       "family": "transaction-classification",
       "seed": 101,
@@ -703,6 +731,34 @@
         "ifrs:15"
       ],
       "digest": "sha256:7400ddab3506d3ea543f1b7bacd32a1319a8dd7152c40c860a876b580b01ee4c"
+    },
+    {
+      "task_id": "corporate-distribution-dividend",
+      "family": "corporate-taxation",
+      "seed": 356,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:0f854f4a91877c7a7b247f463fa6dcf784b93cfb6042862fc5230c9bb338f783"
+    },
+    {
+      "task_id": "corporate-formation-gain",
+      "family": "corporate-taxation",
+      "seed": 358,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7fc890f4e3af7af74b7cd3cf6c65cd4424a98c26e2741df0a21495a2b0b46952"
     },
     {
       "task_id": "correct-misclassification",
@@ -884,6 +940,20 @@
       "digest": "sha256:96dfce916326e713b3b34e702cdf323f29d39e40cc38eb5c89fae58dfa6d56f1"
     },
     {
+      "task_id": "depreciation-recapture-ordinary",
+      "family": "income-taxes",
+      "seed": 348,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:573213c4ef121db365e0bd354868cbb105b1d3dbc1807e08aa7edc3da1e4b071"
+    },
+    {
       "task_id": "development-cost-capitalization",
       "family": "intangible-assets",
       "seed": 197,
@@ -1033,6 +1103,20 @@
         "ias:28"
       ],
       "digest": "sha256:769e8a41a082035e2c639a051605f3141ea48b36a602e7ab21299cc84bd963cb"
+    },
+    {
+      "task_id": "estimated-tax-installment",
+      "family": "income-taxes",
+      "seed": 349,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:fb79199a586d2bd393e56298c598f9859af97cf00cb8782fde0391453be580dc"
     },
     {
       "task_id": "exit-obligation-january-amount",
@@ -1428,6 +1512,20 @@
       "digest": "sha256:61d3f814e6e74e73d7387a36119fea1afc7b0215a617c6083bda3bb474003f74"
     },
     {
+      "task_id": "installment-sale-gain-year",
+      "family": "income-taxes",
+      "seed": 350,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:8aa912e7ea8270ff5efcf32793f912ea26c7d120b608bd890138b73a3be4ce5f"
+    },
+    {
       "task_id": "interim-income-tax-expense",
       "family": "income-taxes",
       "seed": 202,
@@ -1736,6 +1834,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:82a74c523499dd2794f9f921bca14afb509647b3824e0fa0582efd38a11ee0c4"
+    },
+    {
+      "task_id": "likekind-exchange-gain",
+      "family": "income-taxes",
+      "seed": 351,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:2a64553f283e56f0aa822e380f65a86d6436cd7a277617403bc638266f5013ef"
+    },
+    {
+      "task_id": "liquidation-shareholder-gain",
+      "family": "corporate-taxation",
+      "seed": 357,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5a5a113409f96ff48d459bf2c40da90fb7b35b335d96f7611239425466810153"
     },
     {
       "task_id": "loan-effective-interest",
@@ -2151,6 +2277,20 @@
       "skill": "analysis",
       "standards": [],
       "digest": "sha256:2378ca71948176b478cbfe481262c15afe7972ff5178d415a0103c237692ddbd"
+    },
+    {
+      "task_id": "partnership-contribution-gain",
+      "family": "passthrough-taxation",
+      "seed": 359,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4ca9a1f8f1e4d3cc43221c34d3410dfe39c7e84b6005bad30b5d4c6c15810336"
     },
     {
       "task_id": "partnership-distribution-gain",
@@ -3257,6 +3397,20 @@
       "digest": "sha256:689bace081fba3ff0fc4bb0257b11c91c5120b9b1ff976a141775e7813f7b8a8"
     },
     {
+      "task_id": "section1231-capital-amount",
+      "family": "income-taxes",
+      "seed": 347,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:943b4f8ae189d40067ff98ee53b669cd6d842bc84c8c9c15c60b8d42bf38a62b"
+    },
+    {
       "task_id": "segment-margin",
       "family": "responsibility-accounting",
       "seed": 203,
@@ -3461,6 +3615,20 @@
       "digest": "sha256:d8cb3c3dc138f62038d0ec5b2532df3913af0ec0442e19f9f4370fbc6ee7628d"
     },
     {
+      "task_id": "tax-equivalent-yield",
+      "family": "income-taxes",
+      "seed": 353,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:df4af3ee02258f3db0106e679d41c39e618aacadc1dcc5a14f67f710a59c59fb"
+    },
+    {
       "task_id": "tax-penalty-combined",
       "family": "income-taxes",
       "seed": 333,
@@ -3487,6 +3655,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:9d126f2e46c1fb94b04317121cbeec61fc558ce8cf7c7719713b3092893aef7f"
+    },
+    {
+      "task_id": "taxable-gifts-total",
+      "family": "income-taxes",
+      "seed": 354,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:cb97219839f769532ca8d046ed7a37ea2b4241664cfc7d263ac44e1678f52ad5"
     },
     {
       "task_id": "total-current-liabilities",

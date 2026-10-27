@@ -18457,6 +18457,718 @@ def owner_ordinary_from_k1(seed: int) -> TaskInstance:
     )
 
 
+def section1231_capital_amount(seed: int) -> TaskInstance:
+    """Numeric: net Section 1231 gain after the five-year lookback.
+
+    Trap: treating the whole net 1231 gain as capital and ignoring
+    recapture of prior years' net 1231 losses as ordinary.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gains = [amt(100, 401) for _ in range(2)]
+    losses = [amt(20, 121) for _ in range(2)]
+    net = sum(gains) - sum(losses)
+    assert net > 0
+    lookback = amt(10, 81)
+    while lookback >= net:
+        lookback = amt(10, 81)
+    gold = net - lookback
+    rows = "".join(f"| 1231 gain | {money(v)} |\n" for v in gains)
+    rows += "".join(f"| 1231 loss | {money(v)} |\n" for v in losses)
+    data = (
+        "# Section 1231 transactions — 2025\n\n| Item | USD |\n|---|---:|\n"
+        + rows
+        + f"| Unrecaptured net 1231 losses from the prior 5 years | {money(lookback)} |\n"
+    )
+    policy = """# Section 1231 rules (stated for this task)
+
+- Net all 1231 gains and losses for the year. A net GAIN is
+  generally long-term capital gain, EXCEPT that the portion up to
+  unrecaptured net 1231 losses deducted in the prior five years is
+  recharacterized as ORDINARY income (the lookback rule).
+- Answer the portion treated as long-term capital gain, in USD.
+"""
+    question = _numeric_question(
+        "capital portion of net 1231 gain",
+        "Using `/app/documents/section1231.md` and `/app/policy.md`, "
+        "compute the amount treated as **long-term capital gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="section1231-capital-amount",
+        family="income-taxes",
+        title="1231 netting with the lookback rule",
+        question=question,
+        policy=policy,
+        data_name="section1231.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "section-1231", "lookback"],
+        abs_tolerance="0.01",
+        trap_value=money(net),
+    )
+
+
+def depreciation_recapture_ordinary(seed: int) -> TaskInstance:
+    """Numeric: ordinary-income recapture on selling depreciable equipment.
+
+    Trap: recapturing the larger of gain or total depreciation in
+    full, whatever the actual gain is.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    cost, accdep = amt(400, 1001), amt(150, 501)
+    basis = cost - accdep
+    price = basis + amt(30, 401)
+    gain = price - basis
+    while gain == accdep:
+        price += Decimal("1000")
+        gain = price - basis
+    gold = min(gain, accdep)
+    trap = max(gain, accdep)
+    data = (
+        "# Equipment sale (Section 1245 property)\n\n| Item | USD |\n|---|---:|\n"
+        f"| Original cost | {money(cost)} |\n"
+        f"| Accumulated depreciation taken | {money(accdep)} |\n"
+        f"| Selling price | {money(price)} |\n"
+    )
+    policy = """# Recapture rules (stated for this task)
+
+- Gain on depreciable personal property (Section 1245) is
+  ordinary income to the extent of depreciation taken, but never
+  more than the gain actually realized (selling price minus
+  adjusted basis). Any remaining gain keeps its capital/1231
+  character.
+- Answer the ordinary-income portion in USD.
+"""
+    question = _numeric_question(
+        "ordinary recapture portion",
+        "Using `/app/documents/equipment_sale.md` and `/app/policy.md`, "
+        "compute the **ordinary income recapture** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="depreciation-recapture-ordinary",
+        family="income-taxes",
+        title="Section 1245 recapture",
+        question=question,
+        policy=policy,
+        data_name="equipment_sale.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "recapture", "section-1245"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def estimated_tax_installment(seed: int) -> TaskInstance:
+    """Numeric: required quarterly estimated-tax installment (safe harbor).
+
+    Trap: paying on the HIGHER safe harbor.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    prior_tax = Decimal(rng.randrange(80, 241)) * 100
+    current_tax = Decimal(rng.randrange(90, 301)) * 100
+    while abs(prior_tax - current_tax * Decimal("0.9")) < Decimal("2000"):
+        current_tax += Decimal("5000")
+    gold = (min(prior_tax, current_tax * Decimal("0.9")) / 4).quantize(CENT)
+    trap = (max(prior_tax, current_tax * Decimal("0.9")) / 4).quantize(CENT)
+    data = (
+        "# Estimated tax data — individual\n\n| Item | USD |\n|---|---:|\n"
+        f"| Prior-year total tax (12-month return) | {money(prior_tax)} |\n"
+        f"| Expected current-year total tax | {money(current_tax)} |\n"
+    )
+    policy = """# Safe-harbor rules (stated for this task)
+
+To avoid an underpayment penalty, required annual estimated tax
+is the LESSER of 100% of the prior year's tax or 90% of the
+current year's tax, payable in four equal quarterly installments.
+
+- Answer one quarterly installment in USD.
+"""
+    question = _numeric_question(
+        "quarterly estimated tax installment",
+        "Using `/app/documents/estimated_tax.md` and `/app/policy.md`, "
+        "compute the **required quarterly installment** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="estimated-tax-installment",
+        family="income-taxes",
+        title="Safe-harbor estimated installments",
+        question=question,
+        policy=policy,
+        data_name="estimated_tax.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "estimated-tax", "safe-harbor"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def installment_sale_gain_year(seed: int) -> TaskInstance:
+    """Numeric: installment-sale gain recognized in the collection year.
+
+    Trap: applying the gross-profit percentage to total cash
+    collected including stated interest.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    price = Decimal(rng.choice([200, 250, 400, 500])) * 1000
+    margin_pct = rng.choice([40, 50, 60])
+    basis = price * (100 - margin_pct) / 100
+    collected = Decimal(rng.randrange(30, 121)) * 1000
+    interest = Decimal(rng.randrange(5, 26)) * 100
+    gold = (collected * margin_pct / 100).quantize(CENT)
+    trap = ((collected + interest) * margin_pct / 100).quantize(CENT)
+    data = (
+        "# Installment sale\n\n| Item | USD |\n|---|---:|\n"
+        f"| Contract price (total) | {money(price)} |\n"
+        f"| Seller's basis in the property | {money(basis)} |\n"
+        f"| Principal collected this year | {money(collected)} |\n"
+        f"| Interest collected this year (separately) | {money(interest)} |\n"
+    )
+    policy = """# Installment-sale rules (stated for this task)
+
+- Gross profit percentage = (contract price - basis) / contract
+  price. Gain recognized each year = PRINCIPAL collected that year
+  x gross profit percentage. Interest collected is ordinary
+  interest income, never part of the installment gain.
+- Answer this year's installment gain in USD.
+"""
+    question = _numeric_question(
+        "installment gain recognized this year",
+        "Using `/app/documents/installment_sale.md` and `/app/policy.md`, "
+        "compute the **gain recognized this year** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="installment-sale-gain-year",
+        family="income-taxes",
+        title="Installment sale gain for the year",
+        question=question,
+        policy=policy,
+        data_name="installment_sale.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "installment-sales"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def likekind_exchange_gain(seed: int) -> TaskInstance:
+    """Numeric: gain recognized in a like-kind exchange with boot.
+
+    Trap: recognizing the whole realized gain despite deferral.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    basis, fmv_new, boot = amt(100, 301), amt(250, 601), amt(10, 81)
+    realized = fmv_new + boot - basis
+    while realized <= boot:
+        fmv_new += Decimal("50000")
+        realized = fmv_new + boot - basis
+    data = (
+        "# Like-kind exchange of real property\n\n| Item | USD |\n|---|---:|\n"
+        f"| Adjusted basis of property given up | {money(basis)} |\n"
+        f"| Fair market value of like-kind property received | {money(fmv_new)} |\n"
+        f"| Cash boot also received | {money(boot)} |\n"
+    )
+    policy = """# Like-kind exchange rules (stated for this task)
+
+- Realized gain = value of property received + cash boot - basis
+  of property given up.
+- Recognized gain is the LESSER of the realized gain and the boot
+  received; the rest is deferred.
+- Answer the recognized gain in USD.
+"""
+    question = _numeric_question(
+        "gain recognized on a like-kind exchange",
+        "Using `/app/documents/exchange_data.md` and `/app/policy.md`, "
+        "compute the **recognized gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="likekind-exchange-gain",
+        family="income-taxes",
+        title="Boot limits recognized gain",
+        question=question,
+        policy=policy,
+        data_name="exchange_data.md",
+        data=data,
+        gold=boot,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "like-kind-exchange", "boot"],
+        abs_tolerance="0.01",
+        trap_value=money(realized),
+    )
+
+
+def below_market_imputed_interest(seed: int) -> TaskInstance:
+    """Numeric: imputed interest on a below-market loan.
+
+    Trap: taking the full applicable-rate interest without
+    credit for interest actually paid.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    principal = Decimal(rng.choice([100, 150, 200, 300])) * 1000
+    rate_pct = rng.choice([Decimal("4"), Decimal("5"), Decimal("6")])
+    paid = Decimal(rng.randrange(1, 31)) * 100
+    at_rate = (principal * rate_pct / 100).quantize(CENT)
+    gold = at_rate - paid
+    data = (
+        "# Below-market loan — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Loan principal (outstanding all year) | {money(principal)} |\n"
+        f"| Stated applicable federal rate | {rate_pct}% |\n"
+        f"| Interest actually paid by the borrower | {money(paid)} |\n"
+        "\nThe loan is a gift/demand loan between related parties with "
+        "interest below the applicable rate.\n"
+    )
+    policy = """# Below-market loan rules (stated for this task)
+
+- Forgone (imputed) interest for the year = principal x the stated
+  applicable rate, MINUS interest actually paid for the year.
+- Answer the imputed interest in USD.
+"""
+    question = _numeric_question(
+        "imputed interest on a below-market loan",
+        "Using `/app/documents/loan_data.md` and `/app/policy.md`, compute "
+        "the **imputed interest** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="below-market-imputed-interest",
+        family="income-taxes",
+        title="Imputed interest on a below-market loan",
+        question=question,
+        policy=policy,
+        data_name="loan_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "below-market-loans", "imputed-interest"],
+        abs_tolerance="0.01",
+        trap_value=money(at_rate),
+    )
+
+
+def tax_equivalent_yield(seed: int) -> TaskInstance:
+    """Numeric: taxable-equivalent yield of a tax-exempt bond.
+
+    Trap: grossing up by multiplying by (1 + tax rate).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    exempt, rate = rng.choice(
+        [
+            (Decimal("3.6"), Decimal("25")),
+            (Decimal("3"), Decimal("25")),
+            (Decimal("4.2"), Decimal("30")),
+            (Decimal("2.8"), Decimal("20")),
+        ]
+    )
+    gold = (exempt / (1 - rate / 100)).quantize(Decimal("0.01"))
+    trap = (exempt * (1 + rate / 100)).quantize(Decimal("0.01"))
+    data = (
+        "# Investment comparison\n\n"
+        f"A municipal bond yields {exempt}% tax-free. The investor's "
+        f"marginal tax rate is {rate}%.\n"
+    )
+    policy = """# Taxable-equivalent yield (stated for this task)
+
+Taxable-equivalent yield = tax-exempt yield / (1 - marginal tax
+rate). Answer as a percentage number (for example 4.80 means
+4.80%).
+
+- Answer in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "taxable-equivalent yield",
+        "Using `/app/documents/investment_comparison.md` and `/app/policy.md`, "
+        "compute the **taxable-equivalent yield** as a percentage number.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="tax-equivalent-yield",
+        family="income-taxes",
+        title="Taxable-equivalent yield",
+        question=question,
+        policy=policy,
+        data_name="investment_comparison.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "tax-equivalent-yield", "after-tax"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def taxable_gifts_total(seed: int) -> TaskInstance:
+    """Numeric: taxable gifts after per-donee annual exclusions.
+
+    Trap: granting the annual exclusion to a future-interest gift.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    exclusion = Decimal("18000")
+    g1 = Decimal(rng.randrange(20, 81)) * 1000
+    g2 = Decimal(rng.randrange(5, 31)) * 1000
+    future = Decimal(rng.randrange(15, 61)) * 1000
+    gold = max(g1 - exclusion, Decimal(0)) + max(g2 - exclusion, Decimal(0)) + future
+    trap = gold - exclusion
+    data = (
+        "# Gifts made in 2025 (donor unmarried, no split-gift election)\n\n"
+        "| Donee | Gift | USD |\n|---|---|---:|\n"
+        f"| Daughter | Cash outright (present interest) | {money(g1)} |\n"
+        f"| Son | Cash outright (present interest) | {money(g2)} |\n"
+        f"| Grandchildren's trust | Remainder interest only (future interest) | {money(future)} |\n"
+    )
+    policy = """# Gift-tax conventions (stated for this task)
+
+- Annual exclusion: USD 18,000 per donee, available ONLY for
+  present-interest gifts. Gifts of future interests get NO annual
+  exclusion.
+- Taxable gifts = the excess of present-interest gifts over the
+  per-donee exclusion (never below zero per donee) plus the full
+  amount of future-interest gifts.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "total taxable gifts",
+        "Using `/app/documents/gifts.md` and `/app/policy.md`, compute "
+        "**total taxable gifts** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="taxable-gifts-total",
+        family="income-taxes",
+        title="Annual exclusion and taxable gifts",
+        question=question,
+        policy=policy,
+        data_name="gifts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "gift-tax", "annual-exclusion"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def charitable_noncash_deduction(seed: int) -> TaskInstance:
+    """Numeric: charitable deduction for noncash gifts by asset type.
+
+    Trap: deducting fair market value for ordinary-income property.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    stock_fmv, stock_basis = amt(120, 401), amt(10, 61)
+    inv_fmv, inv_basis = amt(60, 201), amt(20, 81)
+    while inv_basis >= inv_fmv:
+        inv_basis = amt(10, 41)
+    cash = amt(20, 101)
+    gold = stock_fmv + inv_basis + cash
+    data = (
+        "# Charitable donations — 2025 (public charities)\n\n"
+        "| Donation | Fair value (USD) | Donor basis (USD) |\n|---|---:|---:|\n"
+        f"| Appreciated listed stock, held 3 years | {money(stock_fmv)} | {money(stock_basis)} |\n"
+        f"| Business inventory (ordinary property) | {money(inv_fmv)} | {money(inv_basis)} |\n"
+        f"| Cash | {money(cash)} | — |\n"
+    )
+    policy = """# Charitable-deduction conventions (stated for this task)
+
+- Long-term capital-gain property given to a public charity is
+  generally deductible at fair market value.
+- Ordinary-income property (for example inventory) is deductible
+  only at the donor's basis.
+- Cash is deductible at the amount given. No percentage-of-income
+  limits bind in this task.
+- Answer the total deduction in USD.
+"""
+    question = _numeric_question(
+        "charitable deduction total",
+        "Using `/app/documents/donations.md` and `/app/policy.md`, "
+        "compute the **total charitable deduction** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="charitable-noncash-deduction",
+        family="income-taxes",
+        title="Noncash charitable deduction by asset type",
+        question=question,
+        policy=policy,
+        data_name="donations.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "charitable-deductions"],
+        abs_tolerance="0.01",
+        trap_value=money(stock_fmv + inv_fmv + cash),
+    )
+
+
+def corporate_distribution_dividend(seed: int) -> TaskInstance:
+    """Numeric: dividend portion of a corporate cash distribution.
+
+    Trap: treating the whole distribution as a dividend when it
+    exceeds total earnings and profits.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    current_ep, accum_ep = amt(40, 151), amt(60, 221)
+    distribution = current_ep + accum_ep + amt(20, 101)
+    gold = current_ep + accum_ep
+    data = (
+        "# Corporate distribution — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Cash distributed to the sole shareholder | {money(distribution)} |\n"
+        f"| Current earnings & profits | {money(current_ep)} |\n"
+        f"| Accumulated earnings & profits (opening) | {money(accum_ep)} |\n"
+    )
+    policy = """# Distribution ordering (stated for this task)
+
+A distribution is a dividend to the extent of current earnings &
+profits first, then accumulated earnings & profits. Any excess
+over total E&P is a return of capital (and then gain), not a
+dividend.
+
+- Answer the dividend portion in USD.
+"""
+    question = _numeric_question(
+        "dividend portion of a distribution",
+        "Using `/app/documents/distribution_data.md` and `/app/policy.md`, "
+        "compute the **dividend portion** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="corporate-distribution-dividend",
+        family="corporate-taxation",
+        title="Dividend to the extent of E&P",
+        question=question,
+        policy=policy,
+        data_name="distribution_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "corporate-distributions", "e-and-p"],
+        abs_tolerance="0.01",
+        trap_value=money(distribution),
+    )
+
+
+def liquidation_shareholder_gain(seed: int) -> TaskInstance:
+    """Numeric: shareholder gain in a complete corporate liquidation.
+
+    Trap: forgetting that liabilities assumed by the shareholder
+    reduce the amount realized.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(150, 501)
+    basis_shareholder, liability = amt(100, 301), amt(30, 121)
+    cash, property_fmv = amt(60, 201), amt(100, 301)
+    # Rebalance cash so the constructed gain is the drawn gold.
+    cash = gold + basis_shareholder + liability - property_fmv
+    while cash <= 0:
+        property_fmv = amt(50, 151)
+        cash = gold + basis_shareholder + liability - property_fmv
+    data = (
+        "# Complete liquidation — sole shareholder\n\n| Item | USD |\n|---|---:|\n"
+        f"| Cash received | {money(cash)} |\n"
+        f"| Property received (fair market value) | {money(property_fmv)} |\n"
+        f"| Corporate liabilities assumed by the shareholder | {money(liability)} |\n"
+        f"| Shareholder's basis in the stock | {money(basis_shareholder)} |\n"
+    )
+    policy = """# Liquidation conventions (stated for this task)
+
+- The shareholder treats the liquidation as a sale of the stock:
+  amount realized = cash + fair market value of property received
+  MINUS corporate liabilities the shareholder assumes.
+- Gain = amount realized - stock basis.
+
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "shareholder gain on liquidation",
+        "Using `/app/documents/liquidation.md` and `/app/policy.md`, "
+        "compute the shareholder's **gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="liquidation-shareholder-gain",
+        family="corporate-taxation",
+        title="Shareholder gain in a liquidation",
+        question=question,
+        policy=policy,
+        data_name="liquidation.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "liquidations", "shareholder-gain"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + liability),
+    )
+
+
+def corporate_formation_gain(seed: int) -> TaskInstance:
+    """Numeric: transferor gain when liabilities exceed basis (Section 351).
+
+    Trap: assuming complete nonrecognition despite debt relief in
+    excess of basis.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    basis = amt(60, 171)
+    mortgage = basis + amt(20, 101)
+    stock_fmv, boot = amt(120, 301), amt(5, 51)
+    realized = stock_fmv + boot + mortgage - basis
+    gold = min(realized, boot + (mortgage - basis))
+    data = (
+        "# Incorporation transfer\n\n| Item | USD |\n|---|---:|\n"
+        f"| Transferor's basis in the property transferred | {money(basis)} |\n"
+        f"| Mortgage on the property assumed by the corporation | {money(mortgage)} |\n"
+        f"| Stock received (fair market value) | {money(stock_fmv)} |\n"
+        f"| Cash boot also received | {money(boot)} |\n"
+        "\nThe transferor controls the corporation immediately after "
+        "the exchange.\n"
+    )
+    policy = """# Incorporation rules (stated for this task)
+
+- No gain is recognized on a qualifying incorporation transfer
+  EXCEPT to the extent of (a) boot received plus (b) liabilities
+  assumed by the corporation in EXCESS of the transferor's basis.
+- Recognized gain can never exceed realized gain (stock + boot +
+  debt relief - basis).
+- Answer the recognized gain in USD.
+"""
+    question = _numeric_question(
+        "gain recognized on incorporation",
+        "Using `/app/documents/incorporation.md` and `/app/policy.md`, "
+        "compute the **recognized gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="corporate-formation-gain",
+        family="corporate-taxation",
+        title="Liabilities in excess of basis on incorporation",
+        question=question,
+        policy=policy,
+        data_name="incorporation.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "corporate-formation", "section-351"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
+def partnership_contribution_gain(seed: int) -> TaskInstance:
+    """Numeric: partner gain when debt relief exceeds outside basis.
+
+    Trap: assuming partnership contributions are always tax-free.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    basis = amt(40, 121)
+    liability = amt(150, 301)
+    share_pct = rng.choice([25, 40, 50])
+    net_relief = liability * (100 - share_pct) / 100
+    while net_relief <= basis:
+        liability += Decimal("5000")
+        net_relief = liability * (100 - share_pct) / 100
+    gold = (net_relief - basis).quantize(CENT)
+    data = (
+        "# Property contributed to a partnership\n\n| Item | USD |\n|---|---:|\n"
+        f"| Partner's basis in the contributed property | {money(basis)} |\n"
+        f"| Mortgage on the property taken over by the partnership | {money(liability)} |\n"
+        f"| Partner's share of partnership liabilities after contribution | {share_pct}% |\n"
+    )
+    policy = """# Contribution rules (stated for this task)
+
+- Contributions are normally tax-free. But relief from the
+  contributed property's liability, net of the partner's share of
+  that liability as a partner, is treated as a cash distribution:
+  if that net relief exceeds the partner's basis in the
+  contributed property, the excess is recognized gain.
+- Answer the recognized gain in USD.
+"""
+    question = _numeric_question(
+        "gain on a leveraged partnership contribution",
+        "Using `/app/documents/contribution.md` and `/app/policy.md`, "
+        "compute the **recognized gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="partnership-contribution-gain",
+        family="passthrough-taxation",
+        title="Debt relief in excess of basis on contribution",
+        question=question,
+        policy=policy,
+        data_name="contribution.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "partnerships", "contributions"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -18704,6 +19416,19 @@ FAMILIES = {
     "qbi-deduction-amount": qbi_deduction_amount,
     "passthrough-ordinary-income": passthrough_ordinary_income,
     "owner-ordinary-from-k1": owner_ordinary_from_k1,
+    "section1231-capital-amount": section1231_capital_amount,
+    "depreciation-recapture-ordinary": depreciation_recapture_ordinary,
+    "estimated-tax-installment": estimated_tax_installment,
+    "installment-sale-gain-year": installment_sale_gain_year,
+    "likekind-exchange-gain": likekind_exchange_gain,
+    "below-market-imputed-interest": below_market_imputed_interest,
+    "tax-equivalent-yield": tax_equivalent_yield,
+    "taxable-gifts-total": taxable_gifts_total,
+    "charitable-noncash-deduction": charitable_noncash_deduction,
+    "corporate-distribution-dividend": corporate_distribution_dividend,
+    "liquidation-shareholder-gain": liquidation_shareholder_gain,
+    "corporate-formation-gain": corporate_formation_gain,
+    "partnership-contribution-gain": partnership_contribution_gain,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -18954,4 +19679,17 @@ STABLE_SEEDS = {
     "qbi-deduction-amount": 344,
     "passthrough-ordinary-income": 345,
     "owner-ordinary-from-k1": 346,
+    "section1231-capital-amount": 347,
+    "depreciation-recapture-ordinary": 348,
+    "estimated-tax-installment": 349,
+    "installment-sale-gain-year": 350,
+    "likekind-exchange-gain": 351,
+    "below-market-imputed-interest": 352,
+    "tax-equivalent-yield": 353,
+    "taxable-gifts-total": 354,
+    "charitable-noncash-deduction": 355,
+    "corporate-distribution-dividend": 356,
+    "liquidation-shareholder-gain": 357,
+    "corporate-formation-gain": 358,
+    "partnership-contribution-gain": 359,
 }
