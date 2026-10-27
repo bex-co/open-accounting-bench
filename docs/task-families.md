@@ -99,161 +99,161 @@ D = standards depth):
 | `suspense-clearance` | V | V | U | U | V | V | V | university (borderline) |
 | `loan-effective-interest` | V | U | V | V | V | V | U | university (borderline) |
 | `revenue-bundle-allocation` | V | U | V | U | V | V | U | university |
-| `perpetual-sale-with-cost` | V | U | V | V | V | V | V | vocational |
-| `sales-return-restock` | V | U | V | V | V | V | V | vocational |
+| `perpetual-sale-with-cost` | V | V | V | V | V | V | V | vocational |
+| `sales-return-restock` | V | V | V | V | V | V | V | vocational |
 | `supplies-adjustment` | V | V | V | V | V | V | V | vocational |
 | `accrued-wages-adjustment` | V | V | V | V | V | V | V | vocational |
-| `straight-line-depreciation` | V | U | V | V | V | V | V | vocational |
-| `note-interest-accrual` | V | U | V | V | V | V | V | vocational |
-| `payroll-withholdings` | V | U | V | V | V | V | V | vocational |
-| `bond-discount-amortization` | V | U | V | V | V | V | U | vocational |
-| `cvp-target-profit-units` | V | U | V | V | V | V | V | vocational |
+| `straight-line-depreciation` | V | V | V | V | V | V | V | vocational |
+| `note-interest-accrual` | V | V | V | V | V | V | V | vocational |
+| `payroll-withholdings` | V | V | V | V | V | V | V | vocational |
+| `bond-discount-amortization` | V | U | V | V | V | V | U | university (borderline) |
+| `cvp-target-profit-units` | V | V | V | V | V | V | V | vocational |
 | `process-costing-equivalent-units` | V | U | V | V | V | V | V | vocational |
-| `operating-cash-flow-indirect` | V | U | V | V | V | V | U | vocational |
-| `inventory-days-on-hand` | V | U | V | V | V | V | V | vocational |
-| `equity-issue-above-par` | V | U | V | V | V | V | V | vocational |
+| `operating-cash-flow-indirect` | V | U | V | V | V | V | U | university (borderline) |
+| `inventory-days-on-hand` | V | V | V | V | V | V | V | vocational |
+| `equity-issue-above-par` | V | V | V | V | V | V | V | vocational |
 | `cash-dividend-declaration` | V | V | V | V | V | V | V | vocational |
-| `treasury-stock-repurchase` | V | V | V | V | V | V | V | vocational |
-| `closing-entries-income-summary` | V | U | V | V | V | V | V | vocational |
-| `job-overhead-applied` | V | U | V | U | V | V | V | vocational |
-| `note-dishonored` | V | U | V | V | V | U | V | vocational |
+| `treasury-stock-repurchase` | V | V | V | V | V | V | U | vocational |
+| `closing-entries-income-summary` | V | V | V | V | V | V | V | vocational |
+| `job-overhead-applied` | V | V | V | U | V | V | V | vocational |
+| `note-dishonored` | V | V | V | V | V | V | V | vocational |
 | `lifo-ending-inventory` | V | U | V | V | V | V | V | vocational |
-| `materials-price-variance` | V | U | V | V | V | V | V | vocational |
-| `npv-project-evaluation` | V | U | V | V | V | V | V | vocational |
-| `make-or-buy-advantage` | V | U | V | U | V | V | V | vocational |
-| `absorption-variable-income-difference` | V | U | V | V | V | V | V | vocational |
-| `current-ratio` | V | U | V | V | V | V | V | vocational |
-| `bank-adjusted-balance` | V | U | V | U | V | V | V | vocational |
-| `capitalized-cost-bundle` | V | U | V | U | V | V | V | vocational |
-| `employer-payroll-taxes` | V | U | V | V | V | V | V | vocational |
-| `current-portion-reclass` | V | U | V | V | V | V | V | vocational |
+| `materials-price-variance` | V | V | V | V | V | V | V | vocational |
+| `npv-project-evaluation` | V | V | V | V | V | V | V | vocational |
+| `make-or-buy-advantage` | V | U | V | U | V | V | V | university (borderline) |
+| `absorption-variable-income-difference` | V | V | V | V | V | V | V | vocational |
+| `current-ratio` | V | V | V | V | V | V | V | vocational |
+| `bank-adjusted-balance` | V | V | V | U | V | V | V | vocational |
+| `capitalized-cost-bundle` | V | V | V | U | V | V | V | vocational |
+| `employer-payroll-taxes` | V | V | V | V | V | V | V | vocational |
+| `current-portion-reclass` | V | V | V | V | V | V | V | vocational |
 | `periodic-purchase-with-freight` | V | V | V | V | V | V | V | vocational |
-| `bad-debt-percent-of-sales` | V | U | V | V | V | U | V | vocational |
-| `cash-discount-receipt` | V | U | V | V | V | V | V | vocational |
-| `abc-overhead-assigned` | V | U | V | U | V | V | V | vocational |
-| `high-low-variable-cost` | V | U | V | V | V | V | V | vocational |
-| `cash-collections-budget` | V | U | V | V | V | V | V | vocational |
-| `gross-profit-from-trial-balance` | V | U | V | U | V | V | V | vocational |
-| `ending-retained-earnings` | V | U | V | U | V | V | V | vocational |
-| `present-value-lump-sum` | V | U | V | V | V | V | V | vocational |
-| `flexible-budget-total-cost` | V | U | V | V | V | V | V | vocational |
-| `narrative-multi-transactions` | V | U | V | V | V | U | V | vocational |
-| `units-of-production-depreciation` | V | U | V | V | V | V | V | vocational |
-| `warranty-provision-and-claims` | V | U | V | V | V | U | V | vocational |
-| `sales-tax-collection` | V | U | V | V | V | V | V | vocational |
-| `petty-cash-replenishment` | V | U | V | U | V | V | V | vocational |
-| `small-stock-dividend` | V | U | V | V | V | V | U | vocational |
-| `accounting-equation-missing-equity` | V | U | V | V | V | V | V | vocational |
-| `current-income-tax-expense` | V | U | V | V | V | V | U | vocational |
-| `lease-liability-present-value` | V | U | V | V | V | V | U | vocational |
-| `equity-method-carrying-amount` | V | U | V | V | V | V | U | vocational |
-| `bond-issue-price` | V | U | V | V | V | V | U | vocational |
+| `bad-debt-percent-of-sales` | V | V | V | U | V | V | V | vocational |
+| `cash-discount-receipt` | V | V | V | V | V | V | V | vocational |
+| `abc-overhead-assigned` | V | U | V | U | V | V | V | university (borderline) |
+| `high-low-variable-cost` | V | V | V | V | V | V | V | vocational |
+| `cash-collections-budget` | V | V | V | V | V | V | V | vocational |
+| `gross-profit-from-trial-balance` | V | U | V | U | V | V | V | university (borderline) |
+| `ending-retained-earnings` | V | V | V | U | V | V | V | vocational |
+| `present-value-lump-sum` | V | V | V | V | V | V | V | vocational |
+| `flexible-budget-total-cost` | V | V | V | V | V | V | V | vocational |
+| `narrative-multi-transactions` | V | V | V | V | V | V | V | vocational |
+| `units-of-production-depreciation` | V | V | V | V | V | V | V | vocational |
+| `warranty-provision-and-claims` | V | V | V | V | V | U | V | vocational |
+| `sales-tax-collection` | V | V | V | V | V | V | V | vocational |
+| `petty-cash-replenishment` | V | V | V | U | V | V | V | vocational |
+| `small-stock-dividend` | V | U | V | V | V | V | U | university (borderline) |
+| `accounting-equation-missing-equity` | V | V | V | V | V | V | V | vocational |
+| `current-income-tax-expense` | V | V | V | V | V | V | U | vocational |
+| `lease-liability-present-value` | V | V | V | V | V | V | U | vocational |
+| `equity-method-carrying-amount` | V | U | V | V | V | V | U | university (borderline) |
+| `bond-issue-price` | V | U | V | V | V | V | U | university (borderline) |
 | `partnership-income-allocation` | V | U | V | V | V | V | V | vocational |
-| `mc-normal-balances` | V | V | V | U | V | V | V | vocational |
+| `mc-normal-balances` | V | V | V | V | V | V | V | vocational |
 | `sc-special-journal-routing` | V | V | V | V | V | V | V | vocational |
-| `short-term-note-payment` | V | U | V | V | V | V | V | vocational |
-| `credit-card-sale-fee` | V | U | V | V | V | V | V | vocational |
-| `patent-amortization` | V | U | V | U | V | V | U | vocational |
-| `loss-contingency-accrual` | V | U | V | U | U | V | U | vocational |
-| `bond-issued-at-premium` | V | U | V | V | V | V | U | vocational |
+| `short-term-note-payment` | V | V | V | V | V | V | V | vocational |
+| `credit-card-sale-fee` | V | V | V | V | V | V | V | vocational |
+| `patent-amortization` | V | V | V | U | V | V | U | university (borderline) |
+| `loss-contingency-accrual` | V | V | V | U | U | V | U | university |
+| `bond-issued-at-premium` | V | V | V | V | V | V | U | vocational |
 | `closing-drawing-account` | V | V | V | V | V | V | V | vocational |
-| `trading-securities-fair-value` | V | U | V | V | V | V | U | vocational |
-| `materials-quantity-variance` | V | U | V | V | V | V | V | vocational |
-| `cost-of-goods-manufactured` | V | U | V | V | V | V | V | vocational |
-| `payback-period-years` | V | U | V | U | V | V | V | vocational |
+| `trading-securities-fair-value` | V | V | V | V | V | V | U | vocational |
+| `materials-quantity-variance` | V | V | V | V | V | V | V | vocational |
+| `cost-of-goods-manufactured` | V | V | V | V | V | V | V | vocational |
+| `payback-period-years` | V | V | V | U | V | V | V | vocational |
 | `multiproduct-breakeven-units` | V | U | V | V | V | V | V | vocational |
-| `total-current-liabilities` | V | U | V | U | V | V | V | vocational |
+| `total-current-liabilities` | V | V | V | U | V | V | V | vocational |
 | `sc-cash-flow-classification` | V | V | V | V | V | V | U | vocational |
-| `inventory-shrinkage-adjustment` | V | U | V | V | V | V | V | vocational |
-| `purchase-return-perpetual` | V | U | V | V | V | V | V | vocational |
-| `overhead-variance-disposition` | V | U | V | V | V | V | V | vocational |
-| `unearned-revenue-release` | V | U | V | V | V | V | V | vocational |
-| `bond-early-retirement` | V | U | V | V | V | V | U | vocational |
-| `fvoci-fair-value-adjustment` | V | U | V | V | U | V | U | vocational |
-| `basket-purchase-allocation` | V | U | V | U | V | V | V | vocational |
-| `labor-efficiency-variance` | V | U | V | U | V | V | V | vocational |
-| `diluted-eps` | V | U | V | V | V | V | U | vocational |
-| `asset-turnover-ratio` | V | U | V | V | V | V | V | vocational |
-| `breakeven-sales-dollars` | V | U | V | V | V | V | V | vocational |
-| `direct-materials-used` | V | U | V | V | V | V | V | vocational |
-| `sc-subsequent-event-classification` | V | V | V | U | U | V | U | vocational |
-| `treasury-stock-reissuance` | V | U | V | V | V | V | U | vocational |
-| `lease-initial-recognition` | V | U | V | V | V | V | U | vocational |
-| `fx-payable-remeasurement` | V | U | V | V | V | V | U | vocational |
-| `development-cost-capitalization` | V | U | V | U | U | V | U | vocational |
-| `inventory-error-correction` | V | U | U | V | U | U | U | vocational |
-| `long-lived-asset-impairment` | V | U | V | U | U | V | U | vocational |
-| `production-budget-units` | V | U | V | V | V | V | V | vocational |
-| `predetermined-overhead-applied` | V | U | V | U | V | V | V | vocational |
-| `interim-income-tax-expense` | V | U | V | V | V | U | U | vocational |
-| `segment-margin` | V | U | V | U | V | V | V | vocational |
-| `residual-income` | V | U | V | V | V | V | V | vocational |
-| `cash-collected-from-customers` | V | U | V | V | V | V | U | vocational |
-| `free-cash-flow` | V | U | V | V | V | V | U | vocational |
+| `inventory-shrinkage-adjustment` | V | V | V | V | V | V | V | vocational |
+| `purchase-return-perpetual` | V | V | V | V | V | V | V | vocational |
+| `overhead-variance-disposition` | V | V | V | V | V | V | V | vocational |
+| `unearned-revenue-release` | V | V | V | V | V | V | V | vocational |
+| `bond-early-retirement` | V | V | V | V | V | V | U | vocational |
+| `fvoci-fair-value-adjustment` | V | V | V | V | V | V | U | vocational |
+| `basket-purchase-allocation` | V | V | V | U | V | V | V | vocational |
+| `labor-efficiency-variance` | V | V | V | V | V | V | V | vocational |
+| `diluted-eps` | V | U | V | V | V | V | U | university (borderline) |
+| `asset-turnover-ratio` | V | V | V | V | V | V | V | vocational |
+| `breakeven-sales-dollars` | V | V | V | V | V | V | V | vocational |
+| `direct-materials-used` | V | V | V | V | V | V | V | vocational |
+| `sc-subsequent-event-classification` | V | V | V | V | V | V | U | vocational |
+| `treasury-stock-reissuance` | V | U | V | V | V | V | U | university (borderline) |
+| `lease-initial-recognition` | V | V | V | V | V | V | U | vocational |
+| `fx-payable-remeasurement` | V | V | V | V | V | V | U | vocational |
+| `development-cost-capitalization` | V | V | V | V | U | V | U | university (borderline) |
+| `inventory-error-correction` | V | V | V | V | V | U | U | university (borderline) |
+| `long-lived-asset-impairment` | V | V | V | U | V | V | U | university (borderline) |
+| `production-budget-units` | V | V | V | V | V | V | V | vocational |
+| `predetermined-overhead-applied` | V | V | V | U | V | V | V | vocational |
+| `interim-income-tax-expense` | V | U | V | V | V | U | U | university |
+| `segment-margin` | V | V | V | U | V | V | V | vocational |
+| `residual-income` | V | V | V | V | V | V | V | vocational |
+| `cash-collected-from-customers` | V | V | V | V | V | V | U | vocational |
+| `free-cash-flow` | V | V | V | V | V | V | U | vocational |
 | `sc-transaction-statement-impact` | V | V | V | V | V | V | V | vocational |
-| `business-combination-acquisition` | V | U | V | U | U | U | U | university |
-| `consolidation-intercompany-elimination` | V | U | U | U | U | U | U | university |
-| `held-for-sale-measurement` | V | U | U | U | U | V | U | university |
-| `share-based-compensation-monthly` | V | U | V | V | V | V | U | vocational |
-| `asset-revaluation-surplus` | V | U | U | U | V | U | U | university |
-| `written-off-receivable-recovery` | V | U | V | V | V | V | V | vocational |
-| `nfp-conditional-vs-unconditional` | V | U | V | U | U | V | U | university |
-| `adjusted-receivable-balance` | V | U | V | V | V | V | V | vocational |
-| `ppe-additions-inferred` | V | U | V | V | V | V | V | vocational |
-| `fixed-overhead-volume-variance` | V | U | V | V | V | V | V | vocational |
+| `business-combination-acquisition` | V | U | V | U | V | V | U | university |
+| `consolidation-intercompany-elimination` | V | U | V | V | V | U | U | university |
+| `held-for-sale-measurement` | V | V | V | V | V | V | U | vocational |
+| `share-based-compensation-monthly` | V | V | V | V | V | V | U | vocational |
+| `asset-revaluation-surplus` | V | V | V | V | V | V | U | vocational |
+| `written-off-receivable-recovery` | V | V | V | V | V | V | V | vocational |
+| `nfp-conditional-vs-unconditional` | V | V | V | V | U | V | U | university (borderline) |
+| `adjusted-receivable-balance` | V | V | V | V | V | V | V | vocational |
+| `ppe-additions-inferred` | V | V | V | V | V | V | V | vocational |
+| `fixed-overhead-volume-variance` | V | V | V | V | V | V | V | vocational |
 | `cumulative-preferred-dividend` | V | U | V | V | V | V | V | vocational |
 | `weighted-average-cost-of-capital` | V | U | V | V | V | V | V | vocational |
 | `standard-cost-per-unit` | V | U | V | V | V | V | V | vocational |
 | `sc-job-vs-process-costing` | V | V | V | V | V | V | V | vocational |
-| `government-grant-release` | V | U | V | V | V | V | U | vocational |
-| `investment-property-fair-value` | V | U | V | V | U | V | U | vocational |
-| `goodwill-impairment` | V | U | U | U | U | V | U | university |
-| `fx-translation-adjustment` | V | U | V | U | U | V | U | university |
-| `sale-and-leaseback-entry` | V | U | U | U | U | U | U | university |
-| `debt-security-credit-loss` | V | U | V | U | U | V | U | university |
-| `trial-balance-debit-total` | V | U | V | U | V | V | V | vocational |
-| `post-closing-debit-total` | V | U | V | U | V | V | V | vocational |
-| `adjusted-wage-expense` | V | U | V | V | V | V | V | vocational |
+| `government-grant-release` | V | V | V | V | V | V | U | vocational |
+| `investment-property-fair-value` | V | V | V | V | V | V | U | vocational |
+| `goodwill-impairment` | V | V | V | V | V | V | U | vocational |
+| `fx-translation-adjustment` | V | V | V | V | V | V | U | vocational |
+| `sale-and-leaseback-entry` | V | V | V | V | V | V | U | vocational |
+| `debt-security-credit-loss` | V | V | V | U | V | V | U | university (borderline) |
+| `trial-balance-debit-total` | V | V | V | U | V | V | V | vocational |
+| `post-closing-debit-total` | V | V | V | U | V | V | V | vocational |
+| `adjusted-wage-expense` | V | V | V | V | V | V | V | vocational |
 | `inventory-method-profit-difference` | V | U | V | V | V | V | V | vocational |
-| `minimum-transfer-price` | V | U | V | U | U | V | V | vocational |
-| `debt-modification-percent-change` | V | U | V | U | V | V | U | vocational |
-| `mc-temporary-accounts` | V | V | V | U | V | V | V | vocational |
+| `minimum-transfer-price` | V | V | V | V | V | V | V | vocational |
+| `debt-modification-percent-change` | V | V | V | U | V | V | U | university (borderline) |
+| `mc-temporary-accounts` | V | V | V | V | V | V | V | vocational |
 | `sc-fair-value-hierarchy` | V | V | V | V | V | V | U | vocational |
-| `deferred-tax-asset-warranty` | V | U | U | U | U | V | U | university |
-| `consignment-sale-recognition` | V | U | U | U | U | V | U | university |
-| `natural-resource-depletion` | V | U | V | V | V | V | U | vocational |
-| `internal-use-software-costs` | V | U | V | U | U | V | U | university |
-| `lessor-sales-type-lease` | V | U | U | U | U | V | U | university |
-| `factoring-secured-borrowing` | V | U | U | U | U | V | U | university |
-| `pension-expense-and-contribution` | V | U | U | U | U | U | U | university |
-| `irr-from-annuity-factor` | V | U | V | V | V | V | V | vocational |
-| `c-corporation-taxable-income` | V | U | V | U | U | V | V | vocational |
-| `s-corporation-aaa-ending` | V | U | V | U | U | V | V | vocational |
-| `partnership-outside-basis` | V | U | V | U | U | V | V | vocational |
-| `performance-materiality` | V | U | V | V | V | V | V | vocational |
-| `cash-and-equivalents-total` | V | U | V | U | V | V | V | vocational |
+| `deferred-tax-asset-warranty` | V | U | V | V | V | V | U | university (borderline) |
+| `consignment-sale-recognition` | V | U | V | V | V | V | U | university (borderline) |
+| `natural-resource-depletion` | V | U | V | V | V | V | V | vocational |
+| `internal-use-software-costs` | V | V | V | V | U | V | U | university (borderline) |
+| `lessor-sales-type-lease` | V | V | V | V | V | V | U | vocational |
+| `factoring-secured-borrowing` | V | V | V | V | V | V | U | vocational |
+| `pension-expense-and-contribution` | V | U | V | V | V | V | U | university (borderline) |
+| `irr-from-annuity-factor` | V | V | V | V | V | V | V | vocational |
+| `c-corporation-taxable-income` | V | V | V | V | U | V | V | vocational |
+| `s-corporation-aaa-ending` | V | V | V | V | U | V | V | vocational |
+| `partnership-outside-basis` | V | V | V | V | U | V | V | vocational |
+| `performance-materiality` | V | V | V | V | V | V | V | vocational |
+| `cash-and-equivalents-total` | V | V | V | U | V | V | V | vocational |
 | `sc-investment-classification` | V | V | V | V | V | V | U | vocational |
-| `mc-reportable-segments` | V | U | V | U | V | V | U | vocational |
-| `cash-flow-hedge-fair-value` | V | U | U | U | U | U | U | university |
-| `provision-rollforward-topup` | V | U | U | V | U | U | V | university |
-| `partnership-admission-bonus` | V | U | U | V | U | U | U | university |
-| `governmental-encumbrance-entry` | V | U | U | V | U | U | U | university |
-| `contract-acquisition-cost` | V | U | V | U | U | V | U | university |
-| `aro-accretion` | V | U | V | V | V | V | U | vocational |
-| `tax-return-crossfoot-difference` | V | U | V | U | V | V | V | vocational |
-| `tax-cost-recovery-deduction` | V | U | V | V | V | V | V | vocational |
-| `passthrough-loss-limitation` | V | U | V | U | U | V | V | vocational |
-| `partnership-distribution-gain` | V | U | V | V | V | V | V | vocational |
-| `sample-misstatement-projection` | V | U | V | V | V | V | V | vocational |
-| `capm-expected-return` | V | U | V | V | V | V | V | vocational |
-| `duplicate-payments-total` | V | U | V | U | V | V | V | vocational |
+| `mc-reportable-segments` | V | V | V | V | V | V | U | vocational |
+| `cash-flow-hedge-fair-value` | V | V | V | V | V | V | U | vocational |
+| `provision-rollforward-topup` | V | U | V | V | V | U | U | university |
+| `partnership-admission-bonus` | V | U | V | V | V | U | V | university (borderline) |
+| `governmental-encumbrance-entry` | V | V | V | V | V | V | V | vocational |
+| `contract-acquisition-cost` | V | V | V | V | V | V | U | vocational |
+| `aro-accretion` | V | V | V | V | V | V | U | vocational |
+| `tax-return-crossfoot-difference` | V | V | V | U | V | V | V | vocational |
+| `tax-cost-recovery-deduction` | V | V | V | V | V | V | V | vocational |
+| `passthrough-loss-limitation` | V | V | V | V | V | V | V | vocational |
+| `partnership-distribution-gain` | V | V | V | V | V | V | V | vocational |
+| `sample-misstatement-projection` | V | V | V | V | V | V | V | vocational |
+| `capm-expected-return` | V | V | V | V | V | V | V | vocational |
+| `duplicate-payments-total` | V | V | U | U | V | V | V | university (borderline) |
 | `sc-audit-procedure-selection` | V | V | V | V | V | V | V | vocational |
-| `sc-control-design-gap` | V | V | V | U | V | V | V | vocational |
-| `inventory-error-income-effect` | V | U | V | V | V | V | V | vocational |
-| `inventory-lcm-value` | V | U | V | V | V | V | V | vocational |
+| `sc-control-design-gap` | V | V | V | V | V | V | V | vocational |
+| `inventory-error-income-effect` | V | U | V | V | V | V | U | university (borderline) |
+| `inventory-lcm-value` | V | U | V | V | V | V | U | university (borderline) |
 | `sc-fraud-triangle-classification` | V | V | V | V | V | V | V | vocational |
 | `expected-profit-choice` | V | U | V | V | V | V | V | vocational |
-| `receivables-control-balance` | V | U | V | V | V | V | V | vocational |
+| `receivables-control-balance` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).

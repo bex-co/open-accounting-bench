@@ -26,7 +26,7 @@
   "forbid_new_accounts": true,
   "category": "financial-accounting",
   "framework": "ifrs",
-  "level": "university",
+  "level": "vocational",
   "skill": "analysis",
   "standards": [
     "ifrs:9"

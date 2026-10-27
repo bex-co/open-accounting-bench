@@ -44,6 +44,37 @@ def test_suspense_memo_states_balance_side_without_sign():
         assert "credit balance" in memo or "debit balance" in memo, seed
 
 
+def test_level_scores_match_labels_and_generators():
+    """docs/task-families.md scores, its labels, and generator levels agree.
+
+    The rubric derives the level from the seven dimension scores
+    (>=2 at U or higher -> university; professional needs >=2 P
+    including I/E/J). 59 rows drifted once because nothing enforced
+    this; the table, the label, and TaskInstance.level must now
+    stay in lockstep for every family.
+    """
+    import re
+
+    text = (Path(__file__).parent.parent / "docs" / "task-families.md").read_text()
+    rows = {}
+    for line in text.splitlines():
+        m = re.match(
+            r"\| `([a-z0-9-]+)` \| ([VUP]) \| ([VUP]) \| ([VUP]) \| ([VUP]) "
+            r"\| ([VUP]) \| ([VUP]) \| ([VUP]) \| ([^|]+) \|",
+            line,
+        )
+        if m:
+            rows[m.group(1)] = (m.groups()[1:8], m.group(9).strip())
+
+    assert set(rows) == set(FAMILIES), sorted(set(FAMILIES) ^ set(rows))
+    for task_id, (scores, label) in rows.items():
+        ups = sum(1 for s in scores if s in "UP")
+        professional = scores.count("P") >= 2 and any(scores[i] == "P" for i in (2, 3, 4))
+        derived = "professional" if professional else ("university" if ups >= 2 else "vocational")
+        assert label.replace(" (borderline)", "") == derived, (task_id, scores, label)
+        assert FAMILIES[task_id](1).level == derived, task_id
+
+
 def test_scenario_sanity_sweeps():
     """Seeds 0-999: generated scenarios stay economically sensible."""
     import re
@@ -98,7 +129,11 @@ def test_stated_rates_fit_generated_prices():
         assert abs(proceeds - pv) < Decimal("5"), (seed, proceeds, pv)
 
         aro = FAMILIES["aro-accretion"](seed).app_files["documents/aro_data.md"]
-        carrying = Decimal(re.search(r"Carrying amount at 2026-01-01: USD ([\d]+\.[\d]{2})", aro)[1])
-        settlement = Decimal(re.search(r"settlement cost in 10 years: USD ([\d]+\.[\d]{2})", aro)[1])
+        carrying = Decimal(
+            re.search(r"Carrying amount at 2026-01-01: USD ([\d]+\.[\d]{2})", aro)[1]
+        )
+        settlement = Decimal(
+            re.search(r"settlement cost in 10 years: USD ([\d]+\.[\d]{2})", aro)[1]
+        )
         rate = Decimal(re.search(r"rate: ([\d.]+)% per month", aro)[1]) / 100
         assert abs(settlement - carrying * (1 + rate) ** 120) < Decimal("5"), seed

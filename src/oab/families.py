@@ -1650,7 +1650,7 @@ def perpetual_sale_with_cost(seed: int) -> TaskInstance:
     Oracle: AR/Sales at qty x price; COGS/Inventory at qty x unit cost.
     Trap: recording revenue only and leaving inventory/cost untouched.
     Equivalent: one combined transaction or two transactions.
-    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     item = rng.choice(["trail backpacks", "ceramic planters", "LED desk lamps"])
@@ -1731,7 +1731,7 @@ def sales_return_restock(seed: int) -> TaskInstance:
     Oracle: SalesReturns/AR at selling price; Inventory/COGS at unit cost.
     Trap: restocking inventory at selling price (inflates inventory, hides
     the margin reversal). Equivalent: combined or split entries.
-    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     item = rng.choice(["steel water bottles", "trail backpacks", "LED desk lamps"])
@@ -2140,7 +2140,8 @@ def payroll_withholdings(seed: int) -> TaskInstance:
 
     Oracle: wage expense at gross; credits split between the three
     withholdings and net wages payable. Trap: expensing net pay, which
-    understates both expense and liabilities. Level V/U/V/V/V/V/V.
+    understates both expense and liabilities.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     gross = Decimal(rng.randrange(6, 21)) * 2000
@@ -2230,7 +2231,8 @@ def bond_discount_amortization(seed: int) -> TaskInstance:
     Oracle: interest expense = issue price x stated effective monthly rate
     (rounded to cents); coupon payable = face x coupon rate / 12; the
     difference amortizes the discount. Trap: expensing the coupon only,
-    leaving the discount untouched. Level V/U/V/V/V/V/U -> vocational.
+    leaving the discount untouched.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     face = Decimal(rng.randrange(5, 21)) * 12000
@@ -2310,7 +2312,7 @@ def bond_discount_amortization(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["bonds-payable", "discount-amortization", "effective-interest"],
-        level="vocational",
+        level="university",
         standards=["asc:835-30", "ifrs:9"],
     )
 
@@ -2330,6 +2332,7 @@ def _numeric_instance(
     keywords: list[str],
     abs_tolerance: str = "1",
     standards: list[str] | None = None,
+    level: str = "vocational",
     **extra_expected,
 ) -> TaskInstance:
     return TaskInstance(
@@ -2363,7 +2366,7 @@ def _numeric_instance(
         solution_ledger="",
         solution_answer={"final_answer": float(gold), "confidence": 100},
         keywords=keywords,
-        level="vocational",
+        level=level,
         category=category,
         format="numeric",
         standards=standards or [],
@@ -2530,6 +2533,7 @@ def operating_cash_flow_indirect(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "cash-flow", "indirect-method"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(gold + 2 * gain),
         standards=["asc:230", "ias:7"],
@@ -2603,7 +2607,7 @@ def equity_issue_above_par(seed: int) -> TaskInstance:
 
     Oracle: Bank at proceeds; CommonStock at par x shares; APIC for rest.
     Trap: crediting common stock with the full proceeds.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     shares = rng.randrange(1000, 9001, 250)
@@ -2669,7 +2673,7 @@ def cash_dividend_declaration(seed: int) -> TaskInstance:
 
     Oracle: RetainedEarnings / DividendsPayable at shares x per-share amount.
     Trap: recording the February payment (or an expense) in January.
-    Level V/V/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     shares = rng.randrange(2000, 12001, 250)
@@ -2743,7 +2747,7 @@ def treasury_stock_repurchase(seed: int) -> TaskInstance:
 
     Oracle: TreasuryStock debited at repurchase cost against bank.
     Trap: debiting common stock (retirement treatment) or an asset.
-    Level V/V/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     shares = rng.randrange(200, 2001, 100)
@@ -2818,7 +2822,7 @@ def closing_entries_income_summary(seed: int) -> TaskInstance:
     IncomeSummary, net profit closed to RetainedEarnings; all nominal
     accounts end at zero. Trap: closing revenue only (expenses left open)
     or transferring gross revenue to retained earnings.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     revenue = Decimal(rng.randrange(300, 901)) * 25
@@ -2944,7 +2948,7 @@ def job_overhead_applied(seed: int) -> TaskInstance:
 
     Oracle: applied = direct-labor cost x rate; debit WIP, credit MfgOH.
     Trap: applying the actual overhead incurred (given in the document).
-    Level V/U/V/U/V/V/V -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     job = f"Job {rng.randint(40, 99)}"
@@ -3040,7 +3044,7 @@ def note_dishonored(seed: int) -> TaskInstance:
     + total interest; credits clear the note, the January-1 interest
     receivable (one month accrued), and January's interest income.
     Trap: transferring principal only and dropping the interest claim.
-    Level V/U/V/V/V/U/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     customer = rng.choice(["Birch & Co", "Fjord Outfitters", "Granite Supply"])
@@ -3336,6 +3340,7 @@ def make_or_buy_advantage(seed: int) -> TaskInstance:
         seed=seed,
         category="management-accounting",
         keywords=["numeric", "relevant-costing", "make-or-buy"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
     )
@@ -3509,7 +3514,7 @@ def capitalized_cost_bundle(seed: int) -> TaskInstance:
     staff training and a routine maintenance visit performed after the
     machine entered service are period expenses.
     Trap: capitalizing the whole invoice (training/maintenance inflate cost).
-    Level V/U/V/U/V/V/V -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     price = Decimal(rng.randrange(200, 601)) * 50
@@ -3607,7 +3612,7 @@ def employer_payroll_taxes(seed: int) -> TaskInstance:
     Oracle: payroll-tax expense = gross x (FICA match + unemployment %),
     credited to the two payables. Trap: treating employer taxes as a
     deduction from employees' pay (crediting wages payable / reducing wages).
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     gross = Decimal(rng.randrange(8, 26)) * 2000
@@ -3689,7 +3694,7 @@ def current_portion_reclass(seed: int) -> TaskInstance:
 
     Oracle: move one year's principal installment from long-term to the
     current-portion account. Trap: reclassifying the whole balance.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     annual = Decimal(rng.randrange(4, 16)) * 1000
@@ -3765,7 +3770,7 @@ def periodic_purchase_with_freight(seed: int) -> TaskInstance:
     Oracle: Purchases at invoice amount + FreightIn debited, AP credited
     for the total owed. Trap: debiting Inventory (perpetual habit) — the
     ledger intentionally has no inventory movement account for purchases.
-    Level V/V/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     supplier = rng.choice(["Apex Components", "Crestline Materials", "Bolt & Nut Supply"])
@@ -3834,7 +3839,7 @@ def bad_debt_percent_of_sales(seed: int) -> TaskInstance:
     Oracle: expense = credit sales x estimated % (the existing allowance
     balance is NOT considered under this method). Trap: aging-style
     true-up that credits only the shortfall over the existing balance.
-    Level V/U/V/V/V/U/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     credit_sales = Decimal(rng.randrange(80, 321)) * 500
@@ -3919,7 +3924,7 @@ def cash_discount_receipt(seed: int) -> TaskInstance:
 
     Oracle: Bank at net, SalesDiscounts at the discount, AR credited gross.
     Trap: crediting AR only with the cash received (discount left in AR).
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     customer = rng.choice(["Cobalt Retail", "Delta Foods", "Harbor Clinics"])
@@ -4035,6 +4040,7 @@ def abc_overhead_assigned(seed: int) -> TaskInstance:
         seed=seed,
         category="management-accounting",
         keywords=["numeric", "abc", "overhead-allocation"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
     )
@@ -4186,6 +4192,7 @@ def gross_profit_from_trial_balance(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "gross-profit", "income-statement"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
     )
@@ -4345,7 +4352,7 @@ def narrative_multi_transactions(seed: int) -> TaskInstance:
     Oracle: owner investment, equipment bought for cash, services rendered
     for cash, rent paid — each its own balanced entry (combined/split
     equivalents accepted on state). Trap: expensing the equipment.
-    Level V/U/V/V/V/U/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     invest = Decimal(rng.randrange(100, 401)) * 50
@@ -4428,7 +4435,7 @@ def units_of_production_depreciation(seed: int) -> TaskInstance:
 
     Oracle: (cost - residual) / total estimated units x January units.
     Trap: ignoring residual value in the per-unit rate.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     # Asset and its output unit are drawn as a pair.
@@ -4514,7 +4521,7 @@ def warranty_provision_and_claims(seed: int) -> TaskInstance:
     Oracle: claims paid debit the opening warranty liability (credit bank);
     January sales x estimate % is warranty expense credited to the liability.
     Trap: expensing the claims paid (cash-basis warranty accounting).
-    Level V/U/V/V/V/U/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/U/V -> vocational.
     """
     rng = random.Random(seed)
     sales = Decimal(rng.randrange(80, 321)) * 500
@@ -4614,7 +4621,7 @@ def sales_tax_collection(seed: int) -> TaskInstance:
 
     Oracle: bank at the tax-inclusive receipt; sales net; tax payable.
     Trap: recording the whole receipt as sales revenue.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     net_sales = Decimal(rng.randrange(20, 121)) * 1000
@@ -4692,7 +4699,7 @@ def petty_cash_replenishment(seed: int) -> TaskInstance:
     credit bank for fund minus cash on hand. The PettyCash account itself
     is untouched (imprest). Trap: crediting PettyCash or replenishing
     only the receipts and losing the shortage.
-    Level V/U/V/U/V/V/V -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     fund = Decimal(rng.choice([200, 300, 400]))
@@ -4775,7 +4782,8 @@ def small_stock_dividend(seed: int) -> TaskInstance:
 
     Oracle: retained earnings debited at market value of the new shares;
     common stock at par; APIC for the excess. Trap: capitalizing at par
-    only (the large-stock-dividend rule). Level V/U/V/V/V/V/U.
+    only (the large-stock-dividend rule).
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     outstanding = rng.randrange(4000, 16001, 500)
@@ -4853,7 +4861,7 @@ def small_stock_dividend(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["stock-dividend", "small-stock-dividend", "equity"],
-        level="vocational",
+        level="university",
     )
 
 
@@ -5042,6 +5050,7 @@ def equity_method_carrying_amount(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "equity-method", "associate"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
         standards=["asc:323", "ias:28"],
@@ -5094,6 +5103,7 @@ def bond_issue_price(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "bonds", "issue-price", "discount"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(face),
         standards=["asc:835-30", "ifrs:9"],
@@ -5185,7 +5195,8 @@ def mc_normal_balances(seed: int) -> TaskInstance:
 
     Trap: contra-assets (accumulated depreciation, allowance) look like
     assets but are credit-normal; dividends look like equity but are
-    debit-normal. Level: rule stated in policy -> vocational.
+    debit-normal.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     pool: list[tuple[str, bool]] = [
@@ -5275,8 +5286,8 @@ def sc_special_journal_routing(seed: int) -> TaskInstance:
     """Single-choice: route one transaction to its special journal.
 
     Trap: returns/adjustments look like sales/purchases activity but
-    belong in the general journal. Level: policy lists each journal's
-    scope -> vocational.
+    belong in the general journal.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     narrative, correct = rng.choice(SPECIAL_JOURNAL_CASES)
@@ -5347,7 +5358,8 @@ def short_term_note_payment(seed: int) -> TaskInstance:
 
     Oracle: debit note principal + interest expense for one month,
     credit bank maturity value. Trap: expensing the whole payment or
-    paying principal only. Level V/U/V/V/V/V/V -> vocational.
+    paying principal only.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     principal = Decimal(rng.randrange(2, 11)) * 12000
@@ -5425,7 +5437,7 @@ def credit_card_sale_fee(seed: int) -> TaskInstance:
 
     Oracle: sales at gross; bank at the net deposit; fee as expense.
     Trap: recording the net deposit as the sales amount.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     gross = Decimal(rng.randrange(30, 161)) * 100
@@ -5499,7 +5511,8 @@ def patent_amortization(seed: int) -> TaskInstance:
     """Scenario: first month's patent amortization over its useful life.
 
     Oracle: cost / (useful-life years x 12); the longer legal life is not
-    used. Trap: amortizing over the legal life. Level V/U/V/U/V/V/U.
+    used. Trap: amortizing over the legal life.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/U -> university.
     """
     rng = random.Random(seed)
     useful = rng.choice([5, 8, 10])
@@ -5555,7 +5568,7 @@ def patent_amortization(seed: int) -> TaskInstance:
         ),
         solution_ledger=solution,
         keywords=["intangible-assets", "amortization", "patent"],
-        level="vocational",
+        level="university",
         standards=["asc:350", "ias:38"],
     )
 
@@ -5573,7 +5586,7 @@ def loss_contingency_accrual(seed: int) -> TaskInstance:
 
     Oracle: accrue only the probable-and-estimable claim; the remote
     claim is not recorded. Trap: accruing both claims.
-    Level V/U/V/U/U/V/U -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/U/V/U -> university.
     """
     rng = random.Random(seed)
     probable = Decimal(rng.randrange(40, 201)) * 100
@@ -5628,7 +5641,7 @@ def loss_contingency_accrual(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["loss-contingency", "probable-estimable", "accrual"],
-        level="vocational",
+        level="university",
         standards=["asc:450", "ias:37"],
     )
 
@@ -5645,7 +5658,7 @@ def bond_issued_at_premium(seed: int) -> TaskInstance:
 
     Oracle: bank at proceeds; bonds payable at face; premium for excess.
     Trap: recording the liability at proceeds (no premium split).
-    Level V/U/V/V/V/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     face = Decimal(rng.randrange(5, 21)) * 12000
@@ -5731,7 +5744,8 @@ def closing_drawing_account(seed: int) -> TaskInstance:
 
     Oracle: OwnerCapital debited, Drawing credited (drawings never pass
     through income summary). Trap: closing drawings to income summary
-    (treating them as an expense). Level V/V/V/V/V/V/V -> vocational.
+    (treating them as an expense).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     capital = Decimal(rng.randrange(200, 601)) * 100
@@ -5817,7 +5831,8 @@ def trading_securities_fair_value(seed: int) -> TaskInstance:
 
     Oracle: debit the securities, credit unrealized gain in income for
     shares x (fair value - cost). Trap: leaving them at cost, or routing
-    the gain outside income. Level V/U/V/V/V/V/U -> vocational.
+    the gain outside income.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     shares = rng.randrange(100, 901, 25)
@@ -6162,7 +6177,7 @@ def sc_cash_flow_classification(seed: int) -> TaskInstance:
 
     Trap: dividends paid look like an operating distribution of profit
     but are financing; non-cash exchanges are not investing outflows.
-    Level: policy gives the section definitions -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     narrative, correct = rng.choice(CASH_FLOW_CASES)
@@ -6230,7 +6245,7 @@ def inventory_shrinkage_adjustment(seed: int) -> TaskInstance:
 
     Oracle: shortage units x unit cost debited to cost of goods sold,
     credited to inventory. Trap: valuing the shortage at selling price.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     item = rng.choice(["ceramic planters", "trail backpacks", "steel water bottles"])
@@ -6306,7 +6321,7 @@ def purchase_return_perpetual(seed: int) -> TaskInstance:
 
     Oracle: debit AP, credit inventory at purchase cost of returned units.
     Trap: crediting inventory at the goods' selling price.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     supplier = rng.choice(["Apex Components", "Bolt & Nut Supply", "Crestline Materials"])
@@ -6377,7 +6392,8 @@ def overhead_variance_disposition(seed: int) -> TaskInstance:
 
     Oracle: underapplied (actual - applied, debit balance) is debited to
     cost of goods sold. Trap: treating the balance as overapplied
-    (reversed entry). Level V/U/V/V/V/V/V -> vocational.
+    (reversed entry).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     applied = Decimal(rng.randrange(100, 401)) * 50
@@ -6457,7 +6473,8 @@ def unearned_revenue_release(seed: int) -> TaskInstance:
     """Scenario: one month earned on a 4-month advance service contract.
 
     Oracle: release total/4 from deferred revenue to service revenue.
-    Trap: releasing the whole advance in January. Level V/U/V/V/V/V/V.
+    Trap: releasing the whole advance in January.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     monthly = Decimal(rng.randrange(30, 121)) * 25
@@ -6530,7 +6547,8 @@ def bond_early_retirement(seed: int) -> TaskInstance:
 
     Oracle: remove face and the remaining discount; loss = call price -
     carrying amount (face - discount). Trap: measuring the loss against
-    face value and orphaning the discount. Level V/U/V/V/V/V/U.
+    face value and orphaning the discount.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     face = Decimal(rng.randrange(5, 16)) * 12000
@@ -6620,7 +6638,7 @@ def fvoci_fair_value_adjustment(seed: int) -> TaskInstance:
     Oracle: debit the investment, credit AOCI (equity), not profit or
     loss, and no recycling on this election. Trap: crediting the
     unrealized gain to income as for trading securities.
-    Level V/U/V/V/U/V/U -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     shares = rng.randrange(100, 801, 25)
@@ -6701,7 +6719,7 @@ def basket_purchase_allocation(seed: int) -> TaskInstance:
 
     Oracle: allocate the price by relative appraised values.
     Trap: splitting the lump sum evenly, or recording appraised values.
-    Level V/U/V/U/V/V/V -> vocational (borderline).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     land_appraised = Decimal(rng.randrange(4, 13)) * 10000
@@ -6870,6 +6888,7 @@ def diluted_eps(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "eps", "dilution", "treasury-stock-method"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=format(trap, "f"),
         standards=["asc:260", "ias:33"],
@@ -7058,8 +7077,8 @@ def sc_subsequent_event_classification(seed: int) -> TaskInstance:
     """Single-choice: recognized vs nonrecognized subsequent event.
 
     Trap: treating a post-period disaster (fire) as an adjusting event
-    because it is material. Level: policy states the condition-at-date
-    test -> vocational.
+    because it is material.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     narrative, correct = rng.choice(SUBSEQUENT_CASES)
@@ -7126,7 +7145,7 @@ def treasury_stock_reissuance(seed: int) -> TaskInstance:
 
     Oracle: bank at proceeds, treasury stock credited at cost, excess to
     APIC. Trap: recognizing the excess as a gain in income. Cost method.
-    Level V/U/V/V/V/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     shares = rng.randrange(200, 2001, 100)
@@ -7201,7 +7220,7 @@ def treasury_stock_reissuance(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["treasury-stock", "reissuance", "paid-in-capital"],
-        level="vocational",
+        level="university",
     )
 
 
@@ -7218,7 +7237,8 @@ def lease_initial_recognition(seed: int) -> TaskInstance:
 
     Oracle: right-of-use asset and lease liability at annual payment x
     annuity factor. Trap: expensing payments as rent with no balance-sheet
-    recognition. Level V/U/V/V/V/V/U -> vocational.
+    recognition.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     asset = rng.choice(["warehouse space", "delivery fleet", "production equipment"])
@@ -7297,7 +7317,8 @@ def fx_payable_remeasurement(seed: int) -> TaskInstance:
 
     Oracle: remeasure only the monetary payable to the closing spot,
     recognizing the increase as an FX loss. Trap: adjusting inventory
-    (a nonmonetary item at historical cost). Level V/U/V/V/V/V/U.
+    (a nonmonetary item at historical cost).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     supplier = rng.choice(["Alpen Werkzeuge", "Bergman Components", "Nordhaus GmbH"])
@@ -7380,7 +7401,8 @@ def development_cost_capitalization(seed: int) -> TaskInstance:
 
     Oracle: research and pre-feasibility work are expensed; only directly
     attributable post-feasibility materials and staff costs capitalize.
-    Trap: capitalizing all project spend. Level V/U/V/U/U/V/U.
+    Trap: capitalizing all project spend.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/U -> university.
     """
     rng = random.Random(seed)
     research = Decimal(rng.randrange(40, 161)) * 50
@@ -7448,7 +7470,7 @@ def development_cost_capitalization(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["ifrs", "ias-38", "development-costs", "research"],
-        level="vocational",
+        level="university",
         framework="ifrs",
         standards=["ias:38"],
     )
@@ -7462,7 +7484,8 @@ def inventory_error_correction(seed: int) -> TaskInstance:
 
     Oracle: debit inventory, credit opening retained earnings (prior-period
     correction, tax ignored as stated). Trap: crediting current-period
-    cost of goods sold. Level V/U/U/V/U/U/U -> vocational (borderline).
+    cost of goods sold.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/U/U -> university.
     """
     rng = random.Random(seed)
     item = rng.choice(["ceramic planters", "trail backpacks", "LED desk lamps"])
@@ -7538,7 +7561,7 @@ def inventory_error_correction(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["prior-period-error", "inventory", "restatement"],
-        level="vocational",
+        level="university",
         standards=["asc:250", "ias:8"],
     )
 
@@ -7556,7 +7579,8 @@ def long_lived_asset_impairment(seed: int) -> TaskInstance:
 
     Oracle: recoverable is the HIGHER of fair value less costs of disposal
     and value in use; impair carrying down to it. Trap: using the lower
-    measure (larger write-down). Level V/U/V/U/U/V/U -> vocational.
+    measure (larger write-down).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/U -> university.
     """
     rng = random.Random(seed)
     asset = rng.choice(["injection molder", "packaging line", "CNC router"])
@@ -7634,7 +7658,7 @@ def long_lived_asset_impairment(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["impairment", "ias-36", "recoverable-amount"],
-        level="vocational",
+        level="university",
         framework="ifrs",
         standards=["ias:36"],
     )
@@ -7781,6 +7805,7 @@ def interim_income_tax_expense(seed: int) -> TaskInstance:
         seed=seed,
         category="tax",
         keywords=["numeric", "interim-reporting", "income-tax"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
         standards=["asc:740", "ias:34"],
@@ -8084,7 +8109,7 @@ def business_combination_acquisition(seed: int) -> TaskInstance:
     Oracle: identifiable assets/liabilities at fair value, goodwill for
     consideration in excess of net identifiable assets. Trap: using the
     seller's book values (or pushing the excess into equipment).
-    Level V/U/V/U/U/U/U -> university.
+    Level scores R/S/I/E/J/C/D = V/U/V/U/V/V/U -> university.
     """
     rng = random.Random(seed)
     receivables = Decimal(rng.randrange(30, 121)) * 100
@@ -8180,7 +8205,7 @@ def consolidation_intercompany_elimination(seed: int) -> TaskInstance:
     Oracle: debit sales at transfer price, credit COGS at seller cost and
     inventory for unrealized profit. 100% is eliminated even with a
     noncontrolling interest. Trap: eliminating only the parent's 80%.
-    Level V/U/U/U/U/U/U -> university.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/U/U -> university.
     """
     rng = random.Random(seed)
     cost = Decimal(rng.randrange(50, 201)) * 100
@@ -8282,7 +8307,7 @@ def held_for_sale_measurement(seed: int) -> TaskInstance:
     Oracle: remove cost/accumulated depreciation, recognize the held-for
     -sale asset at fair value less costs to sell, and book the shortfall
     as a loss. Trap: reclassifying at carrying amount with no write-down.
-    Level V/U/U/U/U/V/U -> university.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     asset = rng.choice(["delivery vehicle", "packaging machine", "forklift"])
@@ -8368,7 +8393,7 @@ def held_for_sale_measurement(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["held-for-sale", "ifrs-5", "write-down"],
-        level="university",
+        level="vocational",
         framework="ifrs",
         standards=["ifrs:5"],
     )
@@ -8386,7 +8411,7 @@ def share_based_compensation_monthly(seed: int) -> TaskInstance:
 
     Oracle: January expense is grant-date fair value divided by vesting
     months, credited to APIC. Trap: expensing the entire grant in January.
-    Level V/U/V/V/V/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     years = rng.choice([2, 3, 4])
@@ -8457,7 +8482,8 @@ def asset_revaluation_surplus(seed: int) -> TaskInstance:
     Oracle (elimination method stated in policy): accumulated depreciation
     is eliminated against the gross amount, equipment is restated to fair
     value, and the uplift goes to revaluation surplus (OCI), not income.
-    Trap: crediting the uplift to profit or loss. Level V/U/U/U/V/U/U.
+    Trap: crediting the uplift to profit or loss.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     asset = rng.choice(["warehouse building", "production hall", "office building"])
@@ -8541,7 +8567,7 @@ def asset_revaluation_surplus(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["revaluation", "ias-16", "oci"],
-        level="university",
+        level="vocational",
         framework="ifrs",
         standards=["ias:16"],
     )
@@ -8552,7 +8578,7 @@ def written_off_receivable_recovery(seed: int) -> TaskInstance:
 
     Oracle: reinstate the receivable against the allowance, then record
     the collection. Trap: crediting the recovery directly to revenue.
-    Level V/U/V/V/V/V/V -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     customer = rng.choice(["Pine Mart", "Cobalt Retail", "Delta Foods"])
@@ -8642,7 +8668,7 @@ def nfp_conditional_vs_unconditional(seed: int) -> TaskInstance:
     Oracle: unconditional pledge is contribution revenue when promised;
     conditional cash advance is a refundable advance liability until the
     barriers are met. Trap: recognizing the conditional grant as revenue.
-    Level V/U/V/U/U/V/U -> university.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/U -> university.
     """
     rng = random.Random(seed)
     pledge = Decimal(rng.randrange(40, 161)) * 100
@@ -9202,7 +9228,7 @@ def investment_property_fair_value(seed: int) -> TaskInstance:
 
     Oracle: gain recognized in profit or loss under the IAS 40 fair-value
     model. Trap: routing it to OCI as if it were a PPE revaluation.
-    Level V/U/V/V/U/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     cost = Decimal(rng.randrange(150, 401)) * 1000
@@ -9279,7 +9305,7 @@ def goodwill_impairment(seed: int) -> TaskInstance:
 
     Oracle: the shortfall is allocated first to goodwill (shortfall here
     is smaller than goodwill). Trap: writing equipment down first.
-    Level V/U/U/U/U/V/U -> university.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     equipment_cost = Decimal(rng.randrange(100, 251)) * 1000
@@ -9349,7 +9375,7 @@ def goodwill_impairment(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["goodwill-impairment", "cgu", "ias-36"],
-        level="university",
+        level="vocational",
         framework="ifrs",
         standards=["ias:36"],
     )
@@ -9367,7 +9393,8 @@ def fx_translation_adjustment(seed: int) -> TaskInstance:
 
     Oracle: retranslation increase on unchanged FC net assets goes to
     OCI (cumulative translation adjustment), not profit or loss. Trap:
-    crediting an FX gain in income. Level V/U/V/U/U/V/U -> university.
+    crediting an FX gain in income.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     euros = Decimal(rng.randrange(10, 31)) * 10000
@@ -9430,7 +9457,7 @@ def fx_translation_adjustment(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["foreign-currency", "translation", "oci", "cta"],
-        level="university",
+        level="vocational",
         standards=["asc:830", "ias:21"],
     )
 
@@ -9447,7 +9474,8 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
 
     Oracle: derecognize the asset, recognize the full sale gain, and book
     the leaseback ROU asset/liability at the stated present value. Trap:
-    deferring the gain as if the sale had failed. Level V/U/U/U/U/U/U.
+    deferring the gain as if the sale had failed.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     carrying = Decimal(rng.randrange(80, 221)) * 1000
@@ -9538,7 +9566,7 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["sale-leaseback", "asc-842", "right-of-use"],
-        level="university",
+        level="vocational",
         skill="analysis",
         framework="us-gaap",
         standards=["asc:842"],
@@ -9560,7 +9588,8 @@ def debt_security_credit_loss(seed: int) -> TaskInstance:
 
     Oracle: top the allowance up to the new expected-credit-loss estimate.
     Trap: providing for the whole fair-value decline (including the
-    interest-rate component). Level V/U/V/U/U/V/U -> university.
+    interest-rate component).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/U -> university.
     """
     rng = random.Random(seed)
     amortized = Decimal(rng.randrange(100, 301)) * 1000
@@ -10030,6 +10059,7 @@ def debt_modification_percent_change(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "debt-modification", "ten-percent-test"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=format(trap, "f"),
         standards=["asc:470-50", "ifrs:9"],
@@ -10227,7 +10257,8 @@ def deferred_tax_asset_warranty(seed: int) -> TaskInstance:
 
     Oracle: total tax expense = current tax payable less the deferred tax
     benefit on the new deductible temporary difference. Trap: recording
-    only current tax. Level V/U/U/U/U/V/U -> university.
+    only current tax.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     warranty = Decimal(rng.randrange(40, 161)) * 1000
@@ -10307,7 +10338,7 @@ def consignment_sale_recognition(seed: int) -> TaskInstance:
     the consignee sells, commission expensed, cost relieved only for the
     units sold; unsold units remain the consignor's inventory. Trap:
     treating shipment (or the net remittance) as the sale.
-    Level V/U/U/U/U/V/U -> university.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     item = rng.choice(["handmade quilts", "ceramic vases", "wooden toys"])
@@ -10413,7 +10444,7 @@ def natural_resource_depletion(seed: int) -> TaskInstance:
     Oracle: deplete the deposit for ALL tons extracted into ore
     inventory, then expense only the tons sold. Trap: depleting (or
     expensing) only the sold tons so the asset/inventory split is wrong.
-    Level V/U/V/V/V/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
     rate = (Decimal(rng.randrange(200, 801, 25)) / 100).quantize(CENT)
@@ -10511,7 +10542,8 @@ def internal_use_software_costs(seed: int) -> TaskInstance:
 
     Oracle: preliminary-stage and post-implementation training costs are
     expensed; application-development coding/configuration capitalize.
-    Trap: capitalizing every project cost. Level V/U/V/U/U/V/U.
+    Trap: capitalizing every project cost.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/U -> university.
     """
     rng = random.Random(seed)
     preliminary = Decimal(rng.randrange(20, 81)) * 50
@@ -10590,7 +10622,8 @@ def lessor_sales_type_lease(seed: int) -> TaskInstance:
 
     Oracle: recognize selling profit at commencement (lease receivable at
     fair value, inventory relieved at cost), like a sale. Trap: operating
-    -lease treatment (keep asset, book rent). Level V/U/U/U/U/V/U.
+    -lease treatment (keep asset, book rent).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     units = rng.randrange(5, 21)
@@ -10671,7 +10704,7 @@ def lessor_sales_type_lease(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["lessor", "sales-type-lease", "selling-profit"],
-        level="university",
+        level="vocational",
         skill="analysis",
         standards=["asc:842", "ifrs:16"],
     )
@@ -10691,7 +10724,8 @@ def factoring_secured_borrowing(seed: int) -> TaskInstance:
 
     Oracle: cash is a secured borrowing net of the factor's fee; the
     receivables stay on the books. Trap: derecognizing receivables as a
-    sale. Level V/U/U/U/U/V/U -> university.
+    sale.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     receivables = Decimal(rng.randrange(80, 241)) * 500
@@ -10761,7 +10795,7 @@ def factoring_secured_borrowing(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["factoring", "secured-borrowing", "derecognition"],
-        level="university",
+        level="vocational",
         skill="analysis",
         standards=["asc:860", "ifrs:9"],
     )
@@ -11474,7 +11508,7 @@ def cash_flow_hedge_fair_value(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["derivatives", "cash-flow-hedge", "oci", "ineffectiveness"],
-        level="university",
+        level="vocational",
         skill="analysis",
         framework="ifrs",
         standards=["ifrs:9"],
@@ -11495,7 +11529,7 @@ def provision_rollforward_topup(seed: int) -> TaskInstance:
     Oracle: payments debit the provision; the January expense is only the
     top-up needed to reach the revised required ending balance. Trap:
     expensing the whole required ending balance (or the payments).
-    Level V/U/U/V/U/U/V -> university.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/U/U -> university.
     """
     rng = random.Random(seed)
     opening_provision = Decimal(rng.randrange(80, 201)) * 1000
@@ -11592,7 +11626,8 @@ def partnership_admission_bonus(seed: int) -> TaskInstance:
     Oracle (bonus method): Cara is credited only her stated percentage of
     post-admission book capital; the difference is a bonus credited to
     Ana and Ben in their profit ratio. Trap: crediting Cara with her
-    full cash contribution. Level V/U/U/V/U/U/U -> university.
+    full cash contribution.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/U/V -> university.
     """
     rng = random.Random(seed)
     ana = Decimal(rng.randrange(60, 141)) * 1000
@@ -11781,7 +11816,7 @@ def governmental_encumbrance_entry(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["governmental", "encumbrance", "budgetary-accounting"],
-        level="university",
+        level="vocational",
         skill="application",
         framework="us-gaap",
     )
@@ -11801,7 +11836,8 @@ def contract_acquisition_cost(seed: int) -> TaskInstance:
 
     Oracle: capitalize the incremental commission and amortize one month
     over the 24-month contract; non-incremental salaries are expensed.
-    Trap: expensing the commission immediately. Level V/U/V/U/U/V/U.
+    Trap: expensing the commission immediately.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     monthly_amort = Decimal(rng.randrange(20, 81)) * 10
@@ -11869,7 +11905,7 @@ def contract_acquisition_cost(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="medium",
         keywords=["contract-costs", "incremental-commission", "amortization"],
-        level="university",
+        level="vocational",
         standards=["asc:340-40", "ifrs:15"],
     )
 
@@ -11887,7 +11923,8 @@ def aro_accretion(seed: int) -> TaskInstance:
 
     Oracle: accretion = opening ARO carrying amount x the stated monthly
     credit-adjusted risk-free rate. Trap: applying the rate to the future
-    undiscounted settlement amount. Level V/U/V/V/V/V/U -> vocational.
+    undiscounted settlement amount.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
     """
     rng = random.Random(seed)
     monthly_rate = rng.choice([Decimal("0.004"), Decimal("0.005"), Decimal("0.006")])
@@ -12313,6 +12350,7 @@ def duplicate_payments_total(seed: int) -> TaskInstance:
         seed=seed,
         category="audit-assurance",
         keywords=["numeric", "audit-analytics", "duplicate-payments"],
+        level="university",
         abs_tolerance="0.01",
         trap_value=money(all_duplicate_payments),
     )
@@ -12557,6 +12595,7 @@ def inventory_error_income_effect(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "inventory", "error-effect"],
+        level="university",
         abs_tolerance="0.01",
         standards=["asc:330", "ias:2"],
         trap_value="0",
@@ -12625,6 +12664,7 @@ def inventory_lcm_value(seed: int) -> TaskInstance:
         seed=seed,
         category="financial-accounting",
         keywords=["numeric", "inventory", "lcm"],
+        level="university",
         abs_tolerance="0.01",
         standards=["asc:330"],
         trap_value=money(trap),
