@@ -225,6 +225,10 @@ name = "open-accounting-bench/equity-method-carrying-amount"
 digest = "sha256:76a52cc6771d0887c468ba0364c75a3e6fd4cf30260b99a3492ec7a722cbef5b"
 
 [[tasks]]
+name = "open-accounting-bench/expected-profit-choice"
+digest = "sha256:e7740e350b1460bfa219fa717ea2331e42a1b953aff415043d5722c418d42408"
+
+[[tasks]]
 name = "open-accounting-bench/factoring-secured-borrowing"
 digest = "sha256:1f25c03ddf576676004d53dcaaaa91e9994563f06f38138d15d629bec14b3c8a"
 
@@ -299,6 +303,14 @@ digest = "sha256:943cc361452f8d59ea59938da6264fc4ee8c11f9002c9b7d02db1f1a6e1c3ad
 [[tasks]]
 name = "open-accounting-bench/inventory-error-correction"
 digest = "sha256:dcadadba8956483d269548c846b826ffc36eec5d3452a657039661acc3da075c"
+
+[[tasks]]
+name = "open-accounting-bench/inventory-error-income-effect"
+digest = "sha256:3a4b1ae794a2ecf9e9340346519ba4b48e9eadf5e3716e044248b64ef3b1f628"
+
+[[tasks]]
+name = "open-accounting-bench/inventory-lcm-value"
+digest = "sha256:ba3562b7c625499ea9c5024a407bc13dfb1fe822eb270f4f0c99d4b8cc4e2176"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-method-profit-difference"
@@ -525,6 +537,10 @@ name = "open-accounting-bench/receivable-allowance-trueup"
 digest = "sha256:d8b94f23b19b485b42751876c339a3fd6cb0153a1b9299fe89c75640872cb56b"
 
 [[tasks]]
+name = "open-accounting-bench/receivables-control-balance"
+digest = "sha256:64984e6e396626f9e080258116b4418e9be5868244bc2161f608ed7aeed98744"
+
+[[tasks]]
 name = "open-accounting-bench/residual-income"
 digest = "sha256:e2aacface59c789b336ed767c5e628f87a5fae913ac89a20dcd7328ad7f7479d"
 
@@ -567,6 +583,10 @@ digest = "sha256:bf55e7514e28f4e4b8ea8a01edb34b3b53ced58cf236586b145388867ecc185
 [[tasks]]
 name = "open-accounting-bench/sc-fair-value-hierarchy"
 digest = "sha256:d3dcf157e03b4e392337208ad65f7dd52f9299881c7f5c6b6af5af7785dcd641"
+
+[[tasks]]
+name = "open-accounting-bench/sc-fraud-triangle-classification"
+digest = "sha256:5a53825c71ccfd6ff9c724821d748d18cc3e2a6062843a0c673c1e2d17c6e783"
 
 [[tasks]]
 name = "open-accounting-bench/sc-investment-classification"

@@ -143,6 +143,10 @@ NUMERIC_FAMILIES = [
     "sample-misstatement-projection",
     "capm-expected-return",
     "duplicate-payments-total",
+    "inventory-error-income-effect",
+    "inventory-lcm-value",
+    "expected-profit-choice",
+    "receivables-control-balance",
 ]
 
 
@@ -227,6 +231,7 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-investment-classification",
         "sc-audit-procedure-selection",
         "sc-control-design-gap",
+        "sc-fraud-triangle-classification",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

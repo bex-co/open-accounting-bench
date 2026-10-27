@@ -249,6 +249,11 @@ D = standards depth):
 | `duplicate-payments-total` | V | U | V | U | V | V | V | vocational |
 | `sc-audit-procedure-selection` | V | V | V | V | V | V | V | vocational |
 | `sc-control-design-gap` | V | V | V | U | V | V | V | vocational |
+| `inventory-error-income-effect` | V | U | V | V | V | V | V | vocational |
+| `inventory-lcm-value` | V | U | V | V | V | V | V | vocational |
+| `sc-fraud-triangle-classification` | V | V | V | V | V | V | V | vocational |
+| `expected-profit-choice` | V | U | V | V | V | V | V | vocational |
+| `receivables-control-balance` | V | U | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -426,8 +431,13 @@ problem the task hands over. An analysis task can be vocational.
 | `duplicate-payments-total` | audit-analytics | numeric | core | application | — | Include first legitimate payment |
 | `sc-audit-procedure-selection` | audit-evidence | single-choice | core | application | — | Mismatch assertion and procedure |
 | `sc-control-design-gap` | internal-control | single-choice | core | application | — | Generic control not matching gap |
+| `inventory-error-income-effect` | inventory | numeric | core | application | `asc:330`, `ias:2` | Self-correcting so Year 2 unaffected |
+| `inventory-lcm-value` | inventory | numeric | core | application | `asc:330` | Replacement cost as market, unbounded |
+| `sc-fraud-triangle-classification` | audit-planning | single-choice | core | application | — | Pressure read as opportunity |
+| `expected-profit-choice` | decision-analysis | numeric | core | application | — | Weaker alternative's expected profit |
+| `receivables-control-balance` | receivables | numeric | core | application | — | Cash sales swept into control account |
 
-Stable seeds: 101–265 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–270 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -436,13 +446,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 103 | 9 | 6 | planned |
-| management-accounting | 31 | planned | planned | planned |
+| financial-accounting | 106 | 9 | 6 | planned |
+| management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
-| audit-assurance | 5 | — | planned | — |
+| audit-assurance | 6 | — | planned | — |
 
-Format coverage: journal-entry ×85, multiple-choice ×4, single-choice ×9,
-numeric ×67; open-text is
+Format coverage: journal-entry ×85, multiple-choice ×4, single-choice ×10,
+numeric ×71; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

@@ -12391,6 +12391,373 @@ Match the remedy to the weakness:
     )
 
 
+def inventory_error_income_effect(seed: int) -> TaskInstance:
+    """Numeric: second-year income effect of a self-correcting count error.
+
+    Trap: because the error self-corrects over two years, answering that
+    Year 2 income is unaffected (0) instead of overstated by the error.
+    """
+    rng = random.Random(seed)
+    counted = Decimal(rng.randrange(60, 241)) * 1000
+    understatement = Decimal(rng.randrange(8, 61)) * 1000
+    data = (
+        "# Inventory count findings\n\n| Item | USD |\n|---|---:|\n"
+        f"| Year 1 ending inventory as counted and recorded | {money(counted)} |\n"
+        f"| Goods on hand at end of Year 1 but omitted from the count | "
+        f"{money(understatement)} |\n"
+        "| Year 2 ending inventory | correctly counted |\n"
+        "| Purchases, both years | correctly recorded |\n"
+    )
+    policy = """# Cost-of-goods-sold mechanics (applies to this task)
+
+- Cost of goods sold = beginning inventory + purchases - ending
+  inventory. Each year's ending inventory is the next year's beginning
+  inventory.
+- Report the overstatement of Year 2 net income as a positive USD
+  amount in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "Year 2 income effect of an inventory count error",
+        "Using `/app/documents/count_findings.md` and `/app/policy.md`, compute "
+        "the **amount by which Year 2 net income is overstated** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="inventory-error-income-effect",
+        family="inventory",
+        title="Second-year income effect of a count error",
+        question=question,
+        policy=policy,
+        data_name="count_findings.md",
+        data=data,
+        gold=understatement,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "inventory", "error-effect"],
+        abs_tolerance="0.01",
+        standards=["asc:330", "ias:2"],
+        trap_value="0",
+    )
+
+
+def inventory_lcm_value(seed: int) -> TaskInstance:
+    """Numeric: lower of cost or market with ceiling/floor on market.
+
+    Trap: using replacement cost directly as market, ignoring the NRV
+    ceiling and the NRV-less-normal-profit floor.
+    """
+    rng = random.Random(seed)
+    nrv = (Decimal(rng.randrange(3000, 9001, 25)) / 100).quantize(CENT)
+    margin = (Decimal(rng.randrange(300, 1201, 25)) / 100).quantize(CENT)
+    floor = nrv - margin
+    units = rng.randrange(120, 901, 20)
+    extra = (Decimal(rng.randrange(100, 801, 25)) / 100).quantize(CENT)
+    extra2 = (Decimal(rng.randrange(100, 801, 25)) / 100).quantize(CENT)
+    if rng.choice([True, False]):
+        # Replacement cost above the ceiling: market is capped at NRV.
+        replacement = nrv + extra
+        cost = nrv + extra2
+        market = nrv
+    else:
+        # Replacement cost below the floor: market is raised to the floor.
+        replacement = floor - extra
+        cost = floor + extra2
+        market = floor
+    gold = (min(cost, market) * units).quantize(CENT)
+    trap = (min(cost, replacement) * units).quantize(CENT)
+    data = (
+        "# Inventory item measured under LIFO (per unit)\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Cost | {money(cost)} |\n"
+        f"| Replacement cost | {money(replacement)} |\n"
+        f"| Net realizable value (selling price less completion/disposal) | "
+        f"{money(nrv)} |\n"
+        f"| Normal profit margin | {money(margin)} |\n"
+        f"| Units on hand | {units} |\n"
+    )
+    policy = """# Lower-of-cost-or-market conventions (applies to this task)
+
+- This inventory is measured lower of cost or market (LIFO basis).
+- Market is replacement cost, but no higher than net realizable value
+  (ceiling) and no lower than net realizable value minus a normal
+  profit margin (floor).
+- Reported amount = lower of cost or market, times units on hand.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "lower of cost or market",
+        "Using `/app/documents/item_data.md` and `/app/policy.md`, compute "
+        "the **reported inventory amount** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="inventory-lcm-value",
+        family="inventory",
+        title="Lower of cost or market with bounds",
+        question=question,
+        policy=policy,
+        data_name="item_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "inventory", "lcm"],
+        abs_tolerance="0.01",
+        standards=["asc:330"],
+        trap_value=money(trap),
+    )
+
+
+FRAUD_TRIANGLE_CASES = [
+    (
+        "A branch manager will lose her annual bonus unless the branch "
+        "hits a profit target it is currently missing; she has fallen "
+        "behind on her mortgage and credit-card payments.",
+        "Incentive / pressure",
+    ),
+    (
+        "The company will breach a loan covenant next quarter unless its "
+        "reported leverage improves, and the CFO's continued employment "
+        "depends on keeping the credit facility.",
+        "Incentive / pressure",
+    ),
+    (
+        "A sales director who is struggling to make ends meet on his "
+        "household budget is under heavy pressure from lenders to repay "
+        "personal debts that are already overdue.",
+        "Incentive / pressure",
+    ),
+    (
+        "One clerk can create new vendors, approve their invoices, and "
+        "release the payments, and nobody independently reviews changes "
+        "to the vendor master file.",
+        "Opportunity",
+    ),
+    (
+        "Warehouse quantities are recorded by the same employee who has "
+        "unrestricted after-hours access to the stock, and there are no "
+        "independent recounts.",
+        "Opportunity",
+    ),
+    (
+        "Change logging on the billing system was switched off during a "
+        "migration and never restored, so altered invoices leave no "
+        "audit trail.",
+        "Opportunity",
+    ),
+    (
+        "An accountant who was passed over for promotion says the company "
+        "owes her, and that taking small amounts for herself merely "
+        "balances things out.",
+        "Rationalization / attitude",
+    ),
+    (
+        "A manager defends recording next quarter's sales early by saying "
+        "everyone in the industry does it and the amount will reverse "
+        "anyway.",
+        "Rationalization / attitude",
+    ),
+    (
+        "An employee argues that the sums involved are trivial to a "
+        "company of this size and that he fully intends to pay them back "
+        "later.",
+        "Rationalization / attitude",
+    ),
+]
+FRAUD_TRIANGLE_OPTIONS = [
+    "Incentive / pressure",
+    "Opportunity",
+    "Rationalization / attitude",
+    "Capability",
+]
+
+
+def sc_fraud_triangle_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify a fact pattern in the fraud triangle.
+
+    Trap: reading personal or business pressure as an opportunity, or
+    picking capability (a fraud-diamond element) for a triangle fact.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(FRAUD_TRIANGLE_CASES)
+    options = FRAUD_TRIANGLE_OPTIONS.copy()
+    rng.shuffle(options)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[options.index(correct)]
+    options_md = "\n".join(
+        f"- {oid}. {name}" for oid, name in zip(option_ids, options, strict=True)
+    )
+    policy = """# Fraud triangle (applies to this task)
+
+- Incentive / pressure: a motive to commit fraud, such as personal
+  financial need, a bonus or job at stake, or a covenant to meet.
+- Opportunity: circumstances that allow fraud to be committed and
+  concealed, such as weak controls or concentrated duties.
+- Rationalization / attitude: a mindset that justifies the dishonest
+  act to the person committing it.
+- Capability is an element of the fraud diamond, not of the triangle:
+  select it only if none of the three triangle elements fits.
+"""
+    question = _choice_question(
+        "fraud triangle classification",
+        f"Fact pattern: **{narrative}**\n\nUsing `/app/policy.md`, which "
+        "element does this fact pattern illustrate? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-fraud-triangle-classification",
+        family="audit-planning",
+        title="Classify a fraud risk factor",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-fraud-triangle-classification",
+            "audit-planning",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="audit-assurance",
+        keywords=["single-choice", "fraud-triangle", "audit-planning"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def expected_profit_choice(seed: int) -> TaskInstance:
+    """Numeric: expected profit of the better of two uncertain products.
+
+    Trap: answering the expected profit of the weaker alternative, or
+    an unweighted average of the outcomes.
+    """
+    rng = random.Random(seed)
+    while True:
+
+        def outcome() -> Decimal:
+            return Decimal(rng.randrange(10, 121)) * 1000
+
+        a_high, a_low = outcome(), outcome()
+        b_high, b_low = outcome(), outcome()
+        pa = Decimal(rng.choice([50, 60, 70, 75, 80])) / 100
+        pb = Decimal(rng.choice([50, 60, 70, 75, 80])) / 100
+        emv_a = (pa * a_high + (1 - pa) * a_low).quantize(CENT)
+        emv_b = (pb * b_high + (1 - pb) * b_low).quantize(CENT)
+        if abs(emv_a - emv_b) >= 2000:
+            break
+    gold, trap = max(emv_a, emv_b), min(emv_a, emv_b)
+    data = (
+        "# Product launch forecasts (profit for the year)\n\n"
+        "| Product | Outcome | Probability | Profit (USD) |\n|---|---|---:|---:|\n"
+        f"| Kestrel | Strong demand | {int(pa * 100)}% | {money(a_high)} |\n"
+        f"| Kestrel | Weak demand | {int((1 - pa) * 100)}% | {money(a_low)} |\n"
+        f"| Marlin | Strong demand | {int(pb * 100)}% | {money(b_high)} |\n"
+        f"| Marlin | Weak demand | {int((1 - pb) * 100)}% | {money(b_low)} |\n"
+    )
+    policy = """# Expected-value conventions (applies to this task)
+
+- Expected profit of a product = sum over its outcomes of
+  (probability x profit).
+- The company can launch only one product and chooses the one with
+  the higher expected profit. Answer that expected profit in USD in
+  `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "expected profit of the chosen product",
+        "Using `/app/documents/forecasts.md` and `/app/policy.md`, compute "
+        "the **expected profit of the product the company will choose** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="expected-profit-choice",
+        family="decision-analysis",
+        title="Expected profit of the better product",
+        question=question,
+        policy=policy,
+        data_name="forecasts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "expected-value", "decision-making"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def receivables_control_balance(seed: int) -> TaskInstance:
+    """Numeric: closing receivables control-account balance.
+
+    Trap: sweeping cash sales into the control account along with
+    credit sales.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    while True:
+        opening, credit_sales = amt(200, 901), amt(1500, 4001)
+        cash_sales = amt(300, 1201)
+        receipts, returns, writeoffs = amt(900, 2601), amt(20, 151), amt(5, 61)
+        gold = opening + credit_sales - receipts - returns - writeoffs
+        if gold >= 5000:
+            break
+    data = (
+        "# Receivables activity for the month\n\n| Item | USD |\n|---|---:|\n"
+        f"| Balance at start of month (debit) | {money(opening)} |\n"
+        f"| Sales on credit | {money(credit_sales)} |\n"
+        f"| Cash sales | {money(cash_sales)} |\n"
+        f"| Cash received from credit customers | {money(receipts)} |\n"
+        f"| Returns from credit customers | {money(returns)} |\n"
+        f"| Accounts written off as uncollectible | {money(writeoffs)} |\n"
+    )
+    policy = """# Control-account conventions (applies to this task)
+
+- The receivables control account contains credit-customer activity
+  only: opening debit balance + credit sales - receipts from credit
+  customers - their returns - write-offs. Cash sales never enter it.
+- The closing balance must agree with the sum of the subsidiary
+  ledger balances. Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "closing receivables control balance",
+        "Using `/app/documents/receivables_activity.md` and `/app/policy.md`, "
+        "compute the **closing balance of the receivables control account** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="receivables-control-balance",
+        family="receivables",
+        title="Roll the receivables control account forward",
+        question=question,
+        policy=policy,
+        data_name="receivables_activity.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "receivables", "control-account"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + cash_sales),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -12557,6 +12924,11 @@ FAMILIES = {
     "duplicate-payments-total": duplicate_payments_total,
     "sc-audit-procedure-selection": sc_audit_procedure_selection,
     "sc-control-design-gap": sc_control_design_gap,
+    "inventory-error-income-effect": inventory_error_income_effect,
+    "inventory-lcm-value": inventory_lcm_value,
+    "sc-fraud-triangle-classification": sc_fraud_triangle_classification,
+    "expected-profit-choice": expected_profit_choice,
+    "receivables-control-balance": receivables_control_balance,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -12726,4 +13098,9 @@ STABLE_SEEDS = {
     "duplicate-payments-total": 263,
     "sc-audit-procedure-selection": 264,
     "sc-control-design-gap": 265,
+    "inventory-error-income-effect": 266,
+    "inventory-lcm-value": 267,
+    "sc-fraud-triangle-classification": 268,
+    "expected-profit-choice": 269,
+    "receivables-control-balance": 270,
 }

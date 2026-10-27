@@ -76,6 +76,13 @@ crosswalk mappings.
   `sc-control-design-gap`. Same checks as earlier batches (in
   particular: simplified stated tax and audit rules used exactly as
   given). No crosswalk mappings proposed yet.
+- 2026-10-26 — five further generator families (Stable seeds
+  266–270): `inventory-error-income-effect`, `inventory-lcm-value`,
+  `sc-fraud-triangle-classification`, `expected-profit-choice`,
+  `receivables-control-balance`. Same checks as earlier batches (in
+  particular: the LCM ceiling/floor construction and stated
+  conventions used exactly as given). No crosswalk mappings proposed
+  yet.
 - 2026-10-26 — fifteen further generator families (Stable seeds
   236–250): `deferred-tax-asset-warranty`, `consignment-sale-recognition`,
   `natural-resource-depletion`, `internal-use-software-costs`,

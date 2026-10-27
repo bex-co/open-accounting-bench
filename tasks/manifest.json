@@ -813,6 +813,20 @@
       "digest": "sha256:76a52cc6771d0887c468ba0364c75a3e6fd4cf30260b99a3492ec7a722cbef5b"
     },
     {
+      "task_id": "expected-profit-choice",
+      "family": "decision-analysis",
+      "seed": 269,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e7740e350b1460bfa219fa717ea2331e42a1b953aff415043d5722c418d42408"
+    },
+    {
       "task_id": "factoring-secured-borrowing",
       "family": "receivables",
       "seed": 241,
@@ -1107,6 +1121,39 @@
         "ias:8"
       ],
       "digest": "sha256:dcadadba8956483d269548c846b826ffc36eec5d3452a657039661acc3da075c"
+    },
+    {
+      "task_id": "inventory-error-income-effect",
+      "family": "inventory",
+      "seed": 266,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:330",
+        "ias:2"
+      ],
+      "digest": "sha256:3a4b1ae794a2ecf9e9340346519ba4b48e9eadf5e3716e044248b64ef3b1f628"
+    },
+    {
+      "task_id": "inventory-lcm-value",
+      "family": "inventory",
+      "seed": 267,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:330"
+      ],
+      "digest": "sha256:ba3562b7c625499ea9c5024a407bc13dfb1fe822eb270f4f0c99d4b8cc4e2176"
     },
     {
       "task_id": "inventory-method-profit-difference",
@@ -1929,6 +1976,20 @@
       "digest": "sha256:d8b94f23b19b485b42751876c339a3fd6cb0153a1b9299fe89c75640872cb56b"
     },
     {
+      "task_id": "receivables-control-balance",
+      "family": "receivables",
+      "seed": 270,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:64984e6e396626f9e080258116b4418e9be5868244bc2161f608ed7aeed98744"
+    },
+    {
       "task_id": "residual-income",
       "family": "responsibility-accounting",
       "seed": 204,
@@ -2092,6 +2153,20 @@
         "ifrs:13"
       ],
       "digest": "sha256:d3dcf157e03b4e392337208ad65f7dd52f9299881c7f5c6b6af5af7785dcd641"
+    },
+    {
+      "task_id": "sc-fraud-triangle-classification",
+      "family": "audit-planning",
+      "seed": 268,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5a53825c71ccfd6ff9c724821d748d18cc3e2a6062843a0c673c1e2d17c6e783"
     },
     {
       "task_id": "sc-investment-classification",
