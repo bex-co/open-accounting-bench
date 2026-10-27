@@ -73,6 +73,20 @@
       "digest": "sha256:b265236af89f2f146397c507cb7529daf98678e0b8e4441fab5693da64259be4"
     },
     {
+      "task_id": "adjusted-profit-from-draft",
+      "family": "financial-reporting",
+      "seed": 289,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:b1f8b446f0a8f6a503dcd104ee4e6f47a262fb5e1a84ad47526a3ae2b4270614"
+    },
+    {
       "task_id": "adjusted-receivable-balance",
       "family": "receivables",
       "seed": 215,
@@ -99,6 +113,37 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:c4a50d9c9b193aa6775fce4337605c5a14a7a4b9da6053c93b92cdec13e39df5"
+    },
+    {
+      "task_id": "agent-commission-revenue",
+      "family": "revenue-recognition",
+      "seed": 287,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:606",
+        "ifrs:15"
+      ],
+      "digest": "sha256:3aec3161e29c09c672077ec90635253b6019c626ca77f06e126f2c4ee24a49f9"
+    },
+    {
+      "task_id": "allowance-movement-expense",
+      "family": "receivables",
+      "seed": 284,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:2d2ae27cb41ff1116891458972c6327259d9d3454a4806c2086fa2f499e76959"
     },
     {
       "task_id": "aro-accretion",
@@ -971,6 +1016,23 @@
       "digest": "sha256:9e1cf73321753641246b13c61be70af042799f3ed1394969acf2542e882aa300"
     },
     {
+      "task_id": "gift-card-breakage-revenue",
+      "family": "revenue-recognition",
+      "seed": 288,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:606",
+        "ifrs:15"
+      ],
+      "digest": "sha256:7d0acee218d164762ff06519d7e9f1f15e0ae59a0cac00b43da489a2183c0e9b"
+    },
+    {
       "task_id": "goodwill-impairment",
       "family": "business-combinations",
       "seed": 224,
@@ -1323,6 +1385,20 @@
         "ifrs:16"
       ],
       "digest": "sha256:062570956f2df0196c4c623878a3e7ff403499a90aea6db6621614fd45d46765"
+    },
+    {
+      "task_id": "ledger-account-balance-carried-down",
+      "family": "ledger-integrity-reporting",
+      "seed": 283,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:58f49268df02e78be3833f98095ae7a06166fa92dae269a6278a649c5f50d44d"
     },
     {
       "task_id": "lessor-sales-type-lease",
@@ -1795,6 +1871,20 @@
       "digest": "sha256:63f01283a67fdae337f6ec8f10e52fe819a48696c1ea9a0efbf626b7a8a27965"
     },
     {
+      "task_id": "payables-control-balance",
+      "family": "payables",
+      "seed": 290,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:80d522935295124a43416aa4ed66a390abe1dffe0bf2c6211bff228e4e62829c"
+    },
+    {
       "task_id": "payables-statement-recon",
       "family": "payables-reconciliation",
       "seed": 110,
@@ -2094,6 +2184,20 @@
       "digest": "sha256:15e610a1d465b355ba322f2a5367ee8fbec9e1c5fed029485ab69c77da973369"
     },
     {
+      "task_id": "receivables-payables-contra",
+      "family": "receivables",
+      "seed": 285,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:d9c4f7bcf7ec1cd6abfe27fc78b477ad6e7ebfd52d90db61f6d76048bc9cc04f"
+    },
+    {
       "task_id": "residual-income",
       "family": "responsibility-accounting",
       "seed": 204,
@@ -2106,6 +2210,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:c6236e27534a7af606f6163be4378864560a44fbba64dd86dd3868da5b7f53a0"
+    },
+    {
+      "task_id": "restructuring-provision-amount",
+      "family": "provisions-contingencies",
+      "seed": 291,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:420",
+        "ias:37"
+      ],
+      "digest": "sha256:52a7cba6dac4133a1b73be5ce4468a949d6381b211bc304e7cebee21ed7a092b"
     },
     {
       "task_id": "revenue-bundle-allocation",
@@ -2349,6 +2470,20 @@
       "digest": "sha256:83ec2cc196bfbc07d81cdf937fa8d725447e272f36f0dbb4f5f784b113b46bb6"
     },
     {
+      "task_id": "sc-measurement-basis",
+      "family": "financial-reporting",
+      "seed": 286,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [],
+      "digest": "sha256:879487f894c810daf4fc3028df446060849b9283be948425449d2934d42c57e9"
+    },
+    {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
@@ -2378,6 +2513,20 @@
         "ias:10"
       ],
       "digest": "sha256:36fd56dd0cee4ed3ad7743571c89f1e3bf6e6c159178c9a6945e8943fd501fd8"
+    },
+    {
+      "task_id": "sc-suspense-account-cause",
+      "family": "ledger-integrity-reporting",
+      "seed": 292,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:aba7a236b834ca9bfdd0036c9600b3af40aa3a28274c66d511a1a063892099dc"
     },
     {
       "task_id": "sc-transaction-statement-impact",

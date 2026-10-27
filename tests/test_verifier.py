@@ -1695,6 +1695,27 @@ def test_expensing_pension_contribution_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_contra_clearing_larger_balance_fails():
+    """Trap: clear the larger mutual balance in full on a contra set-off."""
+    from decimal import Decimal
+
+    instance = FAMILIES["receivables-payables-contra"](285)
+    finals = instance.expected["required_final_balances"]
+    offset = Decimal(instance.expected["expected_deltas"]["Liabilities:AccountsPayable"])
+    ar_open = Decimal(finals["Assets:AccountsReceivable"]) + offset
+    ap_open = -Decimal(finals["Liabilities:AccountsPayable"]) + offset
+    larger = max(ar_open, ap_open)
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-25",
+        "Northwind Traders",
+        [
+            ("Liabilities:AccountsPayable", larger),
+            ("Assets:AccountsReceivable", -larger),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
 def test_formation_at_old_book_value_fails():
     """Trap: record contributed equipment at the contributor's book value."""
     import re

@@ -1,0 +1,25 @@
+{
+  "task_id": "sc-suspense-account-cause",
+  "family": "ledger-integrity-reporting",
+  "seed": 292,
+  "generator_version": "0.4.0",
+  "format": "single-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "A",
+  "options": [
+    "A",
+    "B"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": []
+}

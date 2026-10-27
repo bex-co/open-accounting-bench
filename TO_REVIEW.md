@@ -202,6 +202,16 @@ crosswalk mappings.
   de-facto-control cases, and the IAS 32 compound-instrument case).
   Level scores were assigned under the strict reading from the start.
   No crosswalk mappings proposed yet.
+- 2026-10-26 — ten further generator families (Stable seeds 283–292):
+  `ledger-account-balance-carried-down`, `allowance-movement-expense`,
+  `receivables-payables-contra`, `sc-measurement-basis`,
+  `agent-commission-revenue`, `gift-card-breakage-revenue`,
+  `adjusted-profit-from-draft`, `payables-control-balance`,
+  `restructuring-provision-amount`, `sc-suspense-account-cause`. Same
+  checks as earlier batches (in particular: the proportional-breakage
+  formula and the measurement-basis case wordings). Level scores
+  assigned under the strict reading. No crosswalk mappings proposed
+  yet.
 
 
 ## Reviewed

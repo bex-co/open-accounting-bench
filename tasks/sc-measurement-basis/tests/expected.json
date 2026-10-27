@@ -1,0 +1,27 @@
+{
+  "task_id": "sc-measurement-basis",
+  "family": "financial-reporting",
+  "seed": 286,
+  "generator_version": "0.4.0",
+  "format": "single-choice",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "B",
+  "options": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "remembering-understanding",
+  "standards": []
+}

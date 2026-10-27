@@ -154,6 +154,13 @@ NUMERIC_FAMILIES = [
     "disposal-of-subsidiary-gain",
     "step-acquisition-remeasurement-gain",
     "weighted-average-ending-inventory",
+    "ledger-account-balance-carried-down",
+    "allowance-movement-expense",
+    "agent-commission-revenue",
+    "gift-card-breakage-revenue",
+    "adjusted-profit-from-draft",
+    "payables-control-balance",
+    "restructuring-provision-amount",
 ]
 
 
@@ -267,6 +274,8 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-fraud-triangle-classification",
         "sc-debt-equity-classification",
         "sc-control-assessment",
+        "sc-measurement-basis",
+        "sc-suspense-account-cause",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

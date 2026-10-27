@@ -266,6 +266,16 @@ D = standards depth):
 | `disposal-of-subsidiary-gain` | V | V | V | V | V | V | U | vocational |
 | `step-acquisition-remeasurement-gain` | V | V | V | V | V | V | U | vocational |
 | `weighted-average-ending-inventory` | V | U | V | V | V | V | U | university (borderline) |
+| `ledger-account-balance-carried-down` | V | V | V | V | V | V | V | vocational |
+| `allowance-movement-expense` | V | U | V | V | V | V | V | vocational |
+| `receivables-payables-contra` | V | V | V | V | V | V | V | vocational |
+| `sc-measurement-basis` | V | V | V | V | V | V | V | vocational |
+| `agent-commission-revenue` | V | V | V | V | V | V | U | vocational |
+| `gift-card-breakage-revenue` | V | V | V | V | V | V | U | vocational |
+| `adjusted-profit-from-draft` | V | V | V | V | V | V | V | vocational |
+| `payables-control-balance` | V | V | V | U | V | V | V | vocational |
+| `restructuring-provision-amount` | V | V | V | U | V | V | U | university (borderline) |
+| `sc-suspense-account-cause` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -460,8 +470,18 @@ problem the task hands over. An analysis task can be vocational.
 | `disposal-of-subsidiary-gain` | consolidation | numeric | core | application | `asc:810`, `ifrs:10` | Gain on parent's share only |
 | `step-acquisition-remeasurement-gain` | business-combinations | numeric | core | application | `asc:805`, `ifrs:3` | Gain measured from original cost |
 | `weighted-average-ending-inventory` | inventory | numeric | core | application | `asc:330`, `ias:2` | Ending units at latest (FIFO) prices |
+| `ledger-account-balance-carried-down` | ledger-integrity-reporting | numeric | core | application | — | Netting entries the wrong way round |
+| `allowance-movement-expense` | receivables | numeric | core | application | — | Expense whole required allowance |
+| `receivables-payables-contra` | receivables | journal-entry | core | application | — | Clearing the larger balance in full |
+| `sc-measurement-basis` | financial-reporting | single-choice | core | remembering-understanding | — | Matching basis to account name |
+| `agent-commission-revenue` | revenue-recognition | numeric | core | application | `asc:606`, `ifrs:15` | Gross collections as revenue |
+| `gift-card-breakage-revenue` | revenue-recognition | numeric | core | application | `asc:606`, `ifrs:15` | Only amounts redeemed so far |
+| `adjusted-profit-from-draft` | financial-reporting | numeric | core | application | — | Subtracting the prepayment too |
+| `payables-control-balance` | payables | numeric | core | application | — | Cash purchases swept into control account |
+| `restructuring-provision-amount` | provisions-contingencies | numeric | core | application | `asc:420`, `ias:37` | Providing for retraining/relocation |
+| `sc-suspense-account-cause` | ledger-integrity-reporting | single-choice | core | application | — | Every error routed through suspense |
 
-Stable seeds: 101–282 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–292 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -470,13 +490,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 113 | 13 | 7 | planned |
+| financial-accounting | 123 | 13 | 7 | planned |
 | management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
 | audit-assurance | 6 | — | planned | — |
 
-Format coverage: journal-entry ×88, multiple-choice ×4, single-choice ×12,
-numeric ×78; open-text is
+Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×14,
+numeric ×85; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

@@ -13827,6 +13827,685 @@ def weighted_average_ending_inventory(seed: int) -> TaskInstance:
     )
 
 
+def ledger_account_balance_carried_down(seed: int) -> TaskInstance:
+    """Numeric: balance carried down on a two-sided ledger account.
+
+    Trap: netting the period's entries the wrong way round.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    opening = amt(40, 201)
+    receipts = [amt(20, 151) for _ in range(3)]
+    payments = [amt(15, 121) for _ in range(3)]
+    # Net movement kept material so the wrong-way-round trap differs.
+    while opening + sum(receipts) - sum(payments) <= Decimal("1000") or abs(
+        sum(receipts) - sum(payments)
+    ) < Decimal("500"):
+        receipts[0] += Decimal("5000")
+    gold = opening + sum(receipts) - sum(payments)
+    trap = opening + sum(payments) - sum(receipts)
+    if trap < 0:
+        trap = opening + sum(receipts) + sum(payments)
+    rows = "".join(f"| Receipt {i} (debit) | {money(v)} |\n" for i, v in enumerate(receipts, 1))
+    rows += "".join(f"| Payment {i} (credit) | {money(v)} |\n" for i, v in enumerate(payments, 1))
+    data = (
+        "# Cash account — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Balance brought down 2026-01-01 (debit) | {money(opening)} |\n{rows}"
+    )
+    policy = """# Balancing a ledger account (applies to this task)
+
+- To balance an account: total each side; the balance carried down
+  is the amount that makes the smaller side equal the larger side.
+  Cash is a debit-balance account: carried-down balance = opening
+  debit balance + receipts (debits) - payments (credits).
+- Answer the debit balance carried down in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "ledger balance carried down",
+        "Using `/app/documents/cash_account.md` and `/app/policy.md`, compute "
+        "the **balance carried down** on the cash account in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="ledger-account-balance-carried-down",
+        family="ledger-integrity-reporting",
+        title="Balance a ledger account",
+        question=question,
+        policy=policy,
+        data_name="cash_account.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "ledger-balancing", "carried-down"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def allowance_movement_expense(seed: int) -> TaskInstance:
+    """Numeric: bad-debt expense from the allowance rollforward.
+
+    Trap: expensing the whole required closing allowance.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    opening_allowance = amt(30, 151)
+    writeoffs = amt(10, 121)
+    while writeoffs >= opening_allowance:
+        writeoffs = amt(10, 121)
+    # Required allowance comfortably above the post-write-off balance,
+    # so the year's charge is an expense, not a release.
+    while True:
+        receivables = Decimal(rng.randrange(200, 801)) * 1000
+        pct = rng.choice([2, 3, 4, 5])
+        required = receivables * pct / 100
+        gold = required - (opening_allowance - writeoffs)
+        if gold >= Decimal("1000"):
+            break
+    data = (
+        "# Receivables and allowance — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Trade receivables at 2025-12-31 | {money(receivables)} |\n"
+        f"| Allowance for doubtful accounts at 2025-01-01 | {money(opening_allowance)} |\n"
+        f"| Accounts written off during 2025 | {money(writeoffs)} |\n"
+        f"| Required allowance | {pct}% of closing receivables |\n"
+    )
+    policy = """# Allowance rollforward (applies to this task)
+
+- Write-offs are charged against the allowance. The bad-debt expense
+  for the year is only the movement needed to bring the post-write-off
+  allowance balance to the required closing allowance.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "bad-debt expense for the year",
+        "Using `/app/documents/allowance_data.md` and `/app/policy.md`, "
+        "compute the **bad-debt expense** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="allowance-movement-expense",
+        family="receivables",
+        title="Bad-debt expense from the allowance movement",
+        question=question,
+        policy=policy,
+        data_name="allowance_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "allowance", "bad-debt"],
+        abs_tolerance="0.01",
+        trap_value=money(required),
+    )
+
+
+def receivables_payables_contra(seed: int) -> TaskInstance:
+    """Scenario: set off mutual balances with the same counterparty.
+
+    Oracle: debit payables, credit receivables for the SMALLER balance
+    when the parties agree a contra set-off. Trap: clearing the larger
+    balance in full, inventing a balance that does not exist.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    ar_balance = Decimal(rng.randrange(30, 121)) * 100
+    ap_balance = Decimal(rng.randrange(30, 121)) * 100
+    while ap_balance == ar_balance:
+        ap_balance = Decimal(rng.randrange(30, 121)) * 100
+    smaller = min(ar_balance, ap_balance)
+    opening = Decimal("20000.00")
+    contra_accounts = [(AR, "Accounts receivable"), (AP, "Accounts payable")]
+    initial = (
+        _ledger_header(opening, contra_accounts)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Northwind Traders receivable balance",
+            [("Assets:AccountsReceivable", ar_balance), ("Equity:Opening-Balances", -ar_balance)],
+        )
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Northwind Traders payable balance",
+            [("Equity:Opening-Balances", ap_balance), ("Liabilities:AccountsPayable", -ap_balance)],
+        )
+    )
+    doc = (
+        "# Contra agreement — 2026-01-25\n\n"
+        f"Northwind Traders is both a customer (owes us USD {money(ar_balance)}) "
+        f"and a supplier (we owe them USD {money(ap_balance)}). The parties "
+        "have agreed to set the balances off against each other (a contra "
+        "entry) on 2026-01-25; any residue stays outstanding.\n"
+    )
+    policy = POLICY + (
+        "- A contra set-off cancels only the SMALLER of the two mutual\n"
+        "  balances: debit accounts payable and credit accounts receivable\n"
+        "  for that amount. The residue of the larger balance remains.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-25",
+        "Northwind Traders",
+        "Contra set-off of mutual balances",
+        [("Liabilities:AccountsPayable", smaller), ("Assets:AccountsReceivable", -smaller)],
+    )
+    return TaskInstance(
+        task_id="receivables-payables-contra",
+        family="receivables",
+        title="Set off mutual receivable/payable balances",
+        instruction=(
+            "Record the set-off in `/app/documents/contra_agreement.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-25; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(contra_accounts),
+            "documents/contra_agreement.md": doc,
+        },
+        expected=_expected(
+            "receivables-payables-contra",
+            "receivables",
+            seed,
+            expected_deltas={
+                "Liabilities:AccountsPayable": money(smaller),
+                "Assets:AccountsReceivable": money(-smaller),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-25", "2026-01-25"],
+            required_final_balances={
+                "Assets:AccountsReceivable": money(ar_balance - smaller),
+                "Liabilities:AccountsPayable": money(-(ap_balance - smaller)),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="easy",
+        keywords=["contra", "set-off", "receivables", "payables"],
+        level="vocational",
+        skill="application",
+    )
+
+
+MEASUREMENT_OPTIONS = [
+    "Historical cost",
+    "Current (replacement) cost",
+    "Fair value",
+    "Present value",
+]
+MEASUREMENT_CASES = [
+    (
+        "A machine bought three years ago is carried at its original "
+        "purchase price less accumulated depreciation.",
+        "Historical cost",
+    ),
+    (
+        "An asset is recorded at the amount it would cost today to "
+        "replace its remaining service potential.",
+        "Current (replacement) cost",
+    ),
+    (
+        "Listed shares are recorded at their quoted market price at the reporting date.",
+        "Fair value",
+    ),
+    (
+        "A long-term obligation is recorded at the discounted amount "
+        "of the future net cash outflows expected to settle it.",
+        "Present value",
+    ),
+    (
+        "A receivable due in three years is recorded at the "
+        "discounted amount of the cash expected to be received.",
+        "Present value",
+    ),
+]
+
+
+def sc_measurement_basis(seed: int) -> TaskInstance:
+    """Single-choice: identify the measurement basis in use.
+
+    Trap: matching the basis to the account name instead of how the
+    amount was actually determined.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(MEASUREMENT_CASES)
+    labels = MEASUREMENT_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Measurement bases (applies to this task)
+
+- Historical cost: the amount paid (or received) at acquisition,
+  adjusted over time for depreciation, amortization, or impairment.
+- Current (replacement) cost: what it would cost today to replace
+  the asset's remaining service potential.
+- Fair value: the price in an orderly market transaction at the
+  measurement date (for example a quoted market price).
+- Present value: the discounted amount of expected future net cash
+  flows from the asset, or to settle the liability.
+"""
+    question = _choice_question(
+        "measurement basis",
+        f"Fact pattern: **{narrative}**\n\nUsing `/app/policy.md`, which "
+        "measurement basis is being used? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-measurement-basis",
+        family="financial-reporting",
+        title="Identify the measurement basis",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-measurement-basis",
+            "financial-reporting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "measurement-basis", "conceptual-framework"],
+        level="vocational",
+        format="single-choice",
+        skill="remembering-understanding",
+    )
+
+
+SUSPENSE_OPTIONS = [
+    "Opens / uses a suspense account",
+    "Does not need a suspense account",
+]
+SUSPENSE_CASES = [
+    (
+        "Wages of USD 800 were paid and recorded in the bank account; "
+        "the debit to wages expense was never made.",
+        "Opens / uses a suspense account",
+    ),
+    (
+        "Cash of USD 350 received from a customer was credited to the "
+        "customer's account but never debited to the cash account.",
+        "Opens / uses a suspense account",
+    ),
+    (
+        "Rent of USD 500 was debited to the repairs account instead of "
+        "the rent account; the credit to bank was correct.",
+        "Does not need a suspense account",
+    ),
+    (
+        "A sale of USD 1,200 was recorded as USD 2,100 in both the "
+        "sales account and the receivables account.",
+        "Does not need a suspense account",
+    ),
+    (
+        "Equipment bought for USD 5,000 on credit was debited to "
+        "purchases; the credit to payables was correct.",
+        "Does not need a suspense account",
+    ),
+]
+
+
+def sc_suspense_account_cause(seed: int) -> TaskInstance:
+    """Single-choice: does this error put the trial balance out of balance?
+
+    Trap: thinking every bookkeeping error needs a suspense account;
+    complete (but wrong) double entries never do.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SUSPENSE_CASES)
+    labels = SUSPENSE_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Suspense accounts (applies to this task)
+
+- A suspense account is used only when the trial balance disagrees
+  — that is, when a double entry is one-sided, incomplete, or made
+  with unequal debit and credit amounts.
+- Errors where a complete double entry was made (wrong account of
+  the same type, error of principle, or the same wrong amount on
+  both sides) leave the trial balance in agreement and never touch
+  a suspense account; they are corrected by journal directly.
+"""
+    question = _choice_question(
+        "suspense account cause",
+        f"Error found: **{narrative}**\n\nUsing `/app/policy.md`, does "
+        "correcting this error involve a suspense account? "
+        "Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-suspense-account-cause",
+        family="ledger-integrity-reporting",
+        title="Does this error need a suspense account?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-suspense-account-cause",
+            "ledger-integrity-reporting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "suspense-account", "error-correction"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def agent_commission_revenue(seed: int) -> TaskInstance:
+    """Numeric: an agent's revenue is the commission, not gross sales.
+
+    Trap: recognizing the gross amounts collected for the principal.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    gross = Decimal(rng.randrange(200, 901)) * 1000
+    pct = rng.choice([5, 8, 10, 12, 15])
+    gold = (gross * pct / 100).quantize(CENT)
+    data = (
+        "# Agency sales — January 2026\n\n"
+        f"The company sells goods as agent for a manufacturer: it never "
+        f"takes title to the goods, bears no inventory risk, and remits "
+        f"collections to the manufacturer. In January it collected "
+        f"USD {money(gross)} from end customers on the manufacturer's "
+        f"behalf under an agreement paying commission of {pct}% of "
+        "amounts collected.\n"
+    )
+    policy = """# Principal vs agent (applies to this task)
+
+- A party that arranges for goods to be provided by another party,
+  without obtaining control of the goods, is an agent. The agent's
+  revenue is only its fee or commission; amounts collected for the
+  principal are not the agent's revenue.
+- Answer the agent's January revenue in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "agent's revenue",
+        "Using `/app/documents/agency_sales.md` and `/app/policy.md`, "
+        "compute **revenue for January** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="agent-commission-revenue",
+        family="revenue-recognition",
+        title="Agent revenue is the commission",
+        question=question,
+        policy=policy,
+        data_name="agency_sales.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "agency", "gross-vs-net"],
+        abs_tolerance="0.01",
+        standards=["asc:606", "ifrs:15"],
+        trap_value=money(gross),
+    )
+
+
+def gift_card_breakage_revenue(seed: int) -> TaskInstance:
+    """Numeric: gift-card revenue including proportional breakage.
+
+    Trap: recognizing only the amount actually redeemed to date.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    sold = Decimal(rng.randrange(80, 241)) * 1000
+    redeem_pct = rng.choice([80, 90])  # expected to EVER be redeemed
+    redeemed = (sold * rng.choice([Decimal("0.3"), Decimal("0.4"), Decimal("0.5")])).quantize(CENT)
+    gold = (redeemed * 100 / redeem_pct).quantize(CENT)
+    data = (
+        "# Gift-card program — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Gift cards sold for cash (1 Jan) | {money(sold)} |\n"
+        f"| Redeemed by customers in January | {money(redeemed)} |\n"
+        f"| Expected proportion of cards that will ever be redeemed | {redeem_pct}% |\n"
+    )
+    policy = """# Breakage convention (applies to this task)
+
+- Amounts received for gift cards are a contract liability until
+  redemption. Expected breakage (the portion that will never be
+  redeemed) is recognized as revenue in PROPORTION to actual
+  redemptions: cumulative revenue to date = amount redeemed to
+  date / expected redemption rate.
+- Answer January's cumulative gift-card revenue in USD.
+"""
+    question = _numeric_question(
+        "gift-card revenue with breakage",
+        "Using `/app/documents/gift_cards.md` and `/app/policy.md`, "
+        "compute **cumulative revenue to date** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="gift-card-breakage-revenue",
+        family="revenue-recognition",
+        title="Gift-card revenue with proportional breakage",
+        question=question,
+        policy=policy,
+        data_name="gift_cards.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "breakage", "contract-liability"],
+        abs_tolerance="0.01",
+        standards=["asc:606", "ifrs:15"],
+        trap_value=money(redeemed),
+    )
+
+
+def adjusted_profit_from_draft(seed: int) -> TaskInstance:
+    """Numeric: correct a draft profit for period-end adjustments.
+
+    Trap: subtracting the prepayment as well (wrong sign), i.e.
+    treating every listed item as an extra expense.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    accrued, prepaid, depreciation = amt(20, 91), amt(15, 71), amt(25, 101)
+    gold = amt(300, 801)
+    draft = gold + accrued - prepaid + depreciation
+    trap = draft - accrued - prepaid - depreciation
+    data = (
+        "# Draft results and year-end adjustments — 2025\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Draft profit for the year (before adjustments below) | {money(draft)} |\n"
+        f"| Accrued wages at 31 Dec, not yet recorded | {money(accrued)} |\n"
+        f"| Insurance prepaid at 31 Dec, all charged to expense when paid | {money(prepaid)} |\n"
+        f"| Depreciation for the year, not yet recorded | {money(depreciation)} |\n"
+    )
+    policy = """# Adjusting a draft profit (applies to this task)
+
+- An unrecorded accrued expense reduces profit; a prepayment that
+  was expensed in full must be added back (only the consumed part
+  is an expense); unrecorded depreciation reduces profit.
+- Answer the adjusted profit in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "adjusted profit",
+        "Using `/app/documents/draft_results.md` and `/app/policy.md`, "
+        "compute the **adjusted profit for the year** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="adjusted-profit-from-draft",
+        family="financial-reporting",
+        title="Adjust a draft profit",
+        question=question,
+        policy=policy,
+        data_name="draft_results.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "adjustments", "draft-profit"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def payables_control_balance(seed: int) -> TaskInstance:
+    """Numeric: closing payables control-account balance.
+
+    Trap: sweeping cash purchases into the credit control account.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    while True:
+        opening, credit_purchases = amt(200, 801), amt(1200, 3001)
+        cash_purchases = amt(200, 901)
+        payments, returns, discounts = amt(900, 2401), amt(15, 101), amt(5, 41)
+        gold = opening + credit_purchases - payments - returns - discounts
+        if gold >= Decimal("5000"):
+            break
+    data = (
+        "# Payables activity for the month\n\n| Item | USD |\n|---|---:|\n"
+        f"| Balance at start of month (credit) | {money(opening)} |\n"
+        f"| Purchases on credit | {money(credit_purchases)} |\n"
+        f"| Cash purchases | {money(cash_purchases)} |\n"
+        f"| Payments to credit suppliers | {money(payments)} |\n"
+        f"| Returns to credit suppliers | {money(returns)} |\n"
+        f"| Discounts received from credit suppliers | {money(discounts)} |\n"
+    )
+    policy = """# Control-account conventions (applies to this task)
+
+- The payables control account contains credit-supplier activity
+  only: opening credit balance + credit purchases - payments -
+  returns - discounts received. Cash purchases never enter it.
+- The closing balance must agree with the sum of the subsidiary
+  ledger balances. Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "closing payables control balance",
+        "Using `/app/documents/payables_activity.md` and `/app/policy.md`, "
+        "compute the **closing balance of the payables control account** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="payables-control-balance",
+        family="payables",
+        title="Roll the payables control account forward",
+        question=question,
+        policy=policy,
+        data_name="payables_activity.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "payables", "control-account"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + cash_purchases),
+    )
+
+
+def restructuring_provision_amount(seed: int) -> TaskInstance:
+    """Numeric: provision limited to direct, unavoidable exit costs.
+
+    Trap: providing for retraining and relocation of continuing staff.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/U -> university.
+    """
+    rng = random.Random(seed)
+    heads = rng.randrange(20, 201, 5)
+    severance_each = Decimal(rng.randrange(20, 81)) * 100
+    severance = heads * severance_each
+    penalty = Decimal(rng.randrange(20, 121)) * 1000
+    retraining = Decimal(rng.randrange(10, 61)) * 1000
+    relocation = Decimal(rng.randrange(10, 51)) * 1000
+    gold = severance + penalty
+    data = (
+        "# Closure plan announced — 2026-01-15\n\n"
+        "A detailed closure plan has been announced to those affected. "
+        "Costs identified:\n\n| Item | USD |\n|---|---:|\n"
+        f"| Severance: {heads} employees x {money(severance_each)} | {money(severance)} |\n"
+        f"| Unavoidable lease-termination penalty on the closed site | {money(penalty)} |\n"
+        f"| Retraining continuing staff for the remaining sites | {money(retraining)} |\n"
+        f"| Relocating continuing staff and equipment | {money(relocation)} |\n"
+    )
+    policy = """# Restructuring-provision conventions (applies to this task)
+
+- A restructuring provision covers only direct expenditures that
+  are both necessarily entailed by the closure and not associated
+  with the entity's ongoing activities: severance for terminated
+  staff and unavoidable contract-termination penalties qualify.
+- Retraining or relocating CONTINUING staff relates to ongoing
+  activities and is expensed as incurred, never provided for.
+- Answer the provision to recognize, in USD, in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "restructuring provision",
+        "Using `/app/documents/closure_plan.md` and `/app/policy.md`, "
+        "compute the **restructuring provision** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="restructuring-provision-amount",
+        family="provisions-contingencies",
+        title="What belongs in a restructuring provision",
+        question=question,
+        policy=policy,
+        data_name="closure_plan.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "restructuring", "provisions"],
+        level="university",
+        abs_tolerance="0.01",
+        standards=["asc:420", "ias:37"],
+        trap_value=money(gold + retraining + relocation),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -14010,6 +14689,16 @@ FAMILIES = {
     "disposal-of-subsidiary-gain": disposal_of_subsidiary_gain,
     "step-acquisition-remeasurement-gain": step_acquisition_remeasurement_gain,
     "weighted-average-ending-inventory": weighted_average_ending_inventory,
+    "ledger-account-balance-carried-down": ledger_account_balance_carried_down,
+    "allowance-movement-expense": allowance_movement_expense,
+    "receivables-payables-contra": receivables_payables_contra,
+    "sc-measurement-basis": sc_measurement_basis,
+    "agent-commission-revenue": agent_commission_revenue,
+    "gift-card-breakage-revenue": gift_card_breakage_revenue,
+    "adjusted-profit-from-draft": adjusted_profit_from_draft,
+    "payables-control-balance": payables_control_balance,
+    "restructuring-provision-amount": restructuring_provision_amount,
+    "sc-suspense-account-cause": sc_suspense_account_cause,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -14196,4 +14885,14 @@ STABLE_SEEDS = {
     "disposal-of-subsidiary-gain": 280,
     "step-acquisition-remeasurement-gain": 281,
     "weighted-average-ending-inventory": 282,
+    "ledger-account-balance-carried-down": 283,
+    "allowance-movement-expense": 284,
+    "receivables-payables-contra": 285,
+    "sc-measurement-basis": 286,
+    "agent-commission-revenue": 287,
+    "gift-card-breakage-revenue": 288,
+    "adjusted-profit-from-draft": 289,
+    "payables-control-balance": 290,
+    "restructuring-provision-amount": 291,
+    "sc-suspense-account-cause": 292,
 }
