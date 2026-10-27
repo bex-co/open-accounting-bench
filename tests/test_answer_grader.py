@@ -163,6 +163,24 @@ def test_numeric_families_oracle_and_plausible_trap(task_id, seed):
     assert trap.layers["answer_accuracy"].score < 1.0
 
 
+@pytest.mark.parametrize("task_id", NUMERIC_FAMILIES)
+def test_numeric_trap_never_within_tolerance_of_gold(task_id):
+    """Seeds 0-999: the documented trap must never score as correct.
+
+    Per-seed collisions (trap == gold, or inside the grading
+    tolerance) slipped past the 3-seed trap tests for several
+    families; the generator serves every seed, so sweep 1,000.
+    """
+    from decimal import Decimal
+
+    fn = FAMILIES[task_id]
+    for seed in range(1000):
+        expected = fn(seed).expected
+        gold, trap = Decimal(expected["gold"]), Decimal(expected["trap_value"])
+        tolerance = Decimal(expected["abs_tolerance"])
+        assert abs(trap - gold) > tolerance, (task_id, seed, gold, trap)
+
+
 @pytest.mark.parametrize("seed", [1, 7, 42, 106])
 def test_mgmt_family_oracle_and_wrong_formula_trap(seed):
     from decimal import Decimal

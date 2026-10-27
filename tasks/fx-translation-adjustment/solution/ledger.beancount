@@ -25,5 +25,5 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -183600.00 USD
 
 2026-01-31 * "Translation" "Retranslate foreign net assets at closing spot"
-  Assets:InvestmentInForeignSubsidiary  6800.00 USD
-  Equity:AccumulatedOtherComprehensiveIncome  -6800.00 USD
+  Assets:InvestmentInForeignSubsidiary  5100.00 USD
+  Equity:AccumulatedOtherComprehensiveIncome  -5100.00 USD

@@ -42,3 +42,63 @@ def test_suspense_memo_states_balance_side_without_sign():
         memo = FAMILIES["suspense-clearance"](seed).app_files["documents/controller_memo.md"]
         assert "USD -" not in memo, seed
         assert "credit balance" in memo or "debit balance" in memo, seed
+
+
+def test_scenario_sanity_sweeps():
+    """Seeds 0-999: generated scenarios stay economically sensible."""
+    import re
+    from decimal import Decimal
+
+    for seed in range(1000):
+        equity = FAMILIES["accounting-equation-missing-equity"](seed).expected
+        assert Decimal(equity["gold"]) > 0 and Decimal(equity["trap_value"]) > 0, seed
+        gp = FAMILIES["gross-profit-from-trial-balance"](seed).expected
+        assert Decimal(gp["gold"]) > 0, seed
+        basket = FAMILIES["basket-purchase-allocation"](seed).expected["expected_deltas"]
+        assert basket["Assets:Land"] != basket["Assets:Building"], seed
+        slb = FAMILIES["sale-and-leaseback-entry"](seed).expected["expected_deltas"]
+        assert (
+            Decimal(slb["Assets:RightOfUseAsset"]) < Decimal(slb["Assets:Bank:Checking"]) * 9 / 10
+        ), seed
+        doc = FAMILIES["expected-profit-choice"](seed).app_files["documents/forecasts.md"]
+        rows = re.findall(r"\| (Strong|Weak) demand \| \d+% \| ([\d,]+\.\d\d) \|", doc)
+        for i in range(0, len(rows) - 1, 2):
+            strong = Decimal(rows[i][1].replace(",", ""))
+            weak = Decimal(rows[i + 1][1].replace(",", ""))
+            assert rows[i][0] == "Strong" and strong >= weak, (seed, rows)
+
+
+def test_stated_rates_fit_generated_prices():
+    """Seeds 0-99: bond/ARO prices are consistent with their stated rates."""
+    import re
+    from decimal import Decimal
+
+    for seed in range(100):
+        terms = FAMILIES["bond-discount-amortization"](seed).app_files["documents/bond_terms.md"]
+        face = Decimal(re.search(r"face value USD ([\d]+\.[\d]{2})", terms)[1])
+        price = Decimal(re.search(r"Issue price USD ([\d]+\.[\d]{2})", terms)[1])
+        monthly = Decimal("0.006")
+        semi = (1 + monthly) ** 6 - 1
+        pv = (
+            face * Decimal("0.03") * sum(1 / (1 + semi) ** k for k in range(1, 11))
+            + face / (1 + monthly) ** 60
+        )
+        assert abs(price - pv) < Decimal("5"), (seed, price, pv)
+
+        doc = FAMILIES["bond-issued-at-premium"](seed).app_files["documents/bond_issuance.md"]
+        face = Decimal(re.search(r"Face value USD ([\d]+\.[\d]{2})", doc)[1])
+        coupon = Decimal(re.search(r", (\d+)% coupon", doc)[1]) / 100
+        market = Decimal(re.search(r"market rate (\d+)%", doc)[1]) / 100
+        proceeds = Decimal(re.search(r"sold for USD ([\d]+\.[\d]{2})", doc)[1])
+        semi_m = market / 2
+        pv = (
+            face * coupon / 2 * sum(1 / (1 + semi_m) ** k for k in range(1, 11))
+            + face / (1 + semi_m) ** 10
+        )
+        assert abs(proceeds - pv) < Decimal("5"), (seed, proceeds, pv)
+
+        aro = FAMILIES["aro-accretion"](seed).app_files["documents/aro_data.md"]
+        carrying = Decimal(re.search(r"Carrying amount at 2026-01-01: USD ([\d]+\.[\d]{2})", aro)[1])
+        settlement = Decimal(re.search(r"settlement cost in 10 years: USD ([\d]+\.[\d]{2})", aro)[1])
+        rate = Decimal(re.search(r"rate: ([\d.]+)% per month", aro)[1]) / 100
+        assert abs(settlement - carrying * (1 + rate) ** 120) < Decimal("5"), seed

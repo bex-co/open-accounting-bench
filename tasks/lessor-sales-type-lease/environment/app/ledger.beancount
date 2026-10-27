@@ -23,5 +23,5 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -30000.00 USD
 
 2026-01-01 * "Opening" "Equipment held for lease or sale: 6 units"
-  Assets:Inventory  132.00 USD
-  Equity:Opening-Balances  -132.00 USD
+  Assets:Inventory  27000.00 USD
+  Equity:Opening-Balances  -27000.00 USD

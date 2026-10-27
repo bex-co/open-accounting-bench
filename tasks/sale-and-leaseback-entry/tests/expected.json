@@ -9,9 +9,9 @@
   "expected_deltas": {
     "Assets:Bank:Checking": "254000.00",
     "Assets:AccumulatedDepreciation": "22000.00",
-    "Assets:RightOfUseAsset": "100000.00",
+    "Assets:RightOfUseAsset": "177800.00",
     "Assets:Equipment": "-225000.00",
-    "Liabilities:LeaseLiability": "-100000.00",
+    "Liabilities:LeaseLiability": "-177800.00",
     "Income:GainLossOnDisposal": "-51000.00"
   },
   "allowed_extra_accounts": [],
@@ -25,7 +25,7 @@
   ],
   "required_final_balances": {
     "Assets:Equipment": "0.00",
-    "Assets:RightOfUseAsset": "100000.00"
+    "Assets:RightOfUseAsset": "177800.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

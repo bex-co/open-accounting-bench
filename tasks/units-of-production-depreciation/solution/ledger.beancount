@@ -17,13 +17,13 @@ option "operating_currency" "USD"
 2026-01-01 open Expenses:Depreciation USD
 
 2026-01-01 * "Opening" "Opening bank balance"
-  Assets:Bank:Checking  155150.00 USD
-  Equity:Opening-Balances  -155150.00 USD
+  Assets:Bank:Checking  205950.00 USD
+  Equity:Opening-Balances  -205950.00 USD
 
 2026-01-02 * "Vendor" "Purchase of delivery truck"
-  Assets:Equipment  135150.00 USD
-  Assets:Bank:Checking  -135150.00 USD
+  Assets:Equipment  185950.00 USD
+  Assets:Bank:Checking  -185950.00 USD
 
-2026-01-31 * "Depreciation" "January depreciation (3400 miles), delivery truck"
-  Expenses:Depreciation  4250.00 USD
-  Assets:AccumulatedDepreciation  -4250.00 USD
+2026-01-31 * "Depreciation" "January depreciation (2000 miles), delivery truck"
+  Expenses:Depreciation  3500.00 USD
+  Assets:AccumulatedDepreciation  -3500.00 USD

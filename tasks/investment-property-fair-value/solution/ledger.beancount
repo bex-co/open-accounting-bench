@@ -21,10 +21,10 @@ option "operating_currency" "USD"
   Assets:Bank:Checking  255000.00 USD
   Equity:Opening-Balances  -255000.00 USD
 
-2026-01-03 * "Seller" "Rental building acquired as investment property"
+2026-01-01 * "Opening" "Rental building held as investment property (carrying amount)"
   Assets:InvestmentProperty  235000.00 USD
-  Assets:Bank:Checking  -235000.00 USD
+  Equity:Opening-Balances  -235000.00 USD
 
 2026-01-31 * "Valuation" "Investment property fair-value gain"
-  Assets:InvestmentProperty  32000.00 USD
-  Income:UnrealizedGainLoss  -32000.00 USD
+  Assets:InvestmentProperty  4935.00 USD
+  Income:UnrealizedGainLoss  -4935.00 USD

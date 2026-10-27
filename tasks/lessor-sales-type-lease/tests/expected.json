@@ -7,10 +7,10 @@
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
-    "Assets:NetInvestmentInLease": "198.00",
-    "Income:Sales": "-198.00",
-    "Expenses:CostOfSales": "132.00",
-    "Assets:Inventory": "-132.00"
+    "Assets:NetInvestmentInLease": "40500.00",
+    "Income:Sales": "-40500.00",
+    "Expenses:CostOfSales": "27000.00",
+    "Assets:Inventory": "-27000.00"
   },
   "allowed_extra_accounts": [],
   "expected_new_transactions": [
@@ -23,7 +23,7 @@
   ],
   "required_final_balances": {
     "Assets:Inventory": "0.00",
-    "Assets:NetInvestmentInLease": "198.00"
+    "Assets:NetInvestmentInLease": "40500.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

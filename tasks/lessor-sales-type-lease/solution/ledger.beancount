@@ -23,13 +23,13 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -30000.00 USD
 
 2026-01-01 * "Opening" "Equipment held for lease or sale: 6 units"
-  Assets:Inventory  132.00 USD
-  Equity:Opening-Balances  -132.00 USD
+  Assets:Inventory  27000.00 USD
+  Equity:Opening-Balances  -27000.00 USD
 
 2026-01-10 * "Lessee" "Sales-type lease commencement"
-  Assets:NetInvestmentInLease  198.00 USD
-  Income:Sales  -198.00 USD
+  Assets:NetInvestmentInLease  40500.00 USD
+  Income:Sales  -40500.00 USD
 
 2026-01-10 * "Lessee" "Cost of equipment leased"
-  Expenses:CostOfSales  132.00 USD
-  Assets:Inventory  -132.00 USD
+  Expenses:CostOfSales  27000.00 USD
+  Assets:Inventory  -27000.00 USD

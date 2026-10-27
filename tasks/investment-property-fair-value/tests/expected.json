@@ -7,8 +7,8 @@
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
-    "Assets:InvestmentProperty": "32000.00",
-    "Income:UnrealizedGainLoss": "-32000.00"
+    "Assets:InvestmentProperty": "4935.00",
+    "Income:UnrealizedGainLoss": "-4935.00"
   },
   "allowed_extra_accounts": [],
   "expected_new_transactions": 1,
@@ -17,7 +17,7 @@
     "2026-01-31"
   ],
   "required_final_balances": {
-    "Assets:InvestmentProperty": "267000.00"
+    "Assets:InvestmentProperty": "239935.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

@@ -21,6 +21,6 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -5000.00 USD
 
 2026-01-01 * "Underwriter" "Bonds issued at a premium"
-  Assets:Bank:Checking  197184.00 USD
+  Assets:Bank:Checking  216566.96 USD
   Liabilities:BondsPayable  -192000.00 USD
-  Liabilities:PremiumOnBondsPayable  -5184.00 USD
+  Liabilities:PremiumOnBondsPayable  -24566.96 USD

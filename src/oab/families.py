@@ -2234,11 +2234,17 @@ def bond_discount_amortization(seed: int) -> TaskInstance:
     """
     rng = random.Random(seed)
     face = Decimal(rng.randrange(5, 21)) * 12000
-    discount = (face * Decimal(rng.randrange(15, 41)) / 1000).quantize(Decimal("1"))
-    price = face - discount
     coupon_annual = Decimal("0.06")
     coupon = face * coupon_annual / 12
     eff_monthly = Decimal("0.006")
+    # Issue price is the present value of the bond's cash flows at the
+    # stated effective monthly rate, so the discount actually fits the
+    # 0.60% rate the terms quote (semiannual coupons, 5-year term).
+    semi_rate = (1 + eff_monthly) ** 6 - 1
+    price = (
+        face * Decimal("0.03") * _annuity_factor(semi_rate, 10) + face / (1 + eff_monthly) ** 60
+    ).quantize(CENT)
+    discount = face - price
     expense = (price * eff_monthly).quantize(CENT)
     amortization = expense - coupon
     opening = Decimal("5000.00")
@@ -3447,6 +3453,9 @@ def bank_adjusted_balance(seed: int) -> TaskInstance:
     fee = Decimal(rng.randrange(1, 9)) * 25
     nsf = Decimal(rng.randrange(4, 25)) * 25
     interest = Decimal(rng.randrange(1, 7)) * 25
+    # Book balance (trap) must differ from the adjusted balance.
+    while fee + nsf - interest < Decimal("50"):
+        nsf += 25
     gold = statement + in_transit - outstanding
     book = gold + fee + nsf - interest
     data = (
@@ -4126,7 +4135,6 @@ def gross_profit_from_trial_balance(seed: int) -> TaskInstance:
     def amt(lo, hi):
         return Decimal(rng.randrange(lo, hi)) * 100
 
-    sales = amt(400, 1201)
     returns = amt(10, 61)
     discounts = amt(5, 31)
     beginning = amt(60, 201)
@@ -4135,7 +4143,10 @@ def gross_profit_from_trial_balance(seed: int) -> TaskInstance:
     ending = amt(50, 181)
     opex = amt(50, 201)
     cogs = beginning + purchases + freight - ending
-    gold = sales - returns - discounts - cogs
+    # Build gross sales up from a positive gross profit (the free draw
+    # produced a gross loss on ~13% of seeds).
+    gold = amt(80, 401)
+    sales = gold + returns + discounts + cogs
     trap = sales - cogs
     data = (
         "# Trial-balance extracts — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
@@ -4420,8 +4431,15 @@ def units_of_production_depreciation(seed: int) -> TaskInstance:
     Level V/U/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
-    asset = rng.choice(["printing press", "bottling machine", "delivery truck"])
-    unit_label = rng.choice(["units", "hours", "miles"])
+    # Asset and its output unit are drawn as a pair.
+    asset, unit_label = rng.choice(
+        [
+            ("printing press", "units"),
+            ("bottling machine", "units"),
+            ("delivery truck", "miles"),
+            ("air compressor", "hours"),
+        ]
+    )
     rate = (Decimal(rng.randrange(25, 201, 25)) / 100).quantize(CENT)
     total_units = rng.randrange(40000, 120001, 5000)
     residual = Decimal(rng.randrange(5, 41)) * 100
@@ -4843,7 +4861,8 @@ def accounting_equation_missing_equity(seed: int) -> TaskInstance:
     """Numeric: ending equity from A = L + E. Trap: beginning equity."""
     rng = random.Random(seed)
     assets = Decimal(rng.randrange(200, 901)) * 1000
-    liabilities = Decimal(rng.randrange(80, 401)) * 1000
+    # Liabilities as a share of assets, so equity is positive by construction.
+    liabilities = assets * rng.choice([30, 40, 50, 60, 70]) / 100
     d_assets = Decimal(rng.randrange(20, 151)) * 1000
     d_liabilities = -Decimal(rng.randrange(10, 81)) * 1000
     gold = (assets + d_assets) - (liabilities + d_liabilities)
@@ -5630,13 +5649,27 @@ def bond_issued_at_premium(seed: int) -> TaskInstance:
     """
     rng = random.Random(seed)
     face = Decimal(rng.randrange(5, 21)) * 12000
-    premium = (face * Decimal(rng.randrange(15, 51)) / 1000).quantize(Decimal("1"))
-    proceeds = face + premium
+    # Price the bond off the stated rates (semiannual periods, 5 years)
+    # so the premium matches the coupon/market spread the terms quote.
+    coupon_annual, market_annual = rng.choice(
+        [
+            (Decimal("0.08"), Decimal("0.06")),
+            (Decimal("0.09"), Decimal("0.06")),
+            (Decimal("0.08"), Decimal("0.05")),
+            (Decimal("0.10"), Decimal("0.07")),
+        ]
+    )
+    semi_coupon, semi_market = face * coupon_annual / 2, market_annual / 2
+    proceeds = (
+        semi_coupon * _annuity_factor(semi_market, 10) + face / (1 + semi_market) ** 10
+    ).quantize(CENT)
+    premium = proceeds - face
     opening = Decimal("5000.00")
     initial = _ledger_header(opening, BOND_ISSUE_ACCOUNTS)
     doc = (
         "# Bond issuance — 2026-01-01\n\n"
-        f"Face value USD {money(face)}, 8% coupon (market rate 6%), 5-year term. "
+        f"Face value USD {money(face)}, {coupon_annual * 100:.0f}% coupon "
+        f"(market rate {market_annual * 100:.0f}%), 5-year term. "
         f"The bonds sold for USD {money(proceeds)}, received in full into "
         "checking on the issue date.\n"
     )
@@ -5910,6 +5943,9 @@ def cost_of_goods_manufactured(seed: int) -> TaskInstance:
 
     dm, dl, oh = amt(150, 501), amt(100, 401), amt(80, 301)
     wip_begin, wip_end = amt(30, 121), amt(20, 101)
+    # Keep the WIP adjustment material so the no-adjustment trap differs.
+    while abs(wip_begin - wip_end) < Decimal("1000"):
+        wip_end = amt(20, 101)
     gold = dm + dl + oh + wip_begin - wip_end
     trap = dm + dl + oh
     data = (
@@ -6670,6 +6706,10 @@ def basket_purchase_allocation(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     land_appraised = Decimal(rng.randrange(4, 13)) * 10000
     building_appraised = Decimal(rng.randrange(6, 16)) * 10000
+    # Equal appraisals would make the even-split trap coincide with the
+    # relative-appraisal oracle; keep them apart by construction.
+    while building_appraised == land_appraised:
+        building_appraised = Decimal(rng.randrange(6, 16)) * 10000
     factor = rng.choice([Decimal("0.8"), Decimal("0.9")])
     lump = (land_appraised + building_appraised) * factor
     land_alloc = land_appraised * factor
@@ -6843,7 +6883,9 @@ def asset_turnover_ratio(seed: int) -> TaskInstance:
         [Decimal("0.80"), Decimal("1.20"), Decimal("1.50"), Decimal("1.80"), Decimal("2.40")]
     )
     average = Decimal(rng.randrange(200, 901)) * 1000
-    step = rng.randint(1, 5)
+    # Step >= 4 keeps ending-balance trap at least ~0.034 from gold,
+    # outside the 0.01 grading tolerance on every seed.
+    step = rng.randint(4, 10)
     delta = Decimal(step) * 10000
     beginning, ending = average - delta, average + delta
     sales = average * turnover
@@ -9164,21 +9206,23 @@ def investment_property_fair_value(seed: int) -> TaskInstance:
     """
     rng = random.Random(seed)
     cost = Decimal(rng.randrange(150, 401)) * 1000
-    gain = Decimal(rng.randrange(10, 61)) * 1000
+    # Monthly remeasurement moves are a few percent, not tens of percent.
+    gain = (cost * Decimal(rng.randrange(10, 31)) / 1000).quantize(CENT)
     fair_value = cost + gain
     opening = cost + Decimal("20000.00")
     initial = _ledger_header(opening, IP_ACCOUNTS) + _txn(
-        "2026-01-03",
-        "Seller",
-        "Rental building acquired as investment property",
-        [(INVESTMENT_PROPERTY, cost), (BANK, -cost)],
+        "2026-01-01",
+        "Opening",
+        "Rental building held as investment property (carrying amount)",
+        [(INVESTMENT_PROPERTY, cost), ("Equity:Opening-Balances", -cost)],
     )
     doc = (
         "# Valuation — rental building, 2026-01-31\n\n"
-        f"Acquired 2026-01-03 for USD {money(cost)} to earn rentals. An "
-        f"independent valuation at 2026-01-31 puts fair value at "
-        f"USD {money(fair_value)}. The company applies the IAS 40 fair-value "
-        "model to investment property.\n"
+        f"The building is held to earn rentals and was carried at "
+        f"USD {money(cost)} at 2026-01-01. An independent valuation at "
+        f"2026-01-31 puts fair value at USD {money(fair_value)}. The "
+        "company applies the IAS 40 fair-value model to investment "
+        "property.\n"
     )
     policy = POLICY + (
         "- Investment property under the fair-value model is remeasured to\n"
@@ -9328,7 +9372,8 @@ def fx_translation_adjustment(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     euros = Decimal(rng.randrange(10, 31)) * 10000
     initial_spot = rng.choice([Decimal("1.05"), Decimal("1.08"), Decimal("1.10"), Decimal("1.12")])
-    uplift = Decimal(rng.randrange(2, 11)) / 100
+    # A monthly EUR/USD move of 1-3 cents, not up to ~10%.
+    uplift = Decimal(rng.randrange(1, 4)) / 100
     closing_spot = initial_spot + uplift
     initial_amount = euros * initial_spot
     gain = euros * uplift
@@ -9410,7 +9455,12 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
     cost = carrying + acc_dep
     gain = Decimal(rng.randrange(10, 61)) * 1000
     proceeds = carrying + gain
-    lease_pv = Decimal(rng.randrange(30, 121)) * 1000
+    # Keep the leaseback PV well under 90% of fair value: at/above that
+    # the leaseback would look like a finance lease and block sale
+    # accounting, contradicting the stated qualifying sale.
+    lease_pv = (proceeds * rng.choice([Decimal("0.5"), Decimal("0.6"), Decimal("0.7")])).quantize(
+        CENT
+    )
     opening = Decimal("20000.00")
     initial = _ledger_header(opening, SALE_LEASEBACK_ACCOUNTS) + _txn(
         "2026-01-01",
@@ -10544,7 +10594,9 @@ def lessor_sales_type_lease(seed: int) -> TaskInstance:
     """
     rng = random.Random(seed)
     units = rng.randrange(5, 21)
-    unit_cost = Decimal(rng.randrange(2000, 6001, 100)) / 100
+    # Equipment-scale unit costs (the old draw priced a whole lease in
+    # the hundreds of dollars).
+    unit_cost = Decimal(rng.randrange(400, 1201, 50)) * 10
     fair_each = (unit_cost * Decimal("1.5")).quantize(CENT)
     cost_total = units * unit_cost
     fair_total = units * fair_each
@@ -11841,7 +11893,8 @@ def aro_accretion(seed: int) -> TaskInstance:
     monthly_rate = rng.choice([Decimal("0.004"), Decimal("0.005"), Decimal("0.006")])
     accretion = Decimal(rng.randrange(20, 101)) * 10
     carrying = (accretion / monthly_rate).quantize(CENT)
-    settlement = carrying * rng.choice([Decimal("1.6"), Decimal("2")])
+    # Undiscounted settlement in 10 years consistent with the stated rate.
+    settlement = (carrying * (1 + monthly_rate) ** 120).quantize(CENT)
     opening = Decimal("50000.00")
     initial = _ledger_header(opening, ARO_ACCOUNTS) + _txn(
         "2026-01-01",
@@ -12722,8 +12775,9 @@ def expected_profit_choice(seed: int) -> TaskInstance:
         def outcome() -> Decimal:
             return Decimal(rng.randrange(10, 121)) * 1000
 
-        a_high, a_low = outcome(), outcome()
-        b_high, b_low = outcome(), outcome()
+        # Strong demand must be the better outcome for each product.
+        a_high, a_low = sorted((outcome(), outcome()), reverse=True)
+        b_high, b_low = sorted((outcome(), outcome()), reverse=True)
         pa = Decimal(rng.choice([50, 60, 70, 75, 80])) / 100
         pb = Decimal(rng.choice([50, 60, 70, 75, 80])) / 100
         emv_a = (pa * a_high + (1 - pa) * a_low).quantize(CENT)

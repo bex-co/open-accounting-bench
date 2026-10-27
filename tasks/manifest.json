@@ -42,7 +42,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2f0e6c291ca879694e598c321fb9e9bfb9b63f9c300caf7ecb79277fffee7818"
+      "digest": "sha256:501d6ab138c82a46b041ab677dd12b500d9c768040fbed19e4aed26fc1f7c06d"
     },
     {
       "task_id": "accrual-deferral-reversal",
@@ -115,7 +115,7 @@
         "asc:410",
         "ias:37"
       ],
-      "digest": "sha256:e4deb9f7df42d9bfd7b325b1eb9db7f3ead34a5b7cd89f47d68e9f3bdc561812"
+      "digest": "sha256:a11961f06e9c7cf80452f457420da8c62bb3df43ca64a6985a37ce9047a7062a"
     },
     {
       "task_id": "asset-revaluation-surplus",
@@ -145,7 +145,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:87dbe7f25b0dc67566b42eee1902601205e14f29d43f7e693266b2753671ee76"
+      "digest": "sha256:2a24bf4bfef222e481bad3e7232310a2becee252bcbea685745e0ab296c18979"
     },
     {
       "task_id": "bad-debt-percent-of-sales",
@@ -218,7 +218,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:f2b156114dd02ad67f4cc05830c06a37883d098f182dfe705f1302ac6ee048bd"
+      "digest": "sha256:43c5d45dd9f16fa7a631d4f8944544f7181881db08278e54d710b47941a590ef"
     },
     {
       "task_id": "bond-early-retirement",
@@ -269,7 +269,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:c8d1f1a414ccd4e5d8b541abf63dab5283d5f22b0d476110ede6e2522de64458"
+      "digest": "sha256:1fb4999a4658c751f50fe1c63d4b037c2b3ac948c5d92437cbfe75ce81ce9f12"
     },
     {
       "task_id": "breakeven-sales-dollars",
@@ -823,7 +823,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2dd299d26861ce007f544574a40f98028f5a93e12318f09785b6b3b0ae6b1fbb"
+      "digest": "sha256:ba5a949769ef0425316574991bd3763a33b6ff6d2b5ea7e3221673807eb0e807"
     },
     {
       "task_id": "factoring-secured-borrowing",
@@ -935,7 +935,7 @@
         "asc:830",
         "ias:21"
       ],
-      "digest": "sha256:a386933728ab68246a4e2f91a3f09c01f06dde81ef4eb419f8805be0a4f980e0"
+      "digest": "sha256:ee2b096dd13211e9eb83e244d331614ef77c906f32c28e44f562afc1d02a20d8"
     },
     {
       "task_id": "goodwill-impairment",
@@ -995,7 +995,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9b359a20956150f95de56c428e2eca1613158b14826d45f908be016bd9cddf4d"
+      "digest": "sha256:904f785134b5496f8a7d3934c20d5b7c4c25bef670adfb0af43d0aac01aee02d"
     },
     {
       "task_id": "held-for-sale-measurement",
@@ -1196,7 +1196,7 @@
       "standards": [
         "ias:40"
       ],
-      "digest": "sha256:dab18704510b79b043662460403b3ebf0b5b21b0f654fb44749cc789316dc9b5"
+      "digest": "sha256:4697d3b71206fb3ef7406e055ba01ce233ca645eb89834922471eda24986afc1"
     },
     {
       "task_id": "irr-from-annuity-factor",
@@ -1289,7 +1289,7 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:b808ae5a196f6ccd0378827548519f055a3cfec5121c89c9cb25fed9005ad7d7"
+      "digest": "sha256:c49c4b3849eca42b524268282ed3b143b8c4dfbfc4889fa44c11f7e288398f69"
     },
     {
       "task_id": "lifo-ending-inventory",
@@ -2046,7 +2046,7 @@
       "standards": [
         "asc:842"
       ],
-      "digest": "sha256:af07e9549bf8a8320863a91927edb8d4defef6233201799312327799bc681464"
+      "digest": "sha256:131b6e90f731fecc21d352c5446d390929cfa9ba437ec1b86ae019fd9ffe7ea0"
     },
     {
       "task_id": "sales-return-restock",
@@ -2483,7 +2483,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b3b28c19539b64f2d5900a2934d998cc38bc0dc7b97dd1dd1740e29b7a696e5f"
+      "digest": "sha256:0dea5abb10bdbc57f828aa948d0b46dd50429900b212afb1f3b63f934a11151c"
     },
     {
       "task_id": "warranty-provision-and-claims",
