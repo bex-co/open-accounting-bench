@@ -262,6 +262,20 @@ crosswalk mappings.
   exceptions, and net-position components are simplified versions
   stated in each policy). Level scores assigned under the strict
   reading. No crosswalk mappings proposed yet.
+- 2026-10-26 — fifteen further generator families (Stable seeds
+  332–346): `state-apportionment-income`, `tax-penalty-combined`,
+  `capital-loss-carryforward`, `sc-capital-gain-classification`,
+  `disallowed-loss-amount`, `sc-s-corp-eligibility`,
+  `individual-tax-with-niit`, `sc-tax-authority-disclosure`,
+  `sc-filing-status`, `individual-gross-income-total`,
+  `agi-above-line-adjustments`, `sc-tax-practice-ethics`,
+  `qbi-deduction-amount`, `passthrough-ordinary-income`,
+  `owner-ordinary-from-k1`. All tax rules are simplified stated
+  conventions given in full in each task policy (brackets, penalty
+  rates, eligibility tests) — reviewer should confirm the
+  simplifications are acceptable stand-ins and the stated-rule
+  outcomes. Level scores assigned under the strict reading. No
+  crosswalk mappings proposed yet.
 
 
 ## Reviewed
