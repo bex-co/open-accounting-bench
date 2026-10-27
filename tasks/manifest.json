@@ -263,6 +263,20 @@
       "digest": "sha256:1c10f7875fcfb53aee3e4abaa4a09309a1b49e7b7519c3901be24f8c0cc67560"
     },
     {
+      "task_id": "basis-adjustment-754-allocation",
+      "family": "passthrough-taxation",
+      "seed": 365,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a2c109e1d5bd953f873e4baa515abac1ebbdc4b0904c7e7bbbda07f2bfbf08c6"
+    },
+    {
       "task_id": "basket-purchase-allocation",
       "family": "fixed-assets",
       "seed": 187,
@@ -417,6 +431,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:54620d2e6ac90610f4a27fa8978b0e8b470497b30cdf47a24fcd251bcd80817b"
+    },
+    {
+      "task_id": "builtin-gains-tax-base",
+      "family": "corporate-taxation",
+      "seed": 369,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:1401a5ee448eac6e03507fcb5a2b56cd946689a28b9f93b3adb6fe27dcaf353d"
     },
     {
       "task_id": "business-combination-acquisition",
@@ -697,6 +725,20 @@
         "ifrs:10"
       ],
       "digest": "sha256:2c6bfafd4ceb17f54d31d2cec0e52191d50575004529da340805a1a9d20560a3"
+    },
+    {
+      "task_id": "constructive-ownership-percent",
+      "family": "income-taxes",
+      "seed": 363,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:3001657ab32c45710bb3e54d480c90904e09fba8b427f3c4f61de3fb29d8fbf7"
     },
     {
       "task_id": "contract-acquisition-cost",
@@ -1211,6 +1253,20 @@
       "digest": "sha256:bd4fb5448cd6e5a564d9146fcf295ca3a39ebd0219e9fc9362f2a90e02c4996e"
     },
     {
+      "task_id": "fsa-tax-saving",
+      "family": "income-taxes",
+      "seed": 368,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e5ed3ade45efc5b69fcabc5323d8cb2a832520ba4c0493bf92b6c458bf245b9d"
+    },
+    {
       "task_id": "fvoci-fair-value-adjustment",
       "family": "investments",
       "seed": 186,
@@ -1482,6 +1538,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:f919473f108283fc4894c1c131b92e7cc92ab479c25242b65075c9f0e93c6e6f"
+    },
+    {
+      "task_id": "income-shifting-pv-saving",
+      "family": "income-taxes",
+      "seed": 366,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ef352d0ecbdfd1ed7a2347710cef0edee61379ec6d80bb0f78b58986849db0a9"
     },
     {
       "task_id": "individual-gross-income-total",
@@ -2777,6 +2847,20 @@
       "digest": "sha256:d9c4f7bcf7ec1cd6abfe27fc78b477ad6e7ebfd52d90db61f6d76048bc9cc04f"
     },
     {
+      "task_id": "related-party-resale-gain",
+      "family": "income-taxes",
+      "seed": 364,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:89b9cb150b307a05ef8f8fccb16fab04f20dc545da6921ec275f555726dbc0cb"
+    },
+    {
       "task_id": "residual-income",
       "family": "responsibility-accounting",
       "seed": 204,
@@ -3164,6 +3248,20 @@
       "digest": "sha256:70ead64f0916a41d192e10471ee32577ebc4b4d9cff99c099bc95d665577a147"
     },
     {
+      "task_id": "sc-income-sourcing",
+      "family": "income-taxes",
+      "seed": 367,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5224bf8786d64deff492f0ca3eff611c43929399b7454aa554c7c0aecdb1be03"
+    },
+    {
       "task_id": "sc-interfund-activity-type",
       "family": "governmental-accounting",
       "seed": 326,
@@ -3409,6 +3507,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:943b4f8ae189d40067ff98ee53b669cd6d842bc84c8c9c15c60b8d42bf38a62b"
+    },
+    {
+      "task_id": "section704c-contributor-gain",
+      "family": "passthrough-taxation",
+      "seed": 362,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:887267267ea6fcaaf107cf47be6ea52feb4326898395b23778fcf5e5ec0b4a80"
     },
     {
       "task_id": "segment-margin",
@@ -3744,6 +3856,34 @@
       "digest": "sha256:3f3c68be632826cfc0bc24b30dacc639153fca9529896f1fdddb70b0835212e6"
     },
     {
+      "task_id": "trust-accounting-income",
+      "family": "income-taxes",
+      "seed": 360,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:641d2f4e540e6978f9f1448eac64fb3cae2a03abbc5e4d7985b16ed9675b2b51"
+    },
+    {
+      "task_id": "trust-dni-computation",
+      "family": "income-taxes",
+      "seed": 361,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:6f026da0c2431944e981e08b5bb0ee8bcd63ee67e1f9bb11bc1e62d1da3c94e2"
+    },
+    {
       "task_id": "unearned-revenue-release",
       "family": "accruals-deferrals",
       "seed": 184,
@@ -3770,6 +3910,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:0dea5abb10bdbc57f828aa948d0b46dd50429900b212afb1f3b63f934a11151c"
+    },
+    {
+      "task_id": "varying-interest-allocation",
+      "family": "passthrough-taxation",
+      "seed": 370,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:00ee9520513061a34950da0164fd3e663b13a2949c4862939f22470cd5d36c3d"
     },
     {
       "task_id": "warranty-provision-and-claims",

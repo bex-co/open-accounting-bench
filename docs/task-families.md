@@ -343,6 +343,17 @@ D = standards depth):
 | `liquidation-shareholder-gain` | V | V | V | U | V | V | V | vocational |
 | `corporate-formation-gain` | V | V | V | V | V | V | V | vocational |
 | `partnership-contribution-gain` | V | V | V | V | V | V | V | vocational |
+| `trust-accounting-income` | V | V | V | U | V | V | V | vocational |
+| `trust-dni-computation` | V | V | V | U | V | V | V | vocational |
+| `section704c-contributor-gain` | V | V | V | V | V | V | V | vocational |
+| `constructive-ownership-percent` | V | V | V | V | V | V | V | vocational |
+| `related-party-resale-gain` | V | V | V | V | V | V | V | vocational |
+| `basis-adjustment-754-allocation` | V | V | V | V | V | V | V | vocational |
+| `income-shifting-pv-saving` | V | V | V | U | V | V | V | vocational |
+| `sc-income-sourcing` | V | V | V | V | V | V | V | vocational |
+| `fsa-tax-saving` | V | V | V | U | V | V | V | vocational |
+| `builtin-gains-tax-base` | V | V | V | U | V | V | V | vocational |
+| `varying-interest-allocation` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -614,8 +625,19 @@ problem the task hands over. An analysis task can be vocational.
 | `liquidation-shareholder-gain` | corporate-taxation | numeric | core | application | — | Assumed liabilities ignored |
 | `corporate-formation-gain` | corporate-taxation | numeric | core | application | — | Complete nonrecognition assumed |
 | `partnership-contribution-gain` | passthrough-taxation | numeric | core | application | — | Contributions assumed always tax-free |
+| `trust-accounting-income` | income-taxes | numeric | core | application | — | Corpus sale proceeds as income |
+| `trust-dni-computation` | income-taxes | numeric | core | application | — | Corpus capital gain inside DNI |
+| `section704c-contributor-gain` | passthrough-taxation | numeric | core | application | — | Built-in gain shared by ratio |
+| `constructive-ownership-percent` | income-taxes | numeric | core | application | — | Partnership holding counted in full |
+| `related-party-resale-gain` | income-taxes | numeric | core | application | — | Full resale gain taxed |
+| `basis-adjustment-754-allocation` | passthrough-taxation | numeric | core | application | — | Adjustment spread by fair value |
+| `income-shifting-pv-saving` | income-taxes | numeric | core | application | — | Nominal comparison, no present value |
+| `sc-income-sourcing` | income-taxes | single-choice | core | application | — | Services sourced where paid |
+| `fsa-tax-saving` | income-taxes | numeric | core | application | — | Saving counted on forfeited balance |
+| `builtin-gains-tax-base` | corporate-taxation | numeric | core | application | — | Post-conversion gains in the base |
+| `varying-interest-allocation` | passthrough-taxation | numeric | core | application | — | Year-end percentage all year |
 
-Stable seeds: 101–359 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–370 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -626,11 +648,11 @@ placeholders tracked as issues, not directories.
 |---|---:|---:|---:|---|
 | financial-accounting | 140 | 17 | 12 | planned |
 | management-accounting | 37 | planned | planned | planned |
-| tax | 40 | — | — | planned |
+| tax | 51 | — | — | planned |
 | audit-assurance | 13 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×32,
-numeric ×133; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×33,
+numeric ×143; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

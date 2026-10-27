@@ -289,6 +289,17 @@ crosswalk mappings.
   partnership debt-relief slices in particular). Level scores
   assigned under the strict reading. No crosswalk mappings proposed
   yet.
+- 2026-10-26 — eleven further generator families (Stable seeds
+  360–370): `trust-accounting-income`, `trust-dni-computation`,
+  `section704c-contributor-gain`, `constructive-ownership-percent`,
+  `related-party-resale-gain`, `basis-adjustment-754-allocation`,
+  `income-shifting-pv-saving`, `sc-income-sourcing`, `fsa-tax-saving`,
+  `builtin-gains-tax-base`, `varying-interest-allocation`. All tax
+  rules are simplified stated conventions in each policy (trust
+  income/corpus allocation, DNI components, 704(c)/754 slices,
+  attribution percentages, sourcing and timing rules in
+  particular). Level scores assigned under the strict reading. No
+  crosswalk mappings proposed yet.
 
 
 ## Reviewed

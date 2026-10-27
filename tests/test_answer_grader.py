@@ -209,6 +209,16 @@ NUMERIC_FAMILIES = [
     "liquidation-shareholder-gain",
     "corporate-formation-gain",
     "partnership-contribution-gain",
+    "trust-accounting-income",
+    "trust-dni-computation",
+    "section704c-contributor-gain",
+    "constructive-ownership-percent",
+    "related-party-resale-gain",
+    "basis-adjustment-754-allocation",
+    "income-shifting-pv-saving",
+    "fsa-tax-saving",
+    "builtin-gains-tax-base",
+    "varying-interest-allocation",
 ]
 
 
@@ -342,6 +352,7 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-tax-authority-disclosure",
         "sc-filing-status",
         "sc-tax-practice-ethics",
+        "sc-income-sourcing",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

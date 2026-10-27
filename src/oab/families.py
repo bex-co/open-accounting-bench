@@ -19169,6 +19169,636 @@ def partnership_contribution_gain(seed: int) -> TaskInstance:
     )
 
 
+def trust_accounting_income(seed: int) -> TaskInstance:
+    """Numeric: fiduciary accounting income under stated allocation rules.
+
+    Trap: treating proceeds from selling a corpus asset as income
+    distributable to the income beneficiary.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    rent, interest, dividends = amt(80, 251), amt(20, 91), amt(15, 71)
+    sale_proceeds, trustee_fee_income_half = amt(150, 501), amt(5, 31)
+    gold = rent + interest + dividends - trustee_fee_income_half
+    data = (
+        "# Trust receipts and charges — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Rents received | {money(rent)} |\n"
+        f"| Bond interest received | {money(interest)} |\n"
+        f"| Cash dividends received | {money(dividends)} |\n"
+        f"| Proceeds from selling a corpus investment | {money(sale_proceeds)} |\n"
+        f"| Trustee fee charged to income (per instrument) | {money(trustee_fee_income_half)} |\n"
+    )
+    policy = """# Fiduciary accounting income (stated for this task)
+
+- Accounting income (for the income beneficiary) = rents,
+  interest, and cash dividends received, less charges the trust
+  instrument allocates to income.
+- Proceeds from selling corpus assets (and stock dividends) are
+  corpus/principal, never accounting income.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "fiduciary accounting income",
+        "Using `/app/documents/trust_receipts.md` and `/app/policy.md`, "
+        "compute **fiduciary accounting income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="trust-accounting-income",
+        family="income-taxes",
+        title="Income vs corpus in a trust",
+        question=question,
+        policy=policy,
+        data_name="trust_receipts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "trusts", "fiduciary-accounting"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + sale_proceeds),
+    )
+
+
+def trust_dni_computation(seed: int) -> TaskInstance:
+    """Numeric: distributable net income of a trust (stated components).
+
+    Trap: including capital gains allocated to corpus in DNI.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    dividends, interest, rents = amt(60, 201), amt(20, 91), amt(40, 151)
+    tax_exempt, expenses, capital_gain = amt(10, 51), amt(10, 51), amt(30, 121)
+    gold = dividends + interest + rents + tax_exempt - expenses
+    data = (
+        "# Trust income items — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Taxable dividends | {money(dividends)} |\n"
+        f"| Taxable interest | {money(interest)} |\n"
+        f"| Rents | {money(rents)} |\n"
+        f"| Tax-exempt interest | {money(tax_exempt)} |\n"
+        f"| Deductible fiduciary expenses (all charged to taxable income) | {money(expenses)} |\n"
+        f"| Capital gain allocated to corpus by the instrument | {money(capital_gain)} |\n"
+    )
+    policy = """# Distributable net income (stated for this task)
+
+- DNI = taxable dividends + taxable interest + rents + tax-exempt
+  interest - deductible fiduciary expenses.
+- Capital gains allocated to corpus under the governing
+  instrument are EXCLUDED from DNI.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "distributable net income",
+        "Using `/app/documents/trust_income_items.md` and `/app/policy.md`, "
+        "compute **distributable net income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="trust-dni-computation",
+        family="income-taxes",
+        title="Distributable net income",
+        question=question,
+        policy=policy,
+        data_name="trust_income_items.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "trusts", "dni"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + capital_gain),
+    )
+
+
+def section704c_contributor_gain(seed: int) -> TaskInstance:
+    """Numeric: built-in gain allocated back to the contributing partner.
+
+    Trap: sharing the built-in portion by the current profit ratio.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    basis = amt(60, 181)
+    fmv_at_contribution = basis + amt(40, 141)
+    big = fmv_at_contribution - basis
+    extra = amt(20, 101)
+    sale_price = fmv_at_contribution + extra
+    total_gain = sale_price - basis
+    gold = big + (total_gain - big) / 2
+    data = (
+        "# Built-in gain property (Section 704(c))\n\n| Item | USD |\n|---|---:|\n"
+        f"| Partner's basis when contributed | {money(basis)} |\n"
+        f"| Fair market value when contributed | {money(fmv_at_contribution)} |\n"
+        f"| Partnership later sells the property for | {money(sale_price)} |\n"
+        "\nThe two partners share post-contribution gains 50/50.\n"
+    )
+    policy = """# Built-in gain allocations (stated for this task)
+
+- When the partnership sells contributed property, the built-in
+  gain at contribution (FMV - basis) is allocated FIRST to the
+  contributing partner (up to the gain realized); only the
+  remaining post-contribution gain is shared by the profit ratio.
+- Answer the CONTRIBUTING partner's total allocated gain in USD.
+"""
+    question = _numeric_question(
+        "contributor's allocated gain",
+        "Using `/app/documents/builtin_gain_property.md` and `/app/policy.md`, "
+        "compute the contributor's **allocated gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="section704c-contributor-gain",
+        family="passthrough-taxation",
+        title="Section 704(c) built-in gain allocation",
+        question=question,
+        policy=policy,
+        data_name="builtin_gain_property.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "section-704c", "built-in-gain"],
+        abs_tolerance="0.01",
+        trap_value=money(total_gain / 2),
+    )
+
+
+def constructive_ownership_percent(seed: int) -> TaskInstance:
+    """Numeric: total constructive ownership under stated attribution rules.
+
+    Trap: counting the partnership's whole holding instead of the
+    proportionate attributed share.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    direct, spouse, partner_share, partnership_holds = rng.choice(
+        [(30, 20, 50, 40), (25, 15, 40, 50), (35, 10, 25, 60), (20, 30, 50, 30)]
+    )
+    gold_pct = Decimal(direct + spouse) + Decimal(partner_share * partnership_holds) / 100
+    trap_pct = Decimal(direct + spouse + partnership_holds)
+    data = (
+        "# Shareholdings — individual A (corporation X)\n\n"
+        f"- A owns {direct}% of X directly.\n"
+        f"- A's spouse owns {spouse}% of X.\n"
+        f"- A is a {partner_share}% partner in partnership P, which owns "
+        f"{partnership_holds}% of X. A's own shares are not held through P.\n"
+    )
+    policy = """# Attribution rules (stated for this task)
+
+Constructive ownership for A = shares owned directly
++ shares owned by A's spouse (family attribution)
++ A's proportionate share of stock owned by a partnership in
+  which A is a partner (partnership percentage x the
+  partnership's holding).
+
+- Do not count the same shares twice through different paths.
+- Answer as a percentage number (70 means 70%).
+"""
+    question = _numeric_question(
+        "total constructive ownership",
+        "Using `/app/documents/shareholdings.md` and `/app/policy.md`, "
+        "compute A's **constructive ownership percentage**.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="constructive-ownership-percent",
+        family="income-taxes",
+        title="Constructive ownership attribution",
+        question=question,
+        policy=policy,
+        data_name="shareholdings.md",
+        data=data,
+        gold=gold_pct.quantize(Decimal("0.01")),
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "attribution", "related-parties"],
+        abs_tolerance="0.01",
+        trap_value=format(trap_pct, "f"),
+    )
+
+
+def related_party_resale_gain(seed: int) -> TaskInstance:
+    """Numeric: related buyer's gain offset by the seller's disallowed loss.
+
+    Trap: taxing the buyer's full resale gain, or letting the
+    offset turn the resale into a deductible loss.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    disallowed = amt(30, 121)
+    resale_gain = amt(10, 201)
+    gold = max(resale_gain - disallowed, Decimal(0))
+    data = (
+        "# Related-party sale and later resale\n\n"
+        f"S sold property to related buyer B at a loss of USD {money(disallowed)}, "
+        "which was disallowed to S. B now sells the property to an "
+        f"unrelated third party at a gain (over B's cost) of USD {money(resale_gain)}.\n"
+    )
+    policy = """# Related-party loss rules (stated for this task)
+
+- The related buyer may offset the seller's previously disallowed
+  loss against gain on a later sale to an unrelated party — but
+  only up to that gain. The offset can reduce the recognized gain
+  to zero; it can never create or increase a loss.
+- Answer B's recognized gain in USD.
+"""
+    question = _numeric_question(
+        "buyer's recognized gain on resale",
+        "Using `/app/documents/related_sale.md` and `/app/policy.md`, "
+        "compute B's **recognized gain** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="related-party-resale-gain",
+        family="income-taxes",
+        title="Disallowed loss offsets a later gain",
+        question=question,
+        policy=policy,
+        data_name="related_sale.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "related-parties", "deferred-losses"],
+        abs_tolerance="0.01",
+        trap_value=money(resale_gain),
+    )
+
+
+def basis_adjustment_754_allocation(seed: int) -> TaskInstance:
+    """Numeric: Section 754 basis adjustment allocated to capital assets.
+
+    Trap: spreading the adjustment across all assets by fair value
+    instead of to appreciated capital assets first.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    price = amt(200, 501)
+    inside_share = amt(80, 181)
+    adjustment = price - inside_share
+    capital_appreciation = amt(50, 251)
+    gold = min(adjustment, capital_appreciation)
+    trap = (adjustment * Decimal("0.6")).quantize(CENT)
+    while abs(trap - gold) <= Decimal("0.01"):
+        capital_appreciation += Decimal("1000")
+        gold = min(adjustment, capital_appreciation)
+    data = (
+        "# Purchase of a partnership interest (Section 754 election in effect)\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Price paid for the interest | {money(price)} |\n"
+        f"| Transferee's share of inside basis | {money(inside_share)} |\n"
+        f"| Capital-asset appreciation (transferee's share) | {money(capital_appreciation)} |\n"
+        "| Other assets | Held at basis = fair value |\n"
+    )
+    policy = """# Section 754 conventions (stated for this task)
+
+- The optional basis adjustment = price paid - the transferee's
+  share of inside basis.
+- A positive adjustment is allocated first to appreciated capital
+  assets, up to their appreciation; any remainder goes to other
+  assets. Assets held at fair value receive none until appreciated
+  capital assets are fully covered.
+- Answer the amount allocated to capital assets in USD.
+"""
+    question = _numeric_question(
+        "basis adjustment to capital assets",
+        "Using `/app/documents/interest_purchase.md` and `/app/policy.md`, "
+        "compute the adjustment **allocated to capital assets** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="basis-adjustment-754-allocation",
+        family="passthrough-taxation",
+        title="Section 754 adjustment allocation",
+        question=question,
+        policy=policy,
+        data_name="interest_purchase.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "section-754", "basis-adjustments"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def income_shifting_pv_saving(seed: int) -> TaskInstance:
+    """Numeric: present-value saving from deferring income to a lower-rate year.
+
+    Trap: comparing nominal tax amounts and ignoring the stated
+    present-value factor for the later year's tax.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    income = Decimal(rng.choice([100, 200, 250, 400])) * 1000
+    rate_now, rate_next = Decimal("0.30"), Decimal("0.22")
+    factor = Decimal("0.95")
+    gold = (income * rate_now - income * rate_next * factor).quantize(CENT)
+    trap = (income * (rate_now - rate_next)).quantize(CENT)
+    data = (
+        "# Timing choice\n\n"
+        f"Income of USD {money(income)} can be recognized this year "
+        "(marginal rate 30%) or deferred to next year (enacted rate "
+        "22%, tax payable then). The stated one-year present-value "
+        "factor for next year's tax cash flow is 0.95.\n"
+    )
+    policy = """# Timing conventions (stated for this task)
+
+Present-value cost of recognizing now = income x this year's rate.
+Present-value cost of deferring = income x next year's rate x the
+stated present-value factor. The saving from deferring is the
+difference of the two present values.
+
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "present-value saving from deferral",
+        "Using `/app/documents/timing_choice.md` and `/app/policy.md`, "
+        "compute the **present-value saving** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="income-shifting-pv-saving",
+        family="income-taxes",
+        title="Deferring income to a lower-rate year",
+        question=question,
+        policy=policy,
+        data_name="timing_choice.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "timing", "present-value"],
+        abs_tolerance="1",
+        trap_value=money(trap),
+    )
+
+
+SOURCING_OPTIONS = ["US source", "Foreign source"]
+SOURCING_CASES = [
+    (
+        "Consulting services performed by the taxpayer while "
+        "physically working in Chicago for a foreign client who pays "
+        "from abroad.",
+        "US source",
+    ),
+    (
+        "Interest paid by a foreign corporation with no US trade or "
+        "business, on a loan used entirely abroad.",
+        "Foreign source",
+    ),
+    (
+        "Rent received for warehouse space located in Texas.",
+        "US source",
+    ),
+    (
+        "Dividends paid by a corporation incorporated in Germany "
+        "(no treaty provision changes the stated rule).",
+        "Foreign source",
+    ),
+    (
+        "Engineering services performed entirely at a site in Brazil "
+        "for a US client who pays from New York.",
+        "Foreign source",
+    ),
+]
+
+
+def sc_income_sourcing(seed: int) -> TaskInstance:
+    """Single-choice: US or foreign source under stated sourcing rules.
+
+    Trap: sourcing service income where it is PAID rather than
+    where the services are performed.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SOURCING_CASES)
+    labels = SOURCING_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Source rules (stated for this task)
+
+- Services income: where the services are PERFORMED.
+- Interest: residence of the payer.
+- Dividends: country of incorporation of the payer.
+- Rents and royalties: where the property is located/used.
+"""
+    question = _choice_question(
+        "income sourcing",
+        f"Income item: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-income-sourcing",
+        family="income-taxes",
+        title="US or foreign source income?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-income-sourcing",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "income-sourcing"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def fsa_tax_saving(seed: int) -> TaskInstance:
+    """Numeric: expected tax saving from a health FSA election.
+
+    Trap: counting tax saved on the forfeited (unspent) balance.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    election = Decimal(rng.choice([1500, 2000, 2500, 3000]))
+    expenses = election - Decimal(rng.randrange(2, 10)) * 100
+    rate = Decimal(rng.choice(["0.22", "0.25", "0.30"]))
+    gold = (expenses * rate).quantize(CENT)
+    data = (
+        "# Health FSA election\n\n| Item | USD |\n|---|---:|\n"
+        f"| Annual salary-reduction election | {money(election)} |\n"
+        f"| Eligible medical expenses expected to be incurred and claimed | {money(expenses)} |\n"
+        f"| Employee's marginal tax rate | {rate * 100:.0f}% |\n"
+        "\nUnspent amounts at year-end are forfeited (use-it-or-lose-it; "
+        "no rollover under this plan).\n"
+    )
+    policy = """# FSA conventions (stated for this task)
+
+- Amounts reimbursed from the FSA escape tax; amounts forfeited
+  unused at year-end produce no benefit. Expected tax saving =
+  expected reimbursable expenses (not exceeding the election) x
+  the marginal tax rate.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "expected FSA tax saving",
+        "Using `/app/documents/fsa_election.md` and `/app/policy.md`, "
+        "compute the **expected tax saving** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="fsa-tax-saving",
+        family="income-taxes",
+        title="FSA saving with a forfeited balance",
+        question=question,
+        policy=policy,
+        data_name="fsa_election.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "fsa", "cafeteria-plans"],
+        abs_tolerance="0.01",
+        trap_value=money((election * rate).quantize(CENT)),
+    )
+
+
+def builtin_gains_tax_base(seed: int) -> TaskInstance:
+    """Numeric: built-in gains tax base for a converted S corporation.
+
+    Trap: taxing appreciation that arose AFTER conversion, which
+    is outside the built-in gains regime.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    nubig = amt(150, 401)
+    gain_pre = amt(60, 301)
+    gain_post_asset = amt(40, 181)
+    gold = min(gain_pre, nubig)
+    data = (
+        "# Former C corporation, S election year 2 of 5\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Net unrecognized built-in gain at conversion (NUBIG) | {money(nubig)} |\n"
+        f"| Gain on selling an asset held at conversion | {money(gain_pre)} |\n"
+        f"| Gain on selling an asset bought AFTER conversion | {money(gain_post_asset)} |\n"
+    )
+    policy = """# Built-in gains conventions (stated for this task)
+
+- During the five-year recognition period after conversion, the
+  built-in gains tax base is the gain recognized on assets held
+  AT conversion, capped at the net unrecognized built-in gain
+  (NUBIG) measured at conversion.
+- Gains on assets acquired after conversion are never in the base.
+- Answer the tax base in USD.
+"""
+    question = _numeric_question(
+        "built-in gains tax base",
+        "Using `/app/documents/builtin_gains.md` and `/app/policy.md`, "
+        "compute the **built-in gains tax base** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="builtin-gains-tax-base",
+        family="corporate-taxation",
+        title="Built-in gains tax base and cap",
+        question=question,
+        policy=policy,
+        data_name="builtin_gains.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "built-in-gains", "s-corporation"],
+        abs_tolerance="0.01",
+        trap_value=money(gain_pre + gain_post_asset),
+    )
+
+
+def varying_interest_allocation(seed: int) -> TaskInstance:
+    """Numeric: income allocation when a partner's interest varies mid-year.
+
+    Trap: applying the year-end percentage to the whole year.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    income = Decimal(rng.choice([240, 360, 480, 600])) * 1000
+    gold = income * (Decimal("0.5") * Decimal("0.4") + Decimal("0.5") * Decimal("0.2"))
+    data = (
+        "# Varying partnership interest — 2025\n\n"
+        f"Total partnership income for 2025: USD {money(income)} (earned "
+        "evenly through the year). Partner A held 40% from January "
+        "through June, then sold half of the interest on 30 June, "
+        "holding 20% from July through December. The partnership uses "
+        "the proration (interim closing by months) method for varying "
+        "interests.\n"
+    )
+    policy = """# Varying-interest conventions (stated for this task)
+
+- When a partner's interest changes during the year and income is
+  earned evenly, allocate by time-weighting the interests: months
+  at the old percentage plus months at the new percentage.
+- Answer A's share of income in USD.
+"""
+    question = _numeric_question(
+        "income share with a varying interest",
+        "Using `/app/documents/varying_interest.md` and `/app/policy.md`, "
+        "compute **A's share of income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="varying-interest-allocation",
+        family="passthrough-taxation",
+        title="Varying interest mid-year sale",
+        question=question,
+        policy=policy,
+        data_name="varying_interest.md",
+        data=data,
+        gold=gold.quantize(CENT),
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "varying-interests", "allocations"],
+        abs_tolerance="1",
+        trap_value=money((income * Decimal("0.2")).quantize(CENT)),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -19429,6 +20059,17 @@ FAMILIES = {
     "liquidation-shareholder-gain": liquidation_shareholder_gain,
     "corporate-formation-gain": corporate_formation_gain,
     "partnership-contribution-gain": partnership_contribution_gain,
+    "trust-accounting-income": trust_accounting_income,
+    "trust-dni-computation": trust_dni_computation,
+    "section704c-contributor-gain": section704c_contributor_gain,
+    "constructive-ownership-percent": constructive_ownership_percent,
+    "related-party-resale-gain": related_party_resale_gain,
+    "basis-adjustment-754-allocation": basis_adjustment_754_allocation,
+    "income-shifting-pv-saving": income_shifting_pv_saving,
+    "sc-income-sourcing": sc_income_sourcing,
+    "fsa-tax-saving": fsa_tax_saving,
+    "builtin-gains-tax-base": builtin_gains_tax_base,
+    "varying-interest-allocation": varying_interest_allocation,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -19692,4 +20333,15 @@ STABLE_SEEDS = {
     "liquidation-shareholder-gain": 357,
     "corporate-formation-gain": 358,
     "partnership-contribution-gain": 359,
+    "trust-accounting-income": 360,
+    "trust-dni-computation": 361,
+    "section704c-contributor-gain": 362,
+    "constructive-ownership-percent": 363,
+    "related-party-resale-gain": 364,
+    "basis-adjustment-754-allocation": 365,
+    "income-shifting-pv-saving": 366,
+    "sc-income-sourcing": 367,
+    "fsa-tax-saving": 368,
+    "builtin-gains-tax-base": 369,
+    "varying-interest-allocation": 370,
 }
