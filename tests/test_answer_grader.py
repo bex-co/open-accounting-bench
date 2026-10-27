@@ -186,6 +186,16 @@ NUMERIC_FAMILIES = [
     "adjusted-ebitda-computation",
     "percent-of-sales-afn",
     "sales-mix-variance",
+    "state-apportionment-income",
+    "tax-penalty-combined",
+    "capital-loss-carryforward",
+    "disallowed-loss-amount",
+    "individual-tax-with-niit",
+    "individual-gross-income-total",
+    "agi-above-line-adjustments",
+    "qbi-deduction-amount",
+    "passthrough-ordinary-income",
+    "owner-ordinary-from-k1",
 ]
 
 
@@ -314,6 +324,11 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-fund-balance-classification",
         "sc-interfund-activity-type",
         "sc-option-value-sensitivity",
+        "sc-capital-gain-classification",
+        "sc-s-corp-eligibility",
+        "sc-tax-authority-disclosure",
+        "sc-filing-status",
+        "sc-tax-practice-ethics",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

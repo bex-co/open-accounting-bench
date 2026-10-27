@@ -315,6 +315,21 @@ D = standards depth):
 | `sc-option-value-sensitivity` | V | V | V | V | V | V | V | vocational |
 | `percent-of-sales-afn` | V | U | V | U | V | V | V | university (borderline) |
 | `sales-mix-variance` | V | U | V | V | V | V | V | vocational |
+| `state-apportionment-income` | V | U | V | V | V | V | V | vocational |
+| `tax-penalty-combined` | V | V | V | V | V | V | V | vocational |
+| `capital-loss-carryforward` | V | U | V | V | V | V | V | vocational |
+| `sc-capital-gain-classification` | V | V | V | V | V | V | V | vocational |
+| `disallowed-loss-amount` | V | V | V | U | V | V | V | vocational |
+| `sc-s-corp-eligibility` | V | V | V | V | V | V | V | vocational |
+| `individual-tax-with-niit` | V | V | V | U | V | V | V | vocational |
+| `sc-tax-authority-disclosure` | V | V | V | V | V | V | V | vocational |
+| `sc-filing-status` | V | V | V | V | V | V | V | vocational |
+| `individual-gross-income-total` | V | V | V | V | U | V | V | vocational |
+| `agi-above-line-adjustments` | V | V | V | V | U | V | V | vocational |
+| `sc-tax-practice-ethics` | V | V | V | V | V | V | V | vocational |
+| `qbi-deduction-amount` | V | V | V | U | V | V | V | vocational |
+| `passthrough-ordinary-income` | V | V | V | U | V | V | V | vocational |
+| `owner-ordinary-from-k1` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -558,8 +573,23 @@ problem the task hands over. An analysis task can be vocational.
 | `sc-option-value-sensitivity` | financial-analysis | single-choice | core | application | — | Volatility/dividend directions reversed |
 | `percent-of-sales-afn` | budgeting | numeric | core | application | — | Non-spontaneous items grown with sales |
 | `sales-mix-variance` | standard-costing | numeric | core | application | — | Quantity variance reported as mix |
+| `state-apportionment-income` | income-taxes | numeric | core | application | — | Three-factor split divided by 3 |
+| `tax-penalty-combined` | income-taxes | numeric | core | application | — | Both rates stacked at 5.5%/month |
+| `capital-loss-carryforward` | income-taxes | numeric | core | application | — | Whole carryforward called short-term |
+| `sc-capital-gain-classification` | income-taxes | single-choice | core | application | — | Gift holding period not tacked |
+| `disallowed-loss-amount` | income-taxes | numeric | core | application | — | Good investment loss also disallowed |
+| `sc-s-corp-eligibility` | income-taxes | single-choice | core | application | — | Voting differences called second class |
+| `individual-tax-with-niit` | income-taxes | numeric | core | application | — | NIIT on all investment income |
+| `sc-tax-authority-disclosure` | income-taxes | single-choice | core | application | — | Reasonable basis upgraded to skip disclosure |
+| `sc-filing-status` | income-taxes | single-choice | core | application | — | Head of household without half-year presence |
+| `individual-gross-income-total` | income-taxes | numeric | core | application | — | Municipal interest included |
+| `agi-above-line-adjustments` | income-taxes | numeric | core | application | — | Itemized deductions netted in AGI |
+| `sc-tax-practice-ethics` | income-taxes | single-choice | core | application | — | Contingent fee for original return |
+| `qbi-deduction-amount` | income-taxes | numeric | core | application | — | Capital gain left in limit base |
+| `passthrough-ordinary-income` | passthrough-taxation | numeric | core | application | — | Portfolio interest in ordinary income |
+| `owner-ordinary-from-k1` | passthrough-taxation | numeric | core | application | — | Separately stated items in ordinary income |
 
-Stable seeds: 101–331 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–346 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -570,11 +600,11 @@ placeholders tracked as issues, not directories.
 |---|---:|---:|---:|---|
 | financial-accounting | 140 | 17 | 12 | planned |
 | management-accounting | 37 | planned | planned | planned |
-| tax | 12 | — | — | planned |
+| tax | 27 | — | — | planned |
 | audit-assurance | 13 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×27,
-numeric ×110; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×32,
+numeric ×120; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

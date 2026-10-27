@@ -17417,6 +17417,1046 @@ def sales_mix_variance(seed: int) -> TaskInstance:
     )
 
 
+def state_apportionment_income(seed: int) -> TaskInstance:
+    """Numeric: state-taxable income under a stated weighted formula.
+
+    Trap: double-weighting sales in the numerator but still dividing
+    by three instead of four.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    income = Decimal(rng.choice([800, 1000, 1200, 2000])) * 1000
+    sales_pct = Decimal(rng.choice([40, 50, 60]))
+    prop_pct = Decimal(rng.choice([20, 30, 40]))
+    pay_pct = Decimal(rng.choice([10, 25, 30]))
+    gold = (income * (2 * sales_pct + prop_pct + pay_pct) / 400).quantize(CENT)
+    trap = (income * (2 * sales_pct + prop_pct + pay_pct) / 300).quantize(CENT)
+    everywhere_sales = Decimal("10000000")
+    everywhere_prop = Decimal("4000000")
+    everywhere_pay = Decimal("2000000")
+    data = (
+        "# Apportionment factors — 2025\n\n"
+        f"Total business income to apportion: USD {money(income)}.\n\n"
+        "| Factor | In state (USD) | Everywhere (USD) |\n|---|---:|---:|\n"
+        f"| Sales | {money(everywhere_sales * sales_pct / 100)} | {money(everywhere_sales)} |\n"
+        f"| Property | {money(everywhere_prop * prop_pct / 100)} | {money(everywhere_prop)} |\n"
+        f"| Payroll | {money(everywhere_pay * pay_pct / 100)} | {money(everywhere_pay)} |\n"
+    )
+    policy = """# State apportionment (stated rules for this task)
+
+- The state formula double-weights the sales factor:
+  apportionment % = (2 x sales % + property % + payroll %) / 4.
+  Each factor % is the in-state amount over the everywhere amount.
+- State-taxable income = total business income x apportionment %.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "state-apportioned taxable income",
+        "Using `/app/documents/apportionment_data.md` and `/app/policy.md`, "
+        "compute **state-taxable income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="state-apportionment-income",
+        family="income-taxes",
+        title="Three-factor state apportionment",
+        question=question,
+        policy=policy,
+        data_name="apportionment_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "state-tax", "apportionment"],
+        abs_tolerance="1",
+        trap_value=money(trap),
+    )
+
+
+def tax_penalty_combined(seed: int) -> TaskInstance:
+    """Numeric: combined late-filing/late-payment penalty with monthly cap.
+
+    Trap: stacking both full rates in overlap months (5.5% a month)
+    instead of applying the combined 5% monthly limit.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    tax = Decimal(rng.randrange(40, 301)) * 100
+    months = rng.randint(2, 8)
+    overlap = min(months, 5)
+    rate_pct = Decimal(5 * overlap) + Decimal("0.5") * max(0, months - 5)
+    # Months 1-5 run at a combined 5%; after that only the 0.5%
+    # payment penalty continues (filing part already at 4.5x5=22.5
+    # included inside the combined 5% months).
+    gold = (tax * rate_pct / 100).quantize(CENT)
+    trap_rate = Decimal(5 * overlap) + Decimal("0.5") * months
+    trap = (tax * trap_rate / 100).quantize(CENT)
+    data = (
+        "# Late return facts\n\n"
+        f"Tax shown on the return and unpaid: USD {money(tax)}. The return "
+        f"was filed and the tax paid {months} months after the due date "
+        "(no extension; months count part-months as full months).\n"
+    )
+    policy = """# Penalty rules (stated for this task)
+
+- Failure-to-file: 5% of the unpaid tax per month, maximum 25%.
+- Failure-to-pay: 0.5% per month, maximum 25%.
+- For any month BOTH apply, the failure-to-file rate is reduced to
+  4.5%, so the combined charge is 5% for that month. The filing
+  penalty reaches its maximum after five such months; the payment
+  penalty keeps running at 0.5% afterwards.
+- Answer the combined penalty in USD.
+"""
+    question = _numeric_question(
+        "combined late filing/payment penalty",
+        "Using `/app/documents/late_return.md` and `/app/policy.md`, "
+        "compute the **combined penalty** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="tax-penalty-combined",
+        family="income-taxes",
+        title="Combined late filing and payment penalty",
+        question=question,
+        policy=policy,
+        data_name="late_return.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "tax-penalties", "late-filing"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def capital_loss_carryforward(seed: int) -> TaskInstance:
+    """Numeric: short-term capital loss carryforward after the $3,000 limit.
+
+    Trap: reporting the whole carryforward as short-term (losing
+    the character split after the annual limit).
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    st_items = [amt(5, 61) * rng.choice([1, -1]) for _ in range(3)]
+    lt_items = [amt(5, 61) * rng.choice([1, -1]) for _ in range(3)]
+    # Force net losses in both baskets totaling more than 3000.
+    while not (sum(st_items) < 0 and sum(lt_items) < 0 and -(sum(st_items) + sum(lt_items)) > 3000):
+        st_items = [-amt(10, 81), -amt(5, 41), amt(0, 21)]
+        lt_items = [-amt(10, 71), amt(0, 21), -amt(5, 31)]
+    net_st, net_lt = -sum(st_items), -sum(lt_items)
+    deductible_st = min(net_st, Decimal(3000))
+    gold_st_carry = net_st - deductible_st
+    total_carry = net_st + net_lt - Decimal(3000)
+    trap = total_carry
+
+    def fmt(values):
+        return ", ".join(f"USD {money(v)}" if v >= 0 else f"-USD {money(-v)}" for v in values)
+
+    data = (
+        "# Capital transactions — 2025 (gains positive, losses negative)\n\n"
+        f"Short-term: {fmt(st_items)}\n\nLong-term: {fmt(lt_items)}\n"
+    )
+    policy = """# Capital-loss rules (stated for this task)
+
+- Net each basket separately (short-term and long-term).
+- A net capital loss is deductible against ordinary income up to
+  USD 3,000 per year, absorbed SHORT-TERM first; the unused part
+  carries forward KEEPING its short-term or long-term character.
+- Answer the SHORT-TERM capital loss carryforward in USD.
+"""
+    question = _numeric_question(
+        "short-term capital loss carryforward",
+        "Using `/app/documents/capital_transactions.md` and `/app/policy.md`, "
+        "compute the **short-term carryforward** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="capital-loss-carryforward",
+        family="income-taxes",
+        title="Capital loss carryforward character",
+        question=question,
+        policy=policy,
+        data_name="capital_transactions.md",
+        data=data,
+        gold=gold_st_carry,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "capital-losses", "carryforward"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+CAPITAL_GAIN_CASES = [
+    ("Shares bought 14 months ago and sold today.", "Long-term"),
+    (
+        "Shares received by gift 3 months ago; the donor had bought "
+        "them 2 years earlier. Sold today.",
+        "Long-term",
+    ),
+    (
+        "Shares inherited 2 months ago from a decedent who bought "
+        "them 1 month before death. Sold today.",
+        "Long-term",
+    ),
+    ("Shares bought 11 months ago and sold today.", "Short-term"),
+    (
+        "Shares received by gift 2 months ago; the donor had bought "
+        "them 4 months before the gift. Sold today.",
+        "Short-term",
+    ),
+]
+
+
+def sc_capital_gain_classification(seed: int) -> TaskInstance:
+    """Single-choice: short- or long-term, with gift/inherited holding rules.
+
+    Trap: starting the clock at receipt for a gift and missing the
+    donor's tacked holding period.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(CAPITAL_GAIN_CASES)
+    labels = ["Short-term", "Long-term"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Holding-period rules (stated for this task)
+
+- Long-term means held MORE than one year; one year or less is
+  short-term.
+- Property received by GIFT: the recipient's holding period
+  INCLUDES (tacks) the donor's holding period.
+- Property acquired from a decedent (inherited) is treated as
+  held long-term regardless of actual periods.
+"""
+    question = _choice_question(
+        "capital gain holding period",
+        f"Facts: **{narrative}**\n\nUsing `/app/policy.md`, is the gain "
+        "short-term or long-term? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-capital-gain-classification",
+        family="income-taxes",
+        title="Short-term or long-term gain?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-capital-gain-classification",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "capital-gains", "holding-period"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def disallowed_loss_amount(seed: int) -> TaskInstance:
+    """Numeric: total losses disallowed under wash-sale/personal/hobby rules.
+
+    Trap: also disallowing the genuine investment loss that had no
+    repurchase (it is deductible).
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    wash, personal, allowed = amt(20, 91), amt(15, 71), amt(10, 61)
+    hobby_income = amt(5, 31)
+    hobby_expenses = hobby_income + amt(8, 41)
+    gold = wash + personal + (hobby_expenses - hobby_income)
+    data = (
+        "# Loss transactions — 2025\n\n| Item | Loss (USD) |\n|---|---:|\n"
+        f"| Stock sold at a loss; identical shares repurchased 10 days later | {money(wash)} |\n"
+        f"| Personal-use car sold at a loss | {money(personal)} |\n"
+        f"| Investment shares sold at a loss; no repurchase | {money(allowed)} |\n"
+        f"| Hobby activity: income {money(hobby_income)}, expenses | {money(hobby_expenses)} |\n"
+    )
+    policy = """# Disallowed-loss rules (stated for this task)
+
+- Wash sale: a loss on shares is disallowed if substantially
+  identical shares are bought within 30 days before or after the
+  sale.
+- Losses on personal-use assets are never deductible.
+- Hobby expenses are deductible only up to hobby income; the
+  excess is disallowed.
+- Other investment losses (no repurchase) are deductible.
+
+- Answer the TOTAL disallowed amount in USD.
+"""
+    question = _numeric_question(
+        "total disallowed losses",
+        "Using `/app/documents/loss_transactions.md` and `/app/policy.md`, "
+        "compute the **total disallowed losses** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="disallowed-loss-amount",
+        family="income-taxes",
+        title="Wash-sale, personal, and hobby disallowances",
+        question=question,
+        policy=policy,
+        data_name="loss_transactions.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "wash-sales", "disallowed-losses"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + allowed),
+    )
+
+
+SCORP_CASES = [
+    (
+        "A domestic corporation has 40 individual US-resident "
+        "shareholders and one class of voting stock; all consent to "
+        "the election.",
+        "Eligible — election valid",
+    ),
+    (
+        "The corporation issues a second class of shares entitled to "
+        "a preferential distribution of profits.",
+        "Not eligible / election terminates",
+    ),
+    (
+        "One shareholder is a nonresident alien individual.",
+        "Not eligible / election terminates",
+    ),
+    (
+        "One of the shareholders is another corporation.",
+        "Not eligible / election terminates",
+    ),
+    (
+        "Shares have different voting rights per share but identical "
+        "rights to distributions and liquidation proceeds.",
+        "Eligible — election valid",
+    ),
+]
+
+
+def sc_s_corp_eligibility(seed: int) -> TaskInstance:
+    """Single-choice: S-corporation eligibility on stated requirements.
+
+    Trap: missing a second class of stock created by differing
+    distribution rights (voting differences alone are fine).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(SCORP_CASES)
+    labels = ["Eligible — election valid", "Not eligible / election terminates"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# S-corporation requirements (stated for this task)
+
+An eligible small business corporation must be domestic, have no
+more than 100 shareholders, have only allowable shareholders
+(US-resident individuals and certain trusts — never corporations
+or nonresident aliens), and have ONE class of stock. One class
+means identical rights to distributions and liquidation proceeds;
+differences in VOTING rights alone do not create a second class.
+"""
+    question = _choice_question(
+        "S corporation eligibility",
+        f"Facts: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-s-corp-eligibility",
+        family="income-taxes",
+        title="S corporation eligibility",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-s-corp-eligibility",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "s-corporation", "eligibility"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def individual_tax_with_niit(seed: int) -> TaskInstance:
+    """Numeric: individual tax plus net investment income tax.
+
+    Trap: applying the 3.8% NIIT to all investment income instead
+    of the lesser-of amount.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    taxable = Decimal(rng.choice([120, 150, 180, 220, 260])) * 1000
+    nii = Decimal(rng.randrange(30, 121)) * 1000
+    excess = Decimal(rng.randrange(10, 81)) * 1000
+    while excess >= nii:
+        excess = Decimal(rng.randrange(10, 81)) * 1000
+    bracket_tax = (Decimal(50000) * Decimal("0.12") + (taxable - 50000) * Decimal("0.22")).quantize(
+        CENT
+    )
+    gold = bracket_tax + (excess * Decimal("0.038")).quantize(CENT)
+    trap = bracket_tax + (nii * Decimal("0.038")).quantize(CENT)
+    data = (
+        "# Individual tax data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Taxable income | {money(taxable)} |\n"
+        f"| Net investment income | {money(nii)} |\n"
+        f"| Modified AGI in excess of the stated NIIT threshold | {money(excess)} |\n"
+    )
+    policy = """# Individual tax (stated rules for this task)
+
+- Regular tax: 12% of the first USD 50,000 of taxable income and
+  22% of the excess over USD 50,000.
+- Net investment income tax: 3.8% of the LESSER of (a) net
+  investment income or (b) modified AGI above the threshold.
+- Answer total tax (regular + NIIT) in USD.
+"""
+    question = _numeric_question(
+        "total individual tax including NIIT",
+        "Using `/app/documents/tax_data.md` and `/app/policy.md`, compute **total tax** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="individual-tax-with-niit",
+        family="income-taxes",
+        title="Individual tax with the NIIT lesser-of test",
+        question=question,
+        policy=policy,
+        data_name="tax_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "individual-tax", "niit"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+AUTHORITY_OPTIONS = [
+    "Substantial authority — disclosure not required",
+    "Reasonable basis only — disclose the position",
+    "Frivolous — must not take the position",
+]
+AUTHORITY_CASES = [
+    (
+        "A regulation directly addresses the taxpayer's facts and "
+        "supports the treatment taken on the return.",
+        "Substantial authority — disclosure not required",
+    ),
+    (
+        "The only support is a well-reasoned law-review article and "
+        "a private letter ruling issued to another taxpayer with "
+        "similar facts.",
+        "Reasonable basis only — disclose the position",
+    ),
+    (
+        "The position contradicts a regulation that squarely covers "
+        "the facts, with no authority the other way.",
+        "Frivolous — must not take the position",
+    ),
+    (
+        "Two appellate court decisions in the taxpayer's circuit "
+        "support the treatment; none in that circuit go the other way.",
+        "Substantial authority — disclosure not required",
+    ),
+]
+
+
+def sc_tax_authority_disclosure(seed: int) -> TaskInstance:
+    """Single-choice: authority weight for a tax position.
+
+    Trap: elevating reasonable basis to substantial authority to
+    avoid disclosure.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(AUTHORITY_CASES)
+    labels = AUTHORITY_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Authority hierarchy (stated for this task)
+
+- Substantial authority: the weight of primary authorities (code,
+  regulations, applicable court decisions) supporting the
+  treatment is substantial in relation to contrary authorities.
+  No disclosure is required.
+- Reasonable basis: a position reasonably arguable from one or
+  more authorities (including well-reasoned commentary), short of
+  substantial authority. The position may be taken only WITH
+  disclosure.
+- Private letter rulings bind only their recipient and count, at
+  most, toward reasonable basis.
+- A position contrary to the authorities with no support is
+  frivolous and must not be taken.
+"""
+    question = _choice_question(
+        "tax authority and disclosure",
+        f"Position support: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-tax-authority-disclosure",
+        family="income-taxes",
+        title="Substantial authority or disclose?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-tax-authority-disclosure",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "tax-authority", "disclosure"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+FILING_STATUS_OPTIONS = [
+    "Single",
+    "Married filing jointly",
+    "Head of household",
+    "Surviving spouse",
+]
+FILING_STATUS_CASES = [
+    (
+        "Unmarried all year; her 8-year-old daughter lived with her "
+        "all year and she paid all household costs.",
+        "Head of household",
+    ),
+    (
+        "Married at year-end; both spouses agree to file one return combining their incomes.",
+        "Married filing jointly",
+    ),
+    (
+        "Unmarried; his son lived with the other parent for 8 months "
+        "of the year and with him for 4 months.",
+        "Single",
+    ),
+    (
+        "Her spouse died in 2023; she has not remarried and keeps up "
+        "the home for her dependent child (tax year 2025).",
+        "Surviving spouse",
+    ),
+    (
+        "Unmarried, no dependents, lives alone.",
+        "Single",
+    ),
+]
+
+
+def sc_filing_status(seed: int) -> TaskInstance:
+    """Single-choice: filing status from stated tests.
+
+    Trap: claiming head of household when the qualifying child did
+    not live with the taxpayer for more than half the year.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(FILING_STATUS_CASES)
+    labels = FILING_STATUS_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Filing-status tests (stated for this task)
+
+- Married filing jointly: married at year-end and both agree.
+- Head of household: unmarried, pays more than half the cost of
+  keeping up the home, and a qualifying person (e.g. the
+  taxpayer's child) lived there for MORE than half the year.
+- Surviving spouse: spouse died within the two prior tax years,
+  taxpayer has not remarried and keeps up the home for a
+  dependent child.
+- Otherwise an unmarried taxpayer files as Single.
+"""
+    question = _choice_question(
+        "filing status",
+        f"Taxpayer facts: **{narrative}**\n\nUsing `/app/policy.md`, "
+        "what is the filing status? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-filing-status",
+        family="income-taxes",
+        title="Determine the filing status",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-filing-status",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "filing-status", "head-of-household"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def individual_gross_income_total(seed: int) -> TaskInstance:
+    """Numeric: gross income from a list of inclusions and exclusions.
+
+    Trap: including tax-exempt municipal bond interest.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    wages, interest, muni = amt(600, 1501), amt(10, 81), amt(8, 51)
+    life_insurance, gift, car_benefit, deposit = (
+        amt(200, 601),
+        amt(50, 201),
+        amt(15, 61),
+        amt(10, 41),
+    )
+    gold = wages + interest + car_benefit
+    data = (
+        "# Individual receipts — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Wages | {money(wages)} |\n"
+        f"| Bank interest | {money(interest)} |\n"
+        f"| Municipal bond interest | {money(muni)} |\n"
+        f"| Life insurance proceeds on spouse's death | {money(life_insurance)} |\n"
+        f"| Cash gift from parents | {money(gift)} |\n"
+        f"| Taxable fringe benefit: personal use of employer car | {money(car_benefit)} |\n"
+        f"| Refundable security deposit received as landlord | {money(deposit)} |\n"
+    )
+    policy = """# Gross-income inclusions (stated for this task)
+
+- Included: wages, taxable interest, and taxable fringe benefits
+  (stated as taxable).
+- Excluded: municipal bond interest, life insurance death
+  benefits, gifts received, and refundable deposits (not income
+  while the obligation to repay stands).
+- Answer total gross income in USD.
+"""
+    question = _numeric_question(
+        "total gross income",
+        "Using `/app/documents/receipts.md` and `/app/policy.md`, compute "
+        "**total gross income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="individual-gross-income-total",
+        family="income-taxes",
+        title="Inclusions and exclusions in gross income",
+        question=question,
+        policy=policy,
+        data_name="receipts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "gross-income", "exclusions"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + muni),
+    )
+
+
+def agi_above_line_adjustments(seed: int) -> TaskInstance:
+    """Numeric: AGI after above-the-line adjustments only.
+
+    Trap: also subtracting below-the-line itemized deductions when
+    computing AGI.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/U/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gross = amt(800, 1601)
+    ira, hsa, se_half, itemized = amt(30, 71), amt(20, 61), amt(15, 61), amt(80, 241)
+    gold = gross - ira - hsa - se_half
+    data = (
+        "# Above-the-line data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Total gross income | {money(gross)} |\n"
+        f"| Deductible traditional IRA contribution | {money(ira)} |\n"
+        f"| HSA contribution (eligible) | {money(hsa)} |\n"
+        f"| One-half of self-employment tax | {money(se_half)} |\n"
+        f"| Itemized deductions (mortgage interest, taxes) | {money(itemized)} |\n"
+    )
+    policy = """# AGI conventions (stated for this task)
+
+Adjusted gross income = gross income MINUS the above-the-line
+adjustments listed: deductible IRA contributions, HSA
+contributions, and one-half of self-employment tax. Itemized
+deductions are subtracted AFTER AGI and never enter this
+computation.
+
+- Answer AGI in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "adjusted gross income",
+        "Using `/app/documents/agi_data.md` and `/app/policy.md`, "
+        "compute **adjusted gross income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="agi-above-line-adjustments",
+        family="income-taxes",
+        title="AGI and above-the-line adjustments",
+        question=question,
+        policy=policy,
+        data_name="agi_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "agi", "adjustments"],
+        abs_tolerance="0.01",
+        trap_value=money(gold - itemized),
+    )
+
+
+ETHICS_CASES = [
+    (
+        "Charging a fee contingent on the refund amount for preparing "
+        "a client's original tax return.",
+        "Prohibited under the stated rules",
+    ),
+    (
+        "Charging a contingent fee to represent the client in an "
+        "examination of that return by the tax authority.",
+        "Permitted under the stated rules",
+    ),
+    (
+        "Signing a return position the preparer knows lacks any "
+        "reasonable basis, without disclosure.",
+        "Prohibited under the stated rules",
+    ),
+    (
+        "Representing both spouses in a divorce-related tax matter "
+        "after each gave informed written consent waiving the "
+        "conflict, and the practitioner reasonably believes both can "
+        "be represented competently.",
+        "Permitted under the stated rules",
+    ),
+]
+
+
+def sc_tax_practice_ethics(seed: int) -> TaskInstance:
+    """Single-choice: tax-practice conduct under stated practice rules.
+
+    Trap: using the examination exception to justify a contingent
+    fee for preparing the original return.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(ETHICS_CASES)
+    labels = ["Permitted under the stated rules", "Prohibited under the stated rules"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Practice rules (stated for this task)
+
+- Contingent fees are PROHIBITED for preparing an original return.
+  They ARE permitted for representing a client in an examination
+  or claim for refund.
+- A preparer must not sign a position lacking a reasonable basis
+  unless it is adequately disclosed (and never a frivolous one).
+- A conflict of interest may be waived only with each affected
+  client's informed written consent and a reasonable belief that
+  competent representation of each is still possible.
+"""
+    question = _choice_question(
+        "tax practice conduct",
+        f"Proposed conduct: **{narrative}**\n\nUsing `/app/policy.md`, select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-tax-practice-ethics",
+        family="income-taxes",
+        title="Contingent fees, signing, and conflicts",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-tax-practice-ethics",
+            "income-taxes",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        category="tax",
+        keywords=["single-choice", "tax-practice", "ethics"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+    )
+
+
+def qbi_deduction_amount(seed: int) -> TaskInstance:
+    """Numeric: qualified business income deduction (simplified stated rules).
+
+    Trap: forgetting to remove net capital gain from the
+    taxable-income limitation base.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    taxable_before = Decimal(rng.randrange(150, 401)) * 1000
+    capital_gain = Decimal(rng.randrange(10, 81)) * 1000
+    qbi = taxable_before - capital_gain + Decimal(rng.randrange(20, 101)) * 1000
+    gold = ((taxable_before - capital_gain) * Decimal("0.2")).quantize(CENT)
+    data = (
+        "# QBI data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Qualified business income (sole proprietorship) | {money(qbi)} |\n"
+        f"| Taxable income before the QBI deduction | {money(taxable_before)} |\n"
+        f"| Net capital gain included in taxable income | {money(capital_gain)} |\n"
+    )
+    policy = """# QBI deduction (simplified stated rules for this task)
+
+The deduction is the LESSER of:
+(a) 20% of qualified business income, or
+(b) 20% of (taxable income before the QBI deduction MINUS net
+    capital gain).
+
+- Answer the deduction in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "qualified business income deduction",
+        "Using `/app/documents/qbi_data.md` and `/app/policy.md`, compute "
+        "the **QBI deduction** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="qbi-deduction-amount",
+        family="income-taxes",
+        title="QBI deduction lesser-of limit",
+        question=question,
+        policy=policy,
+        data_name="qbi_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "qbi", "deductions"],
+        abs_tolerance="0.01",
+        trap_value=money((qbi * Decimal("0.2")).quantize(CENT)),
+    )
+
+
+def passthrough_ordinary_income(seed: int) -> TaskInstance:
+    """Numeric: an S corporation's ordinary business income.
+
+    Trap: folding separately stated portfolio interest into
+    ordinary income.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(300, 901)
+    cogs, opex, guaranteed = amt(400, 901), amt(200, 601), amt(30, 121)
+    interest, charity = amt(10, 61), amt(5, 41)
+    sales = gold + cogs + opex + guaranteed
+    data = (
+        "# S corporation results — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Sales revenue | {money(sales)} |\n"
+        f"| Cost of goods sold | {money(cogs)} |\n"
+        f"| Operating expenses | {money(opex)} |\n"
+        f"| Guaranteed payments to shareholders | {money(guaranteed)} |\n"
+        f"| Portfolio interest income | {money(interest)} |\n"
+        f"| Charitable contributions | {money(charity)} |\n"
+    )
+    policy = """# Passthrough computation (stated for this task)
+
+- Ordinary business income = sales - cost of goods sold -
+  operating expenses - guaranteed payments (deductible by the
+  entity).
+- Portfolio interest and charitable contributions are SEPARATELY
+  STATED items: they never enter ordinary business income.
+- Answer ordinary business income in USD.
+"""
+    question = _numeric_question(
+        "passthrough ordinary business income",
+        "Using `/app/documents/entity_results.md` and `/app/policy.md`, "
+        "compute **ordinary business income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="passthrough-ordinary-income",
+        family="passthrough-taxation",
+        title="Ordinary income of a passthrough entity",
+        question=question,
+        policy=policy,
+        data_name="entity_results.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "passthrough", "ordinary-income"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + interest),
+    )
+
+
+def owner_ordinary_from_k1(seed: int) -> TaskInstance:
+    """Numeric: an owner's ordinary income from partnership K-1 items.
+
+    Trap: reporting the separately stated portfolio interest as
+    part of ordinary business income.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    ordinary_share, guaranteed, interest, dividends = (
+        amt(150, 601),
+        amt(40, 161),
+        amt(8, 51),
+        amt(5, 41),
+    )
+    gold = ordinary_share + guaranteed
+    data = (
+        "# Partner's Schedule K-1 extracts — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Distributive share of ordinary business income | {money(ordinary_share)} |\n"
+        f"| Guaranteed payments received for services | {money(guaranteed)} |\n"
+        f"| Portfolio interest income (separately stated) | {money(interest)} |\n"
+        f"| Qualified dividends (separately stated) | {money(dividends)} |\n"
+    )
+    policy = """# Owner reporting (stated for this task)
+
+- The owner's ordinary income from the partnership = distributive
+  share of ordinary business income + guaranteed payments for
+  services.
+- Separately stated portfolio interest and dividends keep their
+  character on the owner's return and are NOT part of ordinary
+  business income.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "owner's ordinary income from K-1",
+        "Using `/app/documents/k1_extracts.md` and `/app/policy.md`, "
+        "compute the owner's **ordinary income from the partnership** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="owner-ordinary-from-k1",
+        family="passthrough-taxation",
+        title="Ordinary income from a Schedule K-1",
+        question=question,
+        policy=policy,
+        data_name="k1_extracts.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "k-1", "passthrough-reporting"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + interest + dividends),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -17649,6 +18689,21 @@ FAMILIES = {
     "sc-option-value-sensitivity": sc_option_value_sensitivity,
     "percent-of-sales-afn": percent_of_sales_afn,
     "sales-mix-variance": sales_mix_variance,
+    "state-apportionment-income": state_apportionment_income,
+    "tax-penalty-combined": tax_penalty_combined,
+    "capital-loss-carryforward": capital_loss_carryforward,
+    "sc-capital-gain-classification": sc_capital_gain_classification,
+    "disallowed-loss-amount": disallowed_loss_amount,
+    "sc-s-corp-eligibility": sc_s_corp_eligibility,
+    "individual-tax-with-niit": individual_tax_with_niit,
+    "sc-tax-authority-disclosure": sc_tax_authority_disclosure,
+    "sc-filing-status": sc_filing_status,
+    "individual-gross-income-total": individual_gross_income_total,
+    "agi-above-line-adjustments": agi_above_line_adjustments,
+    "sc-tax-practice-ethics": sc_tax_practice_ethics,
+    "qbi-deduction-amount": qbi_deduction_amount,
+    "passthrough-ordinary-income": passthrough_ordinary_income,
+    "owner-ordinary-from-k1": owner_ordinary_from_k1,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -17884,4 +18939,19 @@ STABLE_SEEDS = {
     "sc-option-value-sensitivity": 329,
     "percent-of-sales-afn": 330,
     "sales-mix-variance": 331,
+    "state-apportionment-income": 332,
+    "tax-penalty-combined": 333,
+    "capital-loss-carryforward": 334,
+    "sc-capital-gain-classification": 335,
+    "disallowed-loss-amount": 336,
+    "sc-s-corp-eligibility": 337,
+    "individual-tax-with-niit": 338,
+    "sc-tax-authority-disclosure": 339,
+    "sc-filing-status": 340,
+    "individual-gross-income-total": 341,
+    "agi-above-line-adjustments": 342,
+    "sc-tax-practice-ethics": 343,
+    "qbi-deduction-amount": 344,
+    "passthrough-ordinary-income": 345,
+    "owner-ordinary-from-k1": 346,
 }

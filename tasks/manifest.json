@@ -146,6 +146,20 @@
       "digest": "sha256:3aec3161e29c09c672077ec90635253b6019c626ca77f06e126f2c4ee24a49f9"
     },
     {
+      "task_id": "agi-above-line-adjustments",
+      "family": "income-taxes",
+      "seed": 342,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:fbeb7da47e69e642591817cb275403698f1f0cf7cb9176105c26fd1750865215"
+    },
+    {
       "task_id": "allowance-movement-expense",
       "family": "receivables",
       "seed": 284,
@@ -420,6 +434,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:fbc1ce7a76d47d22f7f1a4d956c5c0f96b942b732358a0ccb40ee4e357191976"
+    },
+    {
+      "task_id": "capital-loss-carryforward",
+      "family": "income-taxes",
+      "seed": 334,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e369aca50773e6707d31bf8207d2b9a9a4c5ee510e0b32b1916ae31e03c451a9"
     },
     {
       "task_id": "capitalized-cost-bundle",
@@ -903,6 +931,20 @@
       "digest": "sha256:df08b49d51bf372a7eda8a759d06c9ce79e3b75bb0403806dd096587559f5371"
     },
     {
+      "task_id": "disallowed-loss-amount",
+      "family": "income-taxes",
+      "seed": 336,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:6dcc32289830a1a0cc29e989a6616440d84aaacd49ba8a1200f5ada0e7da34a8"
+    },
+    {
       "task_id": "disposal-of-subsidiary-gain",
       "family": "consolidation",
       "seed": 280,
@@ -1356,6 +1398,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:f919473f108283fc4894c1c131b92e7cc92ab479c25242b65075c9f0e93c6e6f"
+    },
+    {
+      "task_id": "individual-gross-income-total",
+      "family": "income-taxes",
+      "seed": 341,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:dda3399e8b9afc9b5eaac945c556078b103f795672474f2ee14a4f4064a66cf3"
+    },
+    {
+      "task_id": "individual-tax-with-niit",
+      "family": "income-taxes",
+      "seed": 338,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:61d3f814e6e74e73d7387a36119fea1afc7b0215a617c6083bda3bb474003f74"
     },
     {
       "task_id": "interim-income-tax-expense",
@@ -2055,6 +2125,20 @@
       "digest": "sha256:ab1a10e19aa1adf483ec55f9b21e4c6c4140f218c743a9b836aaa41d20f069c1"
     },
     {
+      "task_id": "owner-ordinary-from-k1",
+      "family": "passthrough-taxation",
+      "seed": 346,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:29b5000cd8141605df94b2388336be7fec75c3a8d1be7b6bfc6ed494e0e650cd"
+    },
+    {
       "task_id": "partnership-admission-bonus",
       "family": "partnerships",
       "seed": 253,
@@ -2165,6 +2249,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:501ddcb0b0a76d474049c80c956e4fb70b7399f779fabdcd0b06cce9bd798730"
+    },
+    {
+      "task_id": "passthrough-ordinary-income",
+      "family": "passthrough-taxation",
+      "seed": 345,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:1e20127dbab459dbfd8404512e94405c5d898dd81669aae185a8da1e99436054"
     },
     {
       "task_id": "patent-amortization",
@@ -2483,6 +2581,20 @@
       "digest": "sha256:cfc0f14a21e0dad5a889a54899066df79679c4dafae54b0423b9942807585108"
     },
     {
+      "task_id": "qbi-deduction-amount",
+      "family": "income-taxes",
+      "seed": 344,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:812ccc572468cf9f7cf32767a0a52e2ea349db9799c0655c0b47aeac2ff93e54"
+    },
+    {
       "task_id": "receivable-allowance-trueup",
       "family": "receivables",
       "seed": 108,
@@ -2718,6 +2830,20 @@
       "digest": "sha256:7811d65a82bf413f1c9dfdd3756beb3ca72ed19399c58c1e0c3ced45ff631f10"
     },
     {
+      "task_id": "sc-capital-gain-classification",
+      "family": "income-taxes",
+      "seed": 335,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:127bc3da9d912bbb4896b3621d69d2ec23b2aabe6d427b0952825741ee8ff2bb"
+    },
+    {
       "task_id": "sc-cash-flow-classification",
       "family": "cash-flow-statement",
       "seed": 180,
@@ -2840,6 +2966,20 @@
         "ifrs:13"
       ],
       "digest": "sha256:4c6e336c2c1c40e024a5c155358ce54ebe194fa0e4a2e032254b0103f95e6529"
+    },
+    {
+      "task_id": "sc-filing-status",
+      "family": "income-taxes",
+      "seed": 340,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:d93b4a26c41e04aac764cb8bbef38f4f7bc58b920682af3dc27079f883e0e3fe"
     },
     {
       "task_id": "sc-fraud-triangle-classification",
@@ -2988,6 +3128,20 @@
       "digest": "sha256:40056d7548acb0c1c05608e942ed37cdb0a6e6c25f5a46697edaf244876dcc8c"
     },
     {
+      "task_id": "sc-s-corp-eligibility",
+      "family": "income-taxes",
+      "seed": 337,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9fb70da83a11f0052774c01f57dd61de7266bc8b1ff01278f335f7f56e70db23"
+    },
+    {
       "task_id": "sc-soc-opinion-modification",
       "family": "audit-planning",
       "seed": 304,
@@ -3059,6 +3213,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:48aef96f6538b8a28ec45c76ca07b6f8f7828478b86bd79f16ad263b38cd4b1e"
+    },
+    {
+      "task_id": "sc-tax-authority-disclosure",
+      "family": "income-taxes",
+      "seed": 339,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7c9e400304fd477aeb54ec3cb90f2b4aff6ead797ef3cb3d8db46ebd5b0196e3"
+    },
+    {
+      "task_id": "sc-tax-practice-ethics",
+      "family": "income-taxes",
+      "seed": 343,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:36cac21a10775f74eb9720d685e725a56b66184a918a81e9a1593560f42295b3"
     },
     {
       "task_id": "sc-transaction-statement-impact",
@@ -3178,6 +3360,20 @@
       "digest": "sha256:48d5c8e76cedcfe99403c9881f67c05194304babb4723e5f68f26190ce2f0742"
     },
     {
+      "task_id": "state-apportionment-income",
+      "family": "income-taxes",
+      "seed": 332,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:812a80703b98e739bc45784ff687ea53ce70c9cfd574160ec6ee23ae30017566"
+    },
+    {
       "task_id": "step-acquisition-remeasurement-gain",
       "family": "business-combinations",
       "seed": 281,
@@ -3263,6 +3459,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:d8cb3c3dc138f62038d0ec5b2532df3913af0ec0442e19f9f4370fbc6ee7628d"
+    },
+    {
+      "task_id": "tax-penalty-combined",
+      "family": "income-taxes",
+      "seed": 333,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:7594759c90c145641839bb4fa6bc301de95fb7d147e0542ac2b9e067d1a0e4d7"
     },
     {
       "task_id": "tax-return-crossfoot-difference",
