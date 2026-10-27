@@ -588,6 +588,23 @@
       "digest": "sha256:4f33ac7a49f09b85fc181bc363bdf06e68c8e93a57d2114fd17b3cb8481e242a"
     },
     {
+      "task_id": "contract-modification-revenue",
+      "family": "revenue-recognition",
+      "seed": 294,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:606",
+        "ifrs:15"
+      ],
+      "digest": "sha256:7400ddab3506d3ea543f1b7bacd32a1319a8dd7152c40c860a876b580b01ee4c"
+    },
+    {
       "task_id": "correct-misclassification",
       "family": "ledger-integrity-reporting",
       "seed": 104,
@@ -1351,6 +1368,23 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:d8caf86909a22e9c44d7e0f142a24c860a08ad9958adebf06f95dd52980badae"
+    },
+    {
+      "task_id": "lease-component-allocation",
+      "family": "leases",
+      "seed": 296,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:842",
+        "ifrs:16"
+      ],
+      "digest": "sha256:408f75925a510b7203ab8a7ab525314ad92ffd4937db0749b78276b85b147078"
     },
     {
       "task_id": "lease-initial-recognition",
@@ -2346,6 +2380,23 @@
       "digest": "sha256:7174f92b229b26f952d818e3f180c60bff0cb2b65e672c1caa5a42a8ed3a0765"
     },
     {
+      "task_id": "sc-business-vs-asset-acquisition",
+      "family": "business-combinations",
+      "seed": 293,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [
+        "asc:805",
+        "ifrs:3"
+      ],
+      "digest": "sha256:7811d65a82bf413f1c9dfdd3756beb3ca72ed19399c58c1e0c3ced45ff631f10"
+    },
+    {
       "task_id": "sc-cash-flow-classification",
       "family": "cash-flow-statement",
       "seed": 180,
@@ -2407,6 +2458,22 @@
         "ias:32"
       ],
       "digest": "sha256:45aaf456cc959fb5fce4db4c07a19c148a9b20e61f61f757e8c940d270a067e2"
+    },
+    {
+      "task_id": "sc-derecognition-assessment",
+      "family": "financial-instruments",
+      "seed": 295,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [
+        "ifrs:9"
+      ],
+      "digest": "sha256:d56f64d06216ad2947d57dcfc2e13aad260a58b04e2af647539f4f18290d7e96"
     },
     {
       "task_id": "sc-fair-value-hierarchy",
@@ -2484,6 +2551,38 @@
       "digest": "sha256:879487f894c810daf4fc3028df446060849b9283be948425449d2934d42c57e9"
     },
     {
+      "task_id": "sc-offsetting-assessment",
+      "family": "financial-instruments",
+      "seed": 297,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [
+        "ias:32"
+      ],
+      "digest": "sha256:927133aa231d03675e607253b6d621d14dbd874309e715d3a3efaf3402a8f427"
+    },
+    {
+      "task_id": "sc-related-party-identification",
+      "family": "financial-reporting",
+      "seed": 298,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [
+        "ias:24"
+      ],
+      "digest": "sha256:40056d7548acb0c1c05608e942ed37cdb0a6e6c25f5a46697edaf244876dcc8c"
+    },
+    {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
@@ -2555,6 +2654,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:56a8470275e01d72d397993dc3ee8dd80ba34c102354e8926afea1ff8543b093"
+    },
+    {
+      "task_id": "separate-statements-investment",
+      "family": "financial-reporting",
+      "seed": 299,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "ias:27"
+      ],
+      "digest": "sha256:dd86a5347a44718f04036c0cbcf3500138afbc7051c11598da7327df842b8814"
     },
     {
       "task_id": "share-based-compensation-monthly",

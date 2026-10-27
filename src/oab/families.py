@@ -14506,6 +14506,570 @@ def restructuring_provision_amount(seed: int) -> TaskInstance:
     )
 
 
+BUSINESS_ASSET_CASES = [
+    (
+        "The acquirer buys a factory together with its workforce, "
+        "production processes, supplier contracts, and an existing "
+        "customer order book, and keeps selling the same products.",
+        "A business",
+    ),
+    (
+        "The acquirer buys a single commercial building with an "
+        "in-place lease. No employees, processes, or other assets are "
+        "transferred.",
+        "An asset (or group of assets), not a business",
+    ),
+    (
+        "The acquirer buys a drug compound under development together "
+        "with the research team, laboratory, and documented research "
+        "protocols. There are no sales yet.",
+        "A business",
+    ),
+    (
+        "The acquirer buys several vacant land parcels from a "
+        "developer. Nothing else is transferred.",
+        "An asset (or group of assets), not a business",
+    ),
+]
+
+
+def sc_business_vs_asset_acquisition(seed: int) -> TaskInstance:
+    """Single-choice: is what was acquired a business or just assets?
+
+    Trap: calling any operating-looking purchase a business even
+    when no substantive process was acquired.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(BUSINESS_ASSET_CASES)
+    labels = ["A business", "An asset (or group of assets), not a business"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# What is a business? (applies to this task)
+
+- A business is an integrated set of inputs and a SUBSTANTIVE
+  PROCESS applied to them that together can create outputs. Outputs
+  (current sales) are helpful evidence but are not required if a
+  substantive process and inputs (including an organized
+  workforce) are acquired.
+- Acquiring assets without a substantive process — for example a
+  single building or bare land — is an asset acquisition, not a
+  business combination, however the assets are used afterwards.
+"""
+    question = _choice_question(
+        "business or asset acquisition",
+        f"Acquisition: **{narrative}**\n\nUsing `/app/policy.md`, what "
+        "was acquired? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-business-vs-asset-acquisition",
+        family="business-combinations",
+        title="Business or asset acquisition?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-business-vs-asset-acquisition",
+            "business-combinations",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "business-combination", "asset-acquisition"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["asc:805", "ifrs:3"],
+    )
+
+
+RELATED_PARTY_CASES = [
+    (
+        "The chief executive's spouse wholly owns a company that "
+        "supplies components to the reporting entity.",
+        "Related party",
+    ),
+    (
+        "A customer buys 40% of the entity's output at normal market "
+        "prices. There are no other links of any kind.",
+        "Not a related party",
+    ),
+    (
+        "A company controlled by the reporting entity's finance "
+        "director leases offices to the entity.",
+        "Related party",
+    ),
+    (
+        "A bank provides an ordinary commercial loan on market terms "
+        "and has no other connection with the entity.",
+        "Not a related party",
+    ),
+    (
+        "The entity's post-employment benefit plan for its employees.",
+        "Related party",
+    ),
+]
+
+
+def sc_related_party_identification(seed: int) -> TaskInstance:
+    """Single-choice: is the counterparty a related party (IAS 24)?
+
+    Trap: recognizing only named group companies and missing close
+    family members of key management personnel.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(RELATED_PARTY_CASES)
+    labels = ["Related party", "Not a related party"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Related parties (applies to this task)
+
+A party is related to the reporting entity if it (or a close
+family member) controls, jointly controls, or significantly
+influences the entity, or is key management personnel of the
+entity or its parent; entities controlled or significantly
+influenced by such persons are also related. Post-employment
+benefit plans for the entity's employees are related.
+
+- Close family includes a spouse/partner and dependants.
+- Ordinary commercial counterparties — even very large customers,
+  suppliers, or lenders dealing at arm's length with no other
+  connection — are NOT related parties merely because of the
+  volume of trade.
+"""
+    question = _choice_question(
+        "related party identification",
+        f"Counterparty: **{narrative}**\n\nUsing `/app/policy.md`, is "
+        "this a related party of the reporting entity? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-related-party-identification",
+        family="financial-reporting",
+        title="Identify a related party",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-related-party-identification",
+            "financial-reporting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "related-parties", "ias-24"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["ias:24"],
+    )
+
+
+OFFSETTING_CASES = [
+    (
+        "The entity has a legally enforceable right to set off the "
+        "receivable against the payable with the same counterparty "
+        "and intends to settle the net amount next month.",
+        "Present net (offset)",
+    ),
+    (
+        "The entity owes, and is owed by, the same counterparty under "
+        "separate contracts. It has no legal right of set-off.",
+        "Present gross (do not offset)",
+    ),
+    (
+        "A legally enforceable set-off right exists, but the entity "
+        "intends to collect the receivable and pay the payable "
+        "separately in the normal course.",
+        "Present gross (do not offset)",
+    ),
+    (
+        "A master netting agreement allows set-off only if the "
+        "counterparty defaults; in normal conditions both balances "
+        "settle gross.",
+        "Present gross (do not offset)",
+    ),
+]
+
+
+def sc_offsetting_assessment(seed: int) -> TaskInstance:
+    """Single-choice: may a financial asset and liability be offset?
+
+    Trap: netting whenever the counterparty is the same, without a
+    currently enforceable legal right AND net-settlement intention.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(OFFSETTING_CASES)
+    labels = ["Present net (offset)", "Present gross (do not offset)"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Offsetting (applies to this task)
+
+A financial asset and a financial liability are offset and
+presented net ONLY when BOTH conditions hold at the reporting
+date:
+
+1. a currently legally enforceable right to set off the amounts
+   (not contingent on a future event such as default), AND
+2. an intention to settle on a net basis (or simultaneously).
+
+Having the same counterparty is never, by itself, enough.
+"""
+    question = _choice_question(
+        "offsetting assessment",
+        f"Facts: **{narrative}**\n\nUsing `/app/policy.md`, how are the "
+        "balances presented? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-offsetting-assessment",
+        family="financial-instruments",
+        title="May these balances be offset?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-offsetting-assessment",
+            "financial-instruments",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "offsetting", "presentation"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["ias:32"],
+    )
+
+
+DERECOGNITION_CASES = [
+    (
+        "Receivables were sold outright with no recourse; the buyer "
+        "bears all late-payment and credit risk and the seller has no "
+        "further involvement.",
+        "Derecognize",
+    ),
+    (
+        "Receivables were factored, but the seller guarantees the "
+        "buyer against all credit losses up to the full amount sold.",
+        "Continue to recognize",
+    ),
+    (
+        "Securities were sold under an agreement to repurchase the "
+        "same securities in 30 days at a fixed price.",
+        "Continue to recognize",
+    ),
+    (
+        "A loan portfolio was transferred with all default and "
+        "prepayment risk; the transferor only services the loans for "
+        "a market-rate fee it could be replaced from at will.",
+        "Derecognize",
+    ),
+    (
+        "An asset was sold, but the seller simultaneously entered a "
+        "total-return swap on the same asset, keeping its price risk "
+        "and returns.",
+        "Continue to recognize",
+    ),
+]
+
+
+def sc_derecognition_assessment(seed: int) -> TaskInstance:
+    """Single-choice: derecognize a transferred financial asset?
+
+    Trap: following the legal sale when the transferor keeps
+    substantially all risks and rewards.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(DERECOGNITION_CASES)
+    labels = ["Derecognize", "Continue to recognize"]
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Derecognition (applies to this task)
+
+- Derecognize a transferred financial asset when substantially all
+  the risks and rewards of ownership have been transferred and
+  control given up. Retaining only an arm's-length servicing role
+  does not by itself retain the risks and rewards.
+- Continue to recognize the asset when the transferor retains
+  substantially all risks and rewards — for example full-recourse
+  credit guarantees, fixed-price repurchase agreements, or
+  total-return swaps over the transferred asset.
+"""
+    question = _choice_question(
+        "derecognition assessment",
+        f"Transfer: **{narrative}**\n\nUsing `/app/policy.md`, should the "
+        "transferor derecognize the asset? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-derecognition-assessment",
+        family="financial-instruments",
+        title="Derecognize the transferred asset?",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-derecognition-assessment",
+            "financial-instruments",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "derecognition", "financial-assets"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="ifrs",
+        standards=["ifrs:9"],
+    )
+
+
+def contract_modification_revenue(seed: int) -> TaskInstance:
+    """Numeric: revenue after a prospective (separate-contract) modification.
+
+    Trap: blending old and new prices into one cumulative catch-up
+    rate for all remaining goods.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    price_old = Decimal(rng.choice([80, 90, 100, 110, 120]))
+    while True:
+        price_new = Decimal(rng.choice([60, 70, 90, 110, 130, 140]))
+        if abs(price_new - price_old) >= 20:
+            break
+    delivered_old, delivered_new = 40, 10
+    gold = delivered_old * price_old + delivered_new * price_new
+    blended_unit = (60 * price_old + 40 * price_new) / 100
+    trap = ((delivered_old + delivered_new) * blended_unit).quantize(CENT)
+    data = (
+        "# Contract and modification\n\n"
+        f"Original contract: 100 units at USD {money(price_old)} each; 40 "
+        "units were delivered and recognized before the modification. "
+        f"The modification adds 40 further distinct units at "
+        f"USD {money(price_new)} each, which is their standalone selling "
+        "price. In January (after the modification) the company "
+        f"delivered {delivered_old} of the original units and "
+        f"{delivered_new} of the added units.\n"
+    )
+    policy = """# Contract-modification convention (applies to this task)
+
+- A modification that adds distinct goods at a price reflecting
+  their standalone selling price is a SEPARATE contract, accounted
+  for prospectively: remaining original goods keep the original
+  price, added goods use the modification price. Do not blend the
+  prices or make a cumulative catch-up adjustment.
+- Answer January's revenue in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "revenue after a contract modification",
+        "Using `/app/documents/contract_modification.md` and `/app/policy.md`, "
+        "compute **January revenue** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="contract-modification-revenue",
+        family="revenue-recognition",
+        title="Prospective contract modification",
+        question=question,
+        policy=policy,
+        data_name="contract_modification.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "contract-modification", "revenue"],
+        abs_tolerance="0.01",
+        standards=["asc:606", "ifrs:15"],
+        trap_value=money(trap),
+    )
+
+
+def lease_component_allocation(seed: int) -> TaskInstance:
+    """Numeric: allocate a payment between lease and service components.
+
+    Trap: capitalizing the whole bundled payment as the lease.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    lease_sa = Decimal(rng.randrange(5, 13)) * 100
+    service_sa = Decimal(rng.randrange(1, 6)) * 100
+    total = Decimal(rng.randrange(7, 18)) * 100
+    gold = (total * lease_sa / (lease_sa + service_sa)).quantize(CENT)
+    data = (
+        "# Bundled contract — monthly amounts\n\n| Item | USD |\n|---|---:|\n"
+        f"| Total monthly payment under the contract | {money(total)} |\n"
+        f"| Standalone price: right to use the equipment | {money(lease_sa)} |\n"
+        f"| Standalone price: maintenance service | {money(service_sa)} |\n"
+    )
+    policy = """# Component-allocation convention (applies to this task)
+
+- Allocate the contract consideration to the lease and non-lease
+  (service) components in proportion to their standalone prices.
+  Only the lease component enters lease measurement; the service
+  component is expensed as incurred.
+- Answer the monthly lease component in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "lease component of a bundled payment",
+        "Using `/app/documents/bundled_contract.md` and `/app/policy.md`, "
+        "compute the **monthly lease component** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="lease-component-allocation",
+        family="leases",
+        title="Allocate a bundled lease payment",
+        question=question,
+        policy=policy,
+        data_name="bundled_contract.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "leases", "components"],
+        abs_tolerance="1",
+        standards=["asc:842", "ifrs:16"],
+        trap_value=money(total),
+    )
+
+
+def separate_statements_investment(seed: int) -> TaskInstance:
+    """Numeric: subsidiary at cost in the parent's separate statements.
+
+    Trap: reducing the investment by dividends received, as under
+    the equity method.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    cost, dividend = amt(200, 601), amt(10, 51)
+    if rng.choice([True, False]):
+        recoverable = cost + amt(10, 81)
+        gold = cost
+    else:
+        while True:
+            impairment = amt(20, 101)
+            if abs(impairment - dividend) >= Decimal("15000"):
+                break
+        recoverable = cost - impairment
+        gold = recoverable
+    data = (
+        "# Investment in subsidiary — separate statements\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Original cost of the 80% holding | {money(cost)} |\n"
+        f"| Dividend received from the subsidiary this year | {money(dividend)} |\n"
+        f"| Recoverable amount at the reporting date | {money(recoverable)} |\n"
+        "\nThe parent measures investments in subsidiaries at COST in "
+        "its separate financial statements.\n"
+    )
+    policy = """# Cost-method conventions (applies to this task)
+
+- At cost, the investment stays at original cost less any
+  impairment: dividends received are income of the parent and do
+  NOT reduce the carrying amount. If the recoverable amount is
+  below cost, write the investment down to the recoverable amount.
+- Answer the carrying amount in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "investment carrying amount (separate statements)",
+        "Using `/app/documents/investment_data.md` and `/app/policy.md`, "
+        "compute the **carrying amount** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="separate-statements-investment",
+        family="financial-reporting",
+        title="Subsidiary at cost in separate statements",
+        question=question,
+        policy=policy,
+        data_name="investment_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "separate-statements", "cost-method"],
+        abs_tolerance="0.01",
+        standards=["ias:27"],
+        trap_value=money(cost - dividend),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -14699,6 +15263,13 @@ FAMILIES = {
     "payables-control-balance": payables_control_balance,
     "restructuring-provision-amount": restructuring_provision_amount,
     "sc-suspense-account-cause": sc_suspense_account_cause,
+    "sc-business-vs-asset-acquisition": sc_business_vs_asset_acquisition,
+    "contract-modification-revenue": contract_modification_revenue,
+    "sc-derecognition-assessment": sc_derecognition_assessment,
+    "lease-component-allocation": lease_component_allocation,
+    "sc-offsetting-assessment": sc_offsetting_assessment,
+    "sc-related-party-identification": sc_related_party_identification,
+    "separate-statements-investment": separate_statements_investment,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -14895,4 +15466,11 @@ STABLE_SEEDS = {
     "payables-control-balance": 290,
     "restructuring-provision-amount": 291,
     "sc-suspense-account-cause": 292,
+    "sc-business-vs-asset-acquisition": 293,
+    "contract-modification-revenue": 294,
+    "sc-derecognition-assessment": 295,
+    "lease-component-allocation": 296,
+    "sc-offsetting-assessment": 297,
+    "sc-related-party-identification": 298,
+    "separate-statements-investment": 299,
 }

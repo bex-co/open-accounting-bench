@@ -161,6 +161,9 @@ NUMERIC_FAMILIES = [
     "adjusted-profit-from-draft",
     "payables-control-balance",
     "restructuring-provision-amount",
+    "contract-modification-revenue",
+    "lease-component-allocation",
+    "separate-statements-investment",
 ]
 
 
@@ -276,6 +279,10 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-control-assessment",
         "sc-measurement-basis",
         "sc-suspense-account-cause",
+        "sc-business-vs-asset-acquisition",
+        "sc-derecognition-assessment",
+        "sc-offsetting-assessment",
+        "sc-related-party-identification",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

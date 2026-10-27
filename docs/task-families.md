@@ -276,6 +276,13 @@ D = standards depth):
 | `payables-control-balance` | V | V | V | U | V | V | V | vocational |
 | `restructuring-provision-amount` | V | V | V | U | V | V | U | university (borderline) |
 | `sc-suspense-account-cause` | V | V | V | V | V | V | V | vocational |
+| `sc-business-vs-asset-acquisition` | V | V | V | V | V | V | U | vocational |
+| `contract-modification-revenue` | V | V | V | V | V | V | U | vocational |
+| `sc-derecognition-assessment` | V | V | V | V | V | V | U | vocational |
+| `lease-component-allocation` | V | V | V | V | V | V | U | vocational |
+| `sc-offsetting-assessment` | V | V | V | V | V | V | U | vocational |
+| `sc-related-party-identification` | V | V | V | V | V | V | U | vocational |
+| `separate-statements-investment` | V | V | V | V | V | V | U | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -480,8 +487,15 @@ problem the task hands over. An analysis task can be vocational.
 | `payables-control-balance` | payables | numeric | core | application | — | Cash purchases swept into control account |
 | `restructuring-provision-amount` | provisions-contingencies | numeric | core | application | `asc:420`, `ias:37` | Providing for retraining/relocation |
 | `sc-suspense-account-cause` | ledger-integrity-reporting | single-choice | core | application | — | Every error routed through suspense |
+| `sc-business-vs-asset-acquisition` | business-combinations | single-choice | ifrs | application | `asc:805`, `ifrs:3` | Assets without a process called a business |
+| `contract-modification-revenue` | revenue-recognition | numeric | core | application | `asc:606`, `ifrs:15` | Blended cumulative catch-up pricing |
+| `sc-derecognition-assessment` | financial-instruments | single-choice | ifrs | application | `ifrs:9` | Legal sale followed despite retained risk |
+| `lease-component-allocation` | leases | numeric | core | application | `asc:842`, `ifrs:16` | Whole bundled payment capitalized |
+| `sc-offsetting-assessment` | financial-instruments | single-choice | ifrs | application | `ias:32` | Netting on same counterparty alone |
+| `sc-related-party-identification` | financial-reporting | single-choice | ifrs | application | `ias:24` | Only named group companies recognized |
+| `separate-statements-investment` | financial-reporting | numeric | core | application | `ias:27` | Dividends netted off the investment |
 
-Stable seeds: 101–292 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–299 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -490,13 +504,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 123 | 13 | 7 | planned |
+| financial-accounting | 126 | 17 | 7 | planned |
 | management-accounting | 32 | planned | planned | planned |
 | tax | 11 | — | — | planned |
 | audit-assurance | 6 | — | planned | — |
 
-Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×14,
-numeric ×85; open-text is
+Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×18,
+numeric ×88; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

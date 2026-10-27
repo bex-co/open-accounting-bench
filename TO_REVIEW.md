@@ -212,6 +212,16 @@ crosswalk mappings.
   formula and the measurement-basis case wordings). Level scores
   assigned under the strict reading. No crosswalk mappings proposed
   yet.
+- 2026-10-26 — seven further generator families (Stable seeds
+  293–299): `sc-business-vs-asset-acquisition`,
+  `contract-modification-revenue`, `sc-derecognition-assessment`,
+  `lease-component-allocation`, `sc-offsetting-assessment`,
+  `sc-related-party-identification`, `separate-statements-investment`.
+  Same checks as earlier batches (in particular: the derecognition,
+  control-adjacent, and offsetting case outcomes — several are
+  simplified stated-convention versions of IFRS 9/10 and IAS 32).
+  Level scores assigned under the strict reading. No crosswalk
+  mappings proposed yet.
 
 
 ## Reviewed
