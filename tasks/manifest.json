@@ -160,6 +160,20 @@
       "digest": "sha256:fbeb7da47e69e642591817cb275403698f1f0cf7cb9176105c26fd1750865215"
     },
     {
+      "task_id": "allowance-estimate-reperformance",
+      "family": "audit-evidence",
+      "seed": 388,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:b6ae3b4b61ff39975255c47a7803feff2e473a5858acae0a535c21afec9fd525"
+    },
+    {
       "task_id": "allowance-movement-expense",
       "family": "receivables",
       "seed": 284,
@@ -219,6 +233,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:2a24bf4bfef222e481bad3e7232310a2becee252bcbea685745e0ab296c18979"
+    },
+    {
+      "task_id": "audit-data-missing-entries",
+      "family": "audit-analytics",
+      "seed": 391,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:03ec98c8412250bc9229a1300c532fc74964404463740bc3c1cc4be4ad60886a"
     },
     {
       "task_id": "bad-debt-percent-of-sales",
@@ -1838,6 +1866,20 @@
       "digest": "sha256:9af0114dcceb9731d128c866d47713b57358b48b418eb6e4659f1bec4f26c83c"
     },
     {
+      "task_id": "known-misstatement-from-sample",
+      "family": "audit-evidence",
+      "seed": 390,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:c2ac700d88d8db4e5826d8828eca8a51c30587439a441465b45daa52aa1c6cb1"
+    },
+    {
       "task_id": "labor-efficiency-variance",
       "family": "standard-costing",
       "seed": 188,
@@ -3259,6 +3301,34 @@
       "digest": "sha256:d56f64d06216ad2947d57dcfc2e13aad260a58b04e2af647539f4f18290d7e96"
     },
     {
+      "task_id": "sc-engagement-acceptance",
+      "family": "audit-planning",
+      "seed": 383,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:c27b080782564dd1cbe4ec33c238dea33da161072e325b8e95e0674011b96832"
+    },
+    {
+      "task_id": "sc-ethics-threat-classification",
+      "family": "audit-planning",
+      "seed": 381,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e35ba537780a1a5f58d9468e2b898e392021164d1a036dc6abec37dea2865466"
+    },
+    {
       "task_id": "sc-evidence-reliability-choice",
       "family": "audit-evidence",
       "seed": 378,
@@ -3360,6 +3430,20 @@
       "digest": "sha256:5224bf8786d64deff492f0ca3eff611c43929399b7454aa554c7c0aecdb1be03"
     },
     {
+      "task_id": "sc-independence-prohibited-service",
+      "family": "audit-planning",
+      "seed": 382,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:aea1691ef40b2bb7baf417d288a3daeb67af58edb4bf08f0ae2cad086ad8f983"
+    },
+    {
       "task_id": "sc-interfund-activity-type",
       "family": "governmental-accounting",
       "seed": 326,
@@ -3448,6 +3532,20 @@
       "digest": "sha256:8782bb8059fdc73061951f5c591a9e1f986db17d1a2e33a234c48f771f1b1a0b"
     },
     {
+      "task_id": "sc-professional-conduct",
+      "family": "audit-planning",
+      "seed": 385,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:27df6df9a0c28a2c2eaf8c24efbd500a1a08cb5ca5b76d92b42eb94b4acbe814"
+    },
+    {
       "task_id": "sc-related-party-identification",
       "family": "financial-reporting",
       "seed": 298,
@@ -3476,6 +3574,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:9fb70da83a11f0052774c01f57dd61de7266bc8b1ff01278f335f7f56e70db23"
+    },
+    {
+      "task_id": "sc-service-organization-reliance",
+      "family": "audit-planning",
+      "seed": 384,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:f4a105c1ef2f334a2d083acaa75b0bc3f4b23b7a4c1236b0cb92257ba3d36da9"
     },
     {
       "task_id": "sc-soc-opinion-modification",
@@ -3635,6 +3747,20 @@
       "digest": "sha256:887267267ea6fcaaf107cf47be6ea52feb4326898395b23778fcf5e5ec0b4a80"
     },
     {
+      "task_id": "securities-revaluation-misstatement",
+      "family": "audit-evidence",
+      "seed": 387,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:0c3ddb0ae8f002f2e7158fcf690fc70b17b482930c9fcd16ad44c34c4eeab46d"
+    },
+    {
       "task_id": "segment-margin",
       "family": "responsibility-accounting",
       "seed": 203,
@@ -3694,6 +3820,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:7888ea43f23fea7661ce70323fb483674e62d91fb11e3cfe8c19275d8a307406"
+    },
+    {
+      "task_id": "single-audit-type-a-count",
+      "family": "audit-planning",
+      "seed": 389,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5e0ca75821624c946ffb0f9e42284a60b747b9a096b68e92461ba6489af305f5"
     },
     {
       "task_id": "small-stock-dividend",
@@ -3781,6 +3921,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:d84b285ddb7aa18ec954f1ab847a5c7eb5388f0ec6d65ae5f8b56c81f996d998"
+    },
+    {
+      "task_id": "substantive-analytic-difference",
+      "family": "audit-evidence",
+      "seed": 386,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "audit-assurance",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:6166a677eb17901909735208e3bc75e8e036ff55d231c6ff5dad41a7e26b48a5"
     },
     {
       "task_id": "supplies-adjustment",

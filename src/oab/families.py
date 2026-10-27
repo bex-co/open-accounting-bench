@@ -20442,6 +20442,686 @@ def schedule_recalculation_difference(seed: int) -> TaskInstance:
     )
 
 
+ETHICS_THREAT_OPTIONS = [
+    "Self-interest threat",
+    "Self-review threat",
+    "Advocacy threat",
+    "Familiarity threat",
+    "Intimidation threat",
+]
+ETHICS_THREAT_CASES = [
+    (
+        "The engagement partner owns shares in the audit client and "
+        "would benefit financially from a rising share price.",
+        "Self-interest threat",
+    ),
+    (
+        "The firm designed the client's billing system last year and "
+        "now audits the controls and outputs of that same system.",
+        "Self-review threat",
+    ),
+    (
+        "The firm promotes the client's shares to potential investors in a roadshow.",
+        "Advocacy threat",
+    ),
+    (
+        "The audit manager has served the client for twelve years "
+        "and socializes weekly with its CFO, a close friend.",
+        "Familiarity threat",
+    ),
+    (
+        "The client tells the partner the firm will be dismissed "
+        "unless a clean opinion is issued this year.",
+        "Intimidation threat",
+    ),
+]
+
+
+def sc_ethics_threat_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify the ethics threat in a fact pattern.
+
+    Trap: analyzing by appearances instead of the threat mechanism.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed * 2_654_435_761 + 381)
+    narrative, correct = rng.choice(ETHICS_THREAT_CASES)
+    policy = """# Threat categories (applies to this task)
+
+- Self-interest: a financial or other interest could inappropriately
+  influence judgment.
+- Self-review: evaluating the results of the firm or individual's
+  own previous work.
+- Advocacy: promoting a client's position or interests.
+- Familiarity: a long or close relationship causing excessive
+  sympathy or acceptance of the client's work.
+- Intimidation: actual or perceived pressure (e.g. threats of
+  dismissal or litigation) deterring objectivity.
+"""
+    return _choice_task(
+        "sc-ethics-threat-classification",
+        "audit-planning",
+        "Ethics threat classification",
+        f"Facts: {narrative}",
+        ETHICS_THREAT_OPTIONS,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "ethics", "threats"],
+    )
+
+
+INDEPENDENCE_CASES = [
+    (
+        "The firm would keep the audit client's books and prepare "
+        "the financial statements it then audits (listed issuer).",
+        "Prohibited — impairs independence",
+    ),
+    (
+        "The firm would provide routine tax-compliance services to "
+        "the audit client with audit-committee preapproval (not on "
+        "the prohibited list).",
+        "Permitted (subject to any required preapproval)",
+    ),
+    (
+        "The firm would outsource the client's entire internal "
+        "audit function and decide which recommendations to implement.",
+        "Prohibited — impairs independence",
+    ),
+    (
+        "An audit partner's spouse is employed as a junior clerk in "
+        "an unrelated retail company (not the audit client).",
+        "Permitted (subject to any required preapproval)",
+    ),
+]
+
+
+def sc_independence_prohibited_service(seed: int) -> TaskInstance:
+    """Single-choice: is the service/relationship prohibited for an issuer audit?
+
+    Trap: confusing permitted (preapproved) tax services with
+    prohibited bookkeeping/internal-audit roles.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed * 2_654_435_761 + 382)
+    narrative, correct = rng.choice(INDEPENDENCE_CASES)
+    policy = """# Prohibited services (stated for this task)
+
+For issuer audit clients the following IMPAIR independence:
+bookkeeping and preparing the audited statements; designing or
+operating financial information systems; internal-audit
+outsourcing with management decision-making; valuation services
+feeding audited amounts; acting as management. Routine tax
+compliance is NOT on the prohibited list and may be provided with
+audit-committee preapproval. Relationships with entities other
+than the audit client do not impair independence toward it.
+"""
+    return _choice_task(
+        "sc-independence-prohibited-service",
+        "audit-planning",
+        "Independence: prohibited service?",
+        f"Proposal: {narrative}",
+        [
+            "Prohibited — impairs independence",
+            "Permitted (subject to any required preapproval)",
+        ],
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "independence", "prohibited-services"],
+    )
+
+
+ACCEPTANCE_CASES = [
+    (
+        "The applicable framework is acceptable, management "
+        "acknowledges its responsibilities in writing, and access to "
+        "all information and persons is agreed.",
+        "Accept the engagement",
+    ),
+    (
+        "Management refuses to acknowledge responsibility for the "
+        "financial statements and for providing complete information.",
+        "Do not accept (or withdraw)",
+    ),
+    (
+        "After fieldwork begins, management asks to change the audit "
+        "to a review because it will not allow inventory observation "
+        "for a material balance.",
+        "Do not accept (or withdraw)",
+    ),
+    (
+        "The prospective client refuses to permit communication with "
+        "the predecessor auditor about management integrity, will not "
+        "explain the refusal, and the firm cannot resolve the matter "
+        "from other sources.",
+        "Do not accept (or withdraw)",
+    ),
+]
+
+
+def sc_engagement_acceptance(seed: int) -> TaskInstance:
+    """Single-choice: engagement acceptance preconditions.
+
+    Trap: accepting a scope-driven downgrade to a lower-assurance
+    engagement, or skipping client consent for predecessor contact.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed * 2_654_435_761 + 383)
+    narrative, correct = rng.choice(ACCEPTANCE_CASES)
+    policy = """# Acceptance preconditions (applies to this task)
+
+Accept only when: the reporting framework is acceptable;
+management acknowledges responsibility for the statements, internal
+control, and full access; and no unacceptable scope limitation is
+imposed. Before acceptance, communication with the predecessor
+auditor requires the prospective client's consent; an unexplained
+refusal that leaves management integrity unresolved prevents
+acceptance under this stated policy. A request to
+downgrade the engagement to avoid a scope limitation (or an
+expected modified opinion) is not a reasonable basis for change.
+"""
+    return _choice_task(
+        "sc-engagement-acceptance",
+        "audit-planning",
+        "Engagement acceptance decision",
+        f"Situation: {narrative}",
+        ["Accept the engagement", "Do not accept (or withdraw)"],
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "engagement-acceptance", "preconditions"],
+    )
+
+
+SOC_RELIANCE_OPTIONS = [
+    "May rely (with the stated procedures done)",
+    "May not rely on operating effectiveness",
+]
+SOC_RELIANCE_CASES = [
+    (
+        "Only a SOC 1 Type 1 report (design as of a date) is "
+        "available for the payroll service organization.",
+        "May not rely on operating effectiveness",
+    ),
+    (
+        "A SOC 1 Type 2 report covers the whole audit period, shows "
+        "no relevant exceptions, and the auditor tested the "
+        "complementary user-entity controls.",
+        "May rely (with the stated procedures done)",
+    ),
+    (
+        "A SOC 1 Type 2 report ends three months before year-end "
+        "and no procedures cover the gap period, yet full-year "
+        "reliance is planned.",
+        "May not rely on operating effectiveness",
+    ),
+    (
+        "A SOC 1 Type 2 report for the full period reports repeated "
+        "exceptions in the very controls the auditor planned to rely "
+        "on, with no compensating evidence.",
+        "May not rely on operating effectiveness",
+    ),
+]
+
+
+def sc_service_organization_reliance(seed: int) -> TaskInstance:
+    """Single-choice: may the auditor rely on the service organization's controls?
+
+    Trap: relying for operating effectiveness on a Type 1 report or
+    across the untested gap period.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed * 2_654_435_761 + 384)
+    narrative, correct = rng.choice(SOC_RELIANCE_CASES)
+    policy = """# Service-organization reports (applies to this task)
+
+- A Type 1 report covers design only (as of a date): it never
+  supports reliance on operating effectiveness.
+- A Type 2 report (design AND operating effectiveness over a
+  period) can support reliance only for the period it covers,
+  when exceptions are not relevant to the reliance and
+  complementary user-entity controls are addressed.
+- Uncovered gap periods and unaddressed relevant exceptions
+  defeat reliance for the planned extent.
+"""
+    return _choice_task(
+        "sc-service-organization-reliance",
+        "audit-planning",
+        "Reliance on a SOC report",
+        f"Situation: {narrative}",
+        SOC_RELIANCE_OPTIONS,
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "soc-reports", "service-organizations"],
+    )
+
+
+CONDUCT_CASES = [
+    (
+        "Disclosing client confidential information in response to a "
+        "valid court subpoena after notifying the client where "
+        "permitted.",
+        "Permitted under the stated code",
+    ),
+    (
+        "Selling a client list with client financial details to a "
+        "marketing company without client consent.",
+        "Prohibited under the stated code",
+    ),
+    (
+        "Sending client data to a third-party processing service "
+        "with contractual confidentiality safeguards and client "
+        "disclosure, as the code requires.",
+        "Permitted under the stated code",
+    ),
+    (
+        "Knowingly signing a document containing a materially false "
+        "statement prepared for a regulator.",
+        "Prohibited under the stated code",
+    ),
+]
+
+
+def sc_professional_conduct(seed: int) -> TaskInstance:
+    """Single-choice: conduct vs the stated code (integrity/confidentiality).
+
+    Trap: invoking the wrong confidentiality exception, or treating
+    safeguarded third-party processing as a plain breach.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed * 2_654_435_761 + 385)
+    narrative, correct = rng.choice(CONDUCT_CASES)
+    policy = """# Conduct rules (stated for this task)
+
+- Client information is confidential and must not be disclosed
+  without consent EXCEPT to comply with a valid legal process
+  (such as a subpoena) or a legal/professional duty, notifying
+  the client where the law permits.
+- Using a third-party service provider is allowed when the client
+  is informed and contractual safeguards keep the information
+  confidential; the member remains responsible.
+- Integrity prohibits knowingly making or signing materially
+  false statements.
+"""
+    return _choice_task(
+        "sc-professional-conduct",
+        "audit-planning",
+        "Professional conduct assessment",
+        f"Conduct: {narrative}",
+        ["Permitted under the stated code", "Prohibited under the stated code"],
+        correct,
+        policy,
+        seed,
+        keywords=["single-choice", "ethics", "confidentiality", "integrity"],
+    )
+
+
+def substantive_analytic_difference(seed: int) -> TaskInstance:
+    """Numeric: book-to-expectation difference for a substantive analytic.
+
+    Trap: building the expectation from the recorded amount itself
+    (circular), guaranteeing a trivial difference.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    rooms = rng.choice([80, 100, 120])
+    rate = Decimal(rng.choice([120, 150, 180]))
+    occupancy_days = rng.randint(200, 320)
+    expectation = rooms * rate * occupancy_days
+    recorded = expectation + Decimal(rng.randrange(20, 91)) * 1000 * rng.choice([1, -1])
+    gold = (recorded - expectation).quantize(CENT)
+    data = (
+        "# Hotel room revenue — independent operating data\n\n"
+        f"Rooms available: {rooms}; average daily rate from the "
+        f"published tariff: USD {money(rate)}; independent front-desk "
+        f"occupancy log: rooms were occupied on the equivalent of "
+        f"{occupancy_days} full-house days (room-nights / rooms). "
+        f"Recorded room revenue per the books: USD {money(recorded)}. "
+        "Investigation threshold: USD 25,000.\n"
+    )
+    policy = """# Substantive analytics (stated for this task)
+
+- Build the expectation ONLY from the independent drivers given
+  (rooms x tariff rate x occupied full-house days), never from the
+  recorded amount. The difference to investigate is recorded
+  amount minus the independent expectation.
+- Answer the signed difference in USD.
+"""
+    question = _numeric_question(
+        "recorded vs expected revenue",
+        "Using `/app/documents/hotel_data.md` and `/app/policy.md`, compute "
+        "**recorded revenue minus the independent expectation** in USD.",
+        "the signed USD amount",
+    )
+    return _numeric_instance(
+        task_id="substantive-analytic-difference",
+        family="audit-evidence",
+        title="Substantive analytic expectation gap",
+        question=question,
+        policy=policy,
+        data_name="hotel_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "analytics", "expectation"],
+        abs_tolerance="1",
+        trap_value="0",
+    )
+
+
+def securities_revaluation_misstatement(seed: int) -> TaskInstance:
+    """Numeric: misstatement from repricing a securities portfolio.
+
+    Trap: accepting the recorded value of an unquoted holding whose
+    stated source price contradicts observable broker quotes.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    holdings = []
+    recorded_total = Decimal(0)
+    true_total = Decimal(0)
+    for name in ["Alpha plc (quoted)", "Beta plc (quoted)"]:
+        qty = rng.randrange(1000, 9001, 500)
+        price = Decimal(rng.randrange(1000, 4001, 25)) / 100
+        holdings.append((name, qty, price, price))
+        recorded_total += qty * price
+        true_total += qty * price
+    qty3 = rng.randrange(1000, 6001, 500)
+    correct3 = Decimal(rng.randrange(800, 2001, 25)) / 100
+    wrong3 = correct3 + Decimal(rng.randrange(200, 601, 25)) / 100
+    holdings.append(("Gamma unquoted equity", qty3, correct3, wrong3))
+    recorded_total += qty3 * wrong3
+    true_total += qty3 * correct3
+    gold = (recorded_total - true_total).quantize(CENT)
+    rows = "".join(f"| {n} | {q} | {money(p)} | {money(w)} |\n" for n, q, p, w in holdings)
+    data = (
+        "# Securities portfolio — year-end\n\n"
+        "| Holding | Shares | Auditor-verified price (USD) | "
+        "Price used by client (USD) |\n|---|---:|---:|---:|\n"
+        + rows
+        + f"\nClient's recorded portfolio total: USD {money(recorded_total.quantize(CENT))}.\n"
+    )
+    policy = """# Repricing conventions (stated for this task)
+
+- Repriced value = shares x the auditor-verified price for every
+  holding. The misstatement is the recorded total minus the
+  repriced total (positive = overstated).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "securities misstatement on repricing",
+        "Using `/app/documents/portfolio.md` and `/app/policy.md`, "
+        "compute the **overstatement** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="securities-revaluation-misstatement",
+        family="audit-evidence",
+        title="Reprice the securities portfolio",
+        question=question,
+        policy=policy,
+        data_name="portfolio.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "fair-value-testing", "securities"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
+def allowance_estimate_reperformance(seed: int) -> TaskInstance:
+    """Numeric: independently reperformed allowance estimate (aging rates).
+
+    Trap: applying management's single flat rate to total
+    receivables instead of the bucket rates given.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    buckets = [
+        (amt(300, 801), Decimal("0.01")),
+        (amt(100, 301), Decimal("0.05")),
+        (amt(40, 151), Decimal("0.25")),
+    ]
+    gold = sum((b * r for b, r in buckets), Decimal(0)).quantize(CENT)
+    total = sum(b for b, _ in buckets)
+    trap = (total * Decimal("0.03")).quantize(CENT)
+    while abs(trap - gold) <= Decimal("50"):
+        buckets[2] = (buckets[2][0] + Decimal("5000"), buckets[2][1])
+        gold = sum((b * r for b, r in buckets), Decimal(0)).quantize(CENT)
+        total = sum(b for b, _ in buckets)
+        trap = (total * Decimal("0.03")).quantize(CENT)
+    rows = "".join(
+        f"| {label} | {money(b)} | {int(r * 100)}% |\n"
+        for (b, r), label in zip(buckets, ["Current", "31-90 days", "Over 90 days"], strict=True)
+    )
+    data = (
+        "# Receivables aging with historical loss rates\n\n"
+        "| Bucket | Balance (USD) | Historical loss rate |\n|---|---:|---:|\n"
+        + rows
+        + "\nManagement instead provides a single flat 3% of total "
+        "receivables as its allowance.\n"
+    )
+    policy = """# Estimate reperformance (stated for this task)
+
+- Independently recompute the allowance bucket by bucket using
+  the historical loss rate stated for EACH aging bucket, then sum.
+  Do not use a flat overall rate.
+- Answer the reperformed allowance in USD.
+"""
+    question = _numeric_question(
+        "reperformed allowance estimate",
+        "Using `/app/documents/aging_buckets.md` and `/app/policy.md`, "
+        "compute the **reperformed allowance** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="allowance-estimate-reperformance",
+        family="audit-evidence",
+        title="Reperform the allowance estimate",
+        question=question,
+        policy=policy,
+        data_name="aging_buckets.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "estimates", "reperformance", "allowance"],
+        abs_tolerance="1",
+        trap_value=money(trap),
+    )
+
+
+def single_audit_type_a_count(seed: int) -> TaskInstance:
+    """Numeric: how many federal programs are Type A (major-program sieve).
+
+    Trap: comparing award amounts (rather than amounts EXPENDED)
+    with the stated threshold.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    threshold = Decimal("750000")
+    programs = []
+    gold = 0
+    for i in range(rng.randint(4, 6)):
+        expended = Decimal(rng.choice([200, 450, 700, 780, 900, 1200])) * 1000
+        awarded = expended + Decimal(rng.choice([0, 100, 300])) * 1000
+        programs.append((f"Program {chr(65 + i)}", awarded, expended))
+        if expended >= threshold:
+            gold += 1
+    if gold == 0:
+        programs[0] = (
+            programs[0][0],
+            max(programs[0][1], Decimal("800000")),
+            Decimal("800000"),
+        )
+        gold = 1
+    trap = sum(1 for _, a, _ in programs if a >= threshold)
+    if trap == gold:
+        for i, (name, _awarded, expended) in enumerate(programs):
+            if expended < threshold:
+                programs[i] = (name, Decimal("800000"), expended)
+                break
+        else:
+            programs[-1] = (programs[-1][0], Decimal("800000"), Decimal("700000"))
+            gold -= 1
+        trap = sum(1 for _, a, _ in programs if a >= threshold)
+    rows = "".join(f"| {n} | {money(a)} | {money(e)} |\n" for n, a, e in programs)
+    data = (
+        "# Federal awards — current award period\n\n"
+        "| Program | Awarded (USD) | Expended (USD) |\n|---|---:|---:|\n" + rows
+    )
+    policy = """# Single-audit thresholds (stated for this task)
+
+- A single audit is required when total federal awards EXPENDED
+  reach the stated threshold; program size classes use amounts
+  EXPENDED (never amounts awarded).
+- Type A programs are those with expenditures of at least
+  USD 750,000.
+- Answer the NUMBER of Type A programs.
+"""
+    question = _numeric_question(
+        "number of Type A programs",
+        "Using `/app/documents/federal_awards.md` and `/app/policy.md`, "
+        "compute the **number of Type A programs**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="single-audit-type-a-count",
+        family="audit-planning",
+        title="Count Type A programs",
+        question=question,
+        policy=policy,
+        data_name="federal_awards.md",
+        data=data,
+        gold=Decimal(gold),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "single-audit", "major-programs"],
+        abs_tolerance="0.01",
+        trap_value=str(trap),
+    )
+
+
+def known_misstatement_from_sample(seed: int) -> TaskInstance:
+    """Numeric: known misstatement from tests of details (signed net).
+
+    Trap: accumulating absolute differences, grossing up errors
+    that partially offset.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    items = []
+    for _i in range(rng.randint(5, 7)):
+        audited = Decimal(rng.randrange(70, 401)) * 100
+        diff = Decimal(rng.randrange(-60, 61)) * 100
+        items.append([audited, diff])
+    if not any(diff > 0 for _audited, diff in items):
+        items[0][1] = Decimal("5000")
+    if not any(diff < 0 for _audited, diff in items):
+        items[1][1] = Decimal("-3000")
+    net = sum((diff for _audited, diff in items), Decimal(0))
+    if net == 0:
+        positive = next(item for item in items if item[1] > 0)
+        positive[1] += Decimal("1000")
+        net += Decimal("1000")
+    gross = sum((abs(diff) for _audited, diff in items), Decimal(0))
+    body = "".join(
+        f"| S{i} | {money(audited + diff)} | {money(audited)} |\n"
+        for i, (audited, diff) in enumerate(items, 1)
+    )
+    data = (
+        "# Tests of details — sample results (expense account)\n\n"
+        "| Item | Recorded (USD) | Audited (USD) |\n|---|---:|---:|\n" + body
+    )
+    policy = """# Known misstatement (stated for this task)
+
+- Known misstatement for the sample is the SIGNED total of
+  (recorded - audited) over the sample items: overstatements and
+  understatements offset when evaluating the net effect.
+- Answer the net overstatement in USD (negative if net understated).
+"""
+    question = _numeric_question(
+        "known misstatement (net)",
+        "Using `/app/documents/sample_results.md` and `/app/policy.md`, "
+        "compute the **net known misstatement** in USD.",
+        "the signed USD amount",
+    )
+    return _numeric_instance(
+        task_id="known-misstatement-from-sample",
+        family="audit-evidence",
+        title="Known misstatement, net",
+        question=question,
+        policy=policy,
+        data_name="sample_results.md",
+        data=data,
+        gold=net.quantize(CENT),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "tests-of-details", "known-misstatement"],
+        abs_tolerance="0.01",
+        trap_value=money(gross.quantize(CENT)),
+    )
+
+
+def audit_data_missing_entries(seed: int) -> TaskInstance:
+    """Numeric: entries a silent query filter dropped from an extract.
+
+    Trap: accepting the extract as complete because it returned
+    rows for most months.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    source_counts = [rng.randint(80, 160) for _ in months]
+    missing_idx = rng.choice([10, 11])
+    extract_counts = [0 if i == missing_idx else c for i, c in enumerate(source_counts)]
+    body = "".join(
+        f"| {m} | {s} | {e} |\n"
+        for m, s, e in zip(months, source_counts, extract_counts, strict=True)
+    )
+    data = (
+        "# Journal-entry extract validation\n\nThe auditor's query was "
+        "intended to extract ALL journal entries for the year.\n\n"
+        "| Month | Source system entries | Extract entries |\n|---|---:|---:|\n" + body
+    )
+    policy = """# Data reliability (stated for this task)
+
+- Before using an extract, agree its record counts to the source
+  system by period. The completeness gap is the source count
+  minus the extract count (summed over the year).
+- Answer the number of missing entries.
+"""
+    question = _numeric_question(
+        "entries missing from the extract",
+        "Using `/app/documents/extract_validation.md` and `/app/policy.md`, "
+        "compute the **number of missing entries**.",
+        "the count",
+    )
+    return _numeric_instance(
+        task_id="audit-data-missing-entries",
+        family="audit-analytics",
+        title="Completeness of an audit data extract",
+        question=question,
+        policy=policy,
+        data_name="extract_validation.md",
+        data=data,
+        gold=Decimal(source_counts[missing_idx]),
+        seed=seed,
+        category="audit-assurance",
+        keywords=["numeric", "data-reliability", "completeness"],
+        abs_tolerance="0.01",
+        trap_value="0",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -20723,6 +21403,17 @@ FAMILIES = {
     "sc-evidence-reliability-choice": sc_evidence_reliability_choice,
     "three-way-match-exceptions": three_way_match_exceptions,
     "schedule-recalculation-difference": schedule_recalculation_difference,
+    "sc-ethics-threat-classification": sc_ethics_threat_classification,
+    "sc-independence-prohibited-service": sc_independence_prohibited_service,
+    "sc-engagement-acceptance": sc_engagement_acceptance,
+    "sc-service-organization-reliance": sc_service_organization_reliance,
+    "sc-professional-conduct": sc_professional_conduct,
+    "substantive-analytic-difference": substantive_analytic_difference,
+    "securities-revaluation-misstatement": securities_revaluation_misstatement,
+    "allowance-estimate-reperformance": allowance_estimate_reperformance,
+    "single-audit-type-a-count": single_audit_type_a_count,
+    "known-misstatement-from-sample": known_misstatement_from_sample,
+    "audit-data-missing-entries": audit_data_missing_entries,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -21007,4 +21698,15 @@ STABLE_SEEDS = {
     "sc-evidence-reliability-choice": 378,
     "three-way-match-exceptions": 379,
     "schedule-recalculation-difference": 380,
+    "sc-ethics-threat-classification": 381,
+    "sc-independence-prohibited-service": 382,
+    "sc-engagement-acceptance": 383,
+    "sc-service-organization-reliance": 384,
+    "sc-professional-conduct": 385,
+    "substantive-analytic-difference": 386,
+    "securities-revaluation-misstatement": 387,
+    "allowance-estimate-reperformance": 388,
+    "single-audit-type-a-count": 389,
+    "known-misstatement-from-sample": 390,
+    "audit-data-missing-entries": 391,
 }

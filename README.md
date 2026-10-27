@@ -77,7 +77,7 @@ pass). See [docs/metrics.md](docs/metrics.md).
 
 ## Task families
 
-280 frozen Stable instances so far, one per generator family; each
+291 frozen Stable instances so far, one per generator family; each
 generator yields hundreds of reproducible instances. Tasks are tagged by
 category, framework, level, format, and skill, and crosswalked to the
 AICPA CPA blueprint and ACCA syllabus (`crosswalks/`). The table below

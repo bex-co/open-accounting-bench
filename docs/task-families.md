@@ -364,6 +364,17 @@ D = standards depth):
 | `sc-evidence-reliability-choice` | V | V | V | V | V | V | V | vocational |
 | `three-way-match-exceptions` | V | V | V | U | V | V | V | vocational |
 | `schedule-recalculation-difference` | V | V | V | U | V | V | V | vocational |
+| `sc-ethics-threat-classification` | V | V | V | V | V | V | V | vocational |
+| `sc-independence-prohibited-service` | V | V | V | V | V | V | V | vocational |
+| `sc-engagement-acceptance` | V | V | V | V | V | V | V | vocational |
+| `sc-service-organization-reliance` | V | V | V | V | V | V | V | vocational |
+| `sc-professional-conduct` | V | V | V | V | V | V | V | vocational |
+| `substantive-analytic-difference` | V | V | V | V | V | V | V | vocational |
+| `securities-revaluation-misstatement` | V | V | V | U | V | V | V | vocational |
+| `allowance-estimate-reperformance` | V | V | V | U | V | V | V | vocational |
+| `single-audit-type-a-count` | V | V | V | U | V | V | V | vocational |
+| `known-misstatement-from-sample` | V | V | V | U | V | V | V | vocational |
+| `audit-data-missing-entries` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -656,8 +667,19 @@ problem the task hands over. An analysis task can be vocational.
 | `sc-evidence-reliability-choice` | audit-evidence | single-choice | core | application | — | Client copies over external originals |
 | `three-way-match-exceptions` | audit-evidence | numeric | core | application | — | Client 'matched' stamps trusted |
 | `schedule-recalculation-difference` | audit-evidence | numeric | core | application | — | Stated extensions merely footed |
+| `sc-ethics-threat-classification` | audit-planning | single-choice | core | application | — | Classify by appearance, not mechanism |
+| `sc-independence-prohibited-service` | audit-planning | single-choice | core | application | — | Prohibited and preapprovable services conflated |
+| `sc-engagement-acceptance` | audit-planning | single-choice | core | application | — | Scope-driven downgrade accepted |
+| `sc-service-organization-reliance` | audit-planning | single-choice | core | application | — | Type 1 report used for operating effectiveness |
+| `sc-professional-conduct` | audit-planning | single-choice | core | application | — | Wrong confidentiality exception invoked |
+| `substantive-analytic-difference` | audit-evidence | numeric | core | application | — | Expectation built from recorded amount |
+| `securities-revaluation-misstatement` | audit-evidence | numeric | core | application | — | Client price accepted for unquoted holding |
+| `allowance-estimate-reperformance` | audit-evidence | numeric | core | application | — | Flat rate used instead of bucket rates |
+| `single-audit-type-a-count` | audit-planning | numeric | core | application | — | Awarded amounts used instead of expended |
+| `known-misstatement-from-sample` | audit-evidence | numeric | core | application | — | Absolute differences accumulated |
+| `audit-data-missing-entries` | audit-analytics | numeric | core | application | — | Extract accepted as complete |
 
-Stable seeds: 101–380 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–391 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -669,10 +691,10 @@ placeholders tracked as issues, not directories.
 | financial-accounting | 140 | 17 | 12 | planned |
 | management-accounting | 37 | planned | planned | planned |
 | tax | 51 | — | — | planned |
-| audit-assurance | 23 | — | planned | — |
+| audit-assurance | 34 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×37,
-numeric ×149; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×42,
+numeric ×155; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

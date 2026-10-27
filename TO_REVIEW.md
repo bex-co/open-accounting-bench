@@ -312,6 +312,20 @@ crosswalk mappings.
   likelihood/magnitude, grant cap at-inclusive reading in
   particular). Level scores assigned under the strict reading. No
   crosswalk mappings proposed yet.
+- 2026-10-27 — eleven further generator families (Stable seeds
+  381–391, audit slice 2 of 2): `sc-ethics-threat-classification`,
+  `sc-independence-prohibited-service`, `sc-engagement-acceptance`,
+  `sc-service-organization-reliance`, `sc-professional-conduct`,
+  `substantive-analytic-difference`,
+  `securities-revaluation-misstatement`,
+  `allowance-estimate-reperformance`, `single-audit-type-a-count`,
+  `known-misstatement-from-sample`, `audit-data-missing-entries`.
+  Audit rules are simplified stated conventions in each policy
+  (ethics-threat taxonomy, prohibited-services list, SOC reliance
+  conditions, the stated single-audit threshold, and signed net
+  known-misstatement convention in particular). Level scores
+  assigned under the strict reading. No crosswalk mappings proposed
+  yet.
 
 
 ## Reviewed

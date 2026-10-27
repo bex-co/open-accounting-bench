@@ -225,6 +225,12 @@ NUMERIC_FAMILIES = [
     "inventory-count-adjusted-balance",
     "three-way-match-exceptions",
     "schedule-recalculation-difference",
+    "substantive-analytic-difference",
+    "securities-revaluation-misstatement",
+    "allowance-estimate-reperformance",
+    "single-audit-type-a-count",
+    "known-misstatement-from-sample",
+    "audit-data-missing-entries",
 ]
 
 
@@ -363,6 +369,11 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-control-deficiency-severity",
         "sc-confirmation-response-classification",
         "sc-evidence-reliability-choice",
+        "sc-ethics-threat-classification",
+        "sc-independence-prohibited-service",
+        "sc-engagement-acceptance",
+        "sc-service-organization-reliance",
+        "sc-professional-conduct",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])
