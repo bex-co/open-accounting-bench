@@ -1695,6 +1695,29 @@ def test_expensing_pension_contribution_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_htm_straight_line_amortization_fails():
+    """Trap: amortize an HTM premium straight-line over the term."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["htm-premium-amortization"](312)
+    terms = instance.app_files["documents/security_terms.md"]
+    premium = Decimal(re.search(r"premium USD ([\d]+\.[\d]{2})", terms)[1])
+    d = _deltas(instance)
+    coupon = d["Assets:InterestReceivable"]
+    sl = (premium / 60).quantize(Decimal("0.01"))
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Issuer",
+        [
+            ("Assets:InterestReceivable", coupon),
+            ("Income:Interest", -(coupon - sl)),
+            ("Assets:HeldToMaturitySecurities", -sl),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
 def test_contra_clearing_larger_balance_fails():
     """Trap: clear the larger mutual balance in full on a contra set-off."""
     from decimal import Decimal

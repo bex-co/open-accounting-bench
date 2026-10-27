@@ -1,0 +1,26 @@
+{
+  "task_id": "exit-obligation-january-amount",
+  "family": "provisions-contingencies",
+  "seed": 310,
+  "generator_version": "0.4.0",
+  "format": "numeric",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "213000",
+  "abs_tolerance": "0.01",
+  "rel_tolerance": "0",
+  "trap_value": "273000.00",
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:420"
+  ]
+}

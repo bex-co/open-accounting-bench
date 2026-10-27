@@ -347,6 +347,20 @@
       "digest": "sha256:0f550ef6d21051e32fdbb1914e7c743f393e5aa40a6c7dbe1e3737781c1f4aba"
     },
     {
+      "task_id": "budget-vs-actual-net-variance",
+      "family": "budgeting",
+      "seed": 307,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:54620d2e6ac90610f4a27fa8978b0e8b470497b30cdf47a24fcd251bcd80817b"
+    },
+    {
       "task_id": "business-combination-acquisition",
       "family": "business-combinations",
       "seed": 208,
@@ -493,6 +507,20 @@
         "ifrs:9"
       ],
       "digest": "sha256:fe9e7b84eadb035722dcc4089dc8125a9fe8715957c8a4d8216a933b061f8ef6"
+    },
+    {
+      "task_id": "cash-to-accrual-profit",
+      "family": "financial-reporting",
+      "seed": 308,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:09b2d871a4760d734c5f24b6d2f1d5a510d870dc0bb40325a91ea2053682b26e"
     },
     {
       "task_id": "change-control-deviation-count",
@@ -734,6 +762,20 @@
       "digest": "sha256:c26367d38df57233db8fc4b405b780061391ee0d18d676e700f695e9b796ba5a"
     },
     {
+      "task_id": "debt-covenant-ratio",
+      "family": "financial-analysis",
+      "seed": 309,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5e42aa2df10ecd035d8d802f5db115963b0f6c070eb1d10bb516503402daddd6"
+    },
+    {
       "task_id": "debt-modification-percent-change",
       "family": "borrowings",
       "seed": 233,
@@ -919,6 +961,22 @@
         "ias:28"
       ],
       "digest": "sha256:769e8a41a082035e2c639a051605f3141ea48b36a602e7ab21299cc84bd963cb"
+    },
+    {
+      "task_id": "exit-obligation-january-amount",
+      "family": "provisions-contingencies",
+      "seed": 310,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:420"
+      ],
+      "digest": "sha256:ae21d7c2ce892c5059355f4f59d15c0024466b78443e54c48cce6e07ebb9f5e7"
     },
     {
       "task_id": "expected-profit-choice",
@@ -1152,6 +1210,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:69d2b408d13a90f81f96b68bdf75e02e81c3ce6d81fc2a1960ba182f856675e3"
+    },
+    {
+      "task_id": "htm-premium-amortization",
+      "family": "investments",
+      "seed": 312,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:320"
+      ],
+      "digest": "sha256:ba8dc2febc9f5f2220f9b4456ef67d8f456aa3b39bd2c0e2c529d57482f45ebc"
     },
     {
       "task_id": "ifrs-capitalize-borrowing-costs",
@@ -1731,6 +1805,55 @@
       "digest": "sha256:142a57c11fd53980abe8fb980b2b15d8e7960adb9f51fb57bfea54b7e4ae79f8"
     },
     {
+      "task_id": "nfp-operating-cash-flow",
+      "family": "not-for-profit",
+      "seed": 314,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:230",
+        "asc:958"
+      ],
+      "digest": "sha256:e7d26cb1853f178db0ff31048183e2e7e9fc3985c595885690a11898857f32ba"
+    },
+    {
+      "task_id": "nfp-program-expense-allocation",
+      "family": "not-for-profit",
+      "seed": 313,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:958"
+      ],
+      "digest": "sha256:298cdf9e2d6cf70c37b66e04fd909265dc8a93f2eceb4b8c36e97871e07f5bd2"
+    },
+    {
+      "task_id": "nfp-restricted-net-assets",
+      "family": "not-for-profit",
+      "seed": 315,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [
+        "asc:958"
+      ],
+      "digest": "sha256:a3e1be28e16213767a603bdd5e7cabc3ec76d91d8ebd5cdc488f9a0bbde47c7d"
+    },
+    {
       "task_id": "note-dishonored",
       "family": "receivables",
       "seed": 133,
@@ -1757,6 +1880,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:e8f89b6779dcbc9847a12fe3405b6546ad851dbdab6baad9a0facf52b39d55fb"
+    },
+    {
+      "task_id": "notes-figures-difference",
+      "family": "financial-reporting",
+      "seed": 316,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:84031710ef8d66aada4c529a6f00a14881f1632c64613523194c9bbd1f1b1fd8"
     },
     {
       "task_id": "npv-project-evaluation",
@@ -2563,6 +2700,20 @@
       "digest": "sha256:2f1c886e9f14ce293d3a7d7226211a9a7da72c19e34a9f2ff613e72dd5015bd7"
     },
     {
+      "task_id": "sc-governmental-fund-assignment",
+      "family": "governmental-accounting",
+      "seed": 311,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:70ead64f0916a41d192e10471ee32577ebc4b4d9cff99c099bc95d665577a147"
+    },
+    {
       "task_id": "sc-investment-classification",
       "family": "investments",
       "seed": 249,
@@ -2886,6 +3037,20 @@
       "skill": "analysis",
       "standards": [],
       "digest": "sha256:76c4d2dcdb10f731276b8085edf4d399da45d3583d5bba326a7fdcba17452b73"
+    },
+    {
+      "task_id": "tax-basis-net-income",
+      "family": "income-taxes",
+      "seed": 317,
+      "generator_version": "0.4.0",
+      "track": "stable",
+      "category": "tax",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:c6efa61da1e422db2212df534112d58989e066a9b3f19ac1ba5400e61def3795"
     },
     {
       "task_id": "tax-cost-recovery-deduction",

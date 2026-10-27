@@ -167,6 +167,15 @@ NUMERIC_FAMILIES = [
     "change-control-deviation-count",
     "incident-response-deviation-count",
     "sql-join-excluded-count",
+    "budget-vs-actual-net-variance",
+    "cash-to-accrual-profit",
+    "debt-covenant-ratio",
+    "exit-obligation-january-amount",
+    "nfp-program-expense-allocation",
+    "nfp-operating-cash-flow",
+    "nfp-restricted-net-assets",
+    "notes-figures-difference",
+    "tax-basis-net-income",
 ]
 
 
@@ -290,6 +299,7 @@ def test_mc_reportable_segments_oracle_and_traps(seed):
         "sc-database-integrity-gap",
         "sc-soc-opinion-modification",
         "sc-system-description-gap",
+        "sc-governmental-fund-assignment",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

@@ -15672,6 +15672,754 @@ A complete system description must cover ALL of:
     )
 
 
+def budget_vs_actual_net_variance(seed: int) -> TaskInstance:
+    """Numeric: net favorable budget variance effect on profit.
+
+    Trap: using the same sign direction for revenue and expense
+    variances (treating an expense overrun as favorable).
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(30, 151)
+    budget_rev, budget_exp = amt(800, 1501), amt(600, 1101)
+    rev_var = amt(10, 121) * rng.choice([1, -1])
+    if rev_var == gold:
+        gold += Decimal("1000")
+    exp_var_favorable = gold - rev_var  # budget_exp - actual_exp
+    actual_rev = budget_rev + rev_var
+    actual_exp = budget_exp - exp_var_favorable
+    assert actual_exp > 0
+    trap = rev_var + (actual_exp - budget_exp)
+    data = (
+        "# Budget vs actual — 2025\n\n| Line | Budget (USD) | Actual (USD) |\n|---|---:|---:|\n"
+        f"| Revenue | {money(budget_rev)} | {money(actual_rev)} |\n"
+        f"| Operating expenses | {money(budget_exp)} | {money(actual_exp)} |\n"
+    )
+    policy = """# Variance conventions (applies to this task)
+
+- A variance is FAVORABLE when it increases profit: actual revenue
+  above budget, or actual expenses below budget. It is UNFAVORABLE
+  in the opposite cases.
+- Answer the NET effect on profit in USD: positive means net
+  favorable, negative means net unfavorable.
+"""
+    question = _numeric_question(
+        "net budget variance effect on profit",
+        "Using `/app/documents/budget_vs_actual.md` and `/app/policy.md`, "
+        "compute the **net variance effect on profit** in USD.",
+        "the signed USD amount",
+    )
+    return _numeric_instance(
+        task_id="budget-vs-actual-net-variance",
+        family="budgeting",
+        title="Net favorable or unfavorable variance",
+        question=question,
+        policy=policy,
+        data_name="budget_vs_actual.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "budget-variance", "favorable-unfavorable"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def cash_to_accrual_profit(seed: int) -> TaskInstance:
+    """Numeric: convert cash-basis results to accrual profit.
+
+    Trap: flipping the sign of the payables increase.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(200, 701)
+    ar_increase, ap_increase, prepaid_expired = amt(20, 121), amt(15, 101), amt(5, 51)
+    receipts = amt(700, 1401)
+    revenue = receipts + ar_increase
+    payments = revenue - gold - ap_increase - prepaid_expired
+    while payments <= 0:
+        receipts += Decimal("20000")
+        revenue = receipts + ar_increase
+        payments = revenue - gold - ap_increase - prepaid_expired
+    trap = revenue - (payments - ap_increase + prepaid_expired)
+    data = (
+        "# Cash records and year-end balances — 2025\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Cash received from customers | {money(receipts)} |\n"
+        f"| Cash paid for operating expenses | {money(payments)} |\n"
+        f"| Increase in trade receivables during the year | {money(ar_increase)} |\n"
+        f"| Increase in trade payables during the year | {money(ap_increase)} |\n"
+        f"| Prepaid expenses expired this year (paid earlier) | {money(prepaid_expired)} |\n"
+    )
+    policy = """# Cash-to-accrual conversion (applies to this task)
+
+- Accrual revenue = cash received from customers + the increase in
+  receivables (earned but not yet collected).
+- Accrual expenses = cash paid + the increase in payables (incurred
+  but not yet paid) + prepayments that expired this year.
+- Accrual profit = accrual revenue - accrual expenses.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "accrual-basis profit",
+        "Using `/app/documents/cash_records.md` and `/app/policy.md`, "
+        "compute **accrual-basis profit** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="cash-to-accrual-profit",
+        family="financial-reporting",
+        title="Convert cash results to accrual profit",
+        question=question,
+        policy=policy,
+        data_name="cash_records.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "cash-to-accrual", "conversion"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def debt_covenant_ratio(seed: int) -> TaskInstance:
+    """Numeric: leverage ratio under the covenant's own definitions.
+
+    Trap: using the financial-statement totals (all liabilities and
+    reported profit) instead of the covenant definitions.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    # Redraw until the covenant-definition and statement-total
+    # ratios are well separated (they can otherwise nearly coincide).
+    while True:
+        loans, bonds = amt(200, 601), amt(100, 401)
+        leases, payables = amt(40, 161), amt(50, 201)
+        op_income, depreciation, one_off_gain = amt(120, 301), amt(30, 91), amt(10, 61)
+        gold = ((loans + bonds) / (op_income + depreciation)).quantize(Decimal("0.0001"))
+        trap = (
+            (loans + bonds + leases + payables) / (op_income + depreciation + one_off_gain)
+        ).quantize(Decimal("0.0001"))
+        if abs(gold - trap) > Decimal("0.05"):
+            break
+    data = (
+        "# Covenant test data — 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Bank loans | {money(loans)} |\n"
+        f"| Bonds payable | {money(bonds)} |\n"
+        f"| Lease liabilities | {money(leases)} |\n"
+        f"| Trade payables | {money(payables)} |\n"
+        f"| Operating income (before the gain below) | {money(op_income)} |\n"
+        f"| Depreciation and amortization | {money(depreciation)} |\n"
+        f"| One-off gain on sale of a warehouse | {money(one_off_gain)} |\n"
+        "\nCovenant definitions: 'Funded Debt' means bank loans and "
+        "bonds only; 'Covenant EBITDA' means operating income plus "
+        "depreciation and amortization, EXCLUDING one-off gains and "
+        "losses on asset disposals. The covenant requires Funded Debt "
+        "/ Covenant EBITDA of no more than 3.50.\n"
+    )
+    policy = """# Covenant-ratio conventions (applies to this task)
+
+- Compute the ratio EXACTLY as the covenant defines its terms,
+  however the financial statements classify the same items.
+- Answer the ratio (for example 2.40) in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "debt covenant leverage ratio",
+        "Using `/app/documents/covenant_data.md` and `/app/policy.md`, "
+        "compute the **covenant leverage ratio**.",
+        "the ratio",
+    )
+    return _numeric_instance(
+        task_id="debt-covenant-ratio",
+        family="financial-analysis",
+        title="Leverage ratio on covenant definitions",
+        question=question,
+        policy=policy,
+        data_name="covenant_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "covenants", "leverage"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def exit_obligation_january_amount(seed: int) -> TaskInstance:
+    """Numeric: January liability for one-time termination benefits.
+
+    Trap: recognizing the full amount for employees who must keep
+    working for months, instead of accruing it over their service.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    immediate = Decimal(rng.randrange(60, 241)) * 1000
+    retention_total = Decimal(rng.randrange(10, 41)) * 6000
+    gold = immediate + retention_total / 6
+    data = (
+        "# Exit plan communicated 2026-01-10\n\n"
+        "| Group | Terms | Amount (USD) |\n|---|---|---:|\n"
+        f"| A: leave now, no future service | Termination benefits | {money(immediate)} |\n"
+        f"| B: must work to 2026-06-30 for the benefit | Termination benefits | "
+        f"{money(retention_total)} |\n"
+    )
+    policy = """# Exit-obligation conventions (applies to this task)
+
+- Benefits for employees terminated without a future-service
+  requirement are recognized in full at the communication date.
+- Benefits that require service beyond a minimum retention period
+  (here: service through 30 June, six months from communication)
+  are accrued ratably over the service period: 1/6 by 31 January.
+- Answer the liability recognized at 2026-01-31 in USD.
+"""
+    question = _numeric_question(
+        "exit liability at January 31",
+        "Using `/app/documents/exit_plan.md` and `/app/policy.md`, compute "
+        "the **liability at 2026-01-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="exit-obligation-january-amount",
+        family="provisions-contingencies",
+        title="Termination benefits with a service condition",
+        question=question,
+        policy=policy,
+        data_name="exit_plan.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "exit-obligations", "termination-benefits"],
+        abs_tolerance="0.01",
+        standards=["asc:420"],
+        trap_value=money(immediate + retention_total),
+    )
+
+
+FUND_OPTIONS = [
+    "General fund",
+    "Special revenue fund",
+    "Capital projects fund",
+    "Debt service fund",
+    "Permanent fund",
+]
+FUND_CASES = [
+    (
+        "A gasoline tax whose enabling legislation restricts it to road maintenance.",
+        "Special revenue fund",
+    ),
+    (
+        "Resources accumulated in a sinking arrangement to pay the "
+        "principal and interest on general obligation bonds.",
+        "Debt service fund",
+    ),
+    (
+        "Bond proceeds earmarked to build a new courthouse, a major capital facility.",
+        "Capital projects fund",
+    ),
+    (
+        "A bequest whose principal must be kept intact forever, with "
+        "earnings used to support the public library.",
+        "Permanent fund",
+    ),
+    (
+        "General property taxes financing police, fire, and general "
+        "administration, with no external restriction.",
+        "General fund",
+    ),
+]
+
+
+def sc_governmental_fund_assignment(seed: int) -> TaskInstance:
+    """Single-choice: assign an activity to its governmental fund type.
+
+    Trap: putting restricted special-purpose resources in the
+    general fund.
+    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(FUND_CASES)
+    labels = FUND_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B", "C", "D", "E"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Governmental fund types (applies to this task)
+
+- General fund: the default operating fund for resources not
+  required to be elsewhere.
+- Special revenue fund: proceeds of specific revenue sources that
+  are restricted or committed to specified purposes (other than
+  debt service or capital projects).
+- Capital projects fund: resources restricted/committed/assigned
+  for major capital facilities.
+- Debt service fund: resources accumulated to pay principal and
+  interest on general long-term debt.
+- Permanent fund: resources whose principal must be kept intact,
+  with only earnings usable for the stated public purpose.
+"""
+    question = _choice_question(
+        "governmental fund assignment",
+        f"Activity: **{narrative}**\n\nUsing `/app/policy.md`, in "
+        "which fund is it reported? Select exactly one option.",
+        options_md,
+        '"A"',
+    )
+    return TaskInstance(
+        task_id="sc-governmental-fund-assignment",
+        family="governmental-accounting",
+        title="Assign the governmental fund type",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-governmental-fund-assignment",
+            "governmental-accounting",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "governmental", "fund-types"],
+        level="vocational",
+        format="single-choice",
+        skill="application",
+        framework="us-gaap",
+    )
+
+
+HTM_INVESTMENT = "Assets:HeldToMaturitySecurities"
+INTEREST_RECEIVABLE_HTM = "Assets:InterestReceivable"
+HTM_ACCOUNTS = [
+    (HTM_INVESTMENT, "Held-to-maturity debt securities at amortized cost"),
+    (INTEREST_RECEIVABLE_HTM, "Accrued interest receivable"),
+    (INTEREST_INCOME, "Interest income"),
+]
+
+
+def htm_premium_amortization(seed: int) -> TaskInstance:
+    """Scenario: HTM security bought at a premium Jan 1; accrue January.
+
+    Oracle: interest income = carrying amount x the stated effective
+    monthly rate; coupon accrual at face x coupon/12; the difference
+    amortizes the premium against the investment. Trap: straight-line
+    amortization of the premium over the term.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
+    """
+    rng = random.Random(seed)
+    face = Decimal(rng.randrange(5, 21)) * 12000
+    coupon_annual = Decimal("0.07")
+    eff_monthly = Decimal("0.004")
+    # Price = PV of annual coupons + principal at the stated monthly
+    # effective rate (5-year term), so the rate fits the premium.
+    coupon_annual_amt = face * coupon_annual
+    price = (
+        sum(coupon_annual_amt / (1 + eff_monthly) ** (12 * k) for k in range(1, 6))
+        + face / (1 + eff_monthly) ** 60
+    )
+    price = price.quantize(CENT)
+    premium = price - face
+    coupon_month = (face * coupon_annual / 12).quantize(CENT)
+    income = (price * eff_monthly).quantize(CENT)
+    amortization = coupon_month - income
+    opening = price + Decimal("10000.00")
+    initial = _ledger_header(opening, HTM_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Broker",
+        "Bought held-to-maturity bonds at a premium",
+        [(HTM_INVESTMENT, price), (BANK, -price)],
+    )
+    terms = (
+        "# Security terms\n\n"
+        f"- Bought 2026-01-01; face value USD {money(face)}; 5-year term\n"
+        f"- Purchase price USD {money(price)} (premium USD {money(premium)})\n"
+        "- Coupon 7.0% a year on face value, paid each 31 December\n"
+        "- Effective interest rate: 0.40% per month on the carrying amount\n"
+        "- Classification: held to maturity (amortized cost)\n"
+    )
+    policy = POLICY + (
+        "- Held-to-maturity securities are measured at amortized cost "
+        "(effective interest method): monthly interest income = carrying\n"
+        "  amount at the start of the month x the effective monthly rate\n"
+        "  stated in the terms, rounded to the cent. The month's coupon "
+        "accrual\n"
+        "  (face x coupon rate / 12) is debited to interest receivable;\n"
+        "  the excess of the coupon accrual over interest income "
+        "amortizes\n"
+        "  the premium (credit the investment). Do not use straight-line\n"
+        "  amortization and do not recompute the effective rate.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Issuer",
+        "January interest accrual and premium amortization",
+        [
+            (INTEREST_RECEIVABLE_HTM, coupon_month),
+            (INTEREST_INCOME, -income),
+            (HTM_INVESTMENT, -amortization),
+        ],
+    )
+    return TaskInstance(
+        task_id="htm-premium-amortization",
+        family="investments",
+        title="Accrue January interest on an HTM security",
+        instruction=(
+            "Record January 2026 interest on the security in "
+            "`/app/documents/security_terms.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions "
+            "dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(HTM_ACCOUNTS),
+            "documents/security_terms.md": terms,
+        },
+        expected=_expected(
+            "htm-premium-amortization",
+            "investments",
+            seed,
+            expected_deltas={
+                INTEREST_RECEIVABLE_HTM: money(coupon_month),
+                INTEREST_INCOME: money(-income),
+                HTM_INVESTMENT: money(-amortization),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={HTM_INVESTMENT: money(price - amortization)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["held-to-maturity", "premium-amortization", "effective-interest"],
+        level="university",
+        skill="application",
+        framework="us-gaap",
+        standards=["asc:320"],
+    )
+
+
+def nfp_program_expense_allocation(seed: int) -> TaskInstance:
+    """Numeric: program-services expenses under a stated allocation policy.
+
+    Trap: allocating the wholly-management executive salary partly to
+    programs at the general staff rate.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    program_staff, occupancy, supplies, exec_salary = (
+        amt(300, 801),
+        amt(100, 401),
+        amt(60, 301),
+        amt(80, 201),
+    )
+    gold = program_staff * Decimal("0.7") + occupancy * Decimal("0.8") + supplies
+    trap = gold + exec_salary * Decimal("0.7")
+    data = (
+        "# Natural expenses and allocation bases — 2025\n\n"
+        "| Expense | Total (USD) | Allocation basis |\n|---|---:|---|\n"
+        f"| Shared staff salaries | {money(program_staff)} | "
+        "Time study: 70% program / 30% management |\n"
+        f"| Occupancy | {money(occupancy)} | Area: 80% program / 20% management |\n"
+        f"| Program supplies (direct) | {money(supplies)} | 100% program |\n"
+        f"| Executive director salary | {money(exec_salary)} | Wholly management & general |\n"
+    )
+    policy = """# Functional-expense conventions (applies to this task)
+
+- Allocate each natural expense to program services vs management
+  & general Using ITS OWN stated basis in the table. A cost stated
+  to be wholly management is never spread to programs at another
+  cost's rate.
+- Answer total PROGRAM services expenses in USD.
+"""
+    question = _numeric_question(
+        "program services expenses",
+        "Using `/app/documents/functional_expenses.md` and `/app/policy.md`, "
+        "compute **total program services expenses** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="nfp-program-expense-allocation",
+        family="not-for-profit",
+        title="Allocate expenses to program services",
+        question=question,
+        policy=policy,
+        data_name="functional_expenses.md",
+        data=data,
+        gold=gold.quantize(CENT),
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "not-for-profit", "functional-expenses"],
+        abs_tolerance="0.01",
+        standards=["asc:958"],
+        trap_value=money(trap.quantize(CENT)),
+    )
+
+
+def nfp_operating_cash_flow(seed: int) -> TaskInstance:
+    """Numeric: nonprofit operating cash flow (indirect method).
+
+    Trap: leaving contributions restricted for long-term purposes in
+    operating activities (they are financing inflows for an NFP).
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(150, 501)
+    depreciation, restricted = amt(20, 91), amt(40, 151)
+    ar_increase, ap_increase = amt(10, 61), amt(8, 51)
+    change_in_net_assets = gold - depreciation + restricted + ar_increase - ap_increase
+    data = (
+        "# Nonprofit cash-flow data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Change in net assets | {money(change_in_net_assets)} |\n"
+        f"| Depreciation expense | {money(depreciation)} |\n"
+        f"| Contributions restricted for construction (in cash, above) | {money(restricted)} |\n"
+        f"| Increase in pledges receivable | {money(ar_increase)} |\n"
+        f"| Increase in accounts payable | {money(ap_increase)} |\n"
+    )
+    policy = """# Nonprofit cash-flow conventions (applies to this task)
+
+- Indirect method from the change in net assets: add back
+  depreciation; subtract increases in operating receivables; add
+  increases in operating payables.
+- Cash contributions restricted by donors for long-term purposes
+  (such as building construction) are FINANCING inflows for a
+  nonprofit and are removed from operating activities.
+- Answer net cash from operating activities in USD.
+"""
+    question = _numeric_question(
+        "nonprofit operating cash flow",
+        "Using `/app/documents/nfp_cashflow_data.md` and `/app/policy.md`, "
+        "compute **net cash from operating activities** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="nfp-operating-cash-flow",
+        family="not-for-profit",
+        title="Nonprofit operating cash flow",
+        question=question,
+        policy=policy,
+        data_name="nfp_cashflow_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "not-for-profit", "cash-flows"],
+        level="university",
+        abs_tolerance="0.01",
+        standards=["asc:230", "asc:958"],
+        trap_value=money(gold + restricted),
+    )
+
+
+def nfp_restricted_net_assets(seed: int) -> TaskInstance:
+    """Numeric: ending net assets with donor restrictions.
+
+    Trap: counting board-designated funds as donor-restricted.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    opening, gifts, designated = amt(150, 501), amt(80, 301), amt(40, 151)
+    while True:
+        released = amt(30, 201)
+        gold = opening + gifts - released
+        if gold > 0:
+            break
+    data = (
+        "# Net-asset movements — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Net assets with donor restrictions, 2025-01-01 | {money(opening)} |\n"
+        f"| Contributions with donor restrictions received | {money(gifts)} |\n"
+        f"| Restrictions satisfied by purpose spending (released) | {money(released)} |\n"
+        f"| Board-designated fund for a future building | {money(designated)} |\n"
+    )
+    policy = """# Net-asset classes (applies to this task)
+
+- Net assets WITH donor restrictions change only for donor-imposed
+  restrictions: they increase for restricted contributions and
+  decrease when the stipulated purpose is satisfied (released).
+- Board designations are internal earmarks of net assets WITHOUT
+  donor restrictions; the board can undo them at will, so they are
+  never donor-restricted.
+- Answer net assets with donor restrictions at 2025-12-31 in USD.
+"""
+    question = _numeric_question(
+        "net assets with donor restrictions",
+        "Using `/app/documents/net_asset_movements.md` and `/app/policy.md`, "
+        "compute **net assets with donor restrictions at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="nfp-restricted-net-assets",
+        family="not-for-profit",
+        title="Restricted net assets rollforward",
+        question=question,
+        policy=policy,
+        data_name="net_asset_movements.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "not-for-profit", "net-assets"],
+        abs_tolerance="0.01",
+        standards=["asc:958"],
+        trap_value=money(gold + designated),
+    )
+
+
+def notes_figures_difference(seed: int) -> TaskInstance:
+    """Numeric: disagreement between a note schedule and the statement line.
+
+    Trap: comparing the note's gross total with the statement's net
+    figure without deducting the allowance shown in the note.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    current, overdue = amt(300, 701), amt(40, 161)
+    allowance = amt(10, 61)
+    difference = amt(5, 41)
+    statement = current + overdue - allowance - difference
+    data = (
+        "# Receivables — statement and note, 2025-12-31\n\n"
+        f"Statement of financial position: trade receivables "
+        f"USD {money(statement)} (net).\n\n"
+        "Note disclosure 'Trade receivables by aging':\n\n"
+        "| Category | USD |\n|---|---:|\n"
+        f"| Current (not yet due) | {money(current)} |\n"
+        f"| Past due | {money(overdue)} |\n"
+        f"| Less: allowance for doubtful accounts | {money(allowance)} |\n"
+    )
+    policy = """# Notes-agreement conventions (applies to this task)
+
+- Compare like with like: the statement line is NET of the
+  allowance, so the note's comparable figure is its gross
+  categories minus the allowance shown in the note.
+- Answer the amount by which the note-implied net figure EXCEEDS
+  the statement figure, in USD.
+"""
+    question = _numeric_question(
+        "note-to-statement difference",
+        "Using `/app/documents/receivables_note.md` and `/app/policy.md`, "
+        "compute the **disagreement amount** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="notes-figures-difference",
+        family="financial-reporting",
+        title="Agree the note to the statement",
+        question=question,
+        policy=policy,
+        data_name="receivables_note.md",
+        data=data,
+        gold=difference,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "notes-disclosure", "agreement"],
+        abs_tolerance="0.01",
+        trap_value=money(difference + allowance),
+    )
+
+
+def tax_basis_net_income(seed: int) -> TaskInstance:
+    """Numeric: income-tax-basis net income from stated tax rules.
+
+    Trap: deducting book (GAAP) straight-line depreciation instead
+    of the tax cost-recovery amount.
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    gold = amt(200, 601)
+    tax_depreciation, book_depreciation = amt(60, 201), amt(30, 121)
+    while abs(tax_depreciation - book_depreciation) < Decimal("2000"):
+        tax_depreciation = amt(60, 201)
+    revenue = amt(900, 1801)
+    operating = revenue - gold - tax_depreciation
+    while operating <= 0:
+        revenue += Decimal("20000")
+        operating = revenue - gold - tax_depreciation
+    data = (
+        "# Income-tax-basis data — 2025\n\n| Item | USD |\n|---|---:|\n"
+        f"| Revenue (same under both bases) | {money(revenue)} |\n"
+        f"| Operating expenses other than depreciation | {money(operating)} |\n"
+        f"| Depreciation under the stated tax cost-recovery table | {money(tax_depreciation)} |\n"
+        f"| Book depreciation (straight-line, GAAP records) | {money(book_depreciation)} |\n"
+        "\nThe statements are prepared on the income-tax basis of "
+        "accounting (a special-purpose framework).\n"
+    )
+    policy = """# Tax-basis conventions (applies to this task)
+
+- Under the income-tax basis, amounts follow the tax rules stated
+  for the statements: depreciation is the TAX cost-recovery amount,
+  never the GAAP book figure.
+- Answer tax-basis net income in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "income-tax-basis net income",
+        "Using `/app/documents/tax_basis_data.md` and `/app/policy.md`, "
+        "compute **tax-basis net income** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="tax-basis-net-income",
+        family="income-taxes",
+        title="Tax-basis net income",
+        question=question,
+        policy=policy,
+        data_name="tax_basis_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="tax",
+        keywords=["numeric", "tax-basis", "special-purpose-framework"],
+        abs_tolerance="0.01",
+        trap_value=money(gold + tax_depreciation - book_depreciation),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -15879,6 +16627,17 @@ FAMILIES = {
     "sc-soc-opinion-modification": sc_soc_opinion_modification,
     "sql-join-excluded-count": sql_join_excluded_count,
     "sc-system-description-gap": sc_system_description_gap,
+    "budget-vs-actual-net-variance": budget_vs_actual_net_variance,
+    "cash-to-accrual-profit": cash_to_accrual_profit,
+    "debt-covenant-ratio": debt_covenant_ratio,
+    "exit-obligation-january-amount": exit_obligation_january_amount,
+    "sc-governmental-fund-assignment": sc_governmental_fund_assignment,
+    "htm-premium-amortization": htm_premium_amortization,
+    "nfp-program-expense-allocation": nfp_program_expense_allocation,
+    "nfp-operating-cash-flow": nfp_operating_cash_flow,
+    "nfp-restricted-net-assets": nfp_restricted_net_assets,
+    "notes-figures-difference": notes_figures_difference,
+    "tax-basis-net-income": tax_basis_net_income,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -16089,4 +16848,15 @@ STABLE_SEEDS = {
     "sc-soc-opinion-modification": 304,
     "sql-join-excluded-count": 305,
     "sc-system-description-gap": 306,
+    "budget-vs-actual-net-variance": 307,
+    "cash-to-accrual-profit": 308,
+    "debt-covenant-ratio": 309,
+    "exit-obligation-january-amount": 310,
+    "sc-governmental-fund-assignment": 311,
+    "htm-premium-amortization": 312,
+    "nfp-program-expense-allocation": 313,
+    "nfp-operating-cash-flow": 314,
+    "nfp-restricted-net-assets": 315,
+    "notes-figures-difference": 316,
+    "tax-basis-net-income": 317,
 }

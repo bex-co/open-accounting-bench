@@ -290,6 +290,17 @@ D = standards depth):
 | `sc-soc-opinion-modification` | V | V | V | V | V | V | V | vocational |
 | `sql-join-excluded-count` | V | V | V | U | V | V | V | vocational |
 | `sc-system-description-gap` | V | V | V | V | V | V | V | vocational |
+| `budget-vs-actual-net-variance` | V | V | V | V | V | V | V | vocational |
+| `cash-to-accrual-profit` | V | V | V | V | V | V | V | vocational |
+| `debt-covenant-ratio` | V | V | V | U | V | V | V | vocational |
+| `exit-obligation-january-amount` | V | V | V | V | V | V | U | vocational |
+| `sc-governmental-fund-assignment` | V | V | V | V | V | V | V | vocational |
+| `htm-premium-amortization` | V | U | V | V | V | V | U | university (borderline) |
+| `nfp-program-expense-allocation` | V | V | V | U | V | V | V | vocational |
+| `nfp-operating-cash-flow` | V | U | V | V | V | V | U | university (borderline) |
+| `nfp-restricted-net-assets` | V | V | V | U | V | V | V | vocational |
+| `notes-figures-difference` | V | V | V | U | V | V | V | vocational |
+| `tax-basis-net-income` | V | V | V | U | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -508,8 +519,19 @@ problem the task hands over. An analysis task can be vocational.
 | `sc-soc-opinion-modification` | audit-planning | single-choice | core | application | — | Modifying for isolated immaterial deviations |
 | `sql-join-excluded-count` | audit-analytics | numeric | core | application | — | Answering rows returned by the query |
 | `sc-system-description-gap` | audit-planning | single-choice | core | application | — | Rating a boundary-less description complete |
+| `budget-vs-actual-net-variance` | budgeting | numeric | core | application | — | Same sign for revenue/expense variances |
+| `cash-to-accrual-profit` | financial-reporting | numeric | core | application | — | Payables increase subtracted |
+| `debt-covenant-ratio` | financial-analysis | numeric | core | application | — | Statement totals over covenant definitions |
+| `exit-obligation-january-amount` | provisions-contingencies | numeric | core | application | `asc:420` | Full recognition despite service condition |
+| `sc-governmental-fund-assignment` | governmental-accounting | single-choice | us-gaap | application | — | Restricted resources in the general fund |
+| `htm-premium-amortization` | investments | journal-entry | us-gaap | application | `asc:320` | Straight-line premium amortization |
+| `nfp-program-expense-allocation` | not-for-profit | numeric | core | application | `asc:958` | Management salary spread to programs |
+| `nfp-operating-cash-flow` | not-for-profit | numeric | core | application | `asc:230`, `asc:958` | Restricted gifts left in operating |
+| `nfp-restricted-net-assets` | not-for-profit | numeric | core | application | `asc:958` | Board designation counted as restricted |
+| `notes-figures-difference` | financial-reporting | numeric | core | application | — | Gross note total vs net statement line |
+| `tax-basis-net-income` | income-taxes | numeric | core | application | — | GAAP depreciation in tax-basis statements |
 
-Stable seeds: 101–306 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–317 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -518,13 +540,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 126 | 17 | 7 | planned |
-| management-accounting | 32 | planned | planned | planned |
-| tax | 11 | — | — | planned |
+| financial-accounting | 133 | 17 | 9 | planned |
+| management-accounting | 33 | planned | planned | planned |
+| tax | 12 | — | — | planned |
 | audit-assurance | 13 | — | planned | — |
 
-Format coverage: journal-entry ×89, multiple-choice ×4, single-choice ×22,
-numeric ×91; open-text is
+Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×23,
+numeric ×100; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
