@@ -1,0 +1,32 @@
+{
+  "task_id": "fx-payable-remeasurement",
+  "family": "foreign-currency",
+  "seed": 196,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Expenses:ForeignExchangeLoss": "5000.00",
+    "Liabilities:AccountsPayable": "-5000.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Liabilities:AccountsPayable": "-110000.00",
+    "Assets:Inventory": "105000.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:830",
+    "ias:21"
+  ]
+}

@@ -1,0 +1,26 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Liabilities:AccountsPayable USD
+2026-01-01 open Assets:Inventory USD
+2026-01-01 open Expenses:ForeignExchangeLoss USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  30000.00 USD
+  Equity:Opening-Balances  -30000.00 USD
+
+2026-01-08 * "Nordhaus GmbH" "Merchandise purchased on credit (euro invoice)"
+  Assets:Inventory  105000.00 USD
+  Liabilities:AccountsPayable  -105000.00 USD

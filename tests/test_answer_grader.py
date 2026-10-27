@@ -111,6 +111,13 @@ NUMERIC_FAMILIES = [
     "asset-turnover-ratio",
     "breakeven-sales-dollars",
     "direct-materials-used",
+    "production-budget-units",
+    "predetermined-overhead-applied",
+    "interim-income-tax-expense",
+    "segment-margin",
+    "residual-income",
+    "cash-collected-from-customers",
+    "free-cash-flow",
 ]
 
 
@@ -163,6 +170,7 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         "sc-special-journal-routing",
         "sc-cash-flow-classification",
         "sc-subsequent-event-classification",
+        "sc-transaction-statement-impact",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

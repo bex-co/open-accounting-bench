@@ -65,6 +65,17 @@ crosswalk mappings.
   (in particular: stated annuity/PV factors used as given; the
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
+- 2026-10-26 — fourteen further generator families (Stable seeds
+  194–207): `treasury-stock-reissuance`, `lease-initial-recognition`,
+  `fx-payable-remeasurement`, `development-cost-capitalization`,
+  `inventory-error-correction`, `long-lived-asset-impairment`,
+  `production-budget-units`, `predetermined-overhead-applied`,
+  `interim-income-tax-expense`, `segment-margin`, `residual-income`,
+  `cash-collected-from-customers`, `free-cash-flow`,
+  `sc-transaction-statement-impact`. Same checks as the earlier batches
+  (in particular: stated annuity factor and free-cash-flow definition
+  used exactly as given; prior-period inventory correction is stated
+  gross of tax). No crosswalk mappings proposed yet.
 - 2026-10-26 — thirteen further generator families (Stable seeds
   181–193): `inventory-shrinkage-adjustment`, `purchase-return-perpetual`,
   `overhead-variance-disposition`, `unearned-revenue-release`,

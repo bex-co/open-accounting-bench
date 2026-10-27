@@ -1181,3 +1181,93 @@ def test_basket_split_evenly_fails():
         [("Assets:Land", half), ("Assets:Building", half), ("Assets:Bank:Checking", -lump)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_treasury_reissuance_gain_to_income_fails():
+    """Trap: recognize the excess over treasury cost as income."""
+    instance = FAMILIES["treasury-stock-reissuance"](194)
+    d = _deltas(instance)
+    proceeds = d["Assets:Bank:Checking"]
+    cost = -d["Equity:TreasuryStock"]
+    excess = -d["Equity:AdditionalPaidInCapital"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Investors",
+        [
+            ("Assets:Bank:Checking", proceeds),
+            ("Equity:TreasuryStock", -cost),
+            ("Income:Sales", -excess),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_lease_treated_as_rent_expense_fails():
+    """Trap: debit rent expense instead of recognizing a right-of-use asset."""
+    instance = FAMILIES["lease-initial-recognition"](195)
+    present_value = _deltas(instance)["Assets:RightOfUseAsset"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-01",
+        "Lessor",
+        [("Expenses:Rent", present_value), ("Liabilities:LeaseLiability", -present_value)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_fx_adjustment_to_inventory_fails():
+    """Trap: remeasure the nonmonetary inventory along with the payable."""
+    instance = FAMILIES["fx-payable-remeasurement"](196)
+    loss = _deltas(instance)["Expenses:ForeignExchangeLoss"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Supplier",
+        [("Assets:Inventory", loss), ("Liabilities:AccountsPayable", -loss)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_capitalizing_all_project_costs_fails():
+    """Trap: capitalize research, pre-feasibility work, and training too."""
+    instance = FAMILIES["development-cost-capitalization"](197)
+    total = -_deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Project",
+        [("Assets:DevelopmentCosts", total), ("Assets:Bank:Checking", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_inventory_error_through_current_cogs_fails():
+    """Trap: run a prior-period inventory correction through current COGS."""
+    instance = FAMILIES["inventory-error-correction"](198)
+    error = _deltas(instance)["Assets:Inventory"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-01",
+        "Audit",
+        [("Assets:Inventory", error), ("Expenses:CostOfSales", -error)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_impairment_to_lower_measure_fails():
+    """Trap: write down to the LOWER of FVLCD and value in use."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["long-lived-asset-impairment"](199)
+    doc = instance.app_files["documents/impairment_review.md"]
+    carrying = Decimal(re.search(r"carrying amount USD ([\d]+\.[\d]{2})", doc)[1])
+    fvlcd = Decimal(re.search(r"costs of disposal: USD ([\d]+\.[\d]{2})", doc)[1])
+    viu = Decimal(re.search(r"Value in use \(discounted\): USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong_amount = carrying - min(fvlcd, viu)
+    assert wrong_amount != _deltas(instance)["Expenses:ImpairmentLoss"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Impairment review",
+        [
+            ("Expenses:ImpairmentLoss", wrong_amount),
+            ("Assets:AccumulatedImpairment", -wrong_amount),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)

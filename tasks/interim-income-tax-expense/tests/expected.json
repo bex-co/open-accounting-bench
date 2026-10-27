@@ -1,0 +1,27 @@
+{
+  "task_id": "interim-income-tax-expense",
+  "family": "income-taxes",
+  "seed": 202,
+  "generator_version": "0.3.0",
+  "format": "numeric",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {},
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 0,
+  "expected_period": null,
+  "required_final_balances": {},
+  "forbid_new_accounts": true,
+  "gold": "79770.00",
+  "abs_tolerance": "0.01",
+  "rel_tolerance": "0",
+  "trap_value": "76800.00",
+  "category": "tax",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:740",
+    "ias:34"
+  ]
+}

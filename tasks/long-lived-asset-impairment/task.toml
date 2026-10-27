@@ -1,0 +1,44 @@
+schema_version = "1.3"
+artifacts = ["/app/ledger.beancount"]
+
+[task]
+name = "open-accounting-bench/long-lived-asset-impairment"
+description = "Impair a long-lived asset to recoverable amount (IFRS)"
+authors = []
+keywords = ["impairment", "ias-36", "recoverable-amount"]
+
+[metadata]
+task_id = "long-lived-asset-impairment"
+family = "fixed-assets"
+difficulty = "medium"
+category = "financial-accounting"
+framework = "ifrs"
+level = "vocational"
+format = "journal-entry"
+skill = "application"
+standards = ["ias:36"]
+track = "stable"
+seed = 199
+generator_version = "0.3.0"
+ledger_engine = "beancount"
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 300.0
+
+[verifier.environment]
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 1800.0
+
+[environment]
+network_mode = "no-network"
+os = "linux"
+cpus = 1
+memory_mb = 2048
+storage_mb = 5120

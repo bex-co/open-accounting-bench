@@ -177,6 +177,20 @@ D = standards depth):
 | `breakeven-sales-dollars` | V | U | V | V | V | V | V | vocational |
 | `direct-materials-used` | V | U | V | V | V | V | V | vocational |
 | `sc-subsequent-event-classification` | V | V | V | U | U | V | U | vocational |
+| `treasury-stock-reissuance` | V | U | V | V | V | V | U | vocational |
+| `lease-initial-recognition` | V | U | V | V | V | V | U | vocational |
+| `fx-payable-remeasurement` | V | U | V | V | V | V | U | vocational |
+| `development-cost-capitalization` | V | U | V | U | U | V | U | vocational |
+| `inventory-error-correction` | V | U | U | V | U | U | U | vocational |
+| `long-lived-asset-impairment` | V | U | V | U | U | V | U | vocational |
+| `production-budget-units` | V | U | V | V | V | V | V | vocational |
+| `predetermined-overhead-applied` | V | U | V | U | V | V | V | vocational |
+| `interim-income-tax-expense` | V | U | V | V | V | U | U | vocational |
+| `segment-margin` | V | U | V | U | V | V | V | vocational |
+| `residual-income` | V | U | V | V | V | V | V | vocational |
+| `cash-collected-from-customers` | V | U | V | V | V | V | U | vocational |
+| `free-cash-flow` | V | U | V | V | V | V | U | vocational |
+| `sc-transaction-statement-impact` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -282,8 +296,22 @@ problem the task hands over. An analysis task can be vocational.
 | `breakeven-sales-dollars` | cost-volume-profit | numeric | core | application | — | Answer break-even units |
 | `direct-materials-used` | job-order-costing | numeric | core | application | — | Purchases only |
 | `sc-subsequent-event-classification` | financial-reporting | single-choice | core | remembering-understanding | `asc:855`, `ias:10` | Later fire treated as adjusting |
+| `treasury-stock-reissuance` | equity | journal-entry | core | application | — | Excess credited to income |
+| `lease-initial-recognition` | leases | journal-entry | core | application | `asc:842`, `ifrs:16` | Debit rent expense |
+| `fx-payable-remeasurement` | foreign-currency | journal-entry | core | application | `asc:830`, `ias:21` | Remeasure inventory too |
+| `development-cost-capitalization` | intangible-assets | journal-entry | ifrs | application | `ias:38` | Capitalize all project spend |
+| `inventory-error-correction` | accounting-changes-errors | journal-entry | core | application | `asc:250`, `ias:8` | Correction through current COGS |
+| `long-lived-asset-impairment` | fixed-assets | journal-entry | ifrs | application | `ias:36` | Use lower recoverable measure |
+| `production-budget-units` | budgeting | numeric | core | application | — | Answer budgeted sales units |
+| `predetermined-overhead-applied` | job-order-costing | numeric | core | application | — | Answer actual overhead |
+| `interim-income-tax-expense` | income-taxes | numeric | core | application | `asc:740`, `ias:34` | Q2-only income x rate |
+| `segment-margin` | responsibility-accounting | numeric | core | application | — | Subtract common fixed costs |
+| `residual-income` | responsibility-accounting | numeric | core | application | — | Answer ROI percentage |
+| `cash-collected-from-customers` | cash-flow-statement | numeric | core | application | `asc:230`, `ias:7` | Answer accrual sales |
+| `free-cash-flow` | cash-flow-statement | numeric | core | application | `asc:230`, `ias:7` | Omit dividends from definition |
+| `sc-transaction-statement-impact` | transaction-classification | single-choice | core | application | — | Treat asset exchange as asset increase |
 
-Stable seeds: 101–193 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–207 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -292,13 +320,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 69 | 2 | planned | planned |
-| management-accounting | 20 | planned | planned | planned |
-| tax | 2 | — | — | planned |
+| financial-accounting | 76 | 4 | planned | planned |
+| management-accounting | 24 | planned | planned | planned |
+| tax | 3 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×53, multiple-choice ×2, single-choice ×3,
-numeric ×35; open-text is
+Format coverage: journal-entry ×59, multiple-choice ×2, single-choice ×4,
+numeric ×42; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
