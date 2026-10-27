@@ -3228,9 +3228,7 @@ def npv_project_evaluation(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     years = rng.choice([4, 5, 6])
     rate = rng.choice([Decimal("0.08"), Decimal("0.10"), Decimal("0.12")])
-    factor = sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
-        Decimal("0.0001")
-    )
+    factor = _annuity_factor(rate, years)
     inflow = Decimal(rng.randrange(15, 61)) * 1000
     initial = (inflow * factor * Decimal("0.8") // 1000) * 1000
     gold = (inflow * factor - initial).quantize(CENT)
@@ -4932,9 +4930,7 @@ def lease_liability_present_value(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     years = rng.choice([3, 4, 5, 6])
     rate = rng.choice([Decimal("0.05"), Decimal("0.06"), Decimal("0.08")])
-    factor = sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
-        Decimal("0.0001")
-    )
+    factor = _annuity_factor(rate, years)
     payment = Decimal(rng.randrange(10, 61)) * 1000
     gold = (payment * factor).quantize(CENT)
     data = (
@@ -5031,9 +5027,7 @@ def bond_issue_price(seed: int) -> TaskInstance:
     coupon_rate = rng.choice([Decimal("0.04"), Decimal("0.05"), Decimal("0.06")])
     market = coupon_rate + Decimal("0.02")
     coupon = face * coupon_rate
-    annuity = sum(Decimal(1) / (1 + market) ** t for t in range(1, years + 1)).quantize(
-        Decimal("0.0001")
-    )
+    annuity = _annuity_factor(market, years)
     pv_factor = (Decimal(1) / (1 + market) ** years).quantize(Decimal("0.0001"))
     gold = (coupon * annuity + face * pv_factor).quantize(CENT)
     data = (
@@ -7173,9 +7167,7 @@ def lease_initial_recognition(seed: int) -> TaskInstance:
     asset = rng.choice(["warehouse space", "delivery fleet", "production equipment"])
     years = rng.choice([3, 4, 5, 6])
     rate = rng.choice([Decimal("0.05"), Decimal("0.06"), Decimal("0.08")])
-    factor = sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
-        Decimal("0.0001")
-    )
+    factor = _annuity_factor(rate, years)
     payment = Decimal(rng.randrange(10, 61)) * 1000
     present_value = (payment * factor).quantize(CENT)
     opening = Decimal("20000.00")
@@ -9579,6 +9571,12 @@ def debt_security_credit_loss(seed: int) -> TaskInstance:
     )
 
 
+def _annuity_factor(rate: Decimal, years: int) -> Decimal:
+    return sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
+        Decimal("0.0001")
+    )
+
+
 def _balances_table(title: str, rows: list[tuple[str, Decimal]]) -> str:
     body = "\n".join(f"| {name} | {money(amount)} |" for name, amount in rows)
     return f"# {title}\n\n| Account | Balance (USD) |\n|---|---:|\n{body}\n"
@@ -10804,12 +10802,7 @@ def irr_from_annuity_factor(seed: int) -> TaskInstance:
     years = rng.choice([4, 5, 6])
     rates = [Decimal("0.08"), Decimal("0.10"), Decimal("0.12")]
     irr = rng.choice(rates)
-    factors = {
-        rate: sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
-            Decimal("0.0001")
-        )
-        for rate in rates
-    }
+    factors = {rate: _annuity_factor(rate, years) for rate in rates}
     inflow = Decimal(rng.randrange(15, 61)) * 1000
     initial = (inflow * factors[irr]).quantize(CENT)
     payback = (initial / inflow).quantize(Decimal("0.0001"))

@@ -77,12 +77,14 @@ pass). See [docs/metrics.md](docs/metrics.md).
 
 ## Task families
 
-Fifteen frozen Stable instances so far; each generator yields hundreds of
-reproducible instances. Tasks are tagged by category, framework,
-level, format, and skill, and crosswalked to the AICPA CPA blueprint
-and ACCA syllabus (`crosswalks/`); the 90-day target is 12–15 validated generators
-(see [docs/task-families.md](docs/task-families.md) for the coverage
-matrix and [docs/roadmap.md](docs/roadmap.md)).
+165 frozen Stable instances so far, one per generator family; each
+generator yields hundreds of reproducible instances. Tasks are tagged by
+category, framework, level, format, and skill, and crosswalked to the
+AICPA CPA blueprint and ACCA syllabus (`crosswalks/`). The table below
+shows the original fifteen seed families; the full, current catalog is
+[`tasks/manifest.json`](tasks/manifest.json), with the coverage matrix in
+[docs/task-families.md](docs/task-families.md) (see also
+[docs/roadmap.md](docs/roadmap.md)).
 
 | Task | Format | Trap it catches |
 |---|---|---|
