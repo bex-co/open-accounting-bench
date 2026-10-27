@@ -191,6 +191,20 @@ D = standards depth):
 | `cash-collected-from-customers` | V | U | V | V | V | V | U | vocational |
 | `free-cash-flow` | V | U | V | V | V | V | U | vocational |
 | `sc-transaction-statement-impact` | V | V | V | V | V | V | V | vocational |
+| `business-combination-acquisition` | V | U | V | U | U | U | U | university |
+| `consolidation-intercompany-elimination` | V | U | U | U | U | U | U | university |
+| `held-for-sale-measurement` | V | U | U | U | U | V | U | university |
+| `share-based-compensation-monthly` | V | U | V | V | V | V | U | vocational |
+| `asset-revaluation-surplus` | V | U | U | U | V | U | U | university |
+| `written-off-receivable-recovery` | V | U | V | V | V | V | V | vocational |
+| `nfp-conditional-vs-unconditional` | V | U | V | U | U | V | U | university |
+| `adjusted-receivable-balance` | V | U | V | V | V | V | V | vocational |
+| `ppe-additions-inferred` | V | U | V | V | V | V | V | vocational |
+| `fixed-overhead-volume-variance` | V | U | V | V | V | V | V | vocational |
+| `cumulative-preferred-dividend` | V | U | V | V | V | V | V | vocational |
+| `weighted-average-cost-of-capital` | V | U | V | V | V | V | V | vocational |
+| `standard-cost-per-unit` | V | U | V | V | V | V | V | vocational |
+| `sc-job-vs-process-costing` | V | V | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -310,8 +324,22 @@ problem the task hands over. An analysis task can be vocational.
 | `cash-collected-from-customers` | cash-flow-statement | numeric | core | application | `asc:230`, `ias:7` | Answer accrual sales |
 | `free-cash-flow` | cash-flow-statement | numeric | core | application | `asc:230`, `ias:7` | Omit dividends from definition |
 | `sc-transaction-statement-impact` | transaction-classification | single-choice | core | application | — | Treat asset exchange as asset increase |
+| `business-combination-acquisition` | business-combinations | journal-entry | core | analysis | `asc:805`, `ifrs:3` | Push excess into equipment |
+| `consolidation-intercompany-elimination` | consolidations | journal-entry | core | analysis | `asc:810`, `ifrs:10` | Eliminate only 80% |
+| `held-for-sale-measurement` | fixed-assets | journal-entry | ifrs | application | `ifrs:5` | Reclassify without write-down |
+| `share-based-compensation-monthly` | share-based-payment | journal-entry | core | application | `asc:718`, `ifrs:2` | Expense whole grant at once |
+| `asset-revaluation-surplus` | fixed-assets | journal-entry | ifrs | application | `ias:16` | Credit uplift to income |
+| `written-off-receivable-recovery` | receivables | journal-entry | core | application | — | Credit recovery to revenue |
+| `nfp-conditional-vs-unconditional` | not-for-profit | journal-entry | us-gaap | analysis | `asc:958` | Conditional cash as revenue |
+| `adjusted-receivable-balance` | receivables | numeric | core | application | — | Forget write-offs |
+| `ppe-additions-inferred` | fixed-assets | numeric | core | application | — | Answer net PPE increase |
+| `fixed-overhead-volume-variance` | standard-costing | numeric | core | application | — | Answer spending variance |
+| `cumulative-preferred-dividend` | equity | numeric | core | application | — | Ignore preferred arrears |
+| `weighted-average-cost-of-capital` | cost-of-capital | numeric | core | application | — | Use pre-tax debt cost |
+| `standard-cost-per-unit` | standard-costing | numeric | core | application | — | Use actual materials price |
+| `sc-job-vs-process-costing` | product-costing | single-choice | core | remembering-understanding | — | Mismatch production pattern |
 
-Stable seeds: 101–207 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–221 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -320,13 +348,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 76 | 4 | planned | planned |
-| management-accounting | 24 | planned | planned | planned |
+| financial-accounting | 83 | 6 | 1 | planned |
+| management-accounting | 28 | planned | planned | planned |
 | tax | 3 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×59, multiple-choice ×2, single-choice ×4,
-numeric ×42; open-text is
+Format coverage: journal-entry ×66, multiple-choice ×2, single-choice ×5,
+numeric ×48; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

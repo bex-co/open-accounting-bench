@@ -73,6 +73,36 @@
       "digest": "sha256:fc701e9a6be8f5db9a11b64a0215fdbb71f7dd0d3caefb1f25ef51a78f720989"
     },
     {
+      "task_id": "adjusted-receivable-balance",
+      "family": "receivables",
+      "seed": 215,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4a981827d8b7fe62c33c17a95ae9760adb316becdc1192aa8eef57d34f39ace2"
+    },
+    {
+      "task_id": "asset-revaluation-surplus",
+      "family": "fixed-assets",
+      "seed": 212,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ias:16"
+      ],
+      "digest": "sha256:dc78ab5b7f1619cc68638bd50b524af5dbfe586ddac2bbc4fb1b8aaa761c8992"
+    },
+    {
       "task_id": "asset-turnover-ratio",
       "family": "financial-analysis",
       "seed": 190,
@@ -225,6 +255,23 @@
       "digest": "sha256:44f15c4158c43910103afae700f23e635d70a016309a2d9a6ac825ae741027c5"
     },
     {
+      "task_id": "business-combination-acquisition",
+      "family": "business-combinations",
+      "seed": 208,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:805",
+        "ifrs:3"
+      ],
+      "digest": "sha256:6a50ce946a4389a1883d32a141e54ba273fa99ca6ad7ac5ca1dfc68663818394"
+    },
+    {
       "task_id": "capitalized-cost-bundle",
       "family": "fixed-assets",
       "seed": 141,
@@ -340,6 +387,23 @@
       "digest": "sha256:96373609e2633d0fe8aee0a756559fd1d13a1a83dc8db508bb2187f09bcd4810"
     },
     {
+      "task_id": "consolidation-intercompany-elimination",
+      "family": "consolidations",
+      "seed": 209,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "analysis",
+      "standards": [
+        "asc:810",
+        "ifrs:10"
+      ],
+      "digest": "sha256:083be7637633b863cccc2ce274cb0bc2eb9291649449460caf43bc84e18c93e6"
+    },
+    {
       "task_id": "correct-misclassification",
       "family": "ledger-integrity-reporting",
       "seed": 104,
@@ -380,6 +444,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:5a702925b171818c186b704171bb3a602037438baf0844c00250c4ef739b9465"
+    },
+    {
+      "task_id": "cumulative-preferred-dividend",
+      "family": "equity",
+      "seed": 218,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:332d982e6b919cf320a3fd1fbcd6472a20bfba020e1158963e97e105a9721116"
     },
     {
       "task_id": "current-income-tax-expense",
@@ -547,6 +625,20 @@
       "digest": "sha256:76a52cc6771d0887c468ba0364c75a3e6fd4cf30260b99a3492ec7a722cbef5b"
     },
     {
+      "task_id": "fixed-overhead-volume-variance",
+      "family": "standard-costing",
+      "seed": 217,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:41f3c7988e543c4d64105a36e404f01e7fc6317dfb13176a2d21781dcab43eca"
+    },
+    {
       "task_id": "flexible-budget-total-cost",
       "family": "budgeting",
       "seed": 153,
@@ -623,6 +715,22 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:189b35a0f615cf392d66347ce016c479bef11f84058035885896bf6fd25fcd3e"
+    },
+    {
+      "task_id": "held-for-sale-measurement",
+      "family": "fixed-assets",
+      "seed": 210,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "ifrs",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "ifrs:5"
+      ],
+      "digest": "sha256:6adb847234d6223262c3384cb62df493963f417589d6b871102d6b7fe8105bd7"
     },
     {
       "task_id": "high-low-variable-cost",
@@ -969,6 +1077,22 @@
       "digest": "sha256:050f81cb7df55965212fe1299a2b40269e97d15bb54db80cfd014f416c893587"
     },
     {
+      "task_id": "nfp-conditional-vs-unconditional",
+      "family": "not-for-profit",
+      "seed": 214,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "us-gaap",
+      "level": "university",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:958"
+      ],
+      "digest": "sha256:9cbb085f591d931c511648f14444d62c9c079eb42108ebba177f74102bceeaf7"
+    },
+    {
       "task_id": "note-dishonored",
       "family": "receivables",
       "seed": 133,
@@ -1155,6 +1279,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:82a813982051e191c11199ffeb46523145e84b446c8610e693fba07e69da7bd0"
+    },
+    {
+      "task_id": "ppe-additions-inferred",
+      "family": "fixed-assets",
+      "seed": 216,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9719a9b0d9da5b4cbb3bdfe408fa845906f14faa924707923468db4bb1ddde77"
     },
     {
       "task_id": "ppe-disposal",
@@ -1345,6 +1483,20 @@
       "digest": "sha256:ef3dd327bdf816493f9c029107e831a979a41bf13101fa351b4ce889131f1fa8"
     },
     {
+      "task_id": "sc-job-vs-process-costing",
+      "family": "product-costing",
+      "seed": 221,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [],
+      "digest": "sha256:7210c66bc3f83d4280de5caa42088dfabb8c75000923cdadd88261c46120b878"
+    },
+    {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
@@ -1404,6 +1556,23 @@
       "digest": "sha256:c658012e8c34240db86be7a7c3ed9a354259a305e5b020b01f0a85e01aa35716"
     },
     {
+      "task_id": "share-based-compensation-monthly",
+      "family": "share-based-payment",
+      "seed": 211,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:718",
+        "ifrs:2"
+      ],
+      "digest": "sha256:537659f0226e0a876a98b6ca0500f89b0ee691066bdb492612e805269121c8a9"
+    },
+    {
       "task_id": "short-term-note-payment",
       "family": "borrowings",
       "seed": 168,
@@ -1430,6 +1599,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:21d39483a78d376dc6615ecfb471c47089c0a8148d910631242509bf0e33e6f6"
+    },
+    {
+      "task_id": "standard-cost-per-unit",
+      "family": "standard-costing",
+      "seed": 220,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:391295e7ce65670872a3738e26b888e4409b0fefa362aa35e1958f5956d5fe91"
     },
     {
       "task_id": "straight-line-depreciation",
@@ -1573,6 +1756,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:af2931ec40ece55c3e89419d106568b53ba7896481d98ad2eab3619731cc9ded"
+    },
+    {
+      "task_id": "weighted-average-cost-of-capital",
+      "family": "cost-of-capital",
+      "seed": 219,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:79078e1e6b3906b0ff5b3673edc67862332e1902b353de31ae6b2188b4d416fc"
+    },
+    {
+      "task_id": "written-off-receivable-recovery",
+      "family": "receivables",
+      "seed": 213,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:66c1d691159ae681da714da7e91720237682e71ed849347c6ab52164001362e8"
     }
   ]
 }

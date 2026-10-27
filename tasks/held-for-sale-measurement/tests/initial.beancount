@@ -1,0 +1,29 @@
+option "title" "Acme Widgets LLC"
+option "operating_currency" "USD"
+
+2026-01-01 open Assets:Bank:Checking USD
+2026-01-01 open Assets:Equipment USD
+2026-01-01 open Assets:PrepaidInsurance USD
+2026-01-01 open Equity:Opening-Balances USD
+2026-01-01 open Income:Sales USD
+2026-01-01 open Expenses:BankFees USD
+2026-01-01 open Expenses:Insurance USD
+2026-01-01 open Expenses:Interest USD
+2026-01-01 open Expenses:OfficeSupplies USD
+2026-01-01 open Expenses:Rent USD
+2026-01-01 open Expenses:Repairs USD
+2026-01-01 open Expenses:Utilities USD
+2026-01-01 open Assets:AccumulatedDepreciation USD
+2026-01-01 open Expenses:Depreciation USD
+2026-01-01 open Income:GainLossOnDisposal USD
+2026-01-01 open Assets:AssetHeldForSale USD
+2026-01-01 open Expenses:ImpairmentLoss USD
+
+2026-01-01 * "Opening" "Opening bank balance"
+  Assets:Bank:Checking  20000.00 USD
+  Equity:Opening-Balances  -20000.00 USD
+
+2026-01-01 * "Opening" "Opening carrying amount: packaging machine"
+  Assets:Equipment  103000.00 USD
+  Assets:AccumulatedDepreciation  -63000.00 USD
+  Equity:Opening-Balances  -40000.00 USD

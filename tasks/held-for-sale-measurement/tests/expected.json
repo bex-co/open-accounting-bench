@@ -1,0 +1,37 @@
+{
+  "task_id": "held-for-sale-measurement",
+  "family": "fixed-assets",
+  "seed": 210,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:AccumulatedDepreciation": "63000.00",
+    "Assets:AssetHeldForSale": "25000.00",
+    "Expenses:ImpairmentLoss": "15000.00",
+    "Assets:Equipment": "-103000.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-20",
+    "2026-01-20"
+  ],
+  "required_final_balances": {
+    "Assets:Equipment": "0.00",
+    "Assets:AccumulatedDepreciation": "0.00",
+    "Assets:AssetHeldForSale": "25000.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "ifrs",
+  "level": "university",
+  "skill": "application",
+  "standards": [
+    "ifrs:5"
+  ]
+}

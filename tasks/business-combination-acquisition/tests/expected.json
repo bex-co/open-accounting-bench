@@ -1,0 +1,38 @@
+{
+  "task_id": "business-combination-acquisition",
+  "family": "business-combinations",
+  "seed": 208,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:AccountsReceivable": "6500.00",
+    "Assets:Inventory": "21400.00",
+    "Assets:Equipment": "25000.00",
+    "Assets:Goodwill": "11300.00",
+    "Liabilities:AccountsPayable": "-3700.00",
+    "Assets:Bank:Checking": "-60500.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    1,
+    3
+  ],
+  "expected_period": [
+    "2026-01-15",
+    "2026-01-15"
+  ],
+  "required_final_balances": {
+    "Assets:Goodwill": "11300.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "university",
+  "skill": "application",
+  "standards": [
+    "asc:805",
+    "ifrs:3"
+  ]
+}

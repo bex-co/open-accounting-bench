@@ -1,0 +1,35 @@
+{
+  "task_id": "nfp-conditional-vs-unconditional",
+  "family": "not-for-profit",
+  "seed": 214,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:PledgesReceivable": "10600.00",
+    "Income:ContributionRevenueWithDonorRestrictions": "-10600.00",
+    "Assets:Bank:Checking": "7500.00",
+    "Liabilities:RefundableAdvance": "-7500.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": [
+    2,
+    3
+  ],
+  "expected_period": [
+    "2026-01-01",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Liabilities:RefundableAdvance": "-7500.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "us-gaap",
+  "level": "university",
+  "skill": "application",
+  "standards": [
+    "asc:958"
+  ]
+}

@@ -118,6 +118,12 @@ NUMERIC_FAMILIES = [
     "residual-income",
     "cash-collected-from-customers",
     "free-cash-flow",
+    "adjusted-receivable-balance",
+    "ppe-additions-inferred",
+    "fixed-overhead-volume-variance",
+    "cumulative-preferred-dividend",
+    "weighted-average-cost-of-capital",
+    "standard-cost-per-unit",
 ]
 
 
@@ -171,6 +177,7 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         "sc-cash-flow-classification",
         "sc-subsequent-event-classification",
         "sc-transaction-statement-impact",
+        "sc-job-vs-process-costing",
     ],
 )
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])

@@ -1271,3 +1271,101 @@ def test_impairment_to_lower_measure_fails():
         ],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_goodwill_pushed_into_equipment_fails():
+    """Trap: allocate the acquisition excess to equipment, not goodwill."""
+    instance = FAMILIES["business-combination-acquisition"](208)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace("  Assets:Goodwill", "  Assets:Equipment")
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_eliminating_only_parent_share_fails():
+    """Trap: eliminate only 80% of the intercompany sale (ownership share)."""
+    from decimal import Decimal
+
+    instance = FAMILIES["consolidation-intercompany-elimination"](209)
+    d = _deltas(instance)
+    factor = Decimal("0.8")
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Consolidation",
+        [
+            ("Income:Sales", d["Income:Sales"] * factor),
+            ("Expenses:CostOfSales", d["Expenses:CostOfSales"] * factor),
+            ("Assets:Inventory", d["Assets:Inventory"] * factor),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_held_for_sale_without_writedown_fails():
+    """Trap: reclassify the asset at carrying amount, ignoring FVLCS."""
+    instance = FAMILIES["held-for-sale-measurement"](210)
+    d = _deltas(instance)
+    acc_dep = d["Assets:AccumulatedDepreciation"]
+    carrying = d["Assets:AssetHeldForSale"] + d["Expenses:ImpairmentLoss"]
+    cost = -d["Assets:Equipment"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-20",
+        "Management",
+        [
+            ("Assets:AccumulatedDepreciation", acc_dep),
+            ("Assets:AssetHeldForSale", carrying),
+            ("Assets:Equipment", -cost),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_expensing_whole_share_award_fails():
+    """Trap: expense the full grant-date fair value in the first month."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["share-based-compensation-monthly"](211)
+    doc = instance.app_files["documents/award_grant.md"]
+    total = Decimal(re.search(r"fair value\s+USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Compensation committee",
+        [
+            ("Expenses:ShareBasedCompensation", total),
+            ("Equity:AdditionalPaidInCapital", -total),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_revaluation_uplift_to_income_fails():
+    """Trap: credit an upward revaluation to profit or loss, not OCI."""
+    instance = FAMILIES["asset-revaluation-surplus"](212)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace(
+        "  Equity:RevaluationSurplus", "  Income:GainLossOnDisposal"
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_bad_debt_recovery_as_revenue_fails():
+    """Trap: credit a recovery of a write-off directly to revenue."""
+    instance = FAMILIES["written-off-receivable-recovery"](213)
+    recovery = _deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-18",
+        "Customer",
+        [("Assets:Bank:Checking", recovery), ("Income:Sales", -recovery)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_conditional_grant_as_revenue_fails():
+    """Trap: recognize conditional grant cash as contribution revenue."""
+    instance = FAMILIES["nfp-conditional-vs-unconditional"](214)
+    added = instance.solution_ledger[len(instance.initial_ledger) :]
+    wrong = instance.initial_ledger + added.replace(
+        "  Liabilities:RefundableAdvance",
+        "  Income:ContributionRevenueWithDonorRestrictions",
+    )
+    _assert_semantic_trap(instance, wrong)

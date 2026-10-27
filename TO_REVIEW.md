@@ -66,6 +66,18 @@ crosswalk mappings.
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
 - 2026-10-26 — fourteen further generator families (Stable seeds
+  208–221): `business-combination-acquisition`,
+  `consolidation-intercompany-elimination`, `held-for-sale-measurement`,
+  `share-based-compensation-monthly`, `asset-revaluation-surplus`,
+  `written-off-receivable-recovery`, `nfp-conditional-vs-unconditional`,
+  `adjusted-receivable-balance`, `ppe-additions-inferred`,
+  `fixed-overhead-volume-variance`, `cumulative-preferred-dividend`,
+  `weighted-average-cost-of-capital`, `standard-cost-per-unit`,
+  `sc-job-vs-process-costing`. Same checks as earlier batches (in
+  particular: combined-opening-balance construction in the
+  consolidation task; the elimination method stated for revaluation;
+  five university-level scores). No crosswalk mappings proposed yet.
+- 2026-10-26 — fourteen further generator families (Stable seeds
   194–207): `treasury-stock-reissuance`, `lease-initial-recognition`,
   `fx-payable-remeasurement`, `development-cost-capitalization`,
   `inventory-error-correction`, `long-lived-asset-impairment`,

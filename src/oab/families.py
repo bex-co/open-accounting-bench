@@ -8021,6 +8021,1039 @@ def sc_transaction_statement_impact(seed: int) -> TaskInstance:
     )
 
 
+GOODWILL = "Assets:Goodwill"
+ACQUISITION_ACCOUNTS = [
+    (AR, "Trade receivables acquired"),
+    (INVENTORY, "Inventory acquired"),
+    (AP, "Trade payables assumed"),
+    (GOODWILL, "Goodwill on acquisition"),
+]
+
+
+def business_combination_acquisition(seed: int) -> TaskInstance:
+    """Scenario: acquire a business's net assets for cash on Jan 15.
+
+    Oracle: identifiable assets/liabilities at fair value, goodwill for
+    consideration in excess of net identifiable assets. Trap: using the
+    seller's book values (or pushing the excess into equipment).
+    Level V/U/V/U/U/U/U -> university.
+    """
+    rng = random.Random(seed)
+    receivables = Decimal(rng.randrange(30, 121)) * 100
+    inventory = Decimal(rng.randrange(80, 241)) * 100
+    equipment = Decimal(rng.randrange(150, 451)) * 100
+    payables = Decimal(rng.randrange(30, 121)) * 100
+    goodwill = Decimal(rng.randrange(40, 161)) * 100
+    net_identifiable = receivables + inventory + equipment - payables
+    price = net_identifiable + goodwill
+
+    def book(value: Decimal, pct: int) -> Decimal:
+        return (value * pct / 100).quantize(CENT)
+
+    opening = price + Decimal("20000.00")
+    initial = _ledger_header(opening, ACQUISITION_ACCOUNTS)
+    doc = (
+        "# Acquisition summary — 2026-01-15\n\n"
+        f"Cash consideration paid from checking: USD {money(price)}.\n\n"
+        "| Item | Fair value (USD) | Seller book value (USD) |\n|---|---:|---:|\n"
+        f"| Accounts receivable | {money(receivables)} | {money(book(receivables, 90))} |\n"
+        f"| Inventory | {money(inventory)} | {money(book(inventory, 80))} |\n"
+        f"| Equipment | {money(equipment)} | {money(book(equipment, 70))} |\n"
+        f"| Accounts payable assumed | {money(payables)} | {money(payables)} |\n"
+    )
+    policy = POLICY + (
+        "- Acquisition method: identifiable assets acquired and liabilities\n"
+        "  assumed are recorded at FAIR value at the acquisition date (the\n"
+        "  seller's book values are irrelevant). Consideration in excess of\n"
+        "  net identifiable assets is goodwill.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-15",
+        "Seller",
+        "Business acquired for cash",
+        [
+            (AR, receivables),
+            (INVENTORY, inventory),
+            ("Assets:Equipment", equipment),
+            (GOODWILL, goodwill),
+            (AP, -payables),
+            (BANK, -price),
+        ],
+    )
+    return TaskInstance(
+        task_id="business-combination-acquisition",
+        family="business-combinations",
+        title="Record a business acquisition and goodwill",
+        instruction=(
+            "Record the acquisition in `/app/documents/acquisition_summary.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-15; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ACQUISITION_ACCOUNTS),
+            "documents/acquisition_summary.md": doc,
+        },
+        expected=_expected(
+            "business-combination-acquisition",
+            "business-combinations",
+            seed,
+            expected_deltas={
+                AR: money(receivables),
+                INVENTORY: money(inventory),
+                "Assets:Equipment": money(equipment),
+                GOODWILL: money(goodwill),
+                AP: money(-payables),
+                BANK: money(-price),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-15", "2026-01-15"],
+            required_final_balances={GOODWILL: money(goodwill)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["business-combination", "goodwill", "fair-value"],
+        level="university",
+        standards=["asc:805", "ifrs:3"],
+    )
+
+
+CONSOLIDATION_ACCOUNTS = [
+    (INVENTORY, "Inventory (combined parent and subsidiary)"),
+    (COST_OF_SALES, "Cost of goods sold (combined)"),
+]
+
+
+def consolidation_intercompany_elimination(seed: int) -> TaskInstance:
+    """Scenario: eliminate an intercompany sale still wholly in inventory.
+
+    Oracle: debit sales at transfer price, credit COGS at seller cost and
+    inventory for unrealized profit. 100% is eliminated even with a
+    noncontrolling interest. Trap: eliminating only the parent's 80%.
+    Level V/U/U/U/U/U/U -> university.
+    """
+    rng = random.Random(seed)
+    cost = Decimal(rng.randrange(50, 201)) * 100
+    markup = Decimal(rng.randrange(10, 81)) * 100
+    transfer = cost + markup
+    opening = Decimal("20000.00")
+    initial = (
+        _ledger_header(opening, CONSOLIDATION_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            "Combined books",
+            "Intercompany sale included in combined sales",
+            [("Equity:Opening-Balances", transfer), ("Income:Sales", -transfer)],
+        )
+        + _txn(
+            "2026-01-01",
+            "Combined books",
+            "Seller cost included in combined cost of goods sold",
+            [(COST_OF_SALES, cost), ("Equity:Opening-Balances", -cost)],
+        )
+        + _txn(
+            "2026-01-01",
+            "Combined books",
+            "Inventory included at transfer price",
+            [(INVENTORY, transfer), ("Equity:Opening-Balances", -transfer)],
+        )
+    )
+    doc = (
+        "# Consolidation worksheet note — January 2026\n\n"
+        f"The parent sold goods costing USD {money(cost)} to its 80%-owned "
+        f"subsidiary for USD {money(transfer)}. All the goods remain in the "
+        "subsidiary's ending inventory. The combined ledger contains the "
+        "sale, the seller's cost, and inventory at transfer price.\n"
+    )
+    policy = POLICY + (
+        "- Consolidation eliminations remove intercompany sales in FULL,\n"
+        "  regardless of the ownership percentage: debit sales at the\n"
+        "  transfer price, credit cost of goods sold at the seller's cost,\n"
+        "  and credit inventory for the unrealized profit on goods unsold.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Consolidation",
+        "Eliminate intercompany sale and unrealized profit",
+        [("Income:Sales", transfer), (COST_OF_SALES, -cost), (INVENTORY, -markup)],
+    )
+    return TaskInstance(
+        task_id="consolidation-intercompany-elimination",
+        family="consolidations",
+        title="Eliminate an intercompany inventory sale",
+        instruction=(
+            "Record the elimination described in `/app/documents/consolidation_note.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CONSOLIDATION_ACCOUNTS),
+            "documents/consolidation_note.md": doc,
+        },
+        expected=_expected(
+            "consolidation-intercompany-elimination",
+            "consolidations",
+            seed,
+            expected_deltas={
+                "Income:Sales": money(transfer),
+                COST_OF_SALES: money(-cost),
+                INVENTORY: money(-markup),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={
+                "Income:Sales": "0.00",
+                COST_OF_SALES: "0.00",
+                INVENTORY: money(cost),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["consolidation", "intercompany-elimination", "unrealized-profit"],
+        level="university",
+        skill="analysis",
+        standards=["asc:810", "ifrs:10"],
+    )
+
+
+HELD_FOR_SALE = "Assets:AssetHeldForSale"
+HELD_FOR_SALE_ACCOUNTS = DISPOSAL_ACCOUNTS + [
+    (HELD_FOR_SALE, "Non-current asset classified as held for sale"),
+    (IMPAIRMENT_LOSS, "Write-down to fair value less costs to sell"),
+]
+
+
+def held_for_sale_measurement(seed: int) -> TaskInstance:
+    """Scenario (IFRS): equipment meets held-for-sale criteria in January.
+
+    Oracle: remove cost/accumulated depreciation, recognize the held-for
+    -sale asset at fair value less costs to sell, and book the shortfall
+    as a loss. Trap: reclassifying at carrying amount with no write-down.
+    Level V/U/U/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    asset = rng.choice(["delivery vehicle", "packaging machine", "forklift"])
+    carrying = Decimal(rng.randrange(40, 121)) * 1000
+    acc_dep = Decimal(rng.randrange(20, 71)) * 1000
+    cost = carrying + acc_dep
+    writedown = Decimal(rng.randrange(3, 21)) * 1000
+    fvlcs = carrying - writedown
+    costs_to_sell = Decimal(rng.randrange(1, 9)) * 500
+    fair_value = fvlcs + costs_to_sell
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, HELD_FOR_SALE_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Opening carrying amount: {asset}",
+        [
+            ("Assets:Equipment", cost),
+            (ACC_DEP, -acc_dep),
+            ("Equity:Opening-Balances", acc_dep - cost),
+        ],
+    )
+    doc = (
+        f"# Held-for-sale decision — {asset}, 2026-01-20\n\n"
+        "Management committed to an active sale plan on 2026-01-20; the "
+        "asset is available for immediate sale, is being actively marketed "
+        "at a reasonable price, and sale within twelve months is highly "
+        f"probable. Cost USD {money(cost)}; accumulated depreciation "
+        f"USD {money(acc_dep)}. Fair value USD {money(fair_value)}; expected "
+        f"costs to sell USD {money(costs_to_sell)}.\n"
+    )
+    policy = POLICY + (
+        "- When the held-for-sale criteria in the document are met, transfer\n"
+        "  the asset out of equipment/accumulated depreciation into\n"
+        "  `Assets:AssetHeldForSale` and measure it at the LOWER of carrying\n"
+        "  amount and fair value less costs to sell, recognizing any\n"
+        "  write-down in profit or loss.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-20",
+        "Management",
+        f"Classify {asset} as held for sale and write down",
+        [
+            (ACC_DEP, acc_dep),
+            (HELD_FOR_SALE, fvlcs),
+            (IMPAIRMENT_LOSS, writedown),
+            ("Assets:Equipment", -cost),
+        ],
+    )
+    return TaskInstance(
+        task_id="held-for-sale-measurement",
+        family="fixed-assets",
+        title="Reclassify and measure an asset held for sale (IFRS)",
+        instruction=(
+            "Record the January entries in `/app/documents/held_for_sale.md` "
+            "in `/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append new balanced transactions dated "
+            "2026-01-20; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(HELD_FOR_SALE_ACCOUNTS),
+            "documents/held_for_sale.md": doc,
+        },
+        expected=_expected(
+            "held-for-sale-measurement",
+            "fixed-assets",
+            seed,
+            expected_deltas={
+                ACC_DEP: money(acc_dep),
+                HELD_FOR_SALE: money(fvlcs),
+                IMPAIRMENT_LOSS: money(writedown),
+                "Assets:Equipment": money(-cost),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-20", "2026-01-20"],
+            required_final_balances={
+                "Assets:Equipment": "0.00",
+                ACC_DEP: "0.00",
+                HELD_FOR_SALE: money(fvlcs),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["held-for-sale", "ifrs-5", "write-down"],
+        level="university",
+        framework="ifrs",
+        standards=["ifrs:5"],
+    )
+
+
+SHARE_COMP = "Expenses:ShareBasedCompensation"
+SHARE_COMP_ACCOUNTS = [
+    (APIC, "Additional paid-in capital from equity awards"),
+    (SHARE_COMP, "Share-based compensation expense"),
+]
+
+
+def share_based_compensation_monthly(seed: int) -> TaskInstance:
+    """Scenario: employee options vest straight-line over several years.
+
+    Oracle: January expense is grant-date fair value divided by vesting
+    months, credited to APIC. Trap: expensing the entire grant in January.
+    Level V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    years = rng.choice([2, 3, 4])
+    months = years * 12
+    monthly = Decimal(rng.randrange(50, 401)) * 5
+    total = monthly * months
+    opening = Decimal("30000.00")
+    initial = _ledger_header(opening, SHARE_COMP_ACCOUNTS)
+    doc = (
+        "# Equity award grant — 2026-01-01\n\n"
+        f"Employee stock options with total grant-date fair value "
+        f"USD {money(total)} were granted on 2026-01-01. They vest "
+        f"straight-line over {years} years of service ({months} months). "
+        "No forfeitures are expected; no cash changed hands.\n"
+    )
+    policy = POLICY + (
+        "- Equity-classified share-based compensation is expensed\n"
+        "  straight-line over the vesting period at grant-date fair value,\n"
+        "  credited to additional paid-in capital.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Compensation committee",
+        "January share-based compensation",
+        [(SHARE_COMP, monthly), (APIC, -monthly)],
+    )
+    return TaskInstance(
+        task_id="share-based-compensation-monthly",
+        family="share-based-payment",
+        title="Recognize one month of share-based compensation",
+        instruction=(
+            "Record January's compensation in `/app/documents/award_grant.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "exactly one balanced transaction dated 2026-01-31; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(SHARE_COMP_ACCOUNTS),
+            "documents/award_grant.md": doc,
+        },
+        expected=_expected(
+            "share-based-compensation-monthly",
+            "share-based-payment",
+            seed,
+            expected_deltas={SHARE_COMP: money(monthly), APIC: money(-monthly)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={APIC: money(-monthly)},
+        ),
+        solution_ledger=solution,
+        keywords=["share-based-compensation", "vesting", "apic"],
+        level="vocational",
+        standards=["asc:718", "ifrs:2"],
+    )
+
+
+REVALUATION_SURPLUS = "Equity:RevaluationSurplus"
+REVALUATION_ACCOUNTS = DISPOSAL_ACCOUNTS + [
+    (REVALUATION_SURPLUS, "Revaluation surplus in other comprehensive income")
+]
+
+
+def asset_revaluation_surplus(seed: int) -> TaskInstance:
+    """Scenario (IFRS): equipment is revalued upward on Jan 31.
+
+    Oracle (elimination method stated in policy): accumulated depreciation
+    is eliminated against the gross amount, equipment is restated to fair
+    value, and the uplift goes to revaluation surplus (OCI), not income.
+    Trap: crediting the uplift to profit or loss. Level V/U/U/U/V/U/U.
+    """
+    rng = random.Random(seed)
+    asset = rng.choice(["warehouse building", "production hall", "office building"])
+    carrying = Decimal(rng.randrange(100, 301)) * 1000
+    acc_dep = Decimal(rng.randrange(30, 121)) * 1000
+    cost = carrying + acc_dep
+    uplift = Decimal(rng.randrange(20, 121)) * 1000
+    fair_value = carrying + uplift
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, REVALUATION_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Opening carrying amount: {asset}",
+        [
+            ("Assets:Equipment", cost),
+            (ACC_DEP, -acc_dep),
+            ("Equity:Opening-Balances", acc_dep - cost),
+        ],
+    )
+    doc = (
+        f"# Revaluation report — {asset}, 2026-01-31\n\n"
+        f"Cost USD {money(cost)}; accumulated depreciation USD {money(acc_dep)} "
+        f"(carrying amount USD {money(carrying)}). Independent fair value at "
+        f"2026-01-31: USD {money(fair_value)}. The asset class is carried "
+        "under the revaluation model.\n"
+    )
+    policy = POLICY + (
+        "- Revaluation increases are recognized in other comprehensive\n"
+        "  income (`Equity:RevaluationSurplus`), not profit or loss. Use the\n"
+        "  elimination method: eliminate accumulated depreciation against\n"
+        "  the asset's gross carrying amount, then restate the asset to\n"
+        "  fair value.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-31",
+            "Valuation",
+            "Eliminate accumulated depreciation on revaluation",
+            [(ACC_DEP, acc_dep), ("Assets:Equipment", -acc_dep)],
+        )
+        + _txn(
+            "2026-01-31",
+            "Valuation",
+            "Restate asset to fair value",
+            [("Assets:Equipment", uplift), (REVALUATION_SURPLUS, -uplift)],
+        )
+    )
+    return TaskInstance(
+        task_id="asset-revaluation-surplus",
+        family="fixed-assets",
+        title="Record an upward asset revaluation (IFRS)",
+        instruction=(
+            "Record the revaluation in `/app/documents/revaluation_report.md` "
+            "in `/app/ledger.beancount` under IFRS as stated in "
+            "`/app/policy.md`. Append new balanced transactions dated "
+            "2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(REVALUATION_ACCOUNTS),
+            "documents/revaluation_report.md": doc,
+        },
+        expected=_expected(
+            "asset-revaluation-surplus",
+            "fixed-assets",
+            seed,
+            expected_deltas={
+                ACC_DEP: money(acc_dep),
+                "Assets:Equipment": money(uplift - acc_dep),
+                REVALUATION_SURPLUS: money(-uplift),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={
+                ACC_DEP: "0.00",
+                "Assets:Equipment": money(fair_value),
+            },
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["revaluation", "ias-16", "oci"],
+        level="university",
+        framework="ifrs",
+        standards=["ias:16"],
+    )
+
+
+def written_off_receivable_recovery(seed: int) -> TaskInstance:
+    """Scenario: a customer whose account was written off pays in full.
+
+    Oracle: reinstate the receivable against the allowance, then record
+    the collection. Trap: crediting the recovery directly to revenue.
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    customer = rng.choice(["Pine Mart", "Cobalt Retail", "Delta Foods"])
+    recovery = Decimal(rng.randrange(10, 81)) * 50
+    allowance_open = recovery * rng.randint(2, 4)
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, RECEIVABLE_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening allowance for doubtful accounts",
+        [("Equity:Opening-Balances", allowance_open), (ALLOWANCE, -allowance_open)],
+    )
+    doc = (
+        f"# Recovery notice — {customer}, 2026-01-18\n\n"
+        f"This customer's account of USD {money(recovery)} was written off "
+        "last year as uncollectible. The customer has now paid the full "
+        "amount into checking.\n"
+    )
+    policy = POLICY + (
+        "- A recovery of a written-off account is recorded in two steps:\n"
+        "  reinstate the receivable (debit receivables, credit allowance),\n"
+        "  then record the cash collection. It is not revenue.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-18",
+            customer,
+            "Reinstate written-off account",
+            [(AR, recovery), (ALLOWANCE, -recovery)],
+        )
+        + _txn(
+            "2026-01-18",
+            customer,
+            "Collect reinstated account",
+            [(BANK, recovery), (AR, -recovery)],
+        )
+    )
+    return TaskInstance(
+        task_id="written-off-receivable-recovery",
+        family="receivables",
+        title="Record recovery of a written-off receivable",
+        instruction=(
+            "Record the recovery in `/app/documents/recovery_notice.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-18; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(RECEIVABLE_ACCOUNTS),
+            "documents/recovery_notice.md": doc,
+        },
+        expected=_expected(
+            "written-off-receivable-recovery",
+            "receivables",
+            seed,
+            expected_deltas={
+                AR: "0.00",
+                ALLOWANCE: money(-recovery),
+                BANK: money(recovery),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=["2026-01-18", "2026-01-18"],
+            required_final_balances={ALLOWANCE: money(-(allowance_open + recovery))},
+        ),
+        solution_ledger=solution,
+        keywords=["bad-debt-recovery", "allowance-method", "reinstatement"],
+        level="vocational",
+    )
+
+
+PLEDGES = "Assets:PledgesReceivable"
+CONTRIBUTION = "Income:ContributionRevenueWithDonorRestrictions"
+REFUNDABLE_ADVANCE = "Liabilities:RefundableAdvance"
+NFP_ACCOUNTS = [
+    (PLEDGES, "Unconditional promises to give receivable"),
+    (CONTRIBUTION, "Contribution revenue with donor restrictions"),
+    (REFUNDABLE_ADVANCE, "Conditional grant advance refundable until barriers met"),
+]
+
+
+def nfp_conditional_vs_unconditional(seed: int) -> TaskInstance:
+    """Scenario: charity receives a restricted pledge and conditional cash.
+
+    Oracle: unconditional pledge is contribution revenue when promised;
+    conditional cash advance is a refundable advance liability until the
+    barriers are met. Trap: recognizing the conditional grant as revenue.
+    Level V/U/V/U/U/V/U -> university.
+    """
+    rng = random.Random(seed)
+    pledge = Decimal(rng.randrange(40, 161)) * 100
+    conditional = Decimal(rng.randrange(30, 121)) * 100
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, NFP_ACCOUNTS)
+    doc = (
+        "# January 2026 donor activity (charity)\n\n"
+        f"1. 2026-01-10 — A donor unconditionally pledged USD {money(pledge)}, "
+        "payable in March and restricted to the youth program. No barriers "
+        "or right of return were imposed.\n"
+        f"2. 2026-01-12 — A foundation transferred USD {money(conditional)} in "
+        "cash. The charity must serve 500 new clients by year-end and return "
+        "any unspent funds if it does not; the barrier has not yet been met.\n"
+    )
+    policy = POLICY + (
+        "- For this not-for-profit, UNCONDITIONAL promises are contribution\n"
+        "  revenue (with donor restrictions if purpose-restricted) when\n"
+        "  promised. A transfer with a measurable barrier AND a right of\n"
+        "  return is conditional: cash received is a refundable advance\n"
+        "  liability until the barrier is met.\n"
+    )
+    solution = (
+        initial
+        + _txn(
+            "2026-01-10",
+            "Donor",
+            "Unconditional restricted pledge received",
+            [(PLEDGES, pledge), (CONTRIBUTION, -pledge)],
+        )
+        + _txn(
+            "2026-01-12",
+            "Foundation",
+            "Conditional grant advance received",
+            [(BANK, conditional), (REFUNDABLE_ADVANCE, -conditional)],
+        )
+    )
+    return TaskInstance(
+        task_id="nfp-conditional-vs-unconditional",
+        family="not-for-profit",
+        title="Distinguish conditional and unconditional contributions",
+        instruction=(
+            "Record the January donor activity in "
+            "`/app/documents/donor_activity.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions on "
+            "their stated January dates; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(NFP_ACCOUNTS),
+            "documents/donor_activity.md": doc,
+        },
+        expected=_expected(
+            "nfp-conditional-vs-unconditional",
+            "not-for-profit",
+            seed,
+            expected_deltas={
+                PLEDGES: money(pledge),
+                CONTRIBUTION: money(-pledge),
+                BANK: money(conditional),
+                REFUNDABLE_ADVANCE: money(-conditional),
+            },
+            expected_new_transactions=[2, 3],
+            required_final_balances={REFUNDABLE_ADVANCE: money(-conditional)},
+        ),
+        solution_ledger=solution,
+        difficulty="hard",
+        keywords=["not-for-profit", "contributions", "conditional-grant"],
+        level="university",
+        framework="us-gaap",
+        standards=["asc:958"],
+    )
+
+
+def adjusted_receivable_balance(seed: int) -> TaskInstance:
+    """Numeric: post a month of receivable activity to an ending balance.
+
+    Trap: forgetting write-offs (or discounts) still reduce receivables.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    beginning, credit_sales, collections = amt(80, 301), amt(400, 1001), amt(300, 801)
+    returns, writeoffs, discounts = amt(10, 61), amt(5, 36), amt(4, 31)
+    gold = beginning + credit_sales - collections - returns - writeoffs - discounts
+    while gold <= 0:
+        credit_sales += 10000
+        gold += 10000
+    trap = gold + writeoffs
+    data = (
+        "# Accounts receivable activity — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Balance, 2026-01-01 (debit) | {money(beginning)} |\n"
+        f"| Credit sales | {money(credit_sales)} |\n"
+        f"| Cash collections | {money(collections)} |\n"
+        f"| Sales returns on credit sales | {money(returns)} |\n"
+        f"| Accounts written off | {money(writeoffs)} |\n"
+        f"| Sales discounts taken | {money(discounts)} |\n"
+    )
+    policy = """# Receivable T-account conventions (applies to this task)
+
+- Ending receivables = beginning balance + credit sales - collections
+  - sales returns - write-offs - discounts taken. Every listed credit
+  item reduces the receivable, including write-offs.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "adjusted accounts receivable balance",
+        "Using `/app/documents/receivable_activity.md` and `/app/policy.md`, compute "
+        "**accounts receivable at 2026-01-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="adjusted-receivable-balance",
+        family="receivables",
+        title="Post receivable activity to an ending balance",
+        question=question,
+        policy=policy,
+        data_name="receivable_activity.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "t-account", "receivables-rollforward"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def ppe_additions_inferred(seed: int) -> TaskInstance:
+    """Numeric: infer PPE purchases from the gross rollforward.
+
+    Trap: answering the net increase in gross PPE.
+    """
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 1000
+
+    beginning, disposals, additions = amt(200, 601), amt(20, 121), amt(40, 201)
+    ending = beginning + additions - disposals
+    trap = ending - beginning
+    data = (
+        "# Equipment at cost — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Gross equipment, 2025-01-01 | {money(beginning)} |\n"
+        f"| Gross equipment, 2025-12-31 | {money(ending)} |\n"
+        f"| Cost of equipment disposed of during the year | {money(disposals)} |\n"
+    )
+    policy = """# PPE rollforward conventions (applies to this task)
+
+- Ending gross PPE = beginning gross PPE + additions at cost - cost of
+  assets disposed of. Solve for additions; the net change alone understates
+  purchases whenever disposals occurred.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "PPE additions inferred from a rollforward",
+        "Using `/app/documents/ppe_rollforward.md` and `/app/policy.md`, compute "
+        "**equipment purchases (additions at cost)** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="ppe-additions-inferred",
+        family="fixed-assets",
+        title="Infer PPE purchases from a rollforward",
+        question=question,
+        policy=policy,
+        data_name="ppe_rollforward.md",
+        data=data,
+        gold=additions,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "ppe-rollforward", "additions"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def fixed_overhead_volume_variance(seed: int) -> TaskInstance:
+    """Numeric: fixed OH volume variance. Trap: fixed OH spending variance."""
+    rng = random.Random(seed)
+    rate = Decimal(rng.randrange(4, 16)) * Decimal("2.50")
+    denominator_hours = rng.randrange(8000, 20001, 500)
+    shortfall = rng.randrange(250, 2001, 250)
+    standard_hours = denominator_hours - shortfall
+    budgeted = rate * denominator_hours
+    actual = budgeted + Decimal(rng.randrange(10, 81)) * 100
+    gold = Decimal(shortfall) * rate
+    trap = actual - budgeted
+    if trap == gold:
+        actual += 1000
+        trap = actual - budgeted
+    data = (
+        "# Fixed overhead — January 2026\n\n| Item | Value |\n|---|---:|\n"
+        f"| Budgeted fixed overhead | USD {money(budgeted)} |\n"
+        f"| Actual fixed overhead | USD {money(actual)} |\n"
+        f"| Denominator (budgeted) hours | {denominator_hours} |\n"
+        f"| Standard hours allowed for actual output | {standard_hours} |\n"
+    )
+    policy = """# Fixed overhead variance conventions (applies to this task)
+
+- Fixed overhead rate = budgeted fixed overhead / denominator hours.
+- VOLUME variance = budgeted fixed overhead - (fixed rate x standard
+  hours allowed). Positive here (allowed below denominator) is
+  unfavorable. Actual minus budgeted fixed overhead is the SPENDING
+  variance, a different variance.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "fixed overhead volume variance",
+        "Using `/app/documents/fixed_overhead.md` and `/app/policy.md`, compute "
+        "the **fixed overhead volume variance** in USD (positive = unfavorable).",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="fixed-overhead-volume-variance",
+        family="standard-costing",
+        title="Compute the fixed overhead volume variance",
+        question=question,
+        policy=policy,
+        data_name="fixed_overhead.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "fixed-overhead", "volume-variance"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def cumulative_preferred_dividend(seed: int) -> TaskInstance:
+    """Numeric: common dividends after cumulative preferred arrears.
+
+    Trap: paying only the current preferred dividend before common.
+    """
+    rng = random.Random(seed)
+    shares = rng.randrange(1000, 8001, 250)
+    par = Decimal(rng.choice([50, 100]))
+    rate = rng.choice([Decimal("0.06"), Decimal("0.08")])
+    annual = shares * par * rate
+    arrears_years = rng.choice([1, 2])
+    common = Decimal(rng.randrange(50, 401)) * 100
+    preferred_due = annual * (arrears_years + 1)
+    declared = preferred_due + common
+    trap = declared - annual
+    data = (
+        "# Dividend declaration — 2026\n\n| Item | Value |\n|---|---:|\n"
+        f"| Cumulative preferred shares | {shares} |\n"
+        f"| Preferred par value | USD {money(par)} per share |\n"
+        f"| Preferred dividend rate | {rate * 100:.0f}% of par a year |\n"
+        f"| Years of preferred dividends in arrears | {arrears_years} |\n"
+        f"| Total dividends declared in 2026 | USD {money(declared)} |\n"
+    )
+    policy = """# Cumulative preferred conventions (applies to this task)
+
+- Cumulative preferred shareholders must receive all arrears plus the
+  current year dividend before common shareholders receive anything.
+- Common dividends = total declared - (annual preferred dividend x
+  (arrears years + 1)).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "dividends to common shareholders",
+        "Using `/app/documents/dividend_declaration.md` and `/app/policy.md`, "
+        "compute **dividends allocated to common shareholders** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="cumulative-preferred-dividend",
+        family="equity",
+        title="Allocate dividends with cumulative preferred arrears",
+        question=question,
+        policy=policy,
+        data_name="dividend_declaration.md",
+        data=data,
+        gold=common,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "cumulative-preferred", "dividends-in-arrears"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def weighted_average_cost_of_capital(seed: int) -> TaskInstance:
+    """Numeric: WACC with after-tax debt cost. Trap: pre-tax cost of debt."""
+    rng = random.Random(seed)
+    debt_weight = rng.choice([30, 40, 50, 60])
+    equity_weight = 100 - debt_weight
+    pretax = rng.choice([Decimal("0.05"), Decimal("0.06"), Decimal("0.08")])
+    tax = rng.choice([Decimal("0.20"), Decimal("0.25"), Decimal("0.30")])
+    cost_equity = rng.choice([Decimal("0.10"), Decimal("0.12"), Decimal("0.14")])
+    gold = (
+        Decimal(debt_weight) * pretax * (1 - tax) + Decimal(equity_weight) * cost_equity
+    ).quantize(Decimal("0.0001"))
+    trap = (Decimal(debt_weight) * pretax + Decimal(equity_weight) * cost_equity).quantize(
+        Decimal("0.0001")
+    )
+    data = (
+        "# Target capital structure and component costs\n\n| Item | Value |\n|---|---:|\n"
+        f"| Debt weight (market value) | {debt_weight}% |\n"
+        f"| Equity weight (market value) | {equity_weight}% |\n"
+        f"| Pre-tax cost of debt | {pretax * 100:.0f}% |\n"
+        f"| Cost of equity | {cost_equity * 100:.0f}% |\n"
+        f"| Marginal tax rate | {tax * 100:.0f}% |\n"
+    )
+    policy = """# WACC conventions (applies to this task)
+
+- WACC = debt weight x pre-tax cost of debt x (1 - tax rate)
+  + equity weight x cost of equity. Interest is tax-deductible, so the
+  debt cost enters after tax.
+- Answer as a percentage number (for example 9.60 for 9.60%).
+"""
+    question = _numeric_question(
+        "weighted average cost of capital",
+        "Using `/app/documents/capital_structure.md` and `/app/policy.md`, compute "
+        "**WACC** as a percentage number.",
+        "the percentage number",
+    )
+    return _numeric_instance(
+        task_id="weighted-average-cost-of-capital",
+        family="cost-of-capital",
+        title="Compute WACC with after-tax debt cost",
+        question=question,
+        policy=policy,
+        data_name="capital_structure.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "wacc", "after-tax-cost-of-debt"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def standard_cost_per_unit(seed: int) -> TaskInstance:
+    """Numeric: build a standard cost card. Trap: using actual input prices."""
+    rng = random.Random(seed)
+    dm_qty = (Decimal(rng.randrange(2, 9)) / 2).quantize(Decimal("0.5"))
+    dm_price = Decimal(rng.randrange(200, 901, 25)) / 100
+    dl_hours = (Decimal(rng.randrange(1, 7)) / 2).quantize(Decimal("0.5"))
+    dl_rate = Decimal(rng.randrange(1200, 3001, 25)) / 100
+    var_rate = Decimal(rng.randrange(200, 801, 25)) / 100
+    fixed_rate = Decimal(rng.randrange(300, 1001, 25)) / 100
+    gold = dm_qty * dm_price + dl_hours * (dl_rate + var_rate + fixed_rate)
+    actual_dm_price = dm_price + Decimal("0.75")
+    trap = dm_qty * actual_dm_price + dl_hours * (dl_rate + var_rate + fixed_rate)
+    data = (
+        "# Standard cost card inputs (per finished unit)\n\n"
+        "| Item | Standard | Actual (January) |\n"
+        "|---|---:|---:|\n"
+        f"| Direct materials | {format(dm_qty, 'f')} units @ USD {money(dm_price)} | "
+        f"USD {money(actual_dm_price)} per unit |\n"
+        f"| Direct labor | {format(dl_hours, 'f')} hours @ USD {money(dl_rate)} | — |\n"
+        f"| Variable overhead | USD {money(var_rate)} per labor hour | — |\n"
+        f"| Fixed overhead | USD {money(fixed_rate)} per labor hour | — |\n"
+    )
+    policy = """# Standard cost conventions (applies to this task)
+
+- A standard cost card uses STANDARD quantities and STANDARD prices for
+  every input; actual prices explain variances and never enter the card.
+  Overhead applies per standard labor hour.
+- Answer in USD per unit in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "standard cost per unit",
+        "Using `/app/documents/cost_card_inputs.md` and `/app/policy.md`, compute "
+        "the **standard cost per finished unit** in USD.",
+        "the USD amount per unit",
+    )
+    return _numeric_instance(
+        task_id="standard-cost-per-unit",
+        family="standard-costing",
+        title="Build a standard cost per unit",
+        question=question,
+        policy=policy,
+        data_name="cost_card_inputs.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "standard-cost-card"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+JOB_PROCESS_OPTIONS = ["Job-order costing", "Process costing"]
+JOB_PROCESS_CASES = [
+    ("A builder constructing custom homes, each to a buyer's design.", "Job-order costing"),
+    ("A law firm tracking time and costs by individual client matter.", "Job-order costing"),
+    ("A print shop producing distinct customer orders in small batches.", "Job-order costing"),
+    ("An oil refinery producing identical fuel in a continuous flow.", "Process costing"),
+    ("A soft-drink bottler producing identical cans on a continuous line.", "Process costing"),
+    ("A cement plant producing a homogeneous product in bulk.", "Process costing"),
+]
+
+
+def sc_job_vs_process_costing(seed: int) -> TaskInstance:
+    """Single-choice: select job-order vs process costing from production type."""
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(JOB_PROCESS_CASES)
+    labels = JOB_PROCESS_OPTIONS.copy()
+    rng.shuffle(labels)
+    option_ids = ["A", "B"]
+    gold = option_ids[labels.index(correct)]
+    options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
+    policy = """# Product costing system conventions (applies to this task)
+
+- Job-order costing fits distinct, identifiable jobs or batches made to
+  order (custom work, client matters, separate customer orders).
+- Process costing fits homogeneous products made in a continuous flow,
+  where costs are averaged over equivalent units.
+"""
+    question = _choice_question(
+        "job-order or process costing",
+        f"Producer: **{narrative}**\n\nUsing `/app/policy.md`, which costing "
+        "system fits? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-job-vs-process-costing",
+        family="product-costing",
+        title="Choose job-order or process costing",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-job-vs-process-costing",
+            "product-costing",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "job-order", "process-costing"],
+        level="vocational",
+        category="management-accounting",
+        format="single-choice",
+        skill="remembering-understanding",
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -8129,6 +9162,20 @@ FAMILIES = {
     "cash-collected-from-customers": cash_collected_from_customers,
     "free-cash-flow": free_cash_flow,
     "sc-transaction-statement-impact": sc_transaction_statement_impact,
+    "business-combination-acquisition": business_combination_acquisition,
+    "consolidation-intercompany-elimination": consolidation_intercompany_elimination,
+    "held-for-sale-measurement": held_for_sale_measurement,
+    "share-based-compensation-monthly": share_based_compensation_monthly,
+    "asset-revaluation-surplus": asset_revaluation_surplus,
+    "written-off-receivable-recovery": written_off_receivable_recovery,
+    "nfp-conditional-vs-unconditional": nfp_conditional_vs_unconditional,
+    "adjusted-receivable-balance": adjusted_receivable_balance,
+    "ppe-additions-inferred": ppe_additions_inferred,
+    "fixed-overhead-volume-variance": fixed_overhead_volume_variance,
+    "cumulative-preferred-dividend": cumulative_preferred_dividend,
+    "weighted-average-cost-of-capital": weighted_average_cost_of_capital,
+    "standard-cost-per-unit": standard_cost_per_unit,
+    "sc-job-vs-process-costing": sc_job_vs_process_costing,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -8240,4 +9287,18 @@ STABLE_SEEDS = {
     "cash-collected-from-customers": 205,
     "free-cash-flow": 206,
     "sc-transaction-statement-impact": 207,
+    "business-combination-acquisition": 208,
+    "consolidation-intercompany-elimination": 209,
+    "held-for-sale-measurement": 210,
+    "share-based-compensation-monthly": 211,
+    "asset-revaluation-surplus": 212,
+    "written-off-receivable-recovery": 213,
+    "nfp-conditional-vs-unconditional": 214,
+    "adjusted-receivable-balance": 215,
+    "ppe-additions-inferred": 216,
+    "fixed-overhead-volume-variance": 217,
+    "cumulative-preferred-dividend": 218,
+    "weighted-average-cost-of-capital": 219,
+    "standard-cost-per-unit": 220,
+    "sc-job-vs-process-costing": 221,
 }
