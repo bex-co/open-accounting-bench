@@ -101,6 +101,11 @@ NUMERIC_FAMILIES = [
     "equity-method-carrying-amount",
     "bond-issue-price",
     "partnership-income-allocation",
+    "materials-quantity-variance",
+    "cost-of-goods-manufactured",
+    "payback-period-years",
+    "multiproduct-breakeven-units",
+    "total-current-liabilities",
 ]
 
 
@@ -147,9 +152,10 @@ def test_mc_normal_balances_oracle_and_traps(seed):
         assert f"- {oid}." in question
 
 
+@pytest.mark.parametrize("task_id", ["sc-special-journal-routing", "sc-cash-flow-classification"])
 @pytest.mark.parametrize("seed", [1, 7, 42, 167, 5, 9, 11])
-def test_sc_special_journal_oracle_and_wrong_journal(seed):
-    instance = FAMILIES["sc-special-journal-routing"](seed)
+def test_single_choice_families_oracle_and_wrong_option(task_id, seed):
+    instance = FAMILIES[task_id](seed)
     expected = {**instance.expected, "format": instance.format}
     assert grade_answer(expected, json.dumps(instance.solution_answer)).reward == 1
     assert grade_answer(expected, None).reward == 0

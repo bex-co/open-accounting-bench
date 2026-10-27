@@ -974,3 +974,105 @@ def test_stock_dividend_at_par_only_fails():
         [("Equity:RetainedEarnings", par_total), ("Equity:CommonStock", -par_total)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_note_payment_without_interest_fails():
+    """Trap: pay principal only at maturity, omitting the month's interest."""
+    instance = FAMILIES["short-term-note-payment"](168)
+    principal = _deltas(instance)["Liabilities:NotesPayable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Bank",
+        [("Liabilities:NotesPayable", principal), ("Assets:Bank:Checking", -principal)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_card_sale_at_net_deposit_fails():
+    """Trap: record the net card deposit as sales (fee netted away)."""
+    instance = FAMILIES["credit-card-sale-fee"](169)
+    net = _deltas(instance)["Assets:Bank:Checking"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Card processor",
+        [("Assets:Bank:Checking", net), ("Income:Sales", -net)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_patent_amortized_over_legal_life_fails():
+    """Trap: amortize over the longer legal life instead of useful life."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["patent-amortization"](170)
+    doc = instance.app_files["documents/patent.md"]
+    cost = Decimal(re.search(r"Cost: USD ([\d]+\.[\d]{2})", doc)[1])
+    legal = int(re.search(r"Legal life remaining: (\d+) years", doc)[1])
+    wrong_amount = (cost / (legal * 12)).quantize(Decimal("0.01"))
+    assert wrong_amount != _deltas(instance)["Expenses:Amortization"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Amortization",
+        [
+            ("Expenses:Amortization", wrong_amount),
+            ("Assets:AccumulatedAmortization", -wrong_amount),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_accruing_remote_contingency_fails():
+    """Trap: accrue the remote claim as well as the probable one."""
+    import re
+    from decimal import Decimal
+
+    instance = FAMILIES["loss-contingency-accrual"](171)
+    doc = instance.app_files["documents/litigation_status.md"]
+    remote = Decimal(re.search(r"amount claimed is USD ([\d]+\.[\d]{2})", doc)[1])
+    wrong = instance.solution_ledger + _entry(
+        "2026-01-31",
+        "Counsel",
+        [
+            ("Expenses:LitigationLoss", remote),
+            ("Liabilities:EstimatedLitigationLiability", -remote),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_bond_liability_at_proceeds_fails():
+    """Trap: record bonds payable at proceeds with no premium split."""
+    instance = FAMILIES["bond-issued-at-premium"](172)
+    proceeds = _deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-01",
+        "Underwriter",
+        [("Assets:Bank:Checking", proceeds), ("Liabilities:BondsPayable", -proceeds)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_closing_drawings_to_income_summary_fails():
+    """Trap: close drawings through income summary (as if an expense)."""
+    instance = FAMILIES["closing-drawing-account"](173)
+    drawn = _deltas(instance)["Equity:OwnerCapital"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Closing",
+        [("Equity:IncomeSummary", drawn), ("Equity:OwnerDrawing", -drawn)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_trading_gain_routed_to_sales_fails():
+    """Trap: credit the unrealized trading gain to sales revenue."""
+    instance = FAMILIES["trading-securities-fair-value"](174)
+    gain = _deltas(instance)["Assets:TradingSecurities"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Broker",
+        [("Assets:TradingSecurities", gain), ("Income:Sales", -gain)],
+    )
+    _assert_semantic_trap(instance, wrong)

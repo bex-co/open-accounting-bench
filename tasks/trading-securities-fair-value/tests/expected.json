@@ -1,0 +1,31 @@
+{
+  "task_id": "trading-securities-fair-value",
+  "family": "investments",
+  "seed": 174,
+  "generator_version": "0.3.0",
+  "format": "journal-entry",
+  "currency": "USD",
+  "tolerance": "0.01",
+  "expected_deltas": {
+    "Assets:TradingSecurities": "100.00",
+    "Income:UnrealizedGainLoss": "-100.00"
+  },
+  "allowed_extra_accounts": [],
+  "expected_new_transactions": 1,
+  "expected_period": [
+    "2026-01-31",
+    "2026-01-31"
+  ],
+  "required_final_balances": {
+    "Assets:TradingSecurities": "4425.00"
+  },
+  "forbid_new_accounts": true,
+  "category": "financial-accounting",
+  "framework": "core",
+  "level": "vocational",
+  "skill": "application",
+  "standards": [
+    "asc:321",
+    "ifrs:9"
+  ]
+}

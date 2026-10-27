@@ -65,6 +65,18 @@ crosswalk mappings.
   (in particular: stated annuity/PV factors used as given; the
   small-vs-large stock-dividend threshold wording). No crosswalk
   mappings proposed yet.
+- 2026-10-26 — thirteen further generator families (Stable seeds
+  168–180): `short-term-note-payment`, `credit-card-sale-fee`,
+  `patent-amortization`, `loss-contingency-accrual`,
+  `bond-issued-at-premium`, `closing-drawing-account`,
+  `trading-securities-fair-value`, `materials-quantity-variance`,
+  `cost-of-goods-manufactured`, `payback-period-years`,
+  `multiproduct-breakeven-units`, `total-current-liabilities`,
+  `sc-cash-flow-classification`. Same checks as the earlier batches
+  (in particular: the probable/remote wording in
+  `loss-contingency-accrual`; dividends-paid-as-financing is the
+  US-GAAP/IFRS policy choice stated in `sc-cash-flow-classification`).
+  No crosswalk mappings proposed yet.
 
 
 ## Reviewed

@@ -151,6 +151,19 @@ D = standards depth):
 | `partnership-income-allocation` | V | U | V | V | V | V | V | vocational |
 | `mc-normal-balances` | V | V | V | U | V | V | V | vocational |
 | `sc-special-journal-routing` | V | V | V | V | V | V | V | vocational |
+| `short-term-note-payment` | V | U | V | V | V | V | V | vocational |
+| `credit-card-sale-fee` | V | U | V | V | V | V | V | vocational |
+| `patent-amortization` | V | U | V | U | V | V | U | vocational |
+| `loss-contingency-accrual` | V | U | V | U | U | V | U | vocational |
+| `bond-issued-at-premium` | V | U | V | V | V | V | U | vocational |
+| `closing-drawing-account` | V | V | V | V | V | V | V | vocational |
+| `trading-securities-fair-value` | V | U | V | V | V | V | U | vocational |
+| `materials-quantity-variance` | V | U | V | V | V | V | V | vocational |
+| `cost-of-goods-manufactured` | V | U | V | V | V | V | V | vocational |
+| `payback-period-years` | V | U | V | U | V | V | V | vocational |
+| `multiproduct-breakeven-units` | V | U | V | V | V | V | V | vocational |
+| `total-current-liabilities` | V | U | V | U | V | V | V | vocational |
+| `sc-cash-flow-classification` | V | V | V | V | V | V | U | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -230,8 +243,21 @@ problem the task hands over. An analysis task can be vocational.
 | `partnership-income-allocation` | partnerships | numeric | core | application | — | Ratio on whole income |
 | `mc-normal-balances` | transaction-classification | multiple-choice | core | remembering-understanding | — | Contra-assets as debit-normal |
 | `sc-special-journal-routing` | ledger-integrity-reporting | single-choice | core | remembering-understanding | — | Return routed to sales journal |
+| `short-term-note-payment` | borrowings | journal-entry | core | application | — | Pay principal only |
+| `credit-card-sale-fee` | transaction-classification | journal-entry | core | application | — | Net deposit as sales |
+| `patent-amortization` | intangible-assets | journal-entry | core | application | `asc:350`, `ias:38` | Amortize over legal life |
+| `loss-contingency-accrual` | provisions-contingencies | journal-entry | core | application | `asc:450`, `ias:37` | Accrue the remote claim too |
+| `bond-issued-at-premium` | borrowings | journal-entry | core | application | `asc:835-30`, `ifrs:9` | Liability at proceeds |
+| `closing-drawing-account` | equity | journal-entry | core | application | — | Close drawings to income summary |
+| `trading-securities-fair-value` | investments | journal-entry | core | application | `asc:321`, `ifrs:9` | Leave at cost / gain to sales |
+| `materials-quantity-variance` | standard-costing | numeric | core | application | — | Use quantity purchased |
+| `cost-of-goods-manufactured` | job-order-costing | numeric | core | application | — | Skip WIP adjustment |
+| `payback-period-years` | capital-budgeting | numeric | core | application | — | Divide by net income |
+| `multiproduct-breakeven-units` | cost-volume-profit | numeric | core | application | — | Simple-average margin |
+| `total-current-liabilities` | financial-reporting | numeric | core | application | — | Include long-term note |
+| `sc-cash-flow-classification` | cash-flow-statement | single-choice | core | remembering-understanding | `asc:230`, `ias:7` | Dividends paid as operating |
 
-Stable seeds: 101–167 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–180 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -240,13 +266,13 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 52 | 1 | planned | planned |
-| management-accounting | 12 | planned | planned | planned |
+| financial-accounting | 61 | 1 | planned | planned |
+| management-accounting | 16 | planned | planned | planned |
 | tax | 2 | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×39, multiple-choice ×2, single-choice ×1,
-numeric ×25; open-text is
+Format coverage: journal-entry ×46, multiple-choice ×2, single-choice ×2,
+numeric ×30; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

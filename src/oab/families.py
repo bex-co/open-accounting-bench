@@ -5315,6 +5315,874 @@ def sc_special_journal_routing(seed: int) -> TaskInstance:
     )
 
 
+NOTE_PAYABLE = "Liabilities:NotesPayable"
+ST_NOTE_ACCOUNTS = [(NOTE_PAYABLE, "Short-term notes payable")]
+
+
+def short_term_note_payment(seed: int) -> TaskInstance:
+    """Scenario: a 30-day note matures and is paid with interest (30/360).
+
+    Oracle: debit note principal + interest expense for one month,
+    credit bank maturity value. Trap: expensing the whole payment or
+    paying principal only. Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    principal = Decimal(rng.randrange(2, 11)) * 12000
+    annual = rng.choice([Decimal("0.06"), Decimal("0.09"), Decimal("0.12")])
+    interest = principal * annual / 12
+    opening = Decimal("5000.00")
+    initial = _ledger_header(opening, ST_NOTE_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Bank",
+        "30-day note signed, cash received",
+        [(BANK, principal), (NOTE_PAYABLE, -principal)],
+    )
+    doc = (
+        "# Note payable — due 2026-01-31\n\n"
+        f"Principal USD {money(principal)}, signed 2026-01-01, due in 30 days, "
+        f"interest {annual * 100:.0f}% a year payable at maturity. The company "
+        "paid the note in full from checking on 2026-01-31.\n"
+    )
+    policy = POLICY + (
+        "- Interest on short-term notes uses a 360-day year (30/360): one\n"
+        "  month = principal x annual rate x 30/360. At payment, debit the\n"
+        "  note for principal and interest expense for the month's interest.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Bank",
+        "Note and interest paid at maturity",
+        [
+            (NOTE_PAYABLE, principal),
+            ("Expenses:Interest", interest),
+            (BANK, -(principal + interest)),
+        ],
+    )
+    return TaskInstance(
+        task_id="short-term-note-payment",
+        family="borrowings",
+        title="Pay a short-term note and its interest at maturity",
+        instruction=(
+            "Record the payment in `/app/documents/note_payable.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(ST_NOTE_ACCOUNTS),
+            "documents/note_payable.md": doc,
+        },
+        expected=_expected(
+            "short-term-note-payment",
+            "borrowings",
+            seed,
+            expected_deltas={
+                NOTE_PAYABLE: money(principal),
+                "Expenses:Interest": money(interest),
+                BANK: money(-(principal + interest)),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={NOTE_PAYABLE: "0.00"},
+        ),
+        solution_ledger=solution,
+        keywords=["notes-payable", "interest", "maturity"],
+        level="vocational",
+    )
+
+
+CARD_FEE = "Expenses:CreditCardFees"
+CARD_ACCOUNTS = [(CARD_FEE, "Credit card processing fees")]
+
+
+def credit_card_sale_fee(seed: int) -> TaskInstance:
+    """Scenario: card sale settled net of the processor's fee.
+
+    Oracle: sales at gross; bank at the net deposit; fee as expense.
+    Trap: recording the net deposit as the sales amount.
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    gross = Decimal(rng.randrange(30, 161)) * 100
+    pct = rng.choice([Decimal("0.02"), Decimal("0.03"), Decimal("0.04")])
+    fee = (gross * pct).quantize(CENT)
+    day = rng.randint(4, 24)
+    date = f"2026-01-{day:02d}"
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, CARD_ACCOUNTS)
+    doc = (
+        f"# Card settlement — {date}\n\n"
+        f"Customers bought merchandise for USD {money(gross)} by credit card. "
+        f"The processor withheld a {pct * 100:.0f}% fee (USD {money(fee)}) and "
+        f"deposited USD {money(gross - fee)} into checking the same day.\n"
+    )
+    policy = POLICY + (
+        "- Credit-card sales are recorded at the gross selling price; the\n"
+        "  processor's fee is a selling expense (`Expenses:CreditCardFees`),\n"
+        "  never a reduction of sales.\n"
+    )
+    solution = initial + _txn(
+        date,
+        "Card processor",
+        "Credit-card sale net of processing fee",
+        [(BANK, gross - fee), (CARD_FEE, fee), ("Income:Sales", -gross)],
+    )
+    return TaskInstance(
+        task_id="credit-card-sale-fee",
+        family="transaction-classification",
+        title="Record a credit-card sale net of its fee",
+        instruction=(
+            "Record the settlement in `/app/documents/card_settlement.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            f"balanced transactions dated {date}; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CARD_ACCOUNTS),
+            "documents/card_settlement.md": doc,
+        },
+        expected=_expected(
+            "credit-card-sale-fee",
+            "transaction-classification",
+            seed,
+            expected_deltas={
+                BANK: money(gross - fee),
+                CARD_FEE: money(fee),
+                "Income:Sales": money(-gross),
+            },
+            expected_period=[date, date],
+            required_final_balances={BANK: money(opening + gross - fee)},
+        ),
+        solution_ledger=solution,
+        keywords=["credit-card-sale", "processing-fee", "gross-sales"],
+        level="vocational",
+    )
+
+
+PATENT = "Assets:Patent"
+ACC_AMORT = "Assets:AccumulatedAmortization"
+AMORTIZATION = "Expenses:Amortization"
+INTANGIBLE_ACCOUNTS = [
+    (PATENT, "Patent at cost"),
+    (ACC_AMORT, "Accumulated amortization (contra-asset; credit balance)"),
+    (AMORTIZATION, "Amortization expense on intangible assets"),
+]
+
+
+def patent_amortization(seed: int) -> TaskInstance:
+    """Scenario: first month's patent amortization over its useful life.
+
+    Oracle: cost / (useful-life years x 12); the longer legal life is not
+    used. Trap: amortizing over the legal life. Level V/U/V/U/V/V/U.
+    """
+    rng = random.Random(seed)
+    useful = rng.choice([5, 8, 10])
+    legal = useful + rng.choice([5, 10])
+    monthly = Decimal(rng.randrange(50, 301))
+    cost = monthly * 12 * useful
+    opening = cost + Decimal("10000.00")
+    initial = _ledger_header(opening, INTANGIBLE_ACCOUNTS) + _txn(
+        "2026-01-02",
+        "Seller",
+        "Patent acquired",
+        [(PATENT, cost), (BANK, -cost)],
+    )
+    doc = (
+        "# Patent acquisition — 2026-01-02\n\n"
+        f"Cost: USD {money(cost)}. Legal life remaining: {legal} years. "
+        f"Expected useful (economic) life: {useful} years. No residual value.\n"
+    )
+    policy = POLICY + (
+        "- Finite-lived intangibles are amortized straight-line over the\n"
+        "  SHORTER of legal and useful life, monthly from the acquisition\n"
+        "  month (full month in that month), to accumulated amortization.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Amortization",
+        "January patent amortization",
+        [(AMORTIZATION, monthly), (ACC_AMORT, -monthly)],
+    )
+    return TaskInstance(
+        task_id="patent-amortization",
+        family="intangible-assets",
+        title="Record the first month of patent amortization",
+        instruction=(
+            "Record January amortization in `/app/ledger.beancount`, using "
+            "`/app/documents/patent.md` and `/app/policy.md`. Append exactly "
+            "one balanced transaction dated 2026-01-31; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(INTANGIBLE_ACCOUNTS),
+            "documents/patent.md": doc,
+        },
+        expected=_expected(
+            "patent-amortization",
+            "intangible-assets",
+            seed,
+            expected_deltas={AMORTIZATION: money(monthly), ACC_AMORT: money(-monthly)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={PATENT: money(cost)},
+        ),
+        solution_ledger=solution,
+        keywords=["intangible-assets", "amortization", "patent"],
+        level="vocational",
+        standards=["asc:350", "ias:38"],
+    )
+
+
+LOSS_CONTINGENCY = "Expenses:LitigationLoss"
+CONTINGENT_LIABILITY = "Liabilities:EstimatedLitigationLiability"
+CONTINGENCY_ACCOUNTS = [
+    (LOSS_CONTINGENCY, "Loss from litigation contingency"),
+    (CONTINGENT_LIABILITY, "Estimated liability for litigation claims"),
+]
+
+
+def loss_contingency_accrual(seed: int) -> TaskInstance:
+    """Scenario: two lawsuits at January close; only one meets the criteria.
+
+    Oracle: accrue only the probable-and-estimable claim; the remote
+    claim is not recorded. Trap: accruing both claims.
+    Level V/U/V/U/U/V/U -> vocational (borderline).
+    """
+    rng = random.Random(seed)
+    probable = Decimal(rng.randrange(40, 201)) * 100
+    remote = Decimal(rng.randrange(100, 501)) * 100
+    opening = Decimal("50000.00")
+    initial = _ledger_header(opening, CONTINGENCY_ACCOUNTS)
+    doc = (
+        "# Litigation status — 2026-01-31 (counsel's assessment)\n\n"
+        f"- Claim 1 (supplier dispute): an unfavorable outcome is PROBABLE and "
+        f"the loss is reasonably estimable at USD {money(probable)}.\n"
+        f"- Claim 2 (customer claim): an unfavorable outcome is REMOTE; the "
+        f"amount claimed is USD {money(remote)}.\n"
+    )
+    policy = POLICY + (
+        "- A loss contingency is accrued (expense and liability) only when a\n"
+        "  loss is probable AND reasonably estimable. Remote contingencies\n"
+        "  are not recorded; reasonably possible ones are disclosed, not accrued.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Counsel",
+        "Accrue probable litigation loss (Claim 1)",
+        [(LOSS_CONTINGENCY, probable), (CONTINGENT_LIABILITY, -probable)],
+    )
+    return TaskInstance(
+        task_id="loss-contingency-accrual",
+        family="provisions-contingencies",
+        title="Accrue the loss contingency that meets the criteria",
+        instruction=(
+            "Record the January entries required by "
+            "`/app/documents/litigation_status.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions "
+            "dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CONTINGENCY_ACCOUNTS),
+            "documents/litigation_status.md": doc,
+        },
+        expected=_expected(
+            "loss-contingency-accrual",
+            "provisions-contingencies",
+            seed,
+            expected_deltas={
+                LOSS_CONTINGENCY: money(probable),
+                CONTINGENT_LIABILITY: money(-probable),
+            },
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={CONTINGENT_LIABILITY: money(-probable)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["loss-contingency", "probable-estimable", "accrual"],
+        level="vocational",
+        standards=["asc:450", "ias:37"],
+    )
+
+
+BOND_PREMIUM = "Liabilities:PremiumOnBondsPayable"
+BOND_ISSUE_ACCOUNTS = [
+    (BONDS, "Bonds payable at face value"),
+    (BOND_PREMIUM, "Unamortized premium on bonds payable (credit balance)"),
+]
+
+
+def bond_issued_at_premium(seed: int) -> TaskInstance:
+    """Scenario: bonds issued above face (coupon above market) on Jan 1.
+
+    Oracle: bank at proceeds; bonds payable at face; premium for excess.
+    Trap: recording the liability at proceeds (no premium split).
+    Level V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    face = Decimal(rng.randrange(5, 21)) * 12000
+    premium = (face * Decimal(rng.randrange(15, 51)) / 1000).quantize(Decimal("1"))
+    proceeds = face + premium
+    opening = Decimal("5000.00")
+    initial = _ledger_header(opening, BOND_ISSUE_ACCOUNTS)
+    doc = (
+        "# Bond issuance — 2026-01-01\n\n"
+        f"Face value USD {money(face)}, 8% coupon (market rate 6%), 5-year term. "
+        f"The bonds sold for USD {money(proceeds)}, received in full into "
+        "checking on the issue date.\n"
+    )
+    policy = POLICY + (
+        "- Bonds payable are recorded at face value. Proceeds above face are\n"
+        "  a premium (`Liabilities:PremiumOnBondsPayable`), amortized over\n"
+        "  the bond term.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-01",
+        "Underwriter",
+        "Bonds issued at a premium",
+        [(BANK, proceeds), (BONDS, -face), (BOND_PREMIUM, -premium)],
+    )
+    return TaskInstance(
+        task_id="bond-issued-at-premium",
+        family="borrowings",
+        title="Record bonds issued at a premium",
+        instruction=(
+            "Record the issuance in `/app/documents/bond_issuance.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-01; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(BOND_ISSUE_ACCOUNTS),
+            "documents/bond_issuance.md": doc,
+        },
+        expected=_expected(
+            "bond-issued-at-premium",
+            "borrowings",
+            seed,
+            expected_deltas={
+                BANK: money(proceeds),
+                BONDS: money(-face),
+                BOND_PREMIUM: money(-premium),
+            },
+            expected_period=["2026-01-01", "2026-01-01"],
+            required_final_balances={BONDS: money(-face)},
+        ),
+        solution_ledger=solution,
+        keywords=["bonds-payable", "premium", "issuance"],
+        level="vocational",
+        standards=["asc:835-30", "ifrs:9"],
+    )
+
+
+DRAWING = "Equity:OwnerDrawing"
+DRAWING_ACCOUNTS = [
+    (OWNER_CAPITAL, "Owner capital contributed"),
+    (DRAWING, "Owner withdrawals for personal use (contra-equity)"),
+]
+
+
+def closing_drawing_account(seed: int) -> TaskInstance:
+    """Scenario: close the owner's drawing account at January 31.
+
+    Oracle: OwnerCapital debited, Drawing credited (drawings never pass
+    through income summary). Trap: closing drawings to income summary
+    (treating them as an expense). Level V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    capital = Decimal(rng.randrange(200, 601)) * 100
+    draw1 = Decimal(rng.randrange(10, 41)) * 50
+    draw2 = Decimal(rng.randrange(10, 41)) * 50
+    total_drawn = draw1 + draw2
+    closing_accounts = DRAWING_ACCOUNTS + [
+        (INCOME_SUMMARY, "Income summary (temporary closing account)")
+    ]
+    opening = Decimal("10000.00")
+    initial = (
+        _ledger_header(opening, closing_accounts)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Opening owner capital",
+            [("Equity:Opening-Balances", capital), (OWNER_CAPITAL, -capital)],
+        )
+        + _txn("2026-01-10", "Owner", "Cash withdrawn by owner", [(DRAWING, draw1), (BANK, -draw1)])
+        + _txn("2026-01-24", "Owner", "Cash withdrawn by owner", [(DRAWING, draw2), (BANK, -draw2)])
+    )
+    doc = (
+        "# Month-end closing instruction\n\n"
+        f"Owner withdrawals in January total USD {money(total_drawn)} (two cash "
+        "draws, already recorded in `Equity:OwnerDrawing`). Close the drawing "
+        "account as part of the January closing process.\n"
+    )
+    policy = POLICY + (
+        "- The drawing account is closed directly to the owner's capital\n"
+        "  account at period-end. Drawings are distributions, never an\n"
+        "  expense, and never pass through income summary.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Closing",
+        "Close drawing account to owner capital",
+        [(OWNER_CAPITAL, total_drawn), (DRAWING, -total_drawn)],
+    )
+    return TaskInstance(
+        task_id="closing-drawing-account",
+        family="equity",
+        title="Close the owner drawing account",
+        instruction=(
+            "Record the closing entry described in "
+            "`/app/documents/closing_instruction.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "exactly one balanced transaction dated 2026-01-31; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(closing_accounts),
+            "documents/closing_instruction.md": doc,
+        },
+        expected=_expected(
+            "closing-drawing-account",
+            "equity",
+            seed,
+            expected_deltas={OWNER_CAPITAL: money(total_drawn), DRAWING: money(-total_drawn)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={
+                DRAWING: "0.00",
+                OWNER_CAPITAL: money(-(capital - total_drawn)),
+            },
+        ),
+        solution_ledger=solution,
+        keywords=["closing-entries", "drawing-account", "owner-capital"],
+        level="vocational",
+    )
+
+
+TRADING = "Assets:TradingSecurities"
+UNREALIZED = "Income:UnrealizedGainLoss"
+TRADING_ACCOUNTS = [
+    (TRADING, "Trading securities at fair value"),
+    (UNREALIZED, "Unrealized gain (credit) or loss on trading securities"),
+]
+
+
+def trading_securities_fair_value(seed: int) -> TaskInstance:
+    """Scenario: mark trading securities up to fair value at month-end.
+
+    Oracle: debit the securities, credit unrealized gain in income for
+    shares x (fair value - cost). Trap: leaving them at cost, or routing
+    the gain outside income. Level V/U/V/V/V/V/U -> vocational.
+    """
+    rng = random.Random(seed)
+    shares = rng.randrange(100, 901, 25)
+    cost_each = Decimal(rng.randrange(1500, 5001, 25)) / 100
+    uplift = Decimal(rng.randrange(100, 801, 25)) / 100
+    fair_each = cost_each + uplift
+    cost_total = shares * cost_each
+    gain = shares * uplift
+    opening = cost_total + Decimal("10000.00")
+    initial = _ledger_header(opening, TRADING_ACCOUNTS) + _txn(
+        "2026-01-05",
+        "Broker",
+        f"Bought {shares} shares as trading securities",
+        [(TRADING, cost_total), (BANK, -cost_total)],
+    )
+    doc = (
+        "# Month-end quotes — 2026-01-31\n\n"
+        f"The {shares} shares bought on 2026-01-05 at USD {money(cost_each)} each "
+        f"are quoted at USD {money(fair_each)} each at 2026-01-31. The shares are "
+        "held for trading (bought to sell at a short-term profit).\n"
+    )
+    policy = POLICY + (
+        "- Trading securities are carried at fair value; unrealized gains and\n"
+        "  losses are recognized in current income "
+        "(`Income:UnrealizedGainLoss`) at each month-end.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Broker",
+        "Mark trading securities to fair value",
+        [(TRADING, gain), (UNREALIZED, -gain)],
+    )
+    return TaskInstance(
+        task_id="trading-securities-fair-value",
+        family="investments",
+        title="Mark trading securities to fair value",
+        instruction=(
+            "Record the month-end adjustment in "
+            "`/app/documents/month_end_quotes.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append exactly one balanced "
+            "transaction dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(TRADING_ACCOUNTS),
+            "documents/month_end_quotes.md": doc,
+        },
+        expected=_expected(
+            "trading-securities-fair-value",
+            "investments",
+            seed,
+            expected_deltas={TRADING: money(gain), UNREALIZED: money(-gain)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={TRADING: money(cost_total + gain)},
+        ),
+        solution_ledger=solution,
+        keywords=["trading-securities", "fair-value", "unrealized-gain"],
+        level="vocational",
+        standards=["asc:321", "ifrs:9"],
+    )
+
+
+def materials_quantity_variance(seed: int) -> TaskInstance:
+    """Numeric: materials quantity variance. Trap: quantity purchased."""
+    rng = random.Random(seed)
+    standard_price = Decimal(rng.randrange(300, 1201, 25)) / 100
+    sq_per_unit = rng.choice([2, 3, 4])
+    output = rng.randrange(800, 3001, 100)
+    allowed = sq_per_unit * output
+    excess = rng.randrange(50, 601, 50)
+    used = allowed + excess
+    purchased = used + rng.randrange(100, 801, 100)
+    gold = (used - allowed) * standard_price
+    trap = (purchased - allowed) * standard_price
+    data = (
+        "# Materials usage — January 2026\n\n| Item | Value |\n|---|---:|\n"
+        f"| Standard price | USD {money(standard_price)} per unit of material |\n"
+        f"| Standard quantity | {sq_per_unit} units of material per finished unit |\n"
+        f"| Finished units produced | {output} |\n"
+        f"| Material actually used | {used} units |\n"
+        f"| Material purchased | {purchased} units |\n"
+    )
+    policy = """# Standard costing conventions (applies to this task)
+
+- Materials quantity (efficiency) variance = (actual quantity USED
+  - standard quantity allowed for actual output) x standard price.
+  Standard quantity allowed = standard per finished unit x units made.
+  A positive answer is unfavorable.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "materials quantity variance",
+        "Using `/app/documents/materials_usage.md` and `/app/policy.md`, compute "
+        "the **materials quantity variance** in USD (positive = unfavorable).",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="materials-quantity-variance",
+        family="standard-costing",
+        title="Compute the materials quantity variance",
+        question=question,
+        policy=policy,
+        data_name="materials_usage.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "standard-costing", "quantity-variance"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def cost_of_goods_manufactured(seed: int) -> TaskInstance:
+    """Numeric: COGM schedule total. Trap: total manufacturing cost (no WIP adj)."""
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    dm, dl, oh = amt(150, 501), amt(100, 401), amt(80, 301)
+    wip_begin, wip_end = amt(30, 121), amt(20, 101)
+    gold = dm + dl + oh + wip_begin - wip_end
+    trap = dm + dl + oh
+    data = (
+        "# Manufacturing data — January 2026\n\n| Item | USD |\n|---|---:|\n"
+        f"| Direct materials used | {money(dm)} |\n"
+        f"| Direct labor | {money(dl)} |\n"
+        f"| Manufacturing overhead applied | {money(oh)} |\n"
+        f"| Work in process, 2026-01-01 | {money(wip_begin)} |\n"
+        f"| Work in process, 2026-01-31 | {money(wip_end)} |\n"
+    )
+    policy = """# Cost of goods manufactured (applies to this task)
+
+- COGM = direct materials used + direct labor + manufacturing overhead
+  applied + beginning work in process - ending work in process.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "cost of goods manufactured",
+        "Using `/app/documents/manufacturing_data.md` and `/app/policy.md`, compute "
+        "**cost of goods manufactured** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="cost-of-goods-manufactured",
+        family="job-order-costing",
+        title="Compute cost of goods manufactured",
+        question=question,
+        policy=policy,
+        data_name="manufacturing_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "cogm", "work-in-process"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def payback_period_years(seed: int) -> TaskInstance:
+    """Numeric: payback in years on cash inflow. Trap: using net income."""
+    rng = random.Random(seed)
+    half_years = rng.randrange(5, 13)  # payback = half_years / 2 years
+    inflow = Decimal(rng.randrange(10, 51)) * 2000
+    initial = inflow * half_years / 2
+    depreciation = (inflow / 4).quantize(CENT)
+    net_income = inflow - depreciation
+    gold = (Decimal(half_years) / 2).quantize(Decimal("0.01"))
+    trap = (initial / net_income).quantize(Decimal("0.0001"))
+    data = (
+        "# Project screening data\n\n| Item | Value |\n|---|---:|\n"
+        f"| Initial investment | USD {money(initial)} |\n"
+        f"| Annual net cash inflow (even) | USD {money(inflow)} |\n"
+        f"| Annual depreciation on the project asset | USD {money(depreciation)} |\n"
+        f"| Annual net income | USD {money(net_income)} |\n"
+    )
+    policy = """# Payback conventions (applies to this task)
+
+- Payback period (even cash inflows) = initial investment / annual NET
+  CASH inflow. Payback is a cash measure: depreciation (a non-cash
+  charge already inside net income) is not deducted.
+- Answer in years (for example 3.50) in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "payback period",
+        "Using `/app/documents/project_screening.md` and `/app/policy.md`, compute "
+        "the **payback period in years**.",
+        "the number of years",
+    )
+    return _numeric_instance(
+        task_id="payback-period-years",
+        family="capital-budgeting",
+        title="Compute the payback period",
+        question=question,
+        policy=policy,
+        data_name="project_screening.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "payback", "capital-budgeting"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def multiproduct_breakeven_units(seed: int) -> TaskInstance:
+    """Numeric: break-even with a sales mix. Trap: simple average margin."""
+    rng = random.Random(seed)
+    breakeven = rng.randrange(500, 2501, 50)
+    cm_a = Decimal(rng.randrange(500, 2001, 50)) / 100
+    cm_b = cm_a + Decimal(rng.randrange(250, 1501, 50)) / 100
+    mix_a = rng.choice([40, 60, 80])
+    wacm = (cm_a * mix_a + cm_b * (100 - mix_a)) / 100
+    fixed = (wacm * breakeven).quantize(CENT)
+    simple = (cm_a + cm_b) / 2
+    trap = int((fixed / simple).to_integral_value(rounding="ROUND_HALF_UP"))
+    if trap == breakeven:
+        trap += 50
+    data = (
+        "# Two-product data (monthly)\n\n| Item | Product A | Product B |\n|---|---:|---:|\n"
+        f"| Contribution margin per unit | USD {money(cm_a)} | USD {money(cm_b)} |\n"
+        f"| Share of units sold (sales mix) | {mix_a}% | {100 - mix_a}% |\n\n"
+        f"Total fixed costs: USD {money(fixed)} a month. The sales mix is constant.\n"
+    )
+    policy = """# Multi-product CVP conventions (applies to this task)
+
+- Weighted-average contribution margin = sum over products of
+  (contribution margin per unit x sales-mix share).
+- Break-even in TOTAL units = fixed costs / weighted-average margin.
+- Answer with the total unit count in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "multi-product break-even units",
+        "Using `/app/documents/two_product_data.md` and `/app/policy.md`, compute "
+        "the monthly **break-even volume in total units**.",
+        "the unit count",
+    )
+    return _numeric_instance(
+        task_id="multiproduct-breakeven-units",
+        family="cost-volume-profit",
+        title="Compute break-even units for a two-product mix",
+        question=question,
+        policy=policy,
+        data_name="two_product_data.md",
+        data=data,
+        gold=Decimal(breakeven),
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "cvp", "sales-mix", "weighted-average-margin"],
+        abs_tolerance="1",
+        trap_value=str(trap),
+    )
+
+
+def total_current_liabilities(seed: int) -> TaskInstance:
+    """Numeric: total current liabilities slice. Trap: including long-term note."""
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    ap = amt(80, 301)
+    accrued = amt(20, 101)
+    unearned = amt(15, 91)
+    current_portion = amt(10, 61)
+    tax_payable = amt(10, 71)
+    lt_note = amt(200, 601)
+    gold = ap + accrued + unearned + current_portion + tax_payable
+    trap = gold + lt_note
+    data = (
+        "# Liability balances — 2026-01-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Accounts payable (due within 30 days) | {money(ap)} |\n"
+        f"| Accrued wages payable | {money(accrued)} |\n"
+        f"| Unearned revenue (services due within 6 months) | {money(unearned)} |\n"
+        f"| Current portion of long-term debt | {money(current_portion)} |\n"
+        f"| Income taxes payable | {money(tax_payable)} |\n"
+        f"| Long-term note payable (due 2029, excluding current portion) | {money(lt_note)} |\n"
+    )
+    policy = """# Current liability conventions (applies to this task)
+
+- Current liabilities are obligations due within one year, including
+  the current portion of long-term debt and unearned revenue for
+  services due within the year. The non-current remainder of long-term
+  debt is excluded.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "total current liabilities",
+        "Using `/app/documents/liability_balances.md` and `/app/policy.md`, compute "
+        "**total current liabilities** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="total-current-liabilities",
+        family="financial-reporting",
+        title="Compute total current liabilities",
+        question=question,
+        policy=policy,
+        data_name="liability_balances.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "current-liabilities", "classified-balance-sheet"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+CASH_FLOW_SECTIONS = [
+    "Operating activities",
+    "Investing activities",
+    "Financing activities",
+    "Not reported in the statement of cash flows (non-cash disclosure only)",
+]
+CASH_FLOW_CASES = [
+    ("Cash paid to suppliers for inventory.", "Operating activities"),
+    ("Cash received from customers.", "Operating activities"),
+    ("Cash paid to purchase manufacturing equipment.", "Investing activities"),
+    ("Cash received from selling a parcel of land.", "Investing activities"),
+    ("Cash dividends paid to shareholders.", "Financing activities"),
+    ("Cash received from issuing new shares.", "Financing activities"),
+    ("Repayment of the principal on a bank loan in cash.", "Financing activities"),
+    (
+        "Equipment acquired by signing a note payable (no cash moved).",
+        "Not reported in the statement of cash flows (non-cash disclosure only)",
+    ),
+]
+
+
+def sc_cash_flow_classification(seed: int) -> TaskInstance:
+    """Single-choice: classify one cash flow by section.
+
+    Trap: dividends paid look like an operating distribution of profit
+    but are financing; non-cash exchanges are not investing outflows.
+    Level: policy gives the section definitions -> vocational.
+    """
+    rng = random.Random(seed)
+    narrative, correct = rng.choice(CASH_FLOW_CASES)
+    sections = CASH_FLOW_SECTIONS.copy()
+    rng.shuffle(sections)
+    option_ids = ["A", "B", "C", "D"]
+    gold = option_ids[sections.index(correct)]
+    options_md = "\n".join(
+        f"- {oid}. {name}" for oid, name in zip(option_ids, sections, strict=True)
+    )
+    policy = """# Cash flow classification (applies to this task)
+
+- Operating: cash from the main revenue-producing activities (receipts
+  from customers, payments to suppliers and employees).
+- Investing: cash to buy or from selling long-term assets.
+- Financing: cash from/to owners and lenders as capital providers
+  (share issues, dividends PAID, borrowing and repaying principal).
+- Transactions with no cash movement are not reported in the statement
+  body (non-cash disclosure only).
+"""
+    question = _choice_question(
+        "cash flow section classification",
+        f"Transaction: **{narrative}**\n\nUsing `/app/policy.md`, in which "
+        "section is it reported? Select exactly one option.",
+        options_md,
+        '"B"',
+    )
+    return TaskInstance(
+        task_id="sc-cash-flow-classification",
+        family="cash-flow-statement",
+        title="Classify a transaction by cash flow section",
+        instruction=(
+            "Answer the single-choice question in `/app/question.md` "
+            "following `/app/policy.md`. Write your selection to "
+            "`/app/answer.json` in the exact format shown in the question."
+        ),
+        app_files={
+            "question.md": question,
+            "policy.md": policy,
+            "answer.example.json": '{\n  "final_answer": "A",\n  "confidence": 50\n}\n',
+        },
+        expected=_expected(
+            "sc-cash-flow-classification",
+            "cash-flow-statement",
+            seed,
+            format="single-choice",
+            gold=gold,
+            options=option_ids,
+            expected_deltas={},
+            expected_new_transactions=0,
+            expected_period=None,
+        ),
+        solution_ledger="",
+        solution_answer={"final_answer": gold, "confidence": 100},
+        keywords=["single-choice", "cash-flow", "classification"],
+        level="vocational",
+        format="single-choice",
+        skill="remembering-understanding",
+        standards=["asc:230", "ias:7"],
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -5383,6 +6251,19 @@ FAMILIES = {
     "partnership-income-allocation": partnership_income_allocation,
     "mc-normal-balances": mc_normal_balances,
     "sc-special-journal-routing": sc_special_journal_routing,
+    "short-term-note-payment": short_term_note_payment,
+    "credit-card-sale-fee": credit_card_sale_fee,
+    "patent-amortization": patent_amortization,
+    "loss-contingency-accrual": loss_contingency_accrual,
+    "bond-issued-at-premium": bond_issued_at_premium,
+    "closing-drawing-account": closing_drawing_account,
+    "trading-securities-fair-value": trading_securities_fair_value,
+    "materials-quantity-variance": materials_quantity_variance,
+    "cost-of-goods-manufactured": cost_of_goods_manufactured,
+    "payback-period-years": payback_period_years,
+    "multiproduct-breakeven-units": multiproduct_breakeven_units,
+    "total-current-liabilities": total_current_liabilities,
+    "sc-cash-flow-classification": sc_cash_flow_classification,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -5454,4 +6335,17 @@ STABLE_SEEDS = {
     "partnership-income-allocation": 165,
     "mc-normal-balances": 166,
     "sc-special-journal-routing": 167,
+    "short-term-note-payment": 168,
+    "credit-card-sale-fee": 169,
+    "patent-amortization": 170,
+    "loss-contingency-accrual": 171,
+    "bond-issued-at-premium": 172,
+    "closing-drawing-account": 173,
+    "trading-securities-fair-value": 174,
+    "materials-quantity-variance": 175,
+    "cost-of-goods-manufactured": 176,
+    "payback-period-years": 177,
+    "multiproduct-breakeven-units": 178,
+    "total-current-liabilities": 179,
+    "sc-cash-flow-classification": 180,
 }

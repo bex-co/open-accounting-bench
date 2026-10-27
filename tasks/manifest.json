@@ -149,6 +149,23 @@
       "digest": "sha256:a00ee2b6bf13ce3427c9560af71f4fce94bb726377ff23f229f8d9f8ed5746b9"
     },
     {
+      "task_id": "bond-issued-at-premium",
+      "family": "borrowings",
+      "seed": 172,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:835-30",
+        "ifrs:9"
+      ],
+      "digest": "sha256:70bdfc1f9bdf683ca5521c209eaae22bb8f7f669856b3d0a19705d623af851ed"
+    },
+    {
       "task_id": "capitalized-cost-bundle",
       "family": "fixed-assets",
       "seed": 141,
@@ -219,6 +236,20 @@
       "digest": "sha256:ef2c98584e12ffff020cce3ceba456ef9f02960b3c7295854227ea12eae30687"
     },
     {
+      "task_id": "closing-drawing-account",
+      "family": "equity",
+      "seed": 173,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:4df2b3fcfd40181dc2d43a2f20ca1de0818b5411588f7d5a4fc41a79585b492e"
+    },
+    {
       "task_id": "closing-entries-income-summary",
       "family": "ledger-integrity-reporting",
       "seed": 131,
@@ -245,6 +276,34 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:3efe9d7a6cd12d37a5b1e1f3d886d436399c14febd981bc05e884c3c4c94ad78"
+    },
+    {
+      "task_id": "cost-of-goods-manufactured",
+      "family": "job-order-costing",
+      "seed": 176,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:9a8769dd9885d9c193d8e2f8c7f5af067d75a1b8c11cb980a55e39e9e006a805"
+    },
+    {
+      "task_id": "credit-card-sale-fee",
+      "family": "transaction-classification",
+      "seed": 169,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:5a702925b171818c186b704171bb3a602037438baf0844c00250c4ef739b9465"
     },
     {
       "task_id": "current-income-tax-expense",
@@ -513,6 +572,23 @@
       "digest": "sha256:ab1daa647889c88590e5438947b4b661970e741dc7f4637cbb02de026593f95a"
     },
     {
+      "task_id": "loss-contingency-accrual",
+      "family": "provisions-contingencies",
+      "seed": 171,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:450",
+        "ias:37"
+      ],
+      "digest": "sha256:e97b7c7ad4b22498691737da5eede6be39226d72a60f4e4369a39dccc6106c3b"
+    },
+    {
       "task_id": "make-or-buy-advantage",
       "family": "relevant-costing",
       "seed": 137,
@@ -539,6 +615,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:efaf8516b67a28897cf50f910215f52fcde2689fd7d40a304323f2da327fd3d3"
+    },
+    {
+      "task_id": "materials-quantity-variance",
+      "family": "standard-costing",
+      "seed": 175,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ee206eec7320669bb30dcc6251632d199a8e150896913dd866f75eec1057ed58"
     },
     {
       "task_id": "mc-capitalization-treatment",
@@ -581,6 +671,20 @@
       "skill": "application",
       "standards": [],
       "digest": "sha256:ce62e516b7c342014008a347a65258002baf6349eccfb8d19e54917462383321"
+    },
+    {
+      "task_id": "multiproduct-breakeven-units",
+      "family": "cost-volume-profit",
+      "seed": 178,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:e04f69ca3aae6f0fdffc46e7ad6cb4691faca738b7194f861d816e180405e4eb"
     },
     {
       "task_id": "narrative-multi-transactions",
@@ -670,6 +774,23 @@
       "digest": "sha256:45000c1d5ca70117990c30a8d97f17ba7ca872f4190f328ce704dd29f8a4a04b"
     },
     {
+      "task_id": "patent-amortization",
+      "family": "intangible-assets",
+      "seed": 170,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:350",
+        "ias:38"
+      ],
+      "digest": "sha256:38e8d1d7241881b530617e46022082813f30dadefa5bcfcc0d5cbcec111a64e6"
+    },
+    {
       "task_id": "payables-statement-recon",
       "family": "payables-reconciliation",
       "seed": 110,
@@ -682,6 +803,20 @@
       "skill": "analysis",
       "standards": [],
       "digest": "sha256:5c7388097d66f2de6161a981cc35091577b1ed45da6c73d500489abb9fd8de1b"
+    },
+    {
+      "task_id": "payback-period-years",
+      "family": "capital-budgeting",
+      "seed": 177,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "management-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:cd2ce70f06091340ebaef352ac78ff0f1eece63e9e7d061d97312da9c9f6355a"
     },
     {
       "task_id": "payroll-withholdings",
@@ -855,6 +990,23 @@
       "digest": "sha256:0a227d3a6af59e32b10ab43b57420c6cb09bf87f9b9fb1bf843eaa68dc213c6c"
     },
     {
+      "task_id": "sc-cash-flow-classification",
+      "family": "cash-flow-statement",
+      "seed": 180,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "single-choice",
+      "skill": "remembering-understanding",
+      "standards": [
+        "asc:230",
+        "ias:7"
+      ],
+      "digest": "sha256:ef3dd327bdf816493f9c029107e831a979a41bf13101fa351b4ce889131f1fa8"
+    },
+    {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
@@ -867,6 +1019,20 @@
       "skill": "remembering-understanding",
       "standards": [],
       "digest": "sha256:6740b723c25887cd56041eddfead1d057235e0144f70991c7cb8e8355940fc27"
+    },
+    {
+      "task_id": "short-term-note-payment",
+      "family": "borrowings",
+      "seed": 168,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:ae1d3557505cadc490845b63ecc24b0e73f7a4607dbdb2c1b50aab28f7dc67e0"
     },
     {
       "task_id": "small-stock-dividend",
@@ -923,6 +1089,37 @@
       "skill": "analysis",
       "standards": [],
       "digest": "sha256:dbee78686ec1e54fa861a98a67e8592c60bd1400187835aeac3219cb15419a85"
+    },
+    {
+      "task_id": "total-current-liabilities",
+      "family": "financial-reporting",
+      "seed": 179,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "numeric",
+      "skill": "application",
+      "standards": [],
+      "digest": "sha256:a10aa67515fc3d94cf03255884df7e041227d6696e4808285ab47d943e0f262c"
+    },
+    {
+      "task_id": "trading-securities-fair-value",
+      "family": "investments",
+      "seed": 174,
+      "generator_version": "0.3.0",
+      "track": "stable",
+      "category": "financial-accounting",
+      "framework": "core",
+      "level": "vocational",
+      "format": "journal-entry",
+      "skill": "application",
+      "standards": [
+        "asc:321",
+        "ifrs:9"
+      ],
+      "digest": "sha256:63decb54ffb445aef4c7e1769c26bcc2a60e3c1ca163565de7456bb46b382b60"
     },
     {
       "task_id": "treasury-stock-repurchase",
