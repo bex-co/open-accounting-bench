@@ -3484,6 +3484,835 @@ def bank_adjusted_balance(seed: int) -> TaskInstance:
     )
 
 
+TRAINING = "Expenses:Training"
+CAP_COST_ACCOUNTS = [(TRAINING, "Staff training expense")]
+
+
+def capitalized_cost_bundle(seed: int) -> TaskInstance:
+    """Scenario: machine invoice bundles capitalizable and period costs.
+
+    Oracle: equipment = invoice price + freight-in + installation/testing;
+    staff training and the first-year service plan are expensed.
+    Trap: capitalizing the whole invoice (training/service inflate cost).
+    Level V/U/V/U/V/V/V -> vocational (borderline).
+    """
+    rng = random.Random(seed)
+    price = Decimal(rng.randrange(200, 601)) * 50
+    freight = Decimal(rng.randrange(8, 41)) * 25
+    install = Decimal(rng.randrange(10, 51)) * 25
+    training = Decimal(rng.randrange(6, 25)) * 25
+    service = Decimal(rng.randrange(12, 41)) * 25
+    equipment = price + freight + install
+    period = training + service
+    total = equipment + period
+    day = rng.randint(4, 24)
+    date = f"2026-01-{day:02d}"
+    opening = Decimal("60000.00")
+    initial = _ledger_header(opening, CAP_COST_ACCOUNTS)
+    invoice = (
+        f"# Supplier invoice — packaging machine, {date}\n\n"
+        "| Item | USD |\n|---|---:|\n"
+        f"| Machine (invoice price) | {money(price)} |\n"
+        f"| Freight-in | {money(freight)} |\n"
+        f"| Installation and testing | {money(install)} |\n"
+        f"| Operator training course | {money(training)} |\n"
+        f"| First-year service plan | {money(service)} |\n"
+        f"| **Total paid from checking** | **{money(total)}** |\n"
+        "\nThe machine was ready for use on the invoice date.\n"
+    )
+    policy = POLICY + (
+        "- Capitalized cost of equipment includes the invoice price and all\n"
+        "  costs needed to bring it to working condition (freight-in,\n"
+        "  installation, testing). Staff training and post-commissioning\n"
+        "  service plans are period expenses (`Expenses:Training` and\n"
+        "  `Expenses:Repairs` respectively).\n"
+    )
+    solution = initial + _txn(
+        date,
+        "Supplier",
+        "Packaging machine acquired and commissioned",
+        [
+            ("Assets:Equipment", equipment),
+            (TRAINING, training),
+            ("Expenses:Repairs", service),
+            (BANK, -total),
+        ],
+    )
+    return TaskInstance(
+        task_id="capitalized-cost-bundle",
+        family="fixed-assets",
+        title="Capitalize a machine's cost from a bundled invoice",
+        instruction=(
+            "Record the acquisition in `/app/documents/machine_invoice.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            f"balanced transactions dated {date}; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(CAP_COST_ACCOUNTS),
+            "documents/machine_invoice.md": invoice,
+        },
+        expected=_expected(
+            "capitalized-cost-bundle",
+            "fixed-assets",
+            seed,
+            expected_deltas={
+                "Assets:Equipment": money(equipment),
+                TRAINING: money(training),
+                "Expenses:Repairs": money(service),
+                BANK: money(-total),
+            },
+            expected_new_transactions=[1, 3],
+            expected_period=[date, date],
+            required_final_balances={"Assets:Equipment": money(equipment)},
+        ),
+        solution_ledger=solution,
+        difficulty="medium",
+        keywords=["fixed-assets", "capitalized-cost", "freight-in"],
+        level="vocational",
+    )
+
+
+PAYROLL_TAX = "Expenses:PayrollTaxes"
+UNEMPLOYMENT_PAYABLE = "Liabilities:UnemploymentTaxPayable"
+EMPLOYER_TAX_ACCOUNTS = [
+    (WAGES, "Gross wages expense"),
+    (PAYROLL_TAX, "Employer payroll taxes (company cost, above gross pay)"),
+    (FICA_PAYABLE, "Social contributions payable to the authority"),
+    (UNEMPLOYMENT_PAYABLE, "Unemployment insurance payable"),
+]
+
+
+def employer_payroll_taxes(seed: int) -> TaskInstance:
+    """Scenario: employer-side payroll taxes on January gross wages.
+
+    Oracle: payroll-tax expense = gross x (FICA match + unemployment %),
+    credited to the two payables. Trap: treating employer taxes as a
+    deduction from employees' pay (crediting wages payable / reducing wages).
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    gross = Decimal(rng.randrange(8, 26)) * 2000
+    fica_rate = Decimal("0.0765")
+    futa_rate = rng.choice([Decimal("0.006"), Decimal("0.008")])
+    fica = (gross * fica_rate).quantize(CENT)
+    futa = (gross * futa_rate).quantize(CENT)
+    opening = Decimal("80000.00")
+    initial = _ledger_header(opening, EMPLOYER_TAX_ACCOUNTS) + _txn(
+        "2026-01-31",
+        "Payroll",
+        "January gross wages (employee entry already recorded)",
+        [(WAGES, gross), (BANK, -gross)],
+    )
+    doc = (
+        "# Employer payroll taxes — January 2026\n\n"
+        f"Gross wages for January (already recorded and paid): USD {money(gross)}.\n"
+        "The employer's own taxes on those wages, not yet recorded:\n\n"
+        "- Social contributions (employer match): 7.65% of gross wages\n"
+        f"- Unemployment insurance: {futa_rate * 100:.1f}% of gross wages\n"
+        "Both are payable to the authorities in February.\n"
+    )
+    policy = POLICY + (
+        "- Taxes the employer bears on top of gross pay are a separate\n"
+        "  payroll-tax expense of the company, credited to the respective\n"
+        "  payable. They never reduce employees' wages or wages expense.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Payroll",
+        "Employer payroll taxes on January wages",
+        [(PAYROLL_TAX, fica + futa), (FICA_PAYABLE, -fica), (UNEMPLOYMENT_PAYABLE, -futa)],
+    )
+    return TaskInstance(
+        task_id="employer-payroll-taxes",
+        family="payroll",
+        title="Record employer payroll taxes",
+        instruction=(
+            "Record the employer taxes described in "
+            "`/app/documents/employer_taxes.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append new balanced transactions "
+            "dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(EMPLOYER_TAX_ACCOUNTS),
+            "documents/employer_taxes.md": doc,
+        },
+        expected=_expected(
+            "employer-payroll-taxes",
+            "payroll",
+            seed,
+            expected_deltas={
+                PAYROLL_TAX: money(fica + futa),
+                FICA_PAYABLE: money(-fica),
+                UNEMPLOYMENT_PAYABLE: money(-futa),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={WAGES: money(gross)},
+        ),
+        solution_ledger=solution,
+        keywords=["payroll", "employer-taxes", "fica-match"],
+        level="vocational",
+    )
+
+
+LT_NOTE = "Liabilities:LongTermNotePayable"
+CURRENT_PORTION = "Liabilities:CurrentPortionOfLongTermDebt"
+RECLASS_ACCOUNTS = [
+    (LT_NOTE, "Long-term note payable (portion due after one year)"),
+    (CURRENT_PORTION, "Current portion of long-term debt (due within one year)"),
+]
+
+
+def current_portion_reclass(seed: int) -> TaskInstance:
+    """Scenario: reporting-date reclass of the note principal due next year.
+
+    Oracle: move one year's principal installment from long-term to the
+    current-portion account. Trap: reclassifying the whole balance.
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    annual = Decimal(rng.randrange(4, 16)) * 1000
+    years_left = rng.randint(3, 6)
+    balance = annual * years_left
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, RECLASS_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        "Opening long-term note balance",
+        [("Equity:Opening-Balances", balance), (LT_NOTE, -balance)],
+    )
+    doc = (
+        "# Note summary — reporting date 2026-01-31\n\n"
+        f"Note balance: USD {money(balance)}. Principal is repayable in equal "
+        f"annual installments of USD {money(annual)} each 31 December; "
+        f"{years_left} installments remain (first due 2026-12-31).\n"
+    )
+    policy = POLICY + (
+        "- At the reporting date, principal due within the next twelve\n"
+        "  months is presented as a current liability: reclassify that\n"
+        "  installment from `Liabilities:LongTermNotePayable` to\n"
+        "  `Liabilities:CurrentPortionOfLongTermDebt`.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Reporting",
+        "Reclassify principal due within twelve months",
+        [(LT_NOTE, annual), (CURRENT_PORTION, -annual)],
+    )
+    return TaskInstance(
+        task_id="current-portion-reclass",
+        family="borrowings",
+        title="Reclassify the current portion of a long-term note",
+        instruction=(
+            "Record the reporting-date reclassification for the note in "
+            "`/app/documents/note_summary.md` in `/app/ledger.beancount`, "
+            "following `/app/policy.md`. Append exactly one balanced "
+            "transaction dated 2026-01-31; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(RECLASS_ACCOUNTS),
+            "documents/note_summary.md": doc,
+        },
+        expected=_expected(
+            "current-portion-reclass",
+            "borrowings",
+            seed,
+            expected_deltas={LT_NOTE: money(annual), CURRENT_PORTION: money(-annual)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={LT_NOTE: money(-(balance - annual))},
+        ),
+        solution_ledger=solution,
+        keywords=["current-portion", "long-term-debt", "reclassification"],
+        level="vocational",
+    )
+
+
+PURCHASES = "Expenses:Purchases"
+FREIGHT_IN = "Expenses:FreightIn"
+PERIODIC_ACCOUNTS = [
+    (AP, "Trade payables (supplier invoices on credit)"),
+    (PURCHASES, "Purchases of merchandise (periodic system)"),
+    (FREIGHT_IN, "Freight-in on merchandise purchases"),
+]
+
+
+def periodic_purchase_with_freight(seed: int) -> TaskInstance:
+    """Scenario: merchandise bought on credit under the periodic system.
+
+    Oracle: Purchases at invoice amount + FreightIn debited, AP credited
+    for the total owed. Trap: debiting Inventory (perpetual habit) — the
+    ledger intentionally has no inventory movement account for purchases.
+    Level V/V/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    supplier = rng.choice(["Apex Components", "Crestline Materials", "Bolt & Nut Supply"])
+    goods = Decimal(rng.randrange(80, 401)) * 25
+    freight = Decimal(rng.randrange(2, 13)) * 25
+    day = rng.randint(4, 24)
+    date = f"2026-01-{day:02d}"
+    opening = Decimal("20000.00")
+    initial = _ledger_header(opening, PERIODIC_ACCOUNTS)
+    invoice = (
+        f"# Purchase invoice — {supplier}, {date}\n\n"
+        f"Merchandise: USD {money(goods)}\n"
+        f"Freight charged by supplier (FOB shipping point): USD {money(freight)}\n"
+        f"Total on account: USD {money(goods + freight)} (due in 30 days)\n"
+    )
+    policy = POLICY + (
+        "- The company uses the PERIODIC inventory system: merchandise buys\n"
+        "  are debited to `Expenses:Purchases` (inventory is only counted at\n"
+        "  period-end). Freight-in on purchases is debited to\n"
+        "  `Expenses:FreightIn`, not to purchases.\n"
+    )
+    solution = initial + _txn(
+        date,
+        supplier,
+        "Merchandise purchase on credit (periodic)",
+        [(PURCHASES, goods), (FREIGHT_IN, freight), (AP, -(goods + freight))],
+    )
+    return TaskInstance(
+        task_id="periodic-purchase-with-freight",
+        family="inventory",
+        title="Record a periodic-system purchase with freight-in",
+        instruction=(
+            f"Record the purchase in `/app/documents/purchase_invoice.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md` and "
+            f"`/app/chart_of_accounts.md`. Append new balanced transactions "
+            f"dated {date}; do not edit existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(PERIODIC_ACCOUNTS),
+            "documents/purchase_invoice.md": invoice,
+        },
+        expected=_expected(
+            "periodic-purchase-with-freight",
+            "inventory",
+            seed,
+            expected_deltas={
+                PURCHASES: money(goods),
+                FREIGHT_IN: money(freight),
+                AP: money(-(goods + freight)),
+            },
+            expected_new_transactions=[1, 2],
+            expected_period=[date, date],
+            required_final_balances={AP: money(-(goods + freight))},
+        ),
+        solution_ledger=solution,
+        keywords=["periodic-inventory", "purchases", "freight-in"],
+        level="vocational",
+    )
+
+
+def bad_debt_percent_of_sales(seed: int) -> TaskInstance:
+    """Scenario: month-end allowance under the percent-of-credit-sales method.
+
+    Oracle: expense = credit sales x estimated % (the existing allowance
+    balance is NOT considered under this method). Trap: aging-style
+    true-up that credits only the shortfall over the existing balance.
+    Level V/U/V/V/V/U/V -> vocational.
+    """
+    rng = random.Random(seed)
+    credit_sales = Decimal(rng.randrange(80, 321)) * 500
+    pct = rng.choice([Decimal("0.01"), Decimal("0.015"), Decimal("0.02")])
+    expense = (credit_sales * pct).quantize(CENT)
+    existing = Decimal(rng.randrange(8, 41)) * 50
+    opening = Decimal("10000.00")
+    initial = (
+        _ledger_header(opening, RECEIVABLE_ACCOUNTS)
+        + _txn(
+            "2026-01-01",
+            "Opening",
+            "Opening allowance for doubtful accounts",
+            [("Equity:Opening-Balances", existing), (ALLOWANCE, -existing)],
+        )
+        + _txn(
+            "2026-01-15",
+            "Customers",
+            "January credit sales",
+            [(AR, credit_sales), ("Income:Sales", -credit_sales)],
+        )
+    )
+    doc = (
+        "# Credit sales summary — January 2026\n\n"
+        f"Net credit sales: USD {money(credit_sales)}.\n"
+        f"Uncollectibles are estimated at {pct * 100:.1f}% of net credit sales.\n"
+        f"Allowance balance at 2026-01-01 (credit): USD {money(existing)}.\n"
+        "No write-offs occurred in January.\n"
+    )
+    policy = POLICY + (
+        "- Uncollectibles are estimated by the percent-of-credit-sales\n"
+        "  method: the month-end entry records bad-debt expense equal to the\n"
+        "  estimated percent of the month's net credit sales. Under this\n"
+        "  method the pre-existing allowance balance is not considered when\n"
+        "  computing the entry.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-31",
+        "Allowance",
+        "Estimated uncollectibles on January credit sales",
+        [(BAD_DEBTS, expense), (ALLOWANCE, -expense)],
+    )
+    return TaskInstance(
+        task_id="bad-debt-percent-of-sales",
+        family="receivables",
+        title="Estimate uncollectibles by percent of credit sales",
+        instruction=(
+            "Record the month-end estimate in `/app/documents/credit_sales.md` "
+            "in `/app/ledger.beancount`, following `/app/policy.md`. Append "
+            "exactly one balanced transaction dated 2026-01-31; do not edit "
+            "existing entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(RECEIVABLE_ACCOUNTS),
+            "documents/credit_sales.md": doc,
+        },
+        expected=_expected(
+            "bad-debt-percent-of-sales",
+            "receivables",
+            seed,
+            expected_deltas={BAD_DEBTS: money(expense), ALLOWANCE: money(-expense)},
+            expected_period=["2026-01-31", "2026-01-31"],
+            required_final_balances={ALLOWANCE: money(-(existing + expense))},
+        ),
+        solution_ledger=solution,
+        keywords=["bad-debt", "percent-of-sales", "allowance"],
+        level="vocational",
+    )
+
+
+SALES_DISCOUNTS = "Income:SalesDiscounts"
+DISCOUNT_ACCOUNTS = [
+    (AR, "Trade receivables (customer invoices on credit)"),
+    (SALES_DISCOUNTS, "Contra-revenue: cash discounts taken by customers"),
+]
+
+
+def cash_discount_receipt(seed: int) -> TaskInstance:
+    """Scenario: customer pays within the discount period (gross method).
+
+    Oracle: Bank at net, SalesDiscounts at the discount, AR credited gross.
+    Trap: crediting AR only with the cash received (discount left in AR).
+    Level V/U/V/V/V/V/V -> vocational.
+    """
+    rng = random.Random(seed)
+    customer = rng.choice(["Cobalt Retail", "Delta Foods", "Harbor Clinics"])
+    gross = Decimal(rng.randrange(40, 201)) * 50
+    pct = rng.choice([Decimal("0.01"), Decimal("0.02"), Decimal("0.03")])
+    discount = (gross * pct).quantize(CENT)
+    net = gross - discount
+    opening = Decimal("10000.00")
+    initial = _ledger_header(opening, DISCOUNT_ACCOUNTS) + _txn(
+        "2026-01-01",
+        "Opening",
+        f"Opening receivable, {customer}",
+        [(AR, gross), ("Equity:Opening-Balances", -gross)],
+    )
+    doc = (
+        f"# Remittance — {customer}, 2026-01-09\n\n"
+        f"The customer paid the outstanding invoice of USD {money(gross)} within "
+        f"the discount period and took the {pct * 100:.0f}% cash discount "
+        "(terms stated on the original invoice). Cash received into checking: "
+        f"USD {money(net)}.\n"
+    )
+    policy = POLICY + (
+        "- Sales are recorded gross. Discounts taken by customers are a\n"
+        "  reduction of revenue (`Income:SalesDiscounts`): on payment, debit\n"
+        "  bank for the cash received, debit sales discounts for the discount\n"
+        "  taken, and credit receivables for the full invoice amount.\n"
+    )
+    solution = initial + _txn(
+        "2026-01-09",
+        customer,
+        "Payment received within discount period",
+        [(BANK, net), (SALES_DISCOUNTS, discount), (AR, -gross)],
+    )
+    return TaskInstance(
+        task_id="cash-discount-receipt",
+        family="receivables",
+        title="Record a customer payment taking a cash discount",
+        instruction=(
+            "Record the remittance in `/app/documents/remittance.md` in "
+            "`/app/ledger.beancount`, following `/app/policy.md`. Append new "
+            "balanced transactions dated 2026-01-09; do not edit existing "
+            "entries."
+        ),
+        app_files={
+            "ledger.beancount": initial,
+            "policy.md": policy,
+            "chart_of_accounts.md": _chart_md(DISCOUNT_ACCOUNTS),
+            "documents/remittance.md": doc,
+        },
+        expected=_expected(
+            "cash-discount-receipt",
+            "receivables",
+            seed,
+            expected_deltas={
+                BANK: money(net),
+                SALES_DISCOUNTS: money(discount),
+                AR: money(-gross),
+            },
+            expected_period=["2026-01-09", "2026-01-09"],
+            required_final_balances={AR: "0.00"},
+        ),
+        solution_ledger=solution,
+        keywords=["cash-discount", "gross-method", "contra-revenue"],
+        level="vocational",
+    )
+
+
+def abc_overhead_assigned(seed: int) -> TaskInstance:
+    """Numeric: ABC assignment for one pool. Trap: plantwide DLH rate."""
+    rng = random.Random(seed)
+    rate = Decimal(rng.randrange(20, 121)) * 5
+    total_setups = rng.randrange(40, 161, 10)
+    pool = rate * total_setups
+    product_setups = rng.randrange(5, total_setups // 2, 5)
+    gold = rate * product_setups
+    dlh_total = rng.randrange(2000, 9001, 250)
+    dlh_product = rng.randrange(250, dlh_total // 2, 250)
+    trap = (pool / dlh_total * dlh_product).quantize(CENT)
+    if trap == gold:
+        dlh_product += 250
+        trap = (pool / dlh_total * dlh_product).quantize(CENT)
+    data = (
+        "# Activity-based costing — setup cost pool, January 2026\n\n"
+        "| Item | Value |\n|---|---:|\n"
+        f"| Setup overhead pool | USD {money(pool)} |\n"
+        f"| Total setups (all products) | {total_setups} |\n"
+        f"| Setups for Product A | {product_setups} |\n"
+        f"| Direct-labor hours, all products | {dlh_total} |\n"
+        f"| Direct-labor hours, Product A | {dlh_product} |\n"
+    )
+    policy = """# ABC conventions (applies to this task)
+
+- Activity rate = cost pool / total driver quantity (here, setups).
+- Overhead assigned to a product = activity rate x the product's
+  driver quantity. Direct-labor hours are not this pool's driver.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "ABC overhead assigned to Product A",
+        "Using `/app/documents/abc_data.md` and `/app/policy.md`, compute the "
+        "setup overhead **assigned to Product A** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="abc-overhead-assigned",
+        family="activity-based-costing",
+        title="Assign setup overhead to a product (ABC)",
+        question=question,
+        policy=policy,
+        data_name="abc_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "abc", "overhead-allocation"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def high_low_variable_cost(seed: int) -> TaskInstance:
+    """Numeric: variable cost per unit by high-low. Trap: avg cost at high."""
+    rng = random.Random(seed)
+    vc = Decimal(rng.randrange(200, 1501, 25)) / 100
+    fixed = Decimal(rng.randrange(100, 601)) * 50
+    low_units = rng.randrange(1000, 4001, 250)
+    high_units = low_units + rng.randrange(1000, 4001, 250)
+    trap = ((fixed + vc * high_units) / high_units).quantize(Decimal("0.0001"))
+    data = (
+        "# Utility cost observations\n\n| Month | Units | Total cost (USD) |\n|---|---:|---:|\n"
+        f"| Low-activity month | {low_units} | {money(fixed + vc * low_units)} |\n"
+        f"| High-activity month | {high_units} | {money(fixed + vc * high_units)} |\n"
+    )
+    policy = """# High-low conventions (applies to this task)
+
+- Variable cost per unit = (total cost at high activity - total cost at
+  low activity) / (high units - low units).
+- Answer in USD per unit in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "variable cost per unit (high-low)",
+        "Using `/app/documents/cost_observations.md` and `/app/policy.md`, "
+        "compute the **variable cost per unit** in USD.",
+        "the USD amount per unit",
+    )
+    return _numeric_instance(
+        task_id="high-low-variable-cost",
+        family="cost-behavior",
+        title="Estimate variable cost per unit (high-low)",
+        question=question,
+        policy=policy,
+        data_name="cost_observations.md",
+        data=data,
+        gold=vc,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "high-low", "cost-behavior"],
+        abs_tolerance="0.01",
+        trap_value=format(trap, "f"),
+    )
+
+
+def cash_collections_budget(seed: int) -> TaskInstance:
+    """Numeric: February collections from a two-month pattern. Trap: Feb only."""
+    rng = random.Random(seed)
+    jan_sales = Decimal(rng.randrange(80, 321)) * 500
+    feb_sales = Decimal(rng.randrange(80, 321)) * 500
+    now_pct = rng.choice([50, 60, 70])
+    later = 100 - now_pct
+    gold = feb_sales * now_pct / 100 + jan_sales * later / 100
+    trap = feb_sales * now_pct / 100
+    data = (
+        "# Sales budget\n\n| Month | Budgeted credit sales (USD) |\n|---|---:|\n"
+        f"| January | {money(jan_sales)} |\n"
+        f"| February | {money(feb_sales)} |\n\n"
+        f"Collections: {now_pct}% in the month of sale, the remaining "
+        f"{later}% in the following month. All January collections follow "
+        "the same pattern.\n"
+    )
+    policy = """# Collections budget conventions (applies to this task)
+
+- A month's expected collections = the current-month share of that
+  month's sales plus the following-month share of the prior month's sales.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "budgeted February cash collections",
+        "Using `/app/documents/sales_budget.md` and `/app/policy.md`, compute "
+        "**expected cash collections in February** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="cash-collections-budget",
+        family="budgeting",
+        title="Compute budgeted cash collections",
+        question=question,
+        policy=policy,
+        data_name="sales_budget.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "cash-budget", "collections"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def gross_profit_from_trial_balance(seed: int) -> TaskInstance:
+    """Numeric: gross profit from TB data. Trap: gross sales minus COGS."""
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    sales = amt(400, 1201)
+    returns = amt(10, 61)
+    discounts = amt(5, 31)
+    beginning = amt(60, 201)
+    purchases = amt(200, 601)
+    freight = amt(5, 41)
+    ending = amt(50, 181)
+    opex = amt(50, 201)
+    cogs = beginning + purchases + freight - ending
+    gold = sales - returns - discounts - cogs
+    trap = sales - cogs
+    data = (
+        "# Trial-balance extracts — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Sales (gross) | {money(sales)} |\n"
+        f"| Sales returns and allowances | {money(returns)} |\n"
+        f"| Sales discounts | {money(discounts)} |\n"
+        f"| Inventory, 2025-01-01 | {money(beginning)} |\n"
+        f"| Purchases | {money(purchases)} |\n"
+        f"| Freight-in | {money(freight)} |\n"
+        f"| Inventory, 2025-12-31 | {money(ending)} |\n"
+        f"| Operating expenses | {money(opex)} |\n"
+    )
+    policy = """# Gross profit conventions (applies to this task)
+
+- Net sales = gross sales - sales returns and allowances - sales discounts.
+- Cost of goods sold = beginning inventory + purchases + freight-in
+  - ending inventory.
+- Gross profit = net sales - cost of goods sold. Operating expenses are
+  below gross profit and excluded.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "gross profit",
+        "Using `/app/documents/trial_balance.md` and `/app/policy.md`, compute "
+        "**gross profit** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="gross-profit-from-trial-balance",
+        family="financial-reporting",
+        title="Compute gross profit from trial-balance data",
+        question=question,
+        policy=policy,
+        data_name="trial_balance.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "gross-profit", "income-statement"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def ending_retained_earnings(seed: int) -> TaskInstance:
+    """Numeric: ending retained earnings. Trap: adding share-issue proceeds."""
+    rng = random.Random(seed)
+
+    def amt(lo, hi):
+        return Decimal(rng.randrange(lo, hi)) * 100
+
+    beginning = amt(200, 901)
+    net_income = amt(60, 301)
+    dividends = amt(10, 81)
+    issue = amt(100, 401)
+    treasury = amt(20, 101)
+    gold = beginning + net_income - dividends
+    trap = gold + issue
+    data = (
+        "# Equity activity — year ended 2025-12-31\n\n| Item | USD |\n|---|---:|\n"
+        f"| Retained earnings, 2025-01-01 | {money(beginning)} |\n"
+        f"| Net income | {money(net_income)} |\n"
+        f"| Cash dividends declared | {money(dividends)} |\n"
+        f"| New shares issued for cash | {money(issue)} |\n"
+        f"| Treasury shares repurchased | {money(treasury)} |\n"
+    )
+    policy = """# Retained earnings conventions (applies to this task)
+
+- Ending retained earnings = beginning retained earnings + net income
+  - dividends declared. Share issues increase share capital/APIC, and
+  treasury purchases are contra-equity; neither enters retained earnings.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "ending retained earnings",
+        "Using `/app/documents/equity_activity.md` and `/app/policy.md`, compute "
+        "**retained earnings at 2025-12-31** in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="ending-retained-earnings",
+        family="equity",
+        title="Compute ending retained earnings",
+        question=question,
+        policy=policy,
+        data_name="equity_activity.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "retained-earnings", "equity-changes"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
+def present_value_lump_sum(seed: int) -> TaskInstance:
+    """Numeric: PV of a lump sum from a stated factor. Trap: face amount."""
+    rng = random.Random(seed)
+    years = rng.choice([3, 5, 8, 10])
+    rate = rng.choice([Decimal("0.06"), Decimal("0.08"), Decimal("0.10")])
+    factor = (Decimal(1) / (1 + rate) ** years).quantize(Decimal("0.0001"))
+    future = Decimal(rng.randrange(20, 121)) * 1000
+    gold = (future * factor).quantize(CENT)
+    data = (
+        "# Note receivable terms\n\n| Item | Value |\n|---|---:|\n"
+        f"| Single amount receivable at maturity | USD {money(future)} |\n"
+        f"| Term | {years} years |\n"
+        f"| Discount rate | {rate * 100:.0f}% |\n"
+        f"| Present value factor ({rate * 100:.0f}%, {years} years, single sum) | {factor} |\n"
+    )
+    policy = """# Present value conventions (applies to this task)
+
+- Present value = future amount x the single-sum factor given in the
+  data (use it as stated; do not recompute it).
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "present value of a lump sum",
+        "Using `/app/documents/note_terms.md` and `/app/policy.md`, compute "
+        "the **present value** of the amount receivable in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="present-value-lump-sum",
+        family="time-value-of-money",
+        title="Compute the present value of a lump sum",
+        question=question,
+        policy=policy,
+        data_name="note_terms.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="financial-accounting",
+        keywords=["numeric", "present-value", "time-value"],
+        abs_tolerance="0.01",
+        trap_value=money(future),
+    )
+
+
+def flexible_budget_total_cost(seed: int) -> TaskInstance:
+    """Numeric: flexible-budget cost at actual volume. Trap: static budget."""
+    rng = random.Random(seed)
+    planned = rng.randrange(4000, 10001, 250)
+    actual = planned + rng.randrange(500, 2501, 250)
+    vc = Decimal(rng.randrange(300, 1201, 25)) / 100
+    fixed = Decimal(rng.randrange(100, 501)) * 100
+    gold = fixed + vc * actual
+    trap = fixed + vc * planned
+    data = (
+        "# Budget data — January 2026\n\n| Item | Value |\n|---|---:|\n"
+        f"| Planned (static-budget) units | {planned} |\n"
+        f"| Actual units | {actual} |\n"
+        f"| Variable cost | USD {money(vc)} per unit |\n"
+        f"| Fixed costs (total, in the relevant range) | USD {money(fixed)} |\n"
+    )
+    policy = """# Flexible budget conventions (applies to this task)
+
+- Flexible-budget total cost at the actual volume = total fixed costs
+  (unchanged in the relevant range) + variable cost per unit x actual units.
+- Answer in USD in `/app/answer.json`.
+"""
+    question = _numeric_question(
+        "flexible-budget total cost",
+        "Using `/app/documents/budget_data.md` and `/app/policy.md`, compute "
+        "the **flexible-budget total cost** for January in USD.",
+        "the USD amount",
+    )
+    return _numeric_instance(
+        task_id="flexible-budget-total-cost",
+        family="budgeting",
+        title="Compute flexible-budget total cost at actual volume",
+        question=question,
+        policy=policy,
+        data_name="budget_data.md",
+        data=data,
+        gold=gold,
+        seed=seed,
+        category="management-accounting",
+        keywords=["numeric", "flexible-budget"],
+        abs_tolerance="0.01",
+        trap_value=money(trap),
+    )
+
+
 FAMILIES = {
     "classify-operating-expense": classify_operating_expense,
     "bank-recon-missing-fee": bank_recon_missing_fee,
@@ -3525,6 +4354,19 @@ FAMILIES = {
     "absorption-variable-income-difference": absorption_variable_income_difference,
     "current-ratio": current_ratio,
     "bank-adjusted-balance": bank_adjusted_balance,
+    "capitalized-cost-bundle": capitalized_cost_bundle,
+    "employer-payroll-taxes": employer_payroll_taxes,
+    "current-portion-reclass": current_portion_reclass,
+    "periodic-purchase-with-freight": periodic_purchase_with_freight,
+    "bad-debt-percent-of-sales": bad_debt_percent_of_sales,
+    "cash-discount-receipt": cash_discount_receipt,
+    "abc-overhead-assigned": abc_overhead_assigned,
+    "high-low-variable-cost": high_low_variable_cost,
+    "cash-collections-budget": cash_collections_budget,
+    "gross-profit-from-trial-balance": gross_profit_from_trial_balance,
+    "ending-retained-earnings": ending_retained_earnings,
+    "present-value-lump-sum": present_value_lump_sum,
+    "flexible-budget-total-cost": flexible_budget_total_cost,
 }
 
 # Frozen Stable-track seeds for the committed tasks under tasks/.
@@ -3569,4 +4411,17 @@ STABLE_SEEDS = {
     "absorption-variable-income-difference": 138,
     "current-ratio": 139,
     "bank-adjusted-balance": 140,
+    "capitalized-cost-bundle": 141,
+    "employer-payroll-taxes": 142,
+    "current-portion-reclass": 143,
+    "periodic-purchase-with-freight": 144,
+    "bad-debt-percent-of-sales": 145,
+    "cash-discount-receipt": 146,
+    "abc-overhead-assigned": 147,
+    "high-low-variable-cost": 148,
+    "cash-collections-budget": 149,
+    "gross-profit-from-trial-balance": 150,
+    "ending-retained-earnings": 151,
+    "present-value-lump-sum": 152,
+    "flexible-budget-total-cost": 153,
 }

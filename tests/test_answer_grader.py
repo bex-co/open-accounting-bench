@@ -88,6 +88,13 @@ NUMERIC_FAMILIES = [
     "absorption-variable-income-difference",
     "current-ratio",
     "bank-adjusted-balance",
+    "abc-overhead-assigned",
+    "high-low-variable-cost",
+    "cash-collections-budget",
+    "gross-profit-from-trial-balance",
+    "ending-retained-earnings",
+    "present-value-lump-sum",
+    "flexible-budget-total-cost",
 ]
 
 

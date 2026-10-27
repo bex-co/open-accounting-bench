@@ -43,6 +43,16 @@ crosswalk mappings.
   `npv-project-evaluation` (4 d.p., used as given). No crosswalk
   mappings proposed yet.
 
+- 2026-10-26 — thirteen further generator families (Stable seeds
+  141–153): `capitalized-cost-bundle`, `employer-payroll-taxes`,
+  `current-portion-reclass`, `periodic-purchase-with-freight`,
+  `bad-debt-percent-of-sales`, `cash-discount-receipt`,
+  `abc-overhead-assigned`, `high-low-variable-cost`,
+  `cash-collections-budget`, `gross-profit-from-trial-balance`,
+  `ending-retained-earnings`, `present-value-lump-sum`,
+  `flexible-budget-total-cost`. Same checks as the earlier batches.
+  No crosswalk mappings proposed yet.
+
 
 ## Reviewed
 

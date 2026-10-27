@@ -9,6 +9,10 @@ authors = []
 keywords = ["accounting", "beancount", "agents"]
 
 [[tasks]]
+name = "open-accounting-bench/abc-overhead-assigned"
+digest = "sha256:929ee852e835550d9452dc174bb80b5841612f7dbf9b38c1e78fd978b5b4c8fb"
+
+[[tasks]]
 name = "open-accounting-bench/absorption-variable-income-difference"
 digest = "sha256:1006dd55cecdda92493a6d05fe4d0f918d5724b7ee51e98513f5cf80e624e01f"
 
@@ -21,6 +25,10 @@ name = "open-accounting-bench/accrued-wages-adjustment"
 digest = "sha256:fc701e9a6be8f5db9a11b64a0215fdbb71f7dd0d3caefb1f25ef51a78f720989"
 
 [[tasks]]
+name = "open-accounting-bench/bad-debt-percent-of-sales"
+digest = "sha256:aa21416b4454e7070f3f1fff82824650700ba298f12643bf445e3f64699dd3a6"
+
+[[tasks]]
 name = "open-accounting-bench/bank-adjusted-balance"
 digest = "sha256:6e30c325e5231d8a4d4c12ccc9d0ea711b8659f48802ae9e998af9f548a8319c"
 
@@ -31,6 +39,18 @@ digest = "sha256:151b31899e420c15ac2c545ddafbdc487a7383deb6c53cce81b2ca6bcc05a74
 [[tasks]]
 name = "open-accounting-bench/bond-discount-amortization"
 digest = "sha256:ee50ea0a435c66578fa903adb888b48bb3316153f2d18fdf95b715a8e0804aed"
+
+[[tasks]]
+name = "open-accounting-bench/capitalized-cost-bundle"
+digest = "sha256:d678209c43a09081b0b594c2326a74d0ab2ff40d87aee584418600f862fa365f"
+
+[[tasks]]
+name = "open-accounting-bench/cash-collections-budget"
+digest = "sha256:ebe50a981bcb6f74ada824d4af74c98f6f8fb6c01b4a78237b35ab926007b199"
+
+[[tasks]]
+name = "open-accounting-bench/cash-discount-receipt"
+digest = "sha256:8f97b1eb7de582dbfabcf6da6d9e0c83e8b64b557e8e9bfc84ec2a4f40341b76"
 
 [[tasks]]
 name = "open-accounting-bench/cash-dividend-declaration"
@@ -49,6 +69,10 @@ name = "open-accounting-bench/correct-misclassification"
 digest = "sha256:3efe9d7a6cd12d37a5b1e1f3d886d436399c14febd981bc05e884c3c4c94ad78"
 
 [[tasks]]
+name = "open-accounting-bench/current-portion-reclass"
+digest = "sha256:1451828fed11ff91ead913365245bf8940f2384cda266726a41393910b3951f6"
+
+[[tasks]]
 name = "open-accounting-bench/current-ratio"
 digest = "sha256:253c0a90677c720cd2aafbf71578cbef2a90146490ee34dd65e65b17cce3e83b"
 
@@ -57,8 +81,28 @@ name = "open-accounting-bench/cvp-target-profit-units"
 digest = "sha256:f10e3a4c1c85d886915e5200c0864cbca992daed0a78032480195623cd21ec99"
 
 [[tasks]]
+name = "open-accounting-bench/employer-payroll-taxes"
+digest = "sha256:9bbda2c05c9f34b7df66cb2505bd30cac8c626e899d1438c404bec3915dbe98d"
+
+[[tasks]]
+name = "open-accounting-bench/ending-retained-earnings"
+digest = "sha256:b2720c68e98c3fc29b88f57d8e1076ada07c23ee8656e831015acf0c3153b1b9"
+
+[[tasks]]
 name = "open-accounting-bench/equity-issue-above-par"
 digest = "sha256:3717965b62f46883972d5ef9355d14227cf745632fd24317983249ed4a375368"
+
+[[tasks]]
+name = "open-accounting-bench/flexible-budget-total-cost"
+digest = "sha256:6a689f285ef11a3f85c51ce2383064f2d25893f9b111512297b852f2a184e3f9"
+
+[[tasks]]
+name = "open-accounting-bench/gross-profit-from-trial-balance"
+digest = "sha256:189b35a0f615cf392d66347ce016c479bef11f84058035885896bf6fd25fcd3e"
+
+[[tasks]]
+name = "open-accounting-bench/high-low-variable-cost"
+digest = "sha256:95bf801887d3f63efaf1a16cdb4f0ae8c3ae8f79be36115e952cc1c4a5c228dc"
 
 [[tasks]]
 name = "open-accounting-bench/ifrs-capitalize-borrowing-costs"
@@ -125,6 +169,10 @@ name = "open-accounting-bench/payroll-withholdings"
 digest = "sha256:89750609bbb6bac4b9f27b6730819320591128f1272d0164a803b86c61155fa9"
 
 [[tasks]]
+name = "open-accounting-bench/periodic-purchase-with-freight"
+digest = "sha256:6babd1e14692057bf5bf967c95b8eb4612c88f18464c635f7ba4395568215a8c"
+
+[[tasks]]
 name = "open-accounting-bench/perpetual-sale-with-cost"
 digest = "sha256:c5cab64cf018098fb9849fcba11d489ed788a67c1a139bd46169a452545e3bdf"
 
@@ -135,6 +183,10 @@ digest = "sha256:2dae436cb78353a7b6d010ee3e5ef19245f0ca4a58f510701b01765ea320060
 [[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
 digest = "sha256:7fad87ca81219f2b1e93616d2b2ff82f1eb254db912cf6093f3f39838ab1df15"
+
+[[tasks]]
+name = "open-accounting-bench/present-value-lump-sum"
+digest = "sha256:e02cb7b84620eb4452c014ce8a09ca619638b38d084d90ce8d09724bf3847343"
 
 [[tasks]]
 name = "open-accounting-bench/process-costing-equivalent-units"

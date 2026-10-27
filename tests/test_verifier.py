@@ -784,3 +784,107 @@ def test_dishonored_note_principal_only_fails():
         [("Assets:AccountsReceivable", principal), ("Assets:NotesReceivable", -principal)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_capitalizing_whole_machine_invoice_fails():
+    """Trap: capitalize training and the service plan into the machine cost."""
+    instance = FAMILIES["capitalized-cost-bundle"](141)
+    d = _deltas(instance)
+    total = -d["Assets:Bank:Checking"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Supplier",
+        [("Assets:Equipment", total), ("Assets:Bank:Checking", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_employer_taxes_deducted_from_wages_fails():
+    """Trap: charge employer taxes against wages expense (employee treatment)."""
+    instance = FAMILIES["employer-payroll-taxes"](142)
+    d = _deltas(instance)
+    total = d["Expenses:PayrollTaxes"]
+    fica = -d["Liabilities:FICAPayable"]
+    futa = -d["Liabilities:UnemploymentTaxPayable"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Payroll",
+        [
+            ("Expenses:Wages", total),
+            ("Liabilities:FICAPayable", -fica),
+            ("Liabilities:UnemploymentTaxPayable", -futa),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_reclassifying_whole_note_balance_fails():
+    """Trap: move the entire note balance to current liabilities."""
+    instance = FAMILIES["current-portion-reclass"](143)
+    final_lt = instance.expected["required_final_balances"]["Liabilities:LongTermNotePayable"]
+    from decimal import Decimal
+
+    annual = _deltas(instance)["Liabilities:LongTermNotePayable"]
+    whole = annual - Decimal(final_lt)
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Reporting",
+        [
+            ("Liabilities:LongTermNotePayable", whole),
+            ("Liabilities:CurrentPortionOfLongTermDebt", -whole),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_freight_buried_in_purchases_fails():
+    """Trap: debit freight-in to purchases instead of its own account."""
+    instance = FAMILIES["periodic-purchase-with-freight"](144)
+    d = _deltas(instance)
+    total = -d["Liabilities:AccountsPayable"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Supplier",
+        [("Expenses:Purchases", total), ("Liabilities:AccountsPayable", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_percent_of_sales_true_up_fails():
+    """Trap: aging-style true-up crediting only the excess over the balance."""
+    instance = FAMILIES["bad-debt-percent-of-sales"](145)
+    from decimal import Decimal
+
+    expense = _deltas(instance)["Expenses:BadDebts"]
+    existing = (
+        -Decimal(
+            instance.expected["required_final_balances"]["Assets:AllowanceForDoubtfulAccounts"]
+        )
+        - expense
+    )
+    shortfall = expense - existing
+    if shortfall <= 0:
+        shortfall = expense / 2
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-31",
+        "Allowance",
+        [
+            ("Expenses:BadDebts", shortfall),
+            ("Assets:AllowanceForDoubtfulAccounts", -shortfall),
+        ],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
+def test_discount_left_in_receivable_fails():
+    """Trap: credit receivables only with cash received (discount stranded)."""
+    instance = FAMILIES["cash-discount-receipt"](146)
+    net = _deltas(instance)["Assets:Bank:Checking"]
+    wrong = instance.initial_ledger + _entry(
+        "2026-01-09",
+        "Customer",
+        [("Assets:Bank:Checking", net), ("Assets:AccountsReceivable", -net)],
+    )
+    _assert_semantic_trap(instance, wrong)

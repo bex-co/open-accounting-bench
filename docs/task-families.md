@@ -124,6 +124,19 @@ D = standards depth):
 | `absorption-variable-income-difference` | V | U | V | V | V | V | V | vocational |
 | `current-ratio` | V | U | V | V | V | V | V | vocational |
 | `bank-adjusted-balance` | V | U | V | U | V | V | V | vocational |
+| `capitalized-cost-bundle` | V | U | V | U | V | V | V | vocational |
+| `employer-payroll-taxes` | V | U | V | V | V | V | V | vocational |
+| `current-portion-reclass` | V | U | V | V | V | V | V | vocational |
+| `periodic-purchase-with-freight` | V | V | V | V | V | V | V | vocational |
+| `bad-debt-percent-of-sales` | V | U | V | V | V | U | V | vocational |
+| `cash-discount-receipt` | V | U | V | V | V | V | V | vocational |
+| `abc-overhead-assigned` | V | U | V | U | V | V | V | vocational |
+| `high-low-variable-cost` | V | U | V | V | V | V | V | vocational |
+| `cash-collections-budget` | V | U | V | V | V | V | V | vocational |
+| `gross-profit-from-trial-balance` | V | U | V | U | V | V | V | vocational |
+| `ending-retained-earnings` | V | U | V | U | V | V | V | vocational |
+| `present-value-lump-sum` | V | U | V | V | V | V | V | vocational |
+| `flexible-budget-total-cost` | V | U | V | V | V | V | V | vocational |
 
 No task reaches professional yet; that needs P on problem
 identification, evidence, or judgement (see above).
@@ -176,8 +189,21 @@ problem the task hands over. An analysis task can be vocational.
 | `absorption-variable-income-difference` | absorption-variable-costing | numeric | core | application | — | Rate x units sold |
 | `current-ratio` | financial-analysis | numeric | core | application | — | Quick ratio |
 | `bank-adjusted-balance` | bank-reconciliation | numeric | core | application | — | Unadjusted book balance |
+| `capitalized-cost-bundle` | fixed-assets | journal-entry | core | application | — | Capitalize the whole invoice |
+| `employer-payroll-taxes` | payroll | journal-entry | core | application | — | Deduct from employee wages |
+| `current-portion-reclass` | borrowings | journal-entry | core | application | — | Reclassify the whole balance |
+| `periodic-purchase-with-freight` | inventory | journal-entry | core | application | — | Freight buried in purchases |
+| `bad-debt-percent-of-sales` | receivables | journal-entry | core | application | — | Aging-style true-up |
+| `cash-discount-receipt` | receivables | journal-entry | core | application | — | Discount left in receivables |
+| `abc-overhead-assigned` | activity-based-costing | numeric | core | application | — | Plantwide DLH rate |
+| `high-low-variable-cost` | cost-behavior | numeric | core | application | — | Average cost at high volume |
+| `cash-collections-budget` | budgeting | numeric | core | application | — | Current month only |
+| `gross-profit-from-trial-balance` | financial-reporting | numeric | core | application | — | Gross sales minus COGS |
+| `ending-retained-earnings` | equity | numeric | core | application | — | Add share-issue proceeds |
+| `present-value-lump-sum` | time-value-of-money | numeric | core | application | — | Undiscounted face amount |
+| `flexible-budget-total-cost` | budgeting | numeric | core | application | — | Static-budget volume |
 
-Stable seeds: 101–140 (`STABLE_SEEDS` in `src/oab/families.py`).
+Stable seeds: 101–153 (`STABLE_SEEDS` in `src/oab/families.py`).
 
 ## Coverage matrix (category × framework)
 
@@ -186,12 +212,12 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 31 | 1 | planned | planned |
-| management-accounting | 8 | planned | planned | planned |
+| financial-accounting | 40 | 1 | planned | planned |
+| management-accounting | 12 | planned | planned | planned |
 | tax | planned | — | — | planned |
 | audit-assurance | planned | — | planned | — |
 
-Format coverage: journal-entry ×27, multiple-choice ×1, numeric ×12;
+Format coverage: journal-entry ×33, multiple-choice ×1, numeric ×19;
 single-choice grader exists without a committed family; open-text is
 deferred (needs a judge design — see [methodology.md](methodology.md)).
 
