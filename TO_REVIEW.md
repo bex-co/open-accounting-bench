@@ -150,6 +150,45 @@ crosswalk mappings.
   `loss-contingency-accrual`; dividends-paid-as-financing is the
   US-GAAP/IFRS policy choice stated in `sc-cash-flow-classification`).
   No crosswalk mappings proposed yet.
+- 2026-10-26 — review-response changes under GENERATOR_VERSION 0.4.0
+  (commits 612a706, d9f843b, accb483), for reviewer confirmation:
+  - `pension-expense-and-contribution` remodelled to US GAAP (ASC 715)
+    only: amortization of prior losses now reclassified out of AOCI
+    (opening debit balance seeded at 3-6x the month's amortization);
+    the liability falls by contribution - (service + interest -
+    expected return). Check the AOCI mechanics and that dropping the
+    IAS 19 tag is right (IAS 19 has no amortization or expected
+    return).
+  - `cash-flow-hedge-fair-value` retagged IFRS 9 only; the document
+    now gives the hedged item's cumulative change so the IFRS 9
+    lower-of test is what solvers apply.
+  - `governmental-encumbrance-entry` redesigned around a partial
+    receipt so the encumbrance balance is graded at month-end.
+  - `factoring-secured-borrowing` accepts 1-3 transactions;
+    `passthrough-loss-limitation` states non-participation;
+    `inventory-error-correction` states materiality;
+    `capitalized-cost-bundle` expenses post-in-service routine
+    maintenance (was a prepaid service plan);
+    `sc-subsequent-event-classification` drops the stock-split case.
+  - Bond/ARO generators now price from their stated rates
+    (`bond-discount-amortization`, `bond-issued-at-premium`,
+    `aro-accretion`); several generators' ranges were constrained so
+    the documented trap can never equal gold and scenarios stay
+    sensible on every seed (permanent 1,000-seed sweep tests).
+  - Level re-score of seeds 116-270 at the strict reading (30
+    university, 25 of them borderline; 125 vocational), with a new
+    consistency test tying docs scores, labels, and generator
+    levels together. The re-scores are themselves judgement;
+    spot-check in particular the borderline rows and
+    `predetermined-overhead-applied` (scored vocational here: the
+    rate derivation is a single two-input intermediate).
+  - Decisions recorded for confirmation (same form as the
+    2026-10-25 "Accepted equivalences"): stated factors must be used
+    as given and not recomputed (`npv-project-evaluation`,
+    `present-value-lump-sum`, `lease-initial-recognition` and peers);
+    answers recomputing exact factors may miss by up to USD 1.88 and
+    score 0. Accepted as a stated-instruction convention, pending
+    reviewer sign-off.
 
 
 ## Reviewed
