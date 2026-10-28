@@ -2,13 +2,13 @@
   "task_id": "asset-revaluation-surplus",
   "family": "fixed-assets",
   "seed": 212,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
     "Assets:AccumulatedDepreciation": "35000.00",
-    "Assets:Equipment": "75000.00",
+    "Assets:Building": "75000.00",
     "Equity:RevaluationSurplus": "-110000.00"
   },
   "allowed_extra_accounts": [],
@@ -22,7 +22,7 @@
   ],
   "required_final_balances": {
     "Assets:AccumulatedDepreciation": "0.00",
-    "Assets:Equipment": "365000.00"
+    "Assets:Building": "365000.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

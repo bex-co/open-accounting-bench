@@ -326,6 +326,28 @@ crosswalk mappings.
   known-misstatement convention in particular). Level scores
   assigned under the strict reading. No crosswalk mappings proposed
   yet.
+- 2026-10-27 — review-response changes under GENERATOR_VERSION 0.5.0
+  for the accumulated 116–391 review. Maintainer decision recorded
+  for confirmation: the earlier "stated factors as given" convention
+  is reversed for the present-value factor families; factors are now
+  stated to ten decimals and exact recomputation fits the grading
+  tolerance. Fixed forward, in particular: current-law hobby-loss
+  disallowance; a genuine defined-contribution plan liability;
+  per-unit governmental capitalization data; internal coherence and
+  a document-derived trap for the Section 754 allocation; unrounded
+  control deviation rates; corrected tax-authority and signing
+  rules; ASC 410-only ARO tagging; secured-borrowing rationale;
+  the 2025 gift exclusion; exclusion of the USD 100,000
+  below-market-loan boundary; partnership guaranteed-payment
+  wording; filing-status precedence; confirmation cutoff facts;
+  issuer internal-audit wording; exit-service dates; and generator
+  guards for warranty trap collisions, negative tax basis, signed
+  AFN, bundled lease prices, and retained-stake pricing. Level
+  re-scores: `abc-overhead-assigned` to vocational and
+  `held-for-sale-measurement` to university (borderline). The
+  original batch entries above remain Pending for the human
+  reviewer's consolidated sign-off; no item in this response is
+  marked reviewed by an agent.
 
 
 ## Reviewed

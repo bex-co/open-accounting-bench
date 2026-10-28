@@ -3261,8 +3261,8 @@ def npv_project_evaluation(seed: int) -> TaskInstance:
     )
     policy = """# Capital budgeting conventions (applies to this task)
 
-- NPV = annual net cash inflow x the annuity factor given in the data
-  (use it as stated; do not recompute it) - initial investment.
+- NPV = annual net cash inflow x the present-value annuity factor
+  for the stated rate and life, minus the initial investment.
 - Answer in USD in `/app/answer.json`.
 """
     question = _numeric_question(
@@ -3993,7 +3993,10 @@ def cash_discount_receipt(seed: int) -> TaskInstance:
 
 
 def abc_overhead_assigned(seed: int) -> TaskInstance:
-    """Numeric: ABC assignment for one pool. Trap: plantwide DLH rate."""
+    """Numeric: ABC assignment for one pool. Trap: plantwide DLH rate.
+
+    Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
+    """
     rng = random.Random(seed)
     rate = Decimal(rng.randrange(20, 121)) * 5
     total_setups = rng.randrange(40, 161, 10)
@@ -4040,7 +4043,6 @@ def abc_overhead_assigned(seed: int) -> TaskInstance:
         seed=seed,
         category="management-accounting",
         keywords=["numeric", "abc", "overhead-allocation"],
-        level="university",
         abs_tolerance="0.01",
         trap_value=money(trap),
     )
@@ -4255,7 +4257,7 @@ def present_value_lump_sum(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     years = rng.choice([3, 5, 8, 10])
     rate = rng.choice([Decimal("0.06"), Decimal("0.08"), Decimal("0.10")])
-    factor = (Decimal(1) / (1 + rate) ** years).quantize(Decimal("0.0001"))
+    factor = (Decimal(1) / (1 + rate) ** years).quantize(Decimal("0.0000000001"))
     future = Decimal(rng.randrange(20, 121)) * 1000
     gold = (future * factor).quantize(CENT)
     data = (
@@ -4267,8 +4269,8 @@ def present_value_lump_sum(seed: int) -> TaskInstance:
     )
     policy = """# Present value conventions (applies to this task)
 
-- Present value = future amount x the single-sum factor given in the
-  data (use it as stated; do not recompute it).
+- Present value = future amount x the single-sum present-value
+  factor for the stated rate and term.
 - Answer in USD in `/app/answer.json`.
 """
     question = _numeric_question(
@@ -4528,6 +4530,8 @@ def warranty_provision_and_claims(seed: int) -> TaskInstance:
     pct = rng.choice([Decimal("0.02"), Decimal("0.03"), Decimal("0.04")])
     estimate = sales * pct
     claims = Decimal(rng.randrange(10, 51)) * 50
+    if claims == estimate:
+        claims += Decimal("50")
     opening_liability = claims * rng.randint(2, 4)
     opening = Decimal("50000.00")
     initial = (
@@ -4981,8 +4985,8 @@ def lease_liability_present_value(seed: int) -> TaskInstance:
     policy = """# Lessee measurement conventions (applies to this task)
 
 - The lease liability at commencement is the present value of the lease
-  payments: annual payment x the annuity factor given in the data
-  (use it as stated; do not recompute it).
+  payments: annual payment x the present-value annuity factor for
+  the stated rate and term.
 - Answer in USD in `/app/answer.json`.
 """
     question = _numeric_question(
@@ -5066,7 +5070,7 @@ def bond_issue_price(seed: int) -> TaskInstance:
     market = coupon_rate + Decimal("0.02")
     coupon = face * coupon_rate
     annuity = _annuity_factor(market, years)
-    pv_factor = (Decimal(1) / (1 + market) ** years).quantize(Decimal("0.0001"))
+    pv_factor = (Decimal(1) / (1 + market) ** years).quantize(Decimal("0.0000000001"))
     gold = (coupon * annuity + face * pv_factor).quantize(CENT)
     data = (
         "# Bond issue terms\n\n| Item | Value |\n|---|---:|\n"
@@ -5079,9 +5083,9 @@ def bond_issue_price(seed: int) -> TaskInstance:
     )
     policy = """# Bond pricing conventions (applies to this task)
 
-- Issue price = annual coupon x the annuity factor + face value x the
-  single-sum factor, using the factors given in the data as stated
-  (do not recompute them). When the market rate exceeds the coupon
+- Issue price = annual coupon x the present-value annuity factor +
+  face value x the single-sum present-value factor, each at the
+  market rate. When the market rate exceeds the coupon
   rate the bonds sell at a discount.
 - Answer in USD in `/app/answer.json`.
 """
@@ -7259,7 +7263,7 @@ def lease_initial_recognition(seed: int) -> TaskInstance:
     policy = POLICY + (
         "- At lease commencement, recognize a right-of-use asset and a lease\n"
         "  liability at the present value of lease payments (annual payment\n"
-        "  x the annuity factor stated in the lease document, used as given).\n"
+        "  x the present-value annuity factor for the stated rate and term).\n"
         "  With no prepayments, incentives, or initial direct costs, the two\n"
         "  opening amounts are equal.\n"
     )
@@ -8307,7 +8311,7 @@ def held_for_sale_measurement(seed: int) -> TaskInstance:
     Oracle: remove cost/accumulated depreciation, recognize the held-for
     -sale asset at fair value less costs to sell, and book the shortfall
     as a loss. Trap: reclassifying at carrying amount with no write-down.
-    Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
+    Level scores R/S/I/E/J/C/D = V/U/V/V/V/V/U -> university.
     """
     rng = random.Random(seed)
     asset = rng.choice(["delivery vehicle", "packaging machine", "forklift"])
@@ -8393,7 +8397,7 @@ def held_for_sale_measurement(seed: int) -> TaskInstance:
         solution_ledger=solution,
         difficulty="hard",
         keywords=["held-for-sale", "ifrs-5", "write-down"],
-        level="vocational",
+        level="university",
         framework="ifrs",
         standards=["ifrs:5"],
     )
@@ -8472,15 +8476,16 @@ def share_based_compensation_monthly(seed: int) -> TaskInstance:
 
 REVALUATION_SURPLUS = "Equity:RevaluationSurplus"
 REVALUATION_ACCOUNTS = DISPOSAL_ACCOUNTS + [
-    (REVALUATION_SURPLUS, "Revaluation surplus in other comprehensive income")
+    (BUILDING, "Buildings (multi-year useful life)"),
+    (REVALUATION_SURPLUS, "Revaluation surplus in other comprehensive income"),
 ]
 
 
 def asset_revaluation_surplus(seed: int) -> TaskInstance:
-    """Scenario (IFRS): equipment is revalued upward on Jan 31.
+    """Scenario (IFRS): a building is revalued upward on Jan 31.
 
     Oracle (elimination method stated in policy): accumulated depreciation
-    is eliminated against the gross amount, equipment is restated to fair
+    is eliminated against the gross amount, the building is restated to fair
     value, and the uplift goes to revaluation surplus (OCI), not income.
     Trap: crediting the uplift to profit or loss.
     Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/U -> vocational.
@@ -8498,7 +8503,7 @@ def asset_revaluation_surplus(seed: int) -> TaskInstance:
         "Opening",
         f"Opening carrying amount: {asset}",
         [
-            ("Assets:Equipment", cost),
+            (BUILDING, cost),
             (ACC_DEP, -acc_dep),
             ("Equity:Opening-Balances", acc_dep - cost),
         ],
@@ -8523,13 +8528,13 @@ def asset_revaluation_surplus(seed: int) -> TaskInstance:
             "2026-01-31",
             "Valuation",
             "Eliminate accumulated depreciation on revaluation",
-            [(ACC_DEP, acc_dep), ("Assets:Equipment", -acc_dep)],
+            [(ACC_DEP, acc_dep), (BUILDING, -acc_dep)],
         )
         + _txn(
             "2026-01-31",
             "Valuation",
             "Restate asset to fair value",
-            [("Assets:Equipment", uplift), (REVALUATION_SURPLUS, -uplift)],
+            [(BUILDING, uplift), (REVALUATION_SURPLUS, -uplift)],
         )
     )
     return TaskInstance(
@@ -8554,14 +8559,14 @@ def asset_revaluation_surplus(seed: int) -> TaskInstance:
             seed,
             expected_deltas={
                 ACC_DEP: money(acc_dep),
-                "Assets:Equipment": money(uplift - acc_dep),
+                BUILDING: money(uplift - acc_dep),
                 REVALUATION_SURPLUS: money(-uplift),
             },
             expected_new_transactions=[1, 3],
             expected_period=["2026-01-31", "2026-01-31"],
             required_final_balances={
                 ACC_DEP: "0.00",
-                "Assets:Equipment": money(fair_value),
+                BUILDING: money(fair_value),
             },
         ),
         solution_ledger=solution,
@@ -9463,6 +9468,7 @@ def fx_translation_adjustment(seed: int) -> TaskInstance:
 
 
 SALE_LEASEBACK_ACCOUNTS = DISPOSAL_ACCOUNTS + [
+    (BUILDING, "Buildings (multi-year useful life)"),
     (ROU_ASSET, "Right-of-use asset (leaseback)"),
     (LEASE_LIABILITY, "Lease liability (leaseback)"),
     (DEFERRED, "Deferred revenue (not used for a qualifying sale)"),
@@ -9495,7 +9501,7 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
         "Opening",
         "Opening carrying amount: headquarters building",
         [
-            ("Assets:Equipment", cost),
+            (BUILDING, cost),
             (ACC_DEP, -acc_dep),
             ("Equity:Opening-Balances", acc_dep - cost),
         ],
@@ -9523,7 +9529,7 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
             (BANK, proceeds),
             (ACC_DEP, acc_dep),
             (ROU_ASSET, lease_pv),
-            ("Assets:Equipment", -cost),
+            (BUILDING, -cost),
             (LEASE_LIABILITY, -lease_pv),
             (DISPOSAL, -gain),
         ],
@@ -9552,14 +9558,14 @@ def sale_and_leaseback_entry(seed: int) -> TaskInstance:
                 BANK: money(proceeds),
                 ACC_DEP: money(acc_dep),
                 ROU_ASSET: money(lease_pv),
-                "Assets:Equipment": money(-cost),
+                BUILDING: money(-cost),
                 LEASE_LIABILITY: money(-lease_pv),
                 DISPOSAL: money(-gain),
             },
             expected_new_transactions=[1, 3],
             expected_period=["2026-01-15", "2026-01-15"],
             required_final_balances={
-                "Assets:Equipment": "0.00",
+                BUILDING: "0.00",
                 ROU_ASSET: money(lease_pv),
             },
         ),
@@ -9667,7 +9673,7 @@ def debt_security_credit_loss(seed: int) -> TaskInstance:
 
 def _annuity_factor(rate: Decimal, years: int) -> Decimal:
     return sum(Decimal(1) / (1 + rate) ** t for t in range(1, years + 1)).quantize(
-        Decimal("0.0001")
+        Decimal("0.0000000001")
     )
 
 
@@ -10746,16 +10752,18 @@ def factoring_secured_borrowing(seed: int) -> TaskInstance:
         f"The company pledged receivables of USD {money(receivables)} to a "
         f"factor, which advanced {advance_pct}% (USD {money(advance)}) less a "
         f"{fee_pct * 100:.0f}% fee on the advance (USD {money(fee)}), paying "
-        f"USD {money(cash)} into checking. The company retains full recourse "
-        "for uncollectible accounts and keeps control of collections; "
-        "customers were not notified.\n"
+        f"USD {money(cash)} into checking. Legal title to the receivables "
+        "was not transferred: the factor has only a security interest, "
+        "cannot sell or pledge them, and the company retains the risks "
+        "of uncollectible accounts and control of collections. Customers "
+        "were not notified.\n"
     )
     policy = POLICY + (
-        "- A transfer of receivables that does not surrender control (here:\n"
-        "  full recourse and retained collections) is a SECURED BORROWING,\n"
-        "  not a sale: cash is debited net of the fee, the fee is expensed,\n"
-        "  a secured-borrowing liability is credited for the advance, and\n"
-        "  receivables remain on the books.\n"
+        "- Pledging receivables as collateral, without transferring legal\n"
+        "  title or giving the lender a right to sell or pledge them, is a\n"
+        "  SECURED BORROWING, not a sale: cash is debited net of the fee,\n"
+        "  the fee is expensed, a secured-borrowing liability is credited\n"
+        "  for the advance, and receivables remain on the books.\n"
     )
     solution = initial + _txn(
         "2026-01-12",
@@ -11985,7 +11993,8 @@ def aro_accretion(seed: int) -> TaskInstance:
         solution_ledger=solution,
         keywords=["asset-retirement-obligation", "accretion"],
         level="vocational",
-        standards=["asc:410", "ias:37"],
+        framework="us-gaap",
+        standards=["asc:410"],
     )
 
 
@@ -13651,10 +13660,13 @@ def disposal_of_subsidiary_gain(seed: int) -> TaskInstance:
 
     net_assets, goodwill = amt(300, 701), amt(20, 121)
     nci = (net_assets * Decimal("0.2")).quantize(CENT)
-    retained_fv = amt(60, 181)
-    # Consideration large enough that the group result is a gain.
+    retained_factor = rng.choice([Decimal("0.75"), Decimal("0.85"), Decimal("0.90")])
+    # Consideration large enough that the group result is a gain. The
+    # retained minority stake is priced from the sold-stake price per
+    # percentage point, with a minority/control discount factor.
     while True:
         consideration = amt(400, 901)
+        retained_fv = (consideration / 3 * retained_factor).quantize(CENT)
         gold = consideration + retained_fv + nci - (net_assets + goodwill)
         if gold >= Decimal("20000"):
             break
@@ -14966,7 +14978,9 @@ def lease_component_allocation(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     lease_sa = Decimal(rng.randrange(5, 13)) * 100
     service_sa = Decimal(rng.randrange(1, 6)) * 100
-    total = Decimal(rng.randrange(7, 18)) * 100
+    total = (
+        (lease_sa + service_sa) * rng.choice([Decimal("0.90"), Decimal("0.95"), Decimal("1")])
+    ).quantize(CENT)
     gold = (total * lease_sa / (lease_sa + service_sa)).quantize(CENT)
     data = (
         "# Bundled contract — monthly amounts\n\n| Item | USD |\n|---|---:|\n"
@@ -15872,7 +15886,7 @@ def exit_obligation_january_amount(seed: int) -> TaskInstance:
     retention_total = Decimal(rng.randrange(10, 41)) * 6000
     gold = immediate + retention_total / 6
     data = (
-        "# Exit plan communicated 2026-01-10\n\n"
+        "# Exit plan communicated 2026-01-01\n\n"
         "| Group | Terms | Amount (USD) |\n|---|---|---:|\n"
         f"| A: leave now, no future service | Termination benefits | {money(immediate)} |\n"
         f"| B: must work to 2026-06-30 for the benefit | Termination benefits | "
@@ -15883,8 +15897,8 @@ def exit_obligation_january_amount(seed: int) -> TaskInstance:
 - Benefits for employees terminated without a future-service
   requirement are recognized in full at the communication date.
 - Benefits that require service beyond a minimum retention period
-  (here: service through 30 June, six months from communication)
-  are accrued ratably over the service period: 1/6 by 31 January.
+  (here: service from 1 January through 30 June, six months) are
+  accrued ratably over the service period: 1/6 by 31 January.
 - Answer the liability recognized at 2026-01-31 in USD.
 """
     question = _numeric_question(
@@ -16440,13 +16454,13 @@ def benefit_plan_net_assets(seed: int) -> TaskInstance:
         f"| Investments at fair value | {money(investments)} |\n"
         f"| Employer contributions receivable | {money(recv_er)} |\n"
         f"| Employee contributions receivable | {money(recv_ee)} |\n"
-        f"| Benefits payable to terminated participants | {money(payable)} |\n"
+        f"| Accrued plan administrative expenses payable | {money(payable)} |\n"
         f"| Actuary's estimate of total future benefits (memo) | {money(obligation)} |\n"
     )
     policy = """# Defined-contribution plan conventions (applies to this task)
 
 - Net assets available for benefits = plan investments at fair
-  value + contributions receivable - benefits and amounts payable.
+  value + contributions receivable - plan liabilities.
 - A defined-contribution plan recognizes NO accrued benefit
   obligation liability: benefits are whatever the accounts hold,
   so actuarial estimates of future benefits are not deducted.
@@ -16757,40 +16771,36 @@ def govt_capitalized_costs_total(seed: int) -> TaskInstance:
     """
     rng = random.Random(seed)
     threshold = Decimal("5000")
-    names = [
-        "Patrol vehicles",
-        "Office chairs",
-        "Bridge resurfacing",
-        "Laptop computers",
-        "HVAC system replacement",
-        "Hand tools",
+
+    def unit_cost(lo, hi, step=100):
+        return Decimal(rng.randrange(lo, hi, step))
+
+    items = [
+        ("Patrol vehicles", rng.randint(2, 4), unit_cost(25000, 60001, 1000)),
+        ("Office chairs", rng.randrange(20, 81, 10), unit_cost(250, 901, 25)),
+        ("Bridge resurfacing project", 1, unit_cost(100000, 400001, 1000)),
+        ("Laptop computers", rng.randrange(10, 41, 5), unit_cost(900, 2501, 50)),
+        ("HVAC system replacement", 1, unit_cost(20000, 80001, 1000)),
+        ("Hand tools", rng.randrange(20, 101, 10), unit_cost(50, 301, 25)),
     ]
-    # At least one item on each side of the threshold.
-    while True:
-        items = [
-            (
-                name,
-                Decimal(rng.randrange(7, 301)) * 1000
-                if rng.random() < 0.55
-                else Decimal(rng.randrange(4, 49)) * 100,
-            )
-            for name in names
-        ]
-        gold = sum(v for _, v in items if v >= threshold)
-        trap = sum(v for _, v in items)
-        if 0 < gold < trap:
-            break
-    rows = "".join(f"| {n} | {money(v)} |\n" for n, v in items)
+    gold = sum(units * cost for _name, units, cost in items if cost >= threshold)
+    trap = sum(units * cost for _name, units, cost in items)
+    rows = "".join(
+        f"| {name} | {units} | {money(cost)} | {money(units * cost)} |\n"
+        for name, units, cost in items
+    )
     data = (
         "# Capital outlay purchases — 2025\n\n"
         f"Capitalization threshold: USD {money(threshold)} per unit/project.\n\n"
-        "| Purchase | Cost (USD) |\n|---|---:|\n" + rows
+        "| Purchase | Units | Cost per unit/project (USD) | Total cost (USD) |\n"
+        "|---|---:|---:|---:|\n" + rows
     )
     policy = """# Capitalization conventions (applies to this task)
 
-- Capitalize only purchases whose per-unit/project cost meets or
-  exceeds the stated capitalization threshold; smaller outlays are
-  expensed in the period.
+- Apply the threshold to the cost PER UNIT or project, not to the
+  invoice total for multiple units. Capitalize the total cost of
+  purchases whose per-unit/project cost meets or exceeds the
+  threshold; smaller outlays are expensed in the period.
 - Answer the total amount capitalized as capital assets, in USD.
 """
     question = _numeric_question(
@@ -16881,8 +16891,8 @@ def govt_expenditures_december(seed: int) -> TaskInstance:
 def govt_long_term_debt_total(seed: int) -> TaskInstance:
     """Numeric: government-wide long-term debt carrying amount.
 
-    Trap: adding the current portion again on top of the full
-    face amount, double-counting it.
+    Trap: excluding the current portion from the carrying amount
+    of debt for all maturities.
     Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
@@ -16935,7 +16945,7 @@ def govt_long_term_debt_total(seed: int) -> TaskInstance:
         category="financial-accounting",
         keywords=["numeric", "governmental", "long-term-debt"],
         abs_tolerance="0.01",
-        trap_value=money(gold + current_portion),
+        trap_value=money(gold - current_portion),
     )
 
 
@@ -17325,13 +17335,15 @@ sales) - (forecast profit retained: forecast sales x margin x
 (1 - payout ratio)).
 
 - Items stated not to vary with sales never enter the calculation.
+- Report the signed result: a negative amount is a financing
+  surplus (negative additional funds needed).
 - Answer in USD in `/app/answer.json`.
 """
     question = _numeric_question(
         "additional funds needed",
         "Using `/app/documents/forecast_inputs.md` and `/app/policy.md`, "
         "compute **additional funds needed** in USD.",
-        "the USD amount",
+        "the signed USD amount",
     )
     return _numeric_instance(
         task_id="percent-of-sales-afn",
@@ -17693,7 +17705,7 @@ def disallowed_loss_amount(seed: int) -> TaskInstance:
     wash, personal, allowed = amt(20, 91), amt(15, 71), amt(10, 61)
     hobby_income = amt(5, 31)
     hobby_expenses = hobby_income + amt(8, 41)
-    gold = wash + personal + (hobby_expenses - hobby_income)
+    gold = wash + personal + hobby_expenses
     data = (
         "# Loss transactions — 2025\n\n| Item | Loss (USD) |\n|---|---:|\n"
         f"| Stock sold at a loss; identical shares repurchased 10 days later | {money(wash)} |\n"
@@ -17707,8 +17719,8 @@ def disallowed_loss_amount(seed: int) -> TaskInstance:
   identical shares are bought within 30 days before or after the
   sale.
 - Losses on personal-use assets are never deductible.
-- Hobby expenses are deductible only up to hobby income; the
-  excess is disallowed.
+- For 2025, hobby expenses are not deductible; the full hobby
+  expense amount is disallowed.
 - Other investment losses (no repurchase) are deductible.
 
 - Answer the TOTAL disallowed amount in USD.
@@ -17894,9 +17906,9 @@ AUTHORITY_CASES = [
         "Substantial authority — disclosure not required",
     ),
     (
-        "The only support is a well-reasoned law-review article and "
-        "a private letter ruling issued to another taxpayer with "
-        "similar facts.",
+        "The only listed authority is an old private letter ruling "
+        "with materially different facts; a well-reasoned law-review "
+        "article also agrees with the taxpayer.",
         "Reasonable basis only — disclose the position",
     ),
     (
@@ -17928,16 +17940,19 @@ def sc_tax_authority_disclosure(seed: int) -> TaskInstance:
     options_md = "\n".join(f"- {oid}. {name}" for oid, name in zip(option_ids, labels, strict=True))
     policy = """# Authority hierarchy (stated for this task)
 
-- Substantial authority: the weight of primary authorities (code,
-  regulations, applicable court decisions) supporting the
+- Substantial authority: the weight of listed authorities (the
+  Code, regulations, revenue rulings, applicable court decisions,
+  and private letter rulings, among others) supporting the
   treatment is substantial in relation to contrary authorities.
   No disclosure is required.
 - Reasonable basis: a position reasonably arguable from one or
-  more authorities (including well-reasoned commentary), short of
-  substantial authority. The position may be taken only WITH
-  disclosure.
-- Private letter rulings bind only their recipient and count, at
-  most, toward reasonable basis.
+  more listed authorities, short of substantial authority. The
+  position may be taken only WITH disclosure.
+- Secondary commentary — law-review articles, treatises, and
+  newsletters — is not authority and cannot by itself establish
+  reasonable basis. A private letter ruling is listed authority,
+  but factual differences and contrary authority affect its weight;
+  it is not automatically substantial authority.
 - A position contrary to the authorities with no support is
   frivolous and must not be taken.
 """
@@ -18037,7 +18052,8 @@ def sc_filing_status(seed: int) -> TaskInstance:
   taxpayer's child) lived there for MORE than half the year.
 - Surviving spouse: spouse died within the two prior tax years,
   taxpayer has not remarried and keeps up the home for a
-  dependent child.
+  dependent child. If the surviving-spouse test is met, use that
+  status even if the head-of-household test is also met.
 - Otherwise an unmarried taxpayer files as Single.
 """
     question = _choice_question(
@@ -18244,8 +18260,9 @@ def sc_tax_practice_ethics(seed: int) -> TaskInstance:
 - Contingent fees are PROHIBITED for preparing an original return.
   They ARE permitted for representing a client in an examination
   or claim for refund.
-- A preparer must not sign a position lacking a reasonable basis
-  unless it is adequately disclosed (and never a frivolous one).
+- A preparer must not sign a position lacking a reasonable basis;
+  disclosure does not cure the absence of a reasonable basis, and
+  a frivolous position must never be signed.
 - A conflict of interest may be waived only with each affected
   client's informed written consent and a reasonable belief that
   competent representation of each is still possible.
@@ -18342,7 +18359,7 @@ The deduction is the LESSER of:
 
 
 def passthrough_ordinary_income(seed: int) -> TaskInstance:
-    """Numeric: an S corporation's ordinary business income.
+    """Numeric: a partnership's ordinary business income.
 
     Trap: folding separately stated portfolio interest into
     ordinary income.
@@ -18358,11 +18375,11 @@ def passthrough_ordinary_income(seed: int) -> TaskInstance:
     interest, charity = amt(10, 61), amt(5, 41)
     sales = gold + cogs + opex + guaranteed
     data = (
-        "# S corporation results — 2025\n\n| Item | USD |\n|---|---:|\n"
+        "# Partnership results — 2025\n\n| Item | USD |\n|---|---:|\n"
         f"| Sales revenue | {money(sales)} |\n"
         f"| Cost of goods sold | {money(cogs)} |\n"
         f"| Operating expenses | {money(opex)} |\n"
-        f"| Guaranteed payments to shareholders | {money(guaranteed)} |\n"
+        f"| Guaranteed payments to partners | {money(guaranteed)} |\n"
         f"| Portfolio interest income | {money(interest)} |\n"
         f"| Charitable contributions | {money(charity)} |\n"
     )
@@ -18527,7 +18544,8 @@ def depreciation_recapture_ordinary(seed: int) -> TaskInstance:
     def amt(lo, hi):
         return Decimal(rng.randrange(lo, hi)) * 100
 
-    cost, accdep = amt(400, 1001), amt(150, 501)
+    cost = amt(400, 1001)
+    accdep = Decimal(rng.randrange(150, int(cost / 100))) * 100
     basis = cost - accdep
     price = basis + amt(30, 401)
     gain = price - basis
@@ -18737,7 +18755,7 @@ def below_market_imputed_interest(seed: int) -> TaskInstance:
     Level scores R/S/I/E/J/C/D = V/V/V/V/V/V/V -> vocational.
     """
     rng = random.Random(seed)
-    principal = Decimal(rng.choice([100, 150, 200, 300])) * 1000
+    principal = Decimal(rng.choice([150, 200, 300])) * 1000
     rate_pct = rng.choice([Decimal("4"), Decimal("5"), Decimal("6")])
     paid = Decimal(rng.randrange(1, 31)) * 100
     at_rate = (principal * rate_pct / 100).quantize(CENT)
@@ -18839,12 +18857,16 @@ def taxable_gifts_total(seed: int) -> TaskInstance:
     Level scores R/S/I/E/J/C/D = V/V/V/U/V/V/V -> vocational.
     """
     rng = random.Random(seed)
-    exclusion = Decimal("18000")
+    exclusion = Decimal("19000")
     g1 = Decimal(rng.randrange(20, 81)) * 1000
     g2 = Decimal(rng.randrange(5, 31)) * 1000
     future = Decimal(rng.randrange(15, 61)) * 1000
     gold = max(g1 - exclusion, Decimal(0)) + max(g2 - exclusion, Decimal(0)) + future
-    trap = gold - exclusion
+    trap = (
+        max(g1 - exclusion, Decimal(0))
+        + max(g2 - exclusion, Decimal(0))
+        + max(future - exclusion, Decimal(0))
+    )
     data = (
         "# Gifts made in 2025 (donor unmarried, no split-gift election)\n\n"
         "| Donee | Gift | USD |\n|---|---|---:|\n"
@@ -18854,7 +18876,7 @@ def taxable_gifts_total(seed: int) -> TaskInstance:
     )
     policy = """# Gift-tax conventions (stated for this task)
 
-- Annual exclusion: USD 18,000 per donee, available ONLY for
+- Annual exclusion: USD 19,000 per donee, available ONLY for
   present-interest gifts. Gifts of future interests get NO annual
   exclusion.
 - Taxable gifts = the excess of present-interest gifts over the
@@ -19452,31 +19474,33 @@ def basis_adjustment_754_allocation(seed: int) -> TaskInstance:
     def amt(lo, hi):
         return Decimal(rng.randrange(lo, hi)) * 100
 
-    price = amt(200, 501)
-    inside_share = amt(80, 181)
-    adjustment = price - inside_share
-    capital_appreciation = amt(50, 251)
-    gold = min(adjustment, capital_appreciation)
-    trap = (adjustment * Decimal("0.6")).quantize(CENT)
-    while abs(trap - gold) <= Decimal("0.01"):
-        capital_appreciation += Decimal("1000")
-        gold = min(adjustment, capital_appreciation)
+    capital_basis, other_basis = amt(50, 151), amt(50, 201)
+    inside_share = capital_basis + other_basis
+    adjustment = amt(30, 181)
+    price = inside_share + adjustment
+    capital_appreciation = adjustment + amt(20, 121)
+    capital_fair_value = capital_basis + capital_appreciation
+    other_fair_value = other_basis
+    gold = adjustment
+    trap = (adjustment * capital_fair_value / (capital_fair_value + other_fair_value)).quantize(
+        CENT
+    )
     data = (
         "# Purchase of a partnership interest (Section 754 election in effect)\n\n"
         "| Item | USD |\n|---|---:|\n"
         f"| Price paid for the interest | {money(price)} |\n"
         f"| Transferee's share of inside basis | {money(inside_share)} |\n"
         f"| Capital-asset appreciation (transferee's share) | {money(capital_appreciation)} |\n"
-        "| Other assets | Held at basis = fair value |\n"
+        f"| Capital assets at fair value (transferee's share) | {money(capital_fair_value)} |\n"
+        f"| Other assets at fair value = basis (transferee's share) | {money(other_fair_value)} |\n"
     )
     policy = """# Section 754 conventions (stated for this task)
 
 - The optional basis adjustment = price paid - the transferee's
   share of inside basis.
 - A positive adjustment is allocated first to appreciated capital
-  assets, up to their appreciation; any remainder goes to other
-  assets. Assets held at fair value receive none until appreciated
-  capital assets are fully covered.
+  assets, up to their appreciation. It is not spread across asset
+  classes in proportion to fair value.
 - Answer the amount allocated to capital assets in USD.
 """
     question = _numeric_question(
@@ -19924,7 +19948,7 @@ def control_deviation_rate(seed: int) -> TaskInstance:
     rng = random.Random(seed)
     sample = rng.choice([40, 50, 60, 80])
     deviations = rng.randint(1, 6)
-    gold = (Decimal(deviations) * 100 / sample).quantize(Decimal("0.1"))
+    gold = (Decimal(deviations) * 100 / sample).quantize(Decimal("0.01"))
     data = (
         "# Test of control: invoice approvals\n\n"
         f"Sample of {sample} disbursements inspected. In "
@@ -20096,8 +20120,9 @@ CONFIRMATION_CASES = [
         "Non-response — perform alternative procedures",
     ),
     (
-        "The customer confirms it returned the goods before year-end; "
-        "the client recorded the return in January.",
+        "The customer confirms it returned the goods and the client "
+        "warehouse received them on 29 December, but accounting "
+        "recorded the return in January.",
         "Misstatement — propose adjustment",
     ),
 ]
@@ -20548,8 +20573,9 @@ def sc_independence_prohibited_service(seed: int) -> TaskInstance:
 
 For issuer audit clients the following IMPAIR independence:
 bookkeeping and preparing the audited statements; designing or
-operating financial information systems; internal-audit
-outsourcing with management decision-making; valuation services
+operating financial information systems; outsourced internal-audit
+services relating to financial reporting or internal accounting
+controls; valuation services
 feeding audited amounts; acting as management. Routine tax
 compliance is NOT on the prohibited list and may be provided with
 audit-committee preapproval. Relationships with entities other

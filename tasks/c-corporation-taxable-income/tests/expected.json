@@ -2,7 +2,7 @@
   "task_id": "c-corporation-taxable-income",
   "family": "income-taxes",
   "seed": 244,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

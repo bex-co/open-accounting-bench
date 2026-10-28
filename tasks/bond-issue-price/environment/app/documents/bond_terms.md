@@ -6,5 +6,5 @@
 | Coupon rate (annual payments) | 5% |
 | Term | 10 years |
 | Market (effective) rate at issue | 7% |
-| Annuity factor (7%, 10 years) | 7.0236 |
-| Single-sum factor (7%, 10 years) | 0.5083 |
+| Annuity factor (7%, 10 years) | 7.0235815409 |
+| Single-sum factor (7%, 10 years) | 0.5083492921 |

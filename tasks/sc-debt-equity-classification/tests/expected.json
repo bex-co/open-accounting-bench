@@ -2,7 +2,7 @@
   "task_id": "sc-debt-equity-classification",
   "family": "financial-instruments",
   "seed": 275,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

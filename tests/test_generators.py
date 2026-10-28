@@ -99,6 +99,69 @@ def test_scenario_sanity_sweeps():
             assert rows[i][0] == "Strong" and strong >= weak, (seed, rows)
 
 
+def test_review_regressions_seed_sweeps():
+    """Seeds 0-999: reviewed generators keep their facts internally coherent."""
+    import re
+    from decimal import ROUND_HALF_UP, Decimal
+
+    def amounts(instance):
+        doc = next(v for k, v in instance.app_files.items() if k.startswith("documents/"))
+        return [Decimal(x) for x in re.findall(r"\| ([\d]+\.[\d]{2}) \|", doc)]
+
+    for seed in range(1000):
+        warranty = FAMILIES["warranty-provision-and-claims"](seed).expected["expected_deltas"]
+        assert Decimal(warranty["Liabilities:WarrantyPayable"]) != 0, seed
+
+        cost, accdep, _price = amounts(FAMILIES["depreciation-recapture-ordinary"](seed))
+        assert cost - accdep >= 0, seed
+
+        price, inside, appreciation, *_fair_values = amounts(
+            FAMILIES["basis-adjustment-754-allocation"](seed)
+        )
+        assert price - inside <= appreciation, seed
+
+        below_doc = FAMILIES["below-market-imputed-interest"](seed).app_files[
+            "documents/loan_data.md"
+        ]
+        assert "| Loan principal (outstanding all year) | 100000.00 |" not in below_doc, seed
+
+        total, lease_sa, service_sa = amounts(FAMILIES["lease-component-allocation"](seed))
+        assert Decimal("0.75") <= total / (lease_sa + service_sa) <= Decimal("1.05"), seed
+
+        disposal = amounts(FAMILIES["disposal-of-subsidiary-gain"](seed))
+        retained_ratio = (disposal[1] / 20) / (disposal[0] / 60)
+        assert Decimal("0.5") <= retained_ratio <= Decimal("1.05"), seed
+
+        control = FAMILIES["control-deviation-rate"](seed)
+        control_doc = control.app_files["documents/control_test.md"]
+        sample, deviations = map(
+            int, re.search(r"Sample of (\d+).*?In (\d+) items", control_doc, re.S).groups()
+        )
+        exact = Decimal(deviations * 100) / sample
+        half_up = exact.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+        assert abs(half_up - Decimal(control.expected["gold"])) <= Decimal(
+            control.expected["abs_tolerance"]
+        ), seed
+
+
+def test_exact_factor_answers_fit_tolerances():
+    """Exact recomputation and stated-factor answers both fit the tolerance."""
+    from decimal import Decimal
+
+    # The discrete rate/year grids are small; maximize the monetary amounts.
+    for years in [3, 5, 8, 10]:
+        for rate in [Decimal("0.06"), Decimal("0.08"), Decimal("0.10")]:
+            exact = Decimal(120000) / (1 + rate) ** years
+            stated = Decimal(120000) * (Decimal(1) / (1 + rate) ** years).quantize(
+                Decimal("0.0000000001")
+            )
+            assert abs(exact - stated) <= Decimal("0.01")
+    for instance_id in ["present-value-lump-sum", "bond-issue-price"]:
+        for seed in [1, 7, 42]:
+            policy = FAMILIES[instance_id](seed).app_files["policy.md"]
+            assert "do not recompute" not in policy
+
+
 def test_stated_rates_fit_generated_prices():
     """Seeds 0-99: bond/ARO prices are consistent with their stated rates."""
     import re

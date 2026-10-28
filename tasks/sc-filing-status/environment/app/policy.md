@@ -6,5 +6,6 @@
   taxpayer's child) lived there for MORE than half the year.
 - Surviving spouse: spouse died within the two prior tax years,
   taxpayer has not remarried and keeps up the home for a
-  dependent child.
+  dependent child. If the surviving-spouse test is met, use that
+  status even if the head-of-household test is also met.
 - Otherwise an unmarried taxpayer files as Single.

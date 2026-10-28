@@ -2,7 +2,7 @@
   "task_id": "predetermined-overhead-applied",
   "family": "job-order-costing",
   "seed": 201,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

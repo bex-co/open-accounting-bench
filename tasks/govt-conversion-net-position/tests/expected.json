@@ -2,7 +2,7 @@
   "task_id": "govt-conversion-net-position",
   "family": "governmental-accounting",
   "seed": 321,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

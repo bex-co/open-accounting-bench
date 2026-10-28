@@ -130,7 +130,7 @@ D = standards depth):
 | `periodic-purchase-with-freight` | V | V | V | V | V | V | V | vocational |
 | `bad-debt-percent-of-sales` | V | V | V | U | V | V | V | vocational |
 | `cash-discount-receipt` | V | V | V | V | V | V | V | vocational |
-| `abc-overhead-assigned` | V | U | V | U | V | V | V | university (borderline) |
+| `abc-overhead-assigned` | V | V | V | U | V | V | V | vocational |
 | `high-low-variable-cost` | V | V | V | V | V | V | V | vocational |
 | `cash-collections-budget` | V | V | V | V | V | V | V | vocational |
 | `gross-profit-from-trial-balance` | V | U | V | U | V | V | V | university (borderline) |
@@ -193,7 +193,7 @@ D = standards depth):
 | `sc-transaction-statement-impact` | V | V | V | V | V | V | V | vocational |
 | `business-combination-acquisition` | V | U | V | U | V | V | U | university |
 | `consolidation-intercompany-elimination` | V | U | V | V | V | U | U | university |
-| `held-for-sale-measurement` | V | V | V | V | V | V | U | vocational |
+| `held-for-sale-measurement` | V | U | V | V | V | V | U | university (borderline) |
 | `share-based-compensation-monthly` | V | V | V | V | V | V | U | vocational |
 | `asset-revaluation-surplus` | V | V | V | V | V | V | U | vocational |
 | `written-off-receivable-recovery` | V | V | V | V | V | V | V | vocational |
@@ -542,7 +542,7 @@ problem the task hands over. An analysis task can be vocational.
 | `partnership-admission-bonus` | partnerships | journal-entry | core | analysis | — | Credit new partner full contribution |
 | `governmental-encumbrance-entry` | governmental-accounting | journal-entry | us-gaap | application | — | Expenditure at PO estimate |
 | `contract-acquisition-cost` | revenue-recognition | journal-entry | core | application | `asc:340-40`, `ifrs:15` | Expense incremental commission |
-| `aro-accretion` | provisions-contingencies | journal-entry | core | application | `asc:410`, `ias:37` | Accrete undiscounted amount |
+| `aro-accretion` | provisions-contingencies | journal-entry | us-gaap | application | `asc:410` | Accrete undiscounted amount |
 | `tax-return-crossfoot-difference` | income-taxes | numeric | core | application | — | Subtract below-total adjustment |
 | `tax-cost-recovery-deduction` | income-taxes | numeric | core | application | — | Use book depreciation |
 | `passthrough-loss-limitation` | passthrough-taxation | numeric | core | application | — | Stop at basis limit |
@@ -610,7 +610,7 @@ problem the task hands over. An analysis task can be vocational.
 | `govt-conversion-net-position` | governmental-accounting | numeric | core | application | — | Unavailable revenue subtracted again |
 | `govt-capitalized-costs-total` | governmental-accounting | numeric | core | application | — | Below-threshold outlays capitalized |
 | `govt-expenditures-december` | governmental-accounting | numeric | core | application | — | Unmatured principal expensed early |
-| `govt-long-term-debt-total` | governmental-accounting | numeric | core | application | — | Current portion counted twice |
+| `govt-long-term-debt-total` | governmental-accounting | numeric | core | application | — | Current portion excluded |
 | `govt-net-investment-capital` | governmental-accounting | numeric | core | application | — | Unrelated debt deducted |
 | `sc-interfund-activity-type` | governmental-accounting | single-choice | us-gaap | application | — | Repayable advance called a transfer |
 | `nonexchange-revenue-recognized` | governmental-accounting | numeric | core | application | — | Whole advance taken as revenue |
@@ -688,7 +688,7 @@ placeholders tracked as issues, not directories.
 
 | Category | core | ifrs | us-gaap | jurisdiction pack |
 |---|---:|---:|---:|---|
-| financial-accounting | 140 | 17 | 12 | planned |
+| financial-accounting | 139 | 17 | 13 | planned |
 | management-accounting | 37 | planned | planned | planned |
 | tax | 51 | — | — | planned |
 | audit-assurance | 34 | — | planned | — |

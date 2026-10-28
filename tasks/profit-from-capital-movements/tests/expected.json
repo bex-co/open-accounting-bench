@@ -2,7 +2,7 @@
   "task_id": "profit-from-capital-movements",
   "family": "ledger-integrity-reporting",
   "seed": 277,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

@@ -13,13 +13,13 @@ family = "activity-based-costing"
 difficulty = "easy"
 category = "management-accounting"
 framework = "core"
-level = "university"
+level = "vocational"
 format = "numeric"
 skill = "application"
 standards = []
 track = "stable"
 seed = 147
-generator_version = "0.4.0"
+generator_version = "0.5.0"
 ledger_engine = "beancount"
 
 [verifier]

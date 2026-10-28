@@ -10,1164 +10,1164 @@ keywords = ["accounting", "beancount", "agents"]
 
 [[tasks]]
 name = "open-accounting-bench/abc-overhead-assigned"
-digest = "sha256:e75c38bd157eb7f11b9d253fc8e90f17c9e7d03550126834445be1c84b5d746a"
+digest = "sha256:cd22fd874dc45bccdeae130681b4ee7454ac3eb570f49a4930ddf9dec8f9d6fe"
 
 [[tasks]]
 name = "open-accounting-bench/absorption-variable-income-difference"
-digest = "sha256:005f6f3adff79a362ccec3706e8533cf11f3b80ccd1b2e986ca27c5a887c6423"
+digest = "sha256:98b967fa558258c1f152efc9981b3d054a8cef2282a904104560784460186ddb"
 
 [[tasks]]
 name = "open-accounting-bench/accounting-equation-missing-equity"
-digest = "sha256:501d6ab138c82a46b041ab677dd12b500d9c768040fbed19e4aed26fc1f7c06d"
+digest = "sha256:3e600e1c0a4585f1c359e9195b35dcc91404497a3fa9d27bcded9a4b514ada5e"
 
 [[tasks]]
 name = "open-accounting-bench/accrual-deferral-reversal"
-digest = "sha256:7267fa67e4a6b00fc4cf4d22b19f49da5335b82c69d763e3e3a74e08f7dc0fcd"
+digest = "sha256:f0a267a37f53a755ea1a4b42402fcc49b495cad1b864043917b7674f28078479"
 
 [[tasks]]
 name = "open-accounting-bench/accrued-wages-adjustment"
-digest = "sha256:b265236af89f2f146397c507cb7529daf98678e0b8e4441fab5693da64259be4"
+digest = "sha256:4a1a3a100ff317ecdcc381131d7f34d141d010a75ba89f80bce3f72ad86f8883"
 
 [[tasks]]
 name = "open-accounting-bench/adjusted-ebitda-computation"
-digest = "sha256:beb1d1b037ac98692b66d35ea5e21700e5522342609314d705f37c8137f6a873"
+digest = "sha256:ae2a2301c6ccd21325c968eeaefcd755a43dc510334bddb128c1c7e45f034095"
 
 [[tasks]]
 name = "open-accounting-bench/adjusted-profit-from-draft"
-digest = "sha256:b1f8b446f0a8f6a503dcd104ee4e6f47a262fb5e1a84ad47526a3ae2b4270614"
+digest = "sha256:e217d3da87ffe8b77a23406cd547bbbc8adff56010ada1e56086a87e9cafbc3c"
 
 [[tasks]]
 name = "open-accounting-bench/adjusted-receivable-balance"
-digest = "sha256:b55201284ade4fede682305de003d0a0ba97591d0ad981e64ca835978a84484d"
+digest = "sha256:a5a544c8d344757898df0a66e6a70cccf5f769700d5c54f894c5dec8abbbe69f"
 
 [[tasks]]
 name = "open-accounting-bench/adjusted-wage-expense"
-digest = "sha256:c4a50d9c9b193aa6775fce4337605c5a14a7a4b9da6053c93b92cdec13e39df5"
+digest = "sha256:8d71597bb637cf2b3fb880833513805fa7e200f3efbb1cc5817fd5a2a5f9aa52"
 
 [[tasks]]
 name = "open-accounting-bench/agent-commission-revenue"
-digest = "sha256:3aec3161e29c09c672077ec90635253b6019c626ca77f06e126f2c4ee24a49f9"
+digest = "sha256:ef13a93b167c33c2c06d627f0278d6c1c65f67e44cef618a54695b7641424fb6"
 
 [[tasks]]
 name = "open-accounting-bench/agi-above-line-adjustments"
-digest = "sha256:fbeb7da47e69e642591817cb275403698f1f0cf7cb9176105c26fd1750865215"
+digest = "sha256:d0c2d6f403670f59ff638cf249faaac539678256fa00b744c735e0ad09e387ab"
 
 [[tasks]]
 name = "open-accounting-bench/allowance-estimate-reperformance"
-digest = "sha256:b6ae3b4b61ff39975255c47a7803feff2e473a5858acae0a535c21afec9fd525"
+digest = "sha256:3acbc2c3980d5e73a43cd5dfdaf1605fc953664d40b09e7f9187508949199e90"
 
 [[tasks]]
 name = "open-accounting-bench/allowance-movement-expense"
-digest = "sha256:2d2ae27cb41ff1116891458972c6327259d9d3454a4806c2086fa2f499e76959"
+digest = "sha256:aacf74e91bb895a4dbbe511733ac2732360787142fb55bee7c5bcc000cab3228"
 
 [[tasks]]
 name = "open-accounting-bench/aro-accretion"
-digest = "sha256:a11961f06e9c7cf80452f457420da8c62bb3df43ca64a6985a37ce9047a7062a"
+digest = "sha256:8eb5ad4120439b7e9188bc291d5cbb935d78633eced92472fe378e1de742cd33"
 
 [[tasks]]
 name = "open-accounting-bench/asset-revaluation-surplus"
-digest = "sha256:fad953fe5e2b63efecb0ce76a1e1ef92506c15dbc012a528a274dfae1db83ead"
+digest = "sha256:f4ee14bd051a605b6051ad2c38bbfb94a5009ad266ad0d3395d5307631380730"
 
 [[tasks]]
 name = "open-accounting-bench/asset-turnover-ratio"
-digest = "sha256:2a24bf4bfef222e481bad3e7232310a2becee252bcbea685745e0ab296c18979"
+digest = "sha256:9bb8f4acf336c21281577143605b9aaba94ff7d9b287d24dbdaada220eae6aa7"
 
 [[tasks]]
 name = "open-accounting-bench/audit-data-missing-entries"
-digest = "sha256:03ec98c8412250bc9229a1300c532fc74964404463740bc3c1cc4be4ad60886a"
+digest = "sha256:80e33be79aa4c6205f8d1823fe7bd31331d7ea578b3a65d671d9d4368f2ece21"
 
 [[tasks]]
 name = "open-accounting-bench/bad-debt-percent-of-sales"
-digest = "sha256:5c372acd1cc051555e2cfea07379a6846941afd4186f6fb7cc7b23af2e1c73c8"
+digest = "sha256:edb31ae3ebafe306529f13cc29b46e9d9e47980a2dbcc550b37edd91b71f25c9"
 
 [[tasks]]
 name = "open-accounting-bench/bank-adjusted-balance"
-digest = "sha256:d8db3802eb6935bd39094145de9ad59e02669c6a62d03b3182fa9119e87f1378"
+digest = "sha256:177534db4eb1a082243fce8e981572586ede71b601c8556a6275e2ac55e3c66e"
 
 [[tasks]]
 name = "open-accounting-bench/bank-recon-missing-fee"
-digest = "sha256:1c10f7875fcfb53aee3e4abaa4a09309a1b49e7b7519c3901be24f8c0cc67560"
+digest = "sha256:2dff86918ecf164a11111543ede241d0c5adea5e606f24239fbc89a14e7b2e2a"
 
 [[tasks]]
 name = "open-accounting-bench/basis-adjustment-754-allocation"
-digest = "sha256:a2c109e1d5bd953f873e4baa515abac1ebbdc4b0904c7e7bbbda07f2bfbf08c6"
+digest = "sha256:4195c6a70ad7593d0fec9c5d476409e6401885724250cbdb408f3759512be1fe"
 
 [[tasks]]
 name = "open-accounting-bench/basket-purchase-allocation"
-digest = "sha256:6f208447ffb24cb0062a929e6b7863ab5eecf52cba4def5e3a575cb1107052ad"
+digest = "sha256:7bd98b716bd025b075d0ac22410fbfa65be145e8c0d223d0012a36ea4497ae27"
 
 [[tasks]]
 name = "open-accounting-bench/below-market-imputed-interest"
-digest = "sha256:258c9d89b7ca9587005a40ac71ddd02ea509f1e1d8056e37b0ba34d7bdedde09"
+digest = "sha256:c8d7908eba48b72d01c34dbc725108e0a4b169d279d56ce70238003f9813f063"
 
 [[tasks]]
 name = "open-accounting-bench/benefit-plan-net-assets"
-digest = "sha256:435bbfa3752031560a1f4a2f2b46e0e8836727cc23775a71ee673ca7bcaf3aa7"
+digest = "sha256:cd58a3bf29ed816345a6167e6b0e40f63b39757b8e1981cfca9759d55cb24172"
 
 [[tasks]]
 name = "open-accounting-bench/biological-asset-fair-value"
-digest = "sha256:5455c967699feaac9cbdab861b310958dbf4dd20d66c7955b42cf23365f3703f"
+digest = "sha256:3782eec859bf66932507c879231687b048ba11200e39be13cfc4ca2765066fe6"
 
 [[tasks]]
 name = "open-accounting-bench/bond-discount-amortization"
-digest = "sha256:cf1846cec4a6475982a6916755c2d48d3cc4a7cdf8850a8862be264b455f978f"
+digest = "sha256:b4118fd07dbcf86f24d00bea907d63bebe6295ab93e85d59a13ae26783bf018c"
 
 [[tasks]]
 name = "open-accounting-bench/bond-early-retirement"
-digest = "sha256:8310966304241f9ea3df0a4fe51b089e52cfa3735da7828ea3da68509eb5b115"
+digest = "sha256:357cc4313765e73e0ca6e540730b530fd0f193571a7171ce4373985beced823e"
 
 [[tasks]]
 name = "open-accounting-bench/bond-issue-price"
-digest = "sha256:95eedfcb67b6a407f497c555a7a96b611b9ee17a20345582835e26fabe3d1b9e"
+digest = "sha256:0481fee10bff617b9c7e78e4ad9263364a5421784f340c5ce2a01b0fecd6fece"
 
 [[tasks]]
 name = "open-accounting-bench/bond-issued-at-premium"
-digest = "sha256:1fb4999a4658c751f50fe1c63d4b037c2b3ac948c5d92437cbfe75ce81ce9f12"
+digest = "sha256:10198241e7153d1c3658deb88b1b614c81eca083c0309c520bbabc002a1d3438"
 
 [[tasks]]
 name = "open-accounting-bench/breakeven-sales-dollars"
-digest = "sha256:0f550ef6d21051e32fdbb1914e7c743f393e5aa40a6c7dbe1e3737781c1f4aba"
+digest = "sha256:43f1bb53970ee0545ff1d9aede57acff39f3f64ed38b49305f4b5790f048a5e8"
 
 [[tasks]]
 name = "open-accounting-bench/budget-vs-actual-net-variance"
-digest = "sha256:54620d2e6ac90610f4a27fa8978b0e8b470497b30cdf47a24fcd251bcd80817b"
+digest = "sha256:6061d96777a34c1f61a5e6a7bf761c2544c299f43ec96ef4b8b3076d6fd36d23"
 
 [[tasks]]
 name = "open-accounting-bench/builtin-gains-tax-base"
-digest = "sha256:1401a5ee448eac6e03507fcb5a2b56cd946689a28b9f93b3adb6fe27dcaf353d"
+digest = "sha256:6d16ecb5ced3aef4521446717931de068fd3ec75d24ec49a964a61e089d5d4ad"
 
 [[tasks]]
 name = "open-accounting-bench/business-combination-acquisition"
-digest = "sha256:22f5a513429ee3f7159d74ef718f5e571ed21bbc7a0ef63e0cf24f8f59020296"
+digest = "sha256:54a57dc307842a0810ab46bb8f86042669aa782bf63580a7e9f53b20941de35f"
 
 [[tasks]]
 name = "open-accounting-bench/c-corporation-taxable-income"
-digest = "sha256:fbc1ce7a76d47d22f7f1a4d956c5c0f96b942b732358a0ccb40ee4e357191976"
+digest = "sha256:89897b283c1e794a24d6ea7d5d6e61d0be3fb230202b5113c3e4134c84e0e7f5"
 
 [[tasks]]
 name = "open-accounting-bench/capital-loss-carryforward"
-digest = "sha256:e369aca50773e6707d31bf8207d2b9a9a4c5ee510e0b32b1916ae31e03c451a9"
+digest = "sha256:d9b237d905b69cf36a1ac63c798e3a3cd37a6e926baa46653ac1774781194a67"
 
 [[tasks]]
 name = "open-accounting-bench/capitalized-cost-bundle"
-digest = "sha256:5098b44a4be2abe771f07b762bb2c55ea9eacd82e89102f444a7d4b7e0ed0da5"
+digest = "sha256:e0ff51e02d29d9075cb3144f648f6048df59db70fdaf44cfe7b97f7e764f43ca"
 
 [[tasks]]
 name = "open-accounting-bench/capm-expected-return"
-digest = "sha256:37c89a192c3a27b61aabb5b99a0d47109b166864d2000c17c7de66c90d4ee78d"
+digest = "sha256:5f0530581e6f0c5eb0c63a5ce2ad460270cc50b37d57dff093caff1b7db93d18"
 
 [[tasks]]
 name = "open-accounting-bench/cash-and-equivalents-total"
-digest = "sha256:b17673ddca70c8f88ff52939dde1ccb352ac676c91f8117359110f5349f4a2e5"
+digest = "sha256:5bba56c5f1bbe5eadc7b389dc340d0b36e4912d76c83a722ba71ce5d63a52187"
 
 [[tasks]]
 name = "open-accounting-bench/cash-collected-from-customers"
-digest = "sha256:c9ae0aab4fa8f2d8c11e23b709d9f16a8733d8c3527568ac2593e40e692b3e73"
+digest = "sha256:5504e6254d0467fe0ba778b82e31afe39e18c9e7aee3aa7a191aa3a1f27fc69d"
 
 [[tasks]]
 name = "open-accounting-bench/cash-collections-budget"
-digest = "sha256:aaa7938ae78c24c0179cd5e8f379ebdd76047e2cf928181a909b4297e1c9c0e7"
+digest = "sha256:95c09c27b82a0aa8967442e7acdbaf552f15afa3ba676df742edd925f5cadf1f"
 
 [[tasks]]
 name = "open-accounting-bench/cash-discount-receipt"
-digest = "sha256:68b648f1693a93fc0ab02eebd531f7f24166fa01ed22798d697b33e14e6d2cd9"
+digest = "sha256:8fb087d3644bf335477c4bd7f59075956d9fd6a9e39aa6e499776781e2deed9b"
 
 [[tasks]]
 name = "open-accounting-bench/cash-dividend-declaration"
-digest = "sha256:9cafc4ae13367045339b8d0916d56e8e109df03d4399130ace31374fc853ad8d"
+digest = "sha256:7bd5391e283dc243062e851e101a20390b4ce3c695ad09017ee9b50a65c3b28f"
 
 [[tasks]]
 name = "open-accounting-bench/cash-flow-hedge-fair-value"
-digest = "sha256:fe9e7b84eadb035722dcc4089dc8125a9fe8715957c8a4d8216a933b061f8ef6"
+digest = "sha256:3bf0b728b9ffca7ddc1e06b39f33d54d1259313e43f733b612572756e915e1be"
 
 [[tasks]]
 name = "open-accounting-bench/cash-to-accrual-profit"
-digest = "sha256:09b2d871a4760d734c5f24b6d2f1d5a510d870dc0bb40325a91ea2053682b26e"
+digest = "sha256:e9202b1cc1490bd90dff34cf0d3525c74653d202d54e85788187e7a8089bba53"
 
 [[tasks]]
 name = "open-accounting-bench/change-control-deviation-count"
-digest = "sha256:4dbf401a6d7d2ab6eaca1f16a8bda9a73228c4f04b6267b432d26b76bc15b96e"
+digest = "sha256:f2ebcafc160ea98bf744179da545bba5c36488242235797f83422ed3c658e8b9"
 
 [[tasks]]
 name = "open-accounting-bench/charitable-noncash-deduction"
-digest = "sha256:1dc566502bce86e7a0a865bb266b127ddf46ec6d99afc83d73cd3e22ccc880eb"
+digest = "sha256:2cff2652aad7eccc1b9d79dd0eb2bbf30d1c2f1c6dca1ed56f22f03cf0dfec45"
 
 [[tasks]]
 name = "open-accounting-bench/classify-operating-expense"
-digest = "sha256:eed4c8797eb81265fb4d941a8e6910b8f7daeb1f60c6796a6cbd1145b8f6b601"
+digest = "sha256:f874cfdd0fcbbadb15fdf255c767c6b5ec29a7e34a71084ede858f90a1cf66ad"
 
 [[tasks]]
 name = "open-accounting-bench/closing-drawing-account"
-digest = "sha256:e3ab10b486b79c1c2a99898d7815982c9ce4c04cd1a812fd9d0662a91526b499"
+digest = "sha256:115a7132809b27813d46f63554d4842a86ad0fb241e26a79951a0c4996d64190"
 
 [[tasks]]
 name = "open-accounting-bench/closing-entries-income-summary"
-digest = "sha256:149554992649b196797c8448bd169bfe2bf9230a9af3deadacedc881789efcc0"
+digest = "sha256:a3d89ec96c2ad95a37a5168292a4127e2c1c62a5462378ed6772b3ceffc66692"
 
 [[tasks]]
 name = "open-accounting-bench/compliance-violations-count"
-digest = "sha256:ebe46b44c934b773b5a688d4a3dbd65a1075232fb88437c365804326bbbc364b"
+digest = "sha256:d7adb0297280aab5708236b885c16468c48d595e61b0042c77cb78237b647a4b"
 
 [[tasks]]
 name = "open-accounting-bench/consignment-sale-recognition"
-digest = "sha256:59e827683298b281c3d8acdb72e2f0ee06c2e7c01fa7deff56e58033146cb554"
+digest = "sha256:5cf496b75260813c8d09ee6fcbcf2f59b788293a0b60a0393fcb71587b2852f9"
 
 [[tasks]]
 name = "open-accounting-bench/consolidation-intercompany-elimination"
-digest = "sha256:2c6bfafd4ceb17f54d31d2cec0e52191d50575004529da340805a1a9d20560a3"
+digest = "sha256:7209f95a6d22851507fc0002ca34a413e87993e11e7a66b3ba13fc109ab3f9c7"
 
 [[tasks]]
 name = "open-accounting-bench/constructive-ownership-percent"
-digest = "sha256:3001657ab32c45710bb3e54d480c90904e09fba8b427f3c4f61de3fb29d8fbf7"
+digest = "sha256:2f37f4eb96034664b6e7441ed0aeb15870665ff2fa4f99a08599b1ede3f18a55"
 
 [[tasks]]
 name = "open-accounting-bench/contract-acquisition-cost"
-digest = "sha256:4f33ac7a49f09b85fc181bc363bdf06e68c8e93a57d2114fd17b3cb8481e242a"
+digest = "sha256:ed380def882bd730173bace21fbc5239696606fe0c06660092e8b360f297d383"
 
 [[tasks]]
 name = "open-accounting-bench/contract-modification-revenue"
-digest = "sha256:7400ddab3506d3ea543f1b7bacd32a1319a8dd7152c40c860a876b580b01ee4c"
+digest = "sha256:b8f2b351c9e6b9296cc91f80b9233a506581f95460215aaac949a4f61bce78e3"
 
 [[tasks]]
 name = "open-accounting-bench/control-deviation-rate"
-digest = "sha256:08cb634daac45cf9ab7c1222b58706b89d4e080d44c09d644a8dd41fefa2fc5e"
+digest = "sha256:58ebb6210a200a8a9743994e02344b122865294b674a2e26926d556303e7d9f3"
 
 [[tasks]]
 name = "open-accounting-bench/corporate-distribution-dividend"
-digest = "sha256:0f854f4a91877c7a7b247f463fa6dcf784b93cfb6042862fc5230c9bb338f783"
+digest = "sha256:63550624f4e5ac46555811498615f904c13da70935fcafc8100a3a7335440045"
 
 [[tasks]]
 name = "open-accounting-bench/corporate-formation-gain"
-digest = "sha256:7fc890f4e3af7af74b7cd3cf6c65cd4424a98c26e2741df0a21495a2b0b46952"
+digest = "sha256:3c7fd97f56ace12351fe9680aa0b28e1646ad60e1ec28e937644546fce3c1fe4"
 
 [[tasks]]
 name = "open-accounting-bench/correct-misclassification"
-digest = "sha256:c3de00924a4c247848c67b892c7d92dabe841703acd742dc67977b098ed5894f"
+digest = "sha256:628f20451528ce1d3d733e617bfc4383bc5b02d16feb38cb8bf5d08c36ecafff"
 
 [[tasks]]
 name = "open-accounting-bench/cost-of-goods-manufactured"
-digest = "sha256:e3660c172d32d3d7e3fa32565311142237db982bd588dafa179c6a55b1bda0b5"
+digest = "sha256:421ba5d6fe074e83f72815d1faa07ca24d1eb4f1bd3f291831c09d9bf7ec8c1a"
 
 [[tasks]]
 name = "open-accounting-bench/credit-card-sale-fee"
-digest = "sha256:6c1e0a7ce601aed2e223b85df10e4b7a888641371a4735aab8845adb7ed31348"
+digest = "sha256:4b80f3df333c055c060c3239b26927c8a837e5c2f114a98e68b2f04029b46df7"
 
 [[tasks]]
 name = "open-accounting-bench/cumulative-preferred-dividend"
-digest = "sha256:fde866ab03a76993afd2ec125af9f317468f589fa89209d52cad5a15fcd22cb6"
+digest = "sha256:6efdfaf60ffb0904b31732408c7229076114ccef73ac8450dbe23ff32ba56aa7"
 
 [[tasks]]
 name = "open-accounting-bench/current-income-tax-expense"
-digest = "sha256:f6f8e6ff58f4a26c3407f1820a2b88b12a8aa1040218544e27f6c8a1b554ed3d"
+digest = "sha256:5d716f030fe3c4cc996795b74dc39067262d7f5dded0c0392884f6946e348e16"
 
 [[tasks]]
 name = "open-accounting-bench/current-portion-reclass"
-digest = "sha256:380dd9ca8c6c82922ea30c4967c52c497c184ebd4f44a78ec32c0378c0d4572c"
+digest = "sha256:6d6fb63a4ff35667000d14340e1f639558076618a5b1d76aa01b67bc6f5d1c26"
 
 [[tasks]]
 name = "open-accounting-bench/current-ratio"
-digest = "sha256:fddd87330f0fa4152e8cdb5ff8a8033966921e29310bb347cf04719af65ec27e"
+digest = "sha256:3d5fe61dd4ffa3a89bd36117a508c446fc5ce685793f9a5668554b9d2a4f02ae"
 
 [[tasks]]
 name = "open-accounting-bench/cvp-target-profit-units"
-digest = "sha256:c26367d38df57233db8fc4b405b780061391ee0d18d676e700f695e9b796ba5a"
+digest = "sha256:08f9dd7ea7c2534ac085be97d7ed0d887911b20117db9ee4e64e608e64aec239"
 
 [[tasks]]
 name = "open-accounting-bench/debt-covenant-ratio"
-digest = "sha256:5e42aa2df10ecd035d8d802f5db115963b0f6c070eb1d10bb516503402daddd6"
+digest = "sha256:31b89d19141f749fd582d153c881465ae71813615ac2ba8e03df6308aedc66d4"
 
 [[tasks]]
 name = "open-accounting-bench/debt-modification-percent-change"
-digest = "sha256:e09246af4dfc6694e8add554b411d319e43b1b37e44f4245c6596522d9801307"
+digest = "sha256:dd0d78d62b4d9f560f2b6c3ca1ecf5480e845ef21e57a1fb36e198dd59ce2101"
 
 [[tasks]]
 name = "open-accounting-bench/debt-security-credit-loss"
-digest = "sha256:5e8ae47c5ffccf6a8feacbdf660b0b8be3998b6fabb23a819563e1c18f24fe84"
+digest = "sha256:76d023f3740bd26249578f646cdb34a2e9a108ec8bfe3aed50587978bce5d7c5"
 
 [[tasks]]
 name = "open-accounting-bench/deferred-tax-asset-warranty"
-digest = "sha256:96dfce916326e713b3b34e702cdf323f29d39e40cc38eb5c89fae58dfa6d56f1"
+digest = "sha256:a31411b84ec85ba62377785c84462c1ea7f8191ca740c1d4c5dfe5191aaade17"
 
 [[tasks]]
 name = "open-accounting-bench/depreciation-recapture-ordinary"
-digest = "sha256:573213c4ef121db365e0bd354868cbb105b1d3dbc1807e08aa7edc3da1e4b071"
+digest = "sha256:63da4119cf3fde2266e8a6b98bc81df095b32dd081c2adfb0960db6f1fa7b7bb"
 
 [[tasks]]
 name = "open-accounting-bench/development-cost-capitalization"
-digest = "sha256:664d3ebc522dc329caba9ac31663462d2a5b97c8d62672d06c73c3ca635ba9cb"
+digest = "sha256:9f231a761945ed4d9c880934065ebc9a29e233e4f817bdc0692e6538d4051192"
 
 [[tasks]]
 name = "open-accounting-bench/diluted-eps"
-digest = "sha256:716b070c33f16ce383b08542a6eb220f08089160f1c813d3770c1c6a655b6258"
+digest = "sha256:b43928cd4b237b0a61abc6eb751ac12087b196b2813efd55eea745af08d010c5"
 
 [[tasks]]
 name = "open-accounting-bench/direct-materials-used"
-digest = "sha256:df08b49d51bf372a7eda8a759d06c9ce79e3b75bb0403806dd096587559f5371"
+digest = "sha256:c1b02f40a496b6fe7e32f6b48f881cf4803006492709c40b963b67841c8e6e39"
 
 [[tasks]]
 name = "open-accounting-bench/disallowed-loss-amount"
-digest = "sha256:6dcc32289830a1a0cc29e989a6616440d84aaacd49ba8a1200f5ada0e7da34a8"
+digest = "sha256:39366d6c055f17597f41894f3f8e67f6fec04f18b33926a7e0378e3074e34116"
 
 [[tasks]]
 name = "open-accounting-bench/disposal-of-subsidiary-gain"
-digest = "sha256:7605778f2aa70eda04cb9560387e026e862541529a11c2f597dbdcff2fe38b78"
+digest = "sha256:367847ad6695fd779618e48e42a10051b7eb9f4bf7283837c38f180d6b6df087"
 
 [[tasks]]
 name = "open-accounting-bench/duplicate-payments-total"
-digest = "sha256:d6f326454872be83ba88b4f7a26ebd1345959ae6efc9ab7dd5b8c11b8b01d9b8"
+digest = "sha256:c6f52b039a092c6a2bd55f7a672d3cb5368607b718519418922469b71f84dc95"
 
 [[tasks]]
 name = "open-accounting-bench/employer-payroll-taxes"
-digest = "sha256:fa7dfd61d3e28f35548d80d070e848b46fcae4d6548d7533f3fcb881bdaa2ab1"
+digest = "sha256:b3c0de84a89079a7da7a094ce790d075a4f4e0f02b23debe63ca8f758ab6721b"
 
 [[tasks]]
 name = "open-accounting-bench/ending-retained-earnings"
-digest = "sha256:a656e3820e80cdc3062048b4a0a3daf643e99128ffc9350ca9c37f804eee4dfa"
+digest = "sha256:22a9aa0099630c15a36eeff0b0521ddde6d703722f941255ee5b01bf8315c23f"
 
 [[tasks]]
 name = "open-accounting-bench/equity-issue-above-par"
-digest = "sha256:67ae6e5ce0d25c6852e356859dc4a5411a4b6efa15e87b98eb8221667752c348"
+digest = "sha256:7292db55a4240a0fabd78940ff3f6656cb208f573c508e57281649c67eb50be2"
 
 [[tasks]]
 name = "open-accounting-bench/equity-method-carrying-amount"
-digest = "sha256:769e8a41a082035e2c639a051605f3141ea48b36a602e7ab21299cc84bd963cb"
+digest = "sha256:f1603ad37a8993ffa188a7af4d82097738ac37e7a53b1c7864934bec9ffab150"
 
 [[tasks]]
 name = "open-accounting-bench/estimated-tax-installment"
-digest = "sha256:fb79199a586d2bd393e56298c598f9859af97cf00cb8782fde0391453be580dc"
+digest = "sha256:cde501e89a715f6b6493426795d17c7b61142e4075048cf29faec665338d61f5"
 
 [[tasks]]
 name = "open-accounting-bench/exit-obligation-january-amount"
-digest = "sha256:ae21d7c2ce892c5059355f4f59d15c0024466b78443e54c48cce6e07ebb9f5e7"
+digest = "sha256:d83418791e4cb7a240e07570b2566a29a07c6010b000f660f7541d06a1017d83"
 
 [[tasks]]
 name = "open-accounting-bench/expected-profit-choice"
-digest = "sha256:ba5a949769ef0425316574991bd3763a33b6ff6d2b5ea7e3221673807eb0e807"
+digest = "sha256:efec6ec41ef75dd18e86b078a399af7bccbc1bc62121ceb189f3c14b188f661a"
 
 [[tasks]]
 name = "open-accounting-bench/factoring-secured-borrowing"
-digest = "sha256:f03afdcad33957d8e55bb7bf3cdd1acf59290e8da2cab062dc99790321c9678f"
+digest = "sha256:ede0e7933cd538f7d6e449177713bb8c9347698ffecf4481fe1afd864c445aae"
 
 [[tasks]]
 name = "open-accounting-bench/fixed-overhead-volume-variance"
-digest = "sha256:76c34f1d04361f923e7d472140f58c61ca5cd8faccc842a2a2f23138bacda313"
+digest = "sha256:90e738e9a1bcae6bba78d58d70c2d60b759e831041e22cf0958ebdc0b29e2c34"
 
 [[tasks]]
 name = "open-accounting-bench/flexible-budget-total-cost"
-digest = "sha256:409685d5008f093d8a4faddc179b3e7d6eb25a92290a4d8e86fa43a7a1efbe0d"
+digest = "sha256:477c61846d62533ffc500223b54843aad0962b141696a4f289b159c30f62f382"
 
 [[tasks]]
 name = "open-accounting-bench/free-cash-flow"
-digest = "sha256:bd4fb5448cd6e5a564d9146fcf295ca3a39ebd0219e9fc9362f2a90e02c4996e"
+digest = "sha256:766c776c3fd8a3b9aa821039f1c5a897ac5898596bfcaba28a36732c5f5296cb"
 
 [[tasks]]
 name = "open-accounting-bench/fsa-tax-saving"
-digest = "sha256:e5ed3ade45efc5b69fcabc5323d8cb2a832520ba4c0493bf92b6c458bf245b9d"
+digest = "sha256:5206610ed5944e5ef9540cd9dc4045d56dbf71388048fe08907350f459bad81c"
 
 [[tasks]]
 name = "open-accounting-bench/fvoci-fair-value-adjustment"
-digest = "sha256:256b49cfa48936c75f2d83226c06f4b697fd3a40edddacb43e4631aa663cfc2a"
+digest = "sha256:8d3053dac1faf6c1dd0dc7263a77193a544ed90a49f84df469f8e164c7ccf172"
 
 [[tasks]]
 name = "open-accounting-bench/fx-payable-remeasurement"
-digest = "sha256:dbd6378e66dae01dabe0ca33889a8db483c1a592186879bb2ce7fa7faca787fe"
+digest = "sha256:e69063a4765ca976448c92b802975ea52d7c5cb143639e4aac1e58e28284fe1e"
 
 [[tasks]]
 name = "open-accounting-bench/fx-translation-adjustment"
-digest = "sha256:9e1cf73321753641246b13c61be70af042799f3ed1394969acf2542e882aa300"
+digest = "sha256:610521cce7d110939c3ed512923645c04b84a4586d9d5a302cfecb23ffae39e5"
 
 [[tasks]]
 name = "open-accounting-bench/gift-card-breakage-revenue"
-digest = "sha256:7d0acee218d164762ff06519d7e9f1f15e0ae59a0cac00b43da489a2183c0e9b"
+digest = "sha256:364cbd19e198a5851830f456f5e60f0a56f3bbd185e168ecf1f8b32544429e6e"
 
 [[tasks]]
 name = "open-accounting-bench/goodwill-impairment"
-digest = "sha256:87412a98a75c016980005473b0b8ca99bf136552051ef07a814eaa4f7b3a57c4"
+digest = "sha256:ce244606b03da0e0476bcf2c8f9170da29e7567acb0cc628ca943748e5a74d33"
 
 [[tasks]]
 name = "open-accounting-bench/government-grant-release"
-digest = "sha256:582ddab814a461d17e7faa6a8695b87950f2225f383ab97edf9e5fe7d7e61d18"
+digest = "sha256:5d801b92c80daaf62f958a90f64011a5393e8e4ce5ff8077e18422c8842497a7"
 
 [[tasks]]
 name = "open-accounting-bench/governmental-encumbrance-entry"
-digest = "sha256:3534c608e85870165e49c92d43d2f7e6a0f46bfc3b5b01cdc8d5880b4a787788"
+digest = "sha256:bf96cc43a31b80da8c417384bc2dc7d6410a1c131e559c367cd0e36809b2f2f8"
 
 [[tasks]]
 name = "open-accounting-bench/govt-capitalized-costs-total"
-digest = "sha256:ee4dc41c6fa91066e4af80e0010e812e4abe5c89f7f1b4f22ab1177ec6b54e88"
+digest = "sha256:0a8dd2650544b9253cf0596a5a013448696f2dece1e309190c9530fec07c8256"
 
 [[tasks]]
 name = "open-accounting-bench/govt-conversion-net-position"
-digest = "sha256:41d96edbe4c94606c9415add2452c2a01ff176cc59caea7a7302af400c424727"
+digest = "sha256:a8b275969b87d9140c35d4b84cd1dc697b56e3d5cb23453ed1ba0726adaa9acf"
 
 [[tasks]]
 name = "open-accounting-bench/govt-expenditures-december"
-digest = "sha256:2c070b74e1fc13b6598a376498aedf0ddd85704c12ea68386b5014717a25d2ff"
+digest = "sha256:53532e2afec1e1ed34ab2c4eccfc515b87ed27290cf434d56efe5944e8dedeff"
 
 [[tasks]]
 name = "open-accounting-bench/govt-long-term-debt-total"
-digest = "sha256:a2125ddc3b559086465a62e4cc496de28413a1f38cf8d9fbe7d4a6ec60098e7b"
+digest = "sha256:8a76d306fbe18b990e4956a8326bcadadca56a42749c29992affe1b5a07cac84"
 
 [[tasks]]
 name = "open-accounting-bench/govt-net-investment-capital"
-digest = "sha256:aaedb7ee863a784dd895a4e73afd70fcfd8b8a41a8a237297a08982c03311d0d"
+digest = "sha256:d2c345fade2734f1e9936aa769a4b2e185d78b130b67336c5d7e5227d6abc3a1"
 
 [[tasks]]
 name = "open-accounting-bench/gross-profit-from-trial-balance"
-digest = "sha256:79a3b55aaed569b17e05130d70cdb99dafc7061b2da1ec6ce4ddbd2448821dbf"
+digest = "sha256:11123fc0de0bcc7908edfe759451cc42b7466ae8500724dc5aae3ca2e2e1f32e"
 
 [[tasks]]
 name = "open-accounting-bench/held-for-sale-measurement"
-digest = "sha256:a6c71f63f1c6434d22ce47efc3c36588aabbbf7c6142976dbeb54f5748c2bf64"
+digest = "sha256:084ffd8dd6b3c1d3085c103288249d12073056006140991532ef455d1a4d573d"
 
 [[tasks]]
 name = "open-accounting-bench/high-low-variable-cost"
-digest = "sha256:69d2b408d13a90f81f96b68bdf75e02e81c3ce6d81fc2a1960ba182f856675e3"
+digest = "sha256:d02f89425c22293ae207e90c30b3dba7ff3d67070015be28860c4c6ed6c49e28"
 
 [[tasks]]
 name = "open-accounting-bench/htm-premium-amortization"
-digest = "sha256:ba8dc2febc9f5f2220f9b4456ef67d8f456aa3b39bd2c0e2c529d57482f45ebc"
+digest = "sha256:d6aa891a1181ce9210cf0cd9beddf648f8261c9ff8263324d31096a0c34ea469"
 
 [[tasks]]
 name = "open-accounting-bench/ifrs-capitalize-borrowing-costs"
-digest = "sha256:faf9d530e59e2c828ec64fcba2a49bb5d16809111fd36cf425daddaf0dc5e849"
+digest = "sha256:012bcfc0c8fb4bd1d35fbf61d9e70d1e18522989cb198b901c1596347607a621"
 
 [[tasks]]
 name = "open-accounting-bench/incident-response-deviation-count"
-digest = "sha256:f919473f108283fc4894c1c131b92e7cc92ab479c25242b65075c9f0e93c6e6f"
+digest = "sha256:dd8a9e7d698d2650ee9f01ebeece497bd49cc8877517a17f9f4dba23a534f452"
 
 [[tasks]]
 name = "open-accounting-bench/income-shifting-pv-saving"
-digest = "sha256:ef352d0ecbdfd1ed7a2347710cef0edee61379ec6d80bb0f78b58986849db0a9"
+digest = "sha256:ffdbb9cf10be572c5d3f6b614a77db0c4098f1def4189b318039eaddc29dfcde"
 
 [[tasks]]
 name = "open-accounting-bench/individual-gross-income-total"
-digest = "sha256:dda3399e8b9afc9b5eaac945c556078b103f795672474f2ee14a4f4064a66cf3"
+digest = "sha256:12512cae7dcaa25c78d4483794ae6ae935f6ae86061f5ec162b9e4b7a7c94c84"
 
 [[tasks]]
 name = "open-accounting-bench/individual-tax-with-niit"
-digest = "sha256:61d3f814e6e74e73d7387a36119fea1afc7b0215a617c6083bda3bb474003f74"
+digest = "sha256:c975450a4802138c70f45cecf2934e2b07936f104edfd8875caab2dc4f36638a"
 
 [[tasks]]
 name = "open-accounting-bench/installment-sale-gain-year"
-digest = "sha256:8aa912e7ea8270ff5efcf32793f912ea26c7d120b608bd890138b73a3be4ce5f"
+digest = "sha256:7c7bc01821f275378e32f06ffac450d6f53e659d094c97e095395d4a01b55d29"
 
 [[tasks]]
 name = "open-accounting-bench/interim-income-tax-expense"
-digest = "sha256:09b318ed6e84285c12131c98866b375d08eac108ba4601ff24bf0d01746f022b"
+digest = "sha256:28c9c222944898a2ee9a8c69b11704e6b07aa9351a22f58728d7792631e7d6e0"
 
 [[tasks]]
 name = "open-accounting-bench/internal-use-software-costs"
-digest = "sha256:4a24a1fe3d301c84e70211dea32d7855492e41f1ed9c5daff5b394781144b98d"
+digest = "sha256:84bcd5ce3c12c59211833396118234306259be32e3d34b67cab13e5cb49d96c5"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-cost-inclusions"
-digest = "sha256:79847bfec198aecdc657aedba5014af6a1fd16ffd5cc9bbbff3ba7a2405f9a6c"
+digest = "sha256:d46c3a3cd2771af8a02e764eb750881bb564bdea95948bb2302f09a107e5bd3c"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-costing-nrv"
-digest = "sha256:0f7473ada5c5232d2b8c5dffa244c4c2e914ad494b7387259ebe44801f62c3c2"
+digest = "sha256:da58d049f197e5b105f58767fdfec9dcce5cad20b8c470ba62b5ec37782342d9"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-count-adjusted-balance"
-digest = "sha256:a655cef5dbbc06afec531bbfb5648b2605406ddcf8603d41b503f50af83b1c59"
+digest = "sha256:fbb8e8d06d3e9f8c68de7558662fdec2fc15efe93ec73bee058e43e1f7dbff4a"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-days-on-hand"
-digest = "sha256:b1c91ca37e0ac881876dead4b8daf1aaa90943bd46a9d70ed202f26b91df71c9"
+digest = "sha256:3ec6944873e944459e67a21488816b7dc307882be41762f77a63fb9c250f941e"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-error-correction"
-digest = "sha256:fad5cd4141ee316b7dc7892c22b7f51250924a7701fe77007dadd9e0021e16c0"
+digest = "sha256:7e6d383c6e51af6a02528f6f13ea79d5737488e1a3703031af33ff805c653851"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-error-income-effect"
-digest = "sha256:a85c76fa1801e56992c73b0e6dff0af3156f720a6e1a26761155a8f0e63fd408"
+digest = "sha256:ea4960d143335c271f2766fd081022a0efb6d5ce8b60ecb4fd012ec041ae2cf7"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-lcm-value"
-digest = "sha256:218da2dbaedcda2201b990cc901d7125f9cbf39ad9f5e05ced9982e3e9398814"
+digest = "sha256:63dc67e43bb9f280c0443ebb65e6dd9cd115261cc73d26cb469b10e0e1b27932"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-method-profit-difference"
-digest = "sha256:5fb02591db5eb2ba5cc3c935e53fec52a3b37528cb0a4af535463260b075f36f"
+digest = "sha256:bdeaea037aad4bff631e7af27a800fb2bce62770d107229f9df8390bdb5ee822"
 
 [[tasks]]
 name = "open-accounting-bench/inventory-shrinkage-adjustment"
-digest = "sha256:7a84e0f6da660831d841bc3fabad7c50e49412020da72cdbb8707be2460da063"
+digest = "sha256:a870a55ddbbb233b30514bd763922979e96ec4ab3496e982b266189e8a445f5f"
 
 [[tasks]]
 name = "open-accounting-bench/investment-property-fair-value"
-digest = "sha256:4697d3b71206fb3ef7406e055ba01ce233ca645eb89834922471eda24986afc1"
+digest = "sha256:acdf24e2c6ac33337406d350a46e854c7e5e41b780f0e6bca0339d9fcf8eff6a"
 
 [[tasks]]
 name = "open-accounting-bench/irr-from-annuity-factor"
-digest = "sha256:ffd4601bad7d225a3b862896ccf829274dec5fff4d771f23f4763ee48cb48ac5"
+digest = "sha256:0ea637e0ee2a70095163a112395d9506e2d473873d45b6897bdaf6fdd06edb4a"
 
 [[tasks]]
 name = "open-accounting-bench/job-overhead-applied"
-digest = "sha256:9af0114dcceb9731d128c866d47713b57358b48b418eb6e4659f1bec4f26c83c"
+digest = "sha256:48fb6858dd877dfb1b875abda0eb4416a278b1895922eb42b92f168362f7ecce"
 
 [[tasks]]
 name = "open-accounting-bench/known-misstatement-from-sample"
-digest = "sha256:c2ac700d88d8db4e5826d8828eca8a51c30587439a441465b45daa52aa1c6cb1"
+digest = "sha256:c033c3e9b2c611c71d8ff2fb3eec8df0fdfa9983ecb79d69a8bcc92f018f71d5"
 
 [[tasks]]
 name = "open-accounting-bench/labor-efficiency-variance"
-digest = "sha256:d8caf86909a22e9c44d7e0f142a24c860a08ad9958adebf06f95dd52980badae"
+digest = "sha256:859a52e8dfb400255cbb8ac48b100759f2114098b69395f203f1d99f91be8ddb"
 
 [[tasks]]
 name = "open-accounting-bench/lease-component-allocation"
-digest = "sha256:408f75925a510b7203ab8a7ab525314ad92ffd4937db0749b78276b85b147078"
+digest = "sha256:b575621a2b917f6807bd51f94492e1047de00a6061e7efa2f2b4197ffad9ab65"
 
 [[tasks]]
 name = "open-accounting-bench/lease-initial-recognition"
-digest = "sha256:a5cd352a3f61c1fa8276c2fb3741d5d2f1a6f6d4e4eceb757cad000e451dfd7b"
+digest = "sha256:4a64ad84496b8bf7354fee838686a067344784932e1deeb23ba286530f96e722"
 
 [[tasks]]
 name = "open-accounting-bench/lease-liability-present-value"
-digest = "sha256:062570956f2df0196c4c623878a3e7ff403499a90aea6db6621614fd45d46765"
+digest = "sha256:14ef95cdee92214aead3f1032eae11261e9a1bbbbbc3070721b11b3f30f39826"
 
 [[tasks]]
 name = "open-accounting-bench/ledger-account-balance-carried-down"
-digest = "sha256:58f49268df02e78be3833f98095ae7a06166fa92dae269a6278a649c5f50d44d"
+digest = "sha256:dbc49adb5cc448c30c170d67c29fcdfbec3d2e1da795b4de04e09b904e6149f0"
 
 [[tasks]]
 name = "open-accounting-bench/lessor-sales-type-lease"
-digest = "sha256:8ad631f9f968c71d6fbc516aa6022f23e75bbae87d8f73c477d34ae0d81a017f"
+digest = "sha256:7d06862ae87ad7391aeb3238e60140d2172dec53e0d61ed8b30439100844908f"
 
 [[tasks]]
 name = "open-accounting-bench/lifo-ending-inventory"
-digest = "sha256:82a74c523499dd2794f9f921bca14afb509647b3824e0fa0582efd38a11ee0c4"
+digest = "sha256:c5ffd0f48d2e381840f3e6a06ed893de8491a54a5f0cedca41b26f5754c5068b"
 
 [[tasks]]
 name = "open-accounting-bench/likekind-exchange-gain"
-digest = "sha256:2a64553f283e56f0aa822e380f65a86d6436cd7a277617403bc638266f5013ef"
+digest = "sha256:ca1588751d3f4e4150f7af7b13fc1d74d11ab885957fc31e0cfcc39103a47e9d"
 
 [[tasks]]
 name = "open-accounting-bench/liquidation-shareholder-gain"
-digest = "sha256:5a5a113409f96ff48d459bf2c40da90fb7b35b335d96f7611239425466810153"
+digest = "sha256:afb8bc9f82594fa961fe9da45599383e1cafd4ad31a22d6e499e8105ca74d971"
 
 [[tasks]]
 name = "open-accounting-bench/loan-effective-interest"
-digest = "sha256:59c953ffbd8873f2432e0f76597cd13dd938dc14e12a89272facfa0c6f1bdd6d"
+digest = "sha256:8035621e044d713106f754be32c6b7252d4fea577fcb7b77f190c189924d5676"
 
 [[tasks]]
 name = "open-accounting-bench/long-lived-asset-impairment"
-digest = "sha256:e61da3581d40dbfa89cb86cdf637962dfd7e7e0f5111979d92556f900c77d9ce"
+digest = "sha256:265d5118b0436e69b79ab12252d67b6f1273f2d2f7da9af938e9a38927ddc8e8"
 
 [[tasks]]
 name = "open-accounting-bench/loss-contingency-accrual"
-digest = "sha256:495ce57bc48bd60b8882351f2622741aeff65e7444d0d12a9d1fbdff805f688a"
+digest = "sha256:61225061851c326ef5ca597824001d462f5c386eebd2b70344d9d50354d4e8d1"
 
 [[tasks]]
 name = "open-accounting-bench/make-or-buy-advantage"
-digest = "sha256:bd99f4fdb23f9847f28a62638814ffc86ec7506aa01748687addb0a85c189d14"
+digest = "sha256:94b5c5e29b1476d7d3192cd5dc4ffa1ce515926b0003a7090573ff76d9441350"
 
 [[tasks]]
 name = "open-accounting-bench/materials-price-variance"
-digest = "sha256:49092efcf4549c090e0442a28157b7c5557ef40178329c253dac0eb515d43b74"
+digest = "sha256:662d0ec68c3c8a6ebbb0e1beeb24eb6251c7031ebf2b8ba6380d309bb74a4f5e"
 
 [[tasks]]
 name = "open-accounting-bench/materials-quantity-variance"
-digest = "sha256:0d86e4e8533c32dd6b2f1f57aa6b28626f0a81dcce8f3be52902305423d91ce0"
+digest = "sha256:dcbddf382fc589e1dacfee5d92e1e31c3e61fc3d2259c91565ce6ee388579613"
 
 [[tasks]]
 name = "open-accounting-bench/mc-capitalization-treatment"
-digest = "sha256:ab12ecc379442f87bd24f42556cd38ad8b155d290e82bac290af5e191a788ea3"
+digest = "sha256:daa5a275a3d3efb6a4dbe0a1e58ce616240534ff1a979ae32157447319e45ef7"
 
 [[tasks]]
 name = "open-accounting-bench/mc-normal-balances"
-digest = "sha256:4021ee706cf4d8a6d30b6a8f4805f5316d6f5681e2664c680c280bc60fa78ea3"
+digest = "sha256:c05d4fa6eb477180485438c79b08a9e57984f163c65bac545103181e5865ef1a"
 
 [[tasks]]
 name = "open-accounting-bench/mc-reportable-segments"
-digest = "sha256:ca792dcf094972f68b4ad2b597d6b3b6765154d3546c3b44e7a1c04752d14c50"
+digest = "sha256:a8ae8b71bda0106e3933d3064d13ef0ad60dfea6b07dafb249208c9370cde8b5"
 
 [[tasks]]
 name = "open-accounting-bench/mc-temporary-accounts"
-digest = "sha256:b54f834d620494af9117708686eb34c79978262a7a489847c7f5f9cfd9e4d291"
+digest = "sha256:e117a56a0ffecf79fedd519db053ac639cc181260bec13762c2a266669827893"
 
 [[tasks]]
 name = "open-accounting-bench/mgmt-break-even-units"
-digest = "sha256:5d0b72f64217b0fba17f482c891ca17d7fcf399555ceacf81c58b37369a4c737"
+digest = "sha256:b31d5f8f53ebd0bed9b27fde96106aed02d239f24b4d0e50926dc6e08e0db701"
 
 [[tasks]]
 name = "open-accounting-bench/minimum-transfer-price"
-digest = "sha256:1b37861980dafea1bc55c6511a597d738e9deb90c420c17fa7048056e5bf35a8"
+digest = "sha256:f0ca8b04491ef0e36b0c0a3c171c753e72430917ffb97e3e88ca30e962907c11"
 
 [[tasks]]
 name = "open-accounting-bench/multiproduct-breakeven-units"
-digest = "sha256:b1f1404fc64c99e136fed61a135626b074e1eeafe9d2eb508ea2c66a0cd97c49"
+digest = "sha256:c14634837688fdbb974a605183226ac73f019ce10585f485c9bfd411bedb39ba"
 
 [[tasks]]
 name = "open-accounting-bench/narrative-multi-transactions"
-digest = "sha256:f9707b9df16b4922b098234ec1ec16b287c2ddd88bed5b4abcac9e6129f84e91"
+digest = "sha256:66aec737736c303e79ccd727c07805fb5ff75e1fc236840cfc6af50f3d6b02da"
 
 [[tasks]]
 name = "open-accounting-bench/natural-resource-depletion"
-digest = "sha256:b5b14e9f3a0f231833cec2916b1947a024a42ed85ae7596fc9bc874cf96d8518"
+digest = "sha256:8a96a0effe8c4e2353c924cec239ad72d0313532f832cb802fa2cf59bdea0ce3"
 
 [[tasks]]
 name = "open-accounting-bench/nfp-conditional-vs-unconditional"
-digest = "sha256:142a57c11fd53980abe8fb980b2b15d8e7960adb9f51fb57bfea54b7e4ae79f8"
+digest = "sha256:7a14866f85888ecb692a0e6b39218437dbb6db1488f1d31213ed6ef204623891"
 
 [[tasks]]
 name = "open-accounting-bench/nfp-operating-cash-flow"
-digest = "sha256:e7d26cb1853f178db0ff31048183e2e7e9fc3985c595885690a11898857f32ba"
+digest = "sha256:9a70e379c249e154230fea5a7eedf8959e93e4131d4f61503662c52a0363aa00"
 
 [[tasks]]
 name = "open-accounting-bench/nfp-program-expense-allocation"
-digest = "sha256:298cdf9e2d6cf70c37b66e04fd909265dc8a93f2eceb4b8c36e97871e07f5bd2"
+digest = "sha256:635a16b35792d02d5396a8e3bc8ccab867fa6e41e088e15eba66c1b25ae847e8"
 
 [[tasks]]
 name = "open-accounting-bench/nfp-restricted-net-assets"
-digest = "sha256:a3e1be28e16213767a603bdd5e7cabc3ec76d91d8ebd5cdc488f9a0bbde47c7d"
+digest = "sha256:854dfc429719217599bd34d96dac75d090a99d2dc0b1512ec32c0f45fb2c5a3b"
 
 [[tasks]]
 name = "open-accounting-bench/nonexchange-revenue-recognized"
-digest = "sha256:da01302a7b3846ddd34ef0d8db1a676d8dc6089584398704f376ad8918c7f14d"
+digest = "sha256:8f6ed0e49b43ca1361b3bfe68ec113331e8a6c19333ac3589e24f691a26ecbde"
 
 [[tasks]]
 name = "open-accounting-bench/note-dishonored"
-digest = "sha256:7133968f825ec4882a7cfae388eaca8857cd26e4ae2bd9263c5ff17a5a68eaa8"
+digest = "sha256:fa9cd024931507ec8672a6c6a1ffa4c782368e69708679d7378ea16ce1454773"
 
 [[tasks]]
 name = "open-accounting-bench/note-interest-accrual"
-digest = "sha256:e8f89b6779dcbc9847a12fe3405b6546ad851dbdab6baad9a0facf52b39d55fb"
+digest = "sha256:0ba6e7bb7a0d8a70f46df4989e92de8ab8e640aef3ddb32fa4fbf09b6fa95854"
 
 [[tasks]]
 name = "open-accounting-bench/notes-figures-difference"
-digest = "sha256:84031710ef8d66aada4c529a6f00a14881f1632c64613523194c9bbd1f1b1fd8"
+digest = "sha256:1fb1da109e969954cd959041e8b274658036078c1fc1c0ee2328bff1de78c712"
 
 [[tasks]]
 name = "open-accounting-bench/npv-project-evaluation"
-digest = "sha256:f4ceb831fbced7b799e7709b1ecf6eb63b938390db22618ec03fca0baa4a7291"
+digest = "sha256:f64f5faf27771f8e39bb999aa56feaa8e729d2a2866b35d70b75a834c0ab69ee"
 
 [[tasks]]
 name = "open-accounting-bench/operating-cash-flow-indirect"
-digest = "sha256:3a51929aa04013f756b8cc1c58a3f7909a8e449e02e56e49a1ef8ab9d3cca4d6"
+digest = "sha256:ec3bf1895ae3279d5308e1366f75100612cfc7f6eafea026372250e030e3969c"
 
 [[tasks]]
 name = "open-accounting-bench/overhead-variance-disposition"
-digest = "sha256:ab1a10e19aa1adf483ec55f9b21e4c6c4140f218c743a9b836aaa41d20f069c1"
+digest = "sha256:e2edb8e85697e204c3a0dac702c4c28c754ae8d749d21492a13f3608805f7d5d"
 
 [[tasks]]
 name = "open-accounting-bench/owner-ordinary-from-k1"
-digest = "sha256:29b5000cd8141605df94b2388336be7fec75c3a8d1be7b6bfc6ed494e0e650cd"
+digest = "sha256:6294f344145328f24f632b533e8933544e309f7c42380195db39ed6bbde74999"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-admission-bonus"
-digest = "sha256:2378ca71948176b478cbfe481262c15afe7972ff5178d415a0103c237692ddbd"
+digest = "sha256:c71dcfd681e12aadde82fb30432b5e744328b8aaf7936136973ab582813a5feb"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-contribution-gain"
-digest = "sha256:4ca9a1f8f1e4d3cc43221c34d3410dfe39c7e84b6005bad30b5d4c6c15810336"
+digest = "sha256:fab8f4886f84d7fe5c235d51d0bc20fcaf751b5eb80d70c35090b909a291f0a8"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-distribution-gain"
-digest = "sha256:66405301601013fb1a708f65dbeb9da8adf11612a1ee77b0b689a4606eefce6e"
+digest = "sha256:af867fdbd2ff84978e38af1d235420d95e5a69712d38e5374811f3cec6d1a1c3"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-formation-capital"
-digest = "sha256:882af2e9f47b6fb22a585bb0b256432a16e7b590bbb377d744989cf771d2248a"
+digest = "sha256:45fadd5a7891b8fe3e89c7288f4e220f18a9502939e25eb1cf055b06ae55de81"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-income-allocation"
-digest = "sha256:0be292800745ae02edbee2681ca5146a150fa3d3e10dbb6750d47f68f8ae6ef3"
+digest = "sha256:8af0663b52e37e1bb92387193831273670e90b240aebe79bd166876b41b4a682"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-liquidation-distribution"
-digest = "sha256:fd3901bc3310ae44e267552337611633470042b3c6430127171ce95a6c0fc757"
+digest = "sha256:f12b26c0a83cf3aa4dfb01036240df5cb84524d257a94874eace0bbb9ae6037a"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-outside-basis"
-digest = "sha256:ca63a1e3fa596d00111cfe35db13beebbd82154d3b1328ea3ca74d0ff1b84f93"
+digest = "sha256:00d0bd595ca0e6d6c3b2f6b6a7fd9cc86b5300762f9bf981cdc68b2b7062a8b0"
 
 [[tasks]]
 name = "open-accounting-bench/partnership-retirement-settlement"
-digest = "sha256:739ce6eb54eff3c46ba8429c4ccd5eec2d5153061a7f3f19e651035f3a62ec5f"
+digest = "sha256:acc09529bcbb332ad2861b3fa5b58b3b925fcd9bf6d68afe88e717ea3a73097e"
 
 [[tasks]]
 name = "open-accounting-bench/passthrough-loss-limitation"
-digest = "sha256:501ddcb0b0a76d474049c80c956e4fb70b7399f779fabdcd0b06cce9bd798730"
+digest = "sha256:57973ce0de9dd17e021c0d9f415e1a89e2f8b31bb68b89a1d511182145e62914"
 
 [[tasks]]
 name = "open-accounting-bench/passthrough-ordinary-income"
-digest = "sha256:1e20127dbab459dbfd8404512e94405c5d898dd81669aae185a8da1e99436054"
+digest = "sha256:c84cf73039d9dad77ec229954d88ce5bb5cb2f5c90570450c3187df2edf112a4"
 
 [[tasks]]
 name = "open-accounting-bench/patent-amortization"
-digest = "sha256:63f01283a67fdae337f6ec8f10e52fe819a48696c1ea9a0efbf626b7a8a27965"
+digest = "sha256:e807bb56b6d6e63ca6a67df96c9a7ce838b13a5e9694781e0295b60a26c76227"
 
 [[tasks]]
 name = "open-accounting-bench/payables-control-balance"
-digest = "sha256:80d522935295124a43416aa4ed66a390abe1dffe0bf2c6211bff228e4e62829c"
+digest = "sha256:528a709d4c1930c521975dbe67cf21250948dd70b5e1f7027ddd2115bd0beada"
 
 [[tasks]]
 name = "open-accounting-bench/payables-statement-recon"
-digest = "sha256:ff3fea5991e6ec5e996b62dd02fb414034fc214cecd5477f1e23c1a66b1ebc56"
+digest = "sha256:2295275985c86640e98496780abe325ac385d91ff90d4379d4678c5190d11254"
 
 [[tasks]]
 name = "open-accounting-bench/payback-period-years"
-digest = "sha256:dc221694f4ec89c89a75691275d9af7bdaf7072f99b0a637825badc899de62e6"
+digest = "sha256:4dd28669a6ac22a3e18bf131d822e8f4e10eb6c2112fdf9d121a2facd1e76bfe"
 
 [[tasks]]
 name = "open-accounting-bench/payroll-withholdings"
-digest = "sha256:8be96572b573faae620fc568c557609ca5d5e70a27e3b20a4b15c9a135aa0fcc"
+digest = "sha256:6e854475db232b89b37b2739f75e55d2a00362130ab53f51e46183cd6ca69c15"
 
 [[tasks]]
 name = "open-accounting-bench/pension-expense-and-contribution"
-digest = "sha256:d96b66e414e728c00eaf513390789c09eb5583425f6862b075d2a566a05f5577"
+digest = "sha256:d5753f82fe19f0fdcec1fffac8e7b2cd46db8cfe192c38f34b40db1e3f8d0cc5"
 
 [[tasks]]
 name = "open-accounting-bench/percent-of-sales-afn"
-digest = "sha256:70d650b48429ee8de7f4553fb6c00c7366d8791494f9240c9f28d25bd425b346"
+digest = "sha256:b7d1c4cb021846b57da62b0930555743cb65949d17e0adb958bbc050e0793b57"
 
 [[tasks]]
 name = "open-accounting-bench/performance-materiality"
-digest = "sha256:1ffb67d74a926fccd1fbb4b1fdac78d57041a0d72c1c1770f7f95d0b25d9552b"
+digest = "sha256:2b287d08bc1d3ebd000f8a10b4033da77ca92053d226b693aedda19257959d02"
 
 [[tasks]]
 name = "open-accounting-bench/periodic-purchase-with-freight"
-digest = "sha256:049297f669843933d56faeaf88e8239d47de4cb6a9e2a26c238dae293f8477a1"
+digest = "sha256:01542e85de04f84e805896d194e356710b69604a41eef7aa9199b8c314a2e6af"
 
 [[tasks]]
 name = "open-accounting-bench/perpetual-sale-with-cost"
-digest = "sha256:e1ae054f05958382e4cc2cf138e65f146567467ac220a0cc90756d97dee0daa0"
+digest = "sha256:ae845ba6d79efc6aa49650752290a0376dac432014d7ea2aeb66cb301163a059"
 
 [[tasks]]
 name = "open-accounting-bench/petty-cash-replenishment"
-digest = "sha256:038c65628c61b3e393472577efc7852e2d00afbd4943974948f1c3837378bf60"
+digest = "sha256:7b5d987049fedb0842d03e6d0de435c88bc5142934b75c70084eb764f3cd7597"
 
 [[tasks]]
 name = "open-accounting-bench/post-closing-debit-total"
-digest = "sha256:17c1f001aab7c75cac1b2ce1ab86ed4b78beeb753d34ed428b31b15d5142bf8b"
+digest = "sha256:98c14dea6638d88e06c44fe771ce3b35eb611b53a525580f73a3d9fafa19530e"
 
 [[tasks]]
 name = "open-accounting-bench/ppe-additions-inferred"
-digest = "sha256:8925faa79b4b88c533f375dba94c52aca186929fecc2e2e1a019404c5cdbfe3e"
+digest = "sha256:f18f98fcc56d2e0f76f676b8de4bbaf7e29c460fe5353acf48e2529369b5036b"
 
 [[tasks]]
 name = "open-accounting-bench/ppe-disposal"
-digest = "sha256:f239c202d09811f669e8000a6775e43238f839987e0af9ea53579b8209ffd1bb"
+digest = "sha256:2906e4a3f989c7a2d6ffca2e06323b0cc6981f36609b65dd74fd4efef87bc756"
 
 [[tasks]]
 name = "open-accounting-bench/predetermined-overhead-applied"
-digest = "sha256:2a1cc9c417078928d8bd231fe52ceab0dcef89fc8e9640f31e55e0b2f58551f2"
+digest = "sha256:3c3cfc121295aa75398e479fe87daa1db68946bd39f2d2d8ef7ac96231a757fd"
 
 [[tasks]]
 name = "open-accounting-bench/prepaid-insurance-adjustment"
-digest = "sha256:37dc2af4860aaf22672ac106f38b633f0bc4ebd2dd63bd403ddf72703685b968"
+digest = "sha256:d12edb5f69ca9b33bb75d0d663ecec02d0d33653b7d6c28e0e421c407ff63bc1"
 
 [[tasks]]
 name = "open-accounting-bench/present-value-lump-sum"
-digest = "sha256:1303fe8736cb38ee1ff0c92a8f25d30f0414915bd89c822d326b41950f31edb9"
+digest = "sha256:8f1aab8a474a87ae688bee8c0c743f255ea2631856e32320c9078fec030e3394"
 
 [[tasks]]
 name = "open-accounting-bench/process-costing-equivalent-units"
-digest = "sha256:9a6319b8bcaa9042004dd2539b36280fc1e86dac05eca625a202ff82425c782a"
+digest = "sha256:179dc59ed4c55bd346d140c3bdf923ff70cfaa34d0388481fec614914b0c61df"
 
 [[tasks]]
 name = "open-accounting-bench/production-budget-units"
-digest = "sha256:dd1e6b7122c7686fd2733f5f83b6f996377bd11dae68a66596ae527c6885e133"
+digest = "sha256:0ed4b04bcfacabbfe14fd1e859b5992d8405ee0c4fd5f2fc243a6a3579c7a513"
 
 [[tasks]]
 name = "open-accounting-bench/profit-from-capital-movements"
-digest = "sha256:14f4d8f38b2e001f4b5cafabb230cff4bbc349df7dcffa28a6a7ccc6d968c7a3"
+digest = "sha256:d3fbf8c6aab547dd25d43ba479906fdaf061f4b6454607f727c8774571c37516"
 
 [[tasks]]
 name = "open-accounting-bench/provision-rollforward-topup"
-digest = "sha256:5777b3d339c5add921487c536bc34a2e132f5420288791811fd7343cc85f4c98"
+digest = "sha256:5e34dd17aa1e4fe963fde99905b3c2d1b147478d05de01f5db6567a6f8974c6e"
 
 [[tasks]]
 name = "open-accounting-bench/purchase-return-perpetual"
-digest = "sha256:cfc0f14a21e0dad5a889a54899066df79679c4dafae54b0423b9942807585108"
+digest = "sha256:1fbea6ad1cc1b75ec069c87f0a97f492018c7a5430aba50f4ae445331c6ca882"
 
 [[tasks]]
 name = "open-accounting-bench/qbi-deduction-amount"
-digest = "sha256:812ccc572468cf9f7cf32767a0a52e2ea349db9799c0655c0b47aeac2ff93e54"
+digest = "sha256:8421e0c2e4678bfb010306b323475ec83873b27ca2d83b7f5466db51c6711aeb"
 
 [[tasks]]
 name = "open-accounting-bench/receivable-allowance-trueup"
-digest = "sha256:19dd6a826f7a325a97cd478b4efea0cddd194ca8af03f4d931bc03cf0a6873d9"
+digest = "sha256:7c546115e260ca375b6a3e641fd5d8670bd2155f41927330989099b9e99b0bfc"
 
 [[tasks]]
 name = "open-accounting-bench/receivables-control-balance"
-digest = "sha256:15e610a1d465b355ba322f2a5367ee8fbec9e1c5fed029485ab69c77da973369"
+digest = "sha256:ee4699c6ffdfb589722692eb8714503f72acc8ddd8b979fd3e5fc6ebd3cd529a"
 
 [[tasks]]
 name = "open-accounting-bench/receivables-payables-contra"
-digest = "sha256:d9c4f7bcf7ec1cd6abfe27fc78b477ad6e7ebfd52d90db61f6d76048bc9cc04f"
+digest = "sha256:6a15ee60577482d2120d8dcbf2a2d798d5a3f1ee4f16bae6d4162526cf580997"
 
 [[tasks]]
 name = "open-accounting-bench/related-party-resale-gain"
-digest = "sha256:89b9cb150b307a05ef8f8fccb16fab04f20dc545da6921ec275f555726dbc0cb"
+digest = "sha256:2638a0d74f26331ebae47a65ae99ecdd8970f127f3f7e0f612ab64bb3b69a3ba"
 
 [[tasks]]
 name = "open-accounting-bench/residual-income"
-digest = "sha256:c6236e27534a7af606f6163be4378864560a44fbba64dd86dd3868da5b7f53a0"
+digest = "sha256:c77d198c00d7a4f7067500016d068938502abb90320094daf90ac30ac5e812bf"
 
 [[tasks]]
 name = "open-accounting-bench/restructuring-provision-amount"
-digest = "sha256:52a7cba6dac4133a1b73be5ce4468a949d6381b211bc304e7cebee21ed7a092b"
+digest = "sha256:d94941db61d059dfb8e7b19a9852175bd4894b78bcf7f32098c3f5415c6270ab"
 
 [[tasks]]
 name = "open-accounting-bench/revenue-bundle-allocation"
-digest = "sha256:22d58bc93cf111ced006b98aa4b5484d5d4984642e5f88768a57cc7199f02e0b"
+digest = "sha256:71a951b2dd0ee299d6df595e4285393510bc7dc9c796fca0c2590e9eb7eb72fe"
 
 [[tasks]]
 name = "open-accounting-bench/s-corporation-aaa-ending"
-digest = "sha256:b878e8012d8325f5bfd6dc8e6e0a90ac643b4b58edb4b277c54280c00066ba5a"
+digest = "sha256:ed77df42eb4bae0740ec003300928cea0569f1242b09a03567b8a54bdecd5a77"
 
 [[tasks]]
 name = "open-accounting-bench/sale-and-leaseback-entry"
-digest = "sha256:cec7a77337fe6caa3bdcd0a47d1b5991c790b1a9ba4188a086e0470e478afd77"
+digest = "sha256:394ac5e525d3c2a67458e4cdff5a97f3b71767eff2df44b948c651697d450851"
 
 [[tasks]]
 name = "open-accounting-bench/sales-from-markup-reconstruction"
-digest = "sha256:f92c56e04306aff2411a6deded64b778c6dde19485060db921bbbbddfb20c2d1"
+digest = "sha256:ad5716b21f5abe9330249f4cb1344bb8b69870ea6ead2dea2d6fbe0cb1a5225b"
 
 [[tasks]]
 name = "open-accounting-bench/sales-mix-variance"
-digest = "sha256:2cd6e5595815872d79a56047cb3aed91baf525ea6d9c16399594deaef3e5c5c0"
+digest = "sha256:60bd0f1c8f1d462d0ecf02f419eede1d58f4a687cc9ddb7f5a9d3cb13be22e16"
 
 [[tasks]]
 name = "open-accounting-bench/sales-return-restock"
-digest = "sha256:0da8d4f1996951eedf60cd823cd50115454cae5dc6af9905fa8601b2f6db57cb"
+digest = "sha256:f55ca276ce1f905514becfd11b628c93199df042e5cce583627861acaf2bb75a"
 
 [[tasks]]
 name = "open-accounting-bench/sales-tax-collection"
-digest = "sha256:0c14426f8b46c0ef3285949fdc1aa9e39e90339e60a50ecad37fb0ac5c8a2e08"
+digest = "sha256:69f8d344c7ce496eae4c91bfa4e6f86ad705ba3107e0bb0366c56e08e536c49a"
 
 [[tasks]]
 name = "open-accounting-bench/sample-misstatement-projection"
-digest = "sha256:127c9433ee705ce221612aad889b790eabff31e86f59146fe58ff8eca969aeb9"
+digest = "sha256:889d2174a4c6d0bfc8bc35ed89d57fba2c0a8990bdb2a6e59d19d7c277a0895d"
 
 [[tasks]]
 name = "open-accounting-bench/sc-audit-opinion-type"
-digest = "sha256:6e0a53555388555dce5d85cc6b6f1ab2c36d002bbcec800359e24712a94f4a37"
+digest = "sha256:c98d0b58aea738449ebdc20e21e59d9f143cbf06b960dce846239d14baf06d9b"
 
 [[tasks]]
 name = "open-accounting-bench/sc-audit-procedure-selection"
-digest = "sha256:7174f92b229b26f952d818e3f180c60bff0cb2b65e672c1caa5a42a8ed3a0765"
+digest = "sha256:212b881d9386bdf2603ebb79e59b2572f9cc3863e9a7a13765c51afa93ba0646"
 
 [[tasks]]
 name = "open-accounting-bench/sc-backup-recovery-selection"
-digest = "sha256:5f4d6311dbe5cc2befebe11206f2001252300dd201abe34012c31f0177040210"
+digest = "sha256:a20dd5f8508c2f23b9b670560ca6cbc94454cae6b1d20d8e5c526502dad2ec91"
 
 [[tasks]]
 name = "open-accounting-bench/sc-business-vs-asset-acquisition"
-digest = "sha256:7811d65a82bf413f1c9dfdd3756beb3ca72ed19399c58c1e0c3ced45ff631f10"
+digest = "sha256:2f2883083831307a6035dac4d0ddfb4c7038f48812826b29b6a4a5dc16efb19e"
 
 [[tasks]]
 name = "open-accounting-bench/sc-capital-gain-classification"
-digest = "sha256:127bc3da9d912bbb4896b3621d69d2ec23b2aabe6d427b0952825741ee8ff2bb"
+digest = "sha256:4eaa76bdfd4ec9e3605370cfca112cb85a18c6e6d30f8283cc307366006b72e8"
 
 [[tasks]]
 name = "open-accounting-bench/sc-cash-flow-classification"
-digest = "sha256:20d01fc2ccae672c7c302cc0727c7c40937f5f62719874c590d3c91356292bdf"
+digest = "sha256:b8c1016ecd9cca6953305009fc7e9fbdf2f6852b076e2e750422485d6d747c63"
 
 [[tasks]]
 name = "open-accounting-bench/sc-component-unit-presentation"
-digest = "sha256:8d64146ac1e9578dedccca21049f8f39c301688d885443f020d3cb4886bddb19"
+digest = "sha256:a9eea21d7c6d1155030035448ab6f5381c84897d52057727406edfe422fca424"
 
 [[tasks]]
 name = "open-accounting-bench/sc-confirmation-response-classification"
-digest = "sha256:f73c7ee552921a869351923892f40466ee0bbf45397b8ad26609a18716d69de6"
+digest = "sha256:630fbfa10d74e8c16281b6e4979cc7e746d6062259820cc38f04aee1c13dfe89"
 
 [[tasks]]
 name = "open-accounting-bench/sc-control-assessment"
-digest = "sha256:7fc4b14b5d9807d99dd8311053cbeb7f35f5b10a319b67b738aac4c309da07e7"
+digest = "sha256:d930ef385d74b4136ce86da21ff2bf4edc8e09c526de809b506b983b17bb3ff0"
 
 [[tasks]]
 name = "open-accounting-bench/sc-control-deficiency-severity"
-digest = "sha256:32fff61c943afcfaba6242e3a1dd3c3e0c945b78bb745596d833eb398caaffe8"
+digest = "sha256:40b7e1b67f1ef1131614f6a573e47b2ccc7234a854431b8425acd1491318a9a0"
 
 [[tasks]]
 name = "open-accounting-bench/sc-control-design-gap"
-digest = "sha256:34c4901317302cf029cc9b537829263572750bcd714ebce33bec8b7691a725ea"
+digest = "sha256:e241ef4f1506b020ee162631f17ff62853247ed92069cea7d8b3dc54ae13ded4"
 
 [[tasks]]
 name = "open-accounting-bench/sc-database-integrity-gap"
-digest = "sha256:154bdd32ff0d7dc526e02cec54625fec6bd08c200e93b911bc6ec0a3ee421f1f"
+digest = "sha256:160985ac071579c71683b11e76917ba445771da7dd65325a95eeb05d5070fead"
 
 [[tasks]]
 name = "open-accounting-bench/sc-debt-equity-classification"
-digest = "sha256:45aaf456cc959fb5fce4db4c07a19c148a9b20e61f61f757e8c940d270a067e2"
+digest = "sha256:e4f5bbe87f5b6a1d7d36f1cd622639c8e7965dc9b1b5ea86d22a16adeb4b1b52"
 
 [[tasks]]
 name = "open-accounting-bench/sc-derecognition-assessment"
-digest = "sha256:d56f64d06216ad2947d57dcfc2e13aad260a58b04e2af647539f4f18290d7e96"
+digest = "sha256:cb65d0ea315e6d25229e12133d9c6f0a07ea40662971a92af81f246e55399248"
 
 [[tasks]]
 name = "open-accounting-bench/sc-engagement-acceptance"
-digest = "sha256:c27b080782564dd1cbe4ec33c238dea33da161072e325b8e95e0674011b96832"
+digest = "sha256:8be95454aebfca783c0481a4384a4bd4cadf18d9be07f482aa88c694e1f6069e"
 
 [[tasks]]
 name = "open-accounting-bench/sc-ethics-threat-classification"
-digest = "sha256:e35ba537780a1a5f58d9468e2b898e392021164d1a036dc6abec37dea2865466"
+digest = "sha256:9cfc00ef0c7da9b27ea0d22e408cbcfc6044b2dad910048d647076cf23894d6d"
 
 [[tasks]]
 name = "open-accounting-bench/sc-evidence-reliability-choice"
-digest = "sha256:bd83d9e92a68dbbbf1c18c10b9e49dc954b049999a700bf046d5b6034d4c6fec"
+digest = "sha256:9f53d26c5d3328c8b73e76e52ac368b52adbbe30d1707679fa50989565a9929e"
 
 [[tasks]]
 name = "open-accounting-bench/sc-fair-value-hierarchy"
-digest = "sha256:4c6e336c2c1c40e024a5c155358ce54ebe194fa0e4a2e032254b0103f95e6529"
+digest = "sha256:fcae446d98e23d0415b0fdb39d4ed772fe76bf7ad0690260595963148ad27406"
 
 [[tasks]]
 name = "open-accounting-bench/sc-filing-status"
-digest = "sha256:d93b4a26c41e04aac764cb8bbef38f4f7bc58b920682af3dc27079f883e0e3fe"
+digest = "sha256:60452cd3b8ccd54e7f51c68d5e294ecc6b3c5d1b0585c80f86464c61fe970851"
 
 [[tasks]]
 name = "open-accounting-bench/sc-fraud-triangle-classification"
-digest = "sha256:2f1c886e9f14ce293d3a7d7226211a9a7da72c19e34a9f2ff613e72dd5015bd7"
+digest = "sha256:464f38ee54862e3ade6019352ae559a3913d84029a5b4ea27c77b6afdbbd66ed"
 
 [[tasks]]
 name = "open-accounting-bench/sc-fund-balance-classification"
-digest = "sha256:b97e725608128db6c5d84ff341c43a420833bb00ddbde4525e226804f322f850"
+digest = "sha256:d070d0db4b43eab9c8de84111eeb31b1e928c3db6e932fe4a05898fc13c8c9e3"
 
 [[tasks]]
 name = "open-accounting-bench/sc-governmental-fund-assignment"
-digest = "sha256:70ead64f0916a41d192e10471ee32577ebc4b4d9cff99c099bc95d665577a147"
+digest = "sha256:32ad1209b10e2703d4ca7d32802076ffeb39e6bfcc6c8e0b8e9f2364440f3f05"
 
 [[tasks]]
 name = "open-accounting-bench/sc-income-sourcing"
-digest = "sha256:5224bf8786d64deff492f0ca3eff611c43929399b7454aa554c7c0aecdb1be03"
+digest = "sha256:c43c49ecc9b15cba8211557883075247c07e0ccabf420a7f52d52cab1b148992"
 
 [[tasks]]
 name = "open-accounting-bench/sc-independence-prohibited-service"
-digest = "sha256:aea1691ef40b2bb7baf417d288a3daeb67af58edb4bf08f0ae2cad086ad8f983"
+digest = "sha256:614faf1d6b6b217c225f222bf9c11d16fc3046563a00b7aee7b69de89de9e651"
 
 [[tasks]]
 name = "open-accounting-bench/sc-interfund-activity-type"
-digest = "sha256:d9c354c76a8228ec08946461eca93121e2cc70bcd02e69048741b4c505645c47"
+digest = "sha256:4ca8eb4525f79f6a95b3bcb28e64cc648196dfa1196d22f872eac8c7e318c6b3"
 
 [[tasks]]
 name = "open-accounting-bench/sc-investment-classification"
-digest = "sha256:2a0280ce0963e325ffbd4c215119963fc8a2fef2b5854aa6b23366f7802c7e08"
+digest = "sha256:3e36eb4a377de47c8767bfc6161d377f327dd8c992d78a80ae19b4e4c0faf7f6"
 
 [[tasks]]
 name = "open-accounting-bench/sc-job-vs-process-costing"
-digest = "sha256:83ec2cc196bfbc07d81cdf937fa8d725447e272f36f0dbb4f5f784b113b46bb6"
+digest = "sha256:172a4c8d9a111da1bf73c6a65666bca8c016630a1d6a42b7a7ab06d6f3d15655"
 
 [[tasks]]
 name = "open-accounting-bench/sc-measurement-basis"
-digest = "sha256:879487f894c810daf4fc3028df446060849b9283be948425449d2934d42c57e9"
+digest = "sha256:59b173ed328cdff46ebd75b3ab5a973c63c616a730ba11c0f65e586ff254e450"
 
 [[tasks]]
 name = "open-accounting-bench/sc-offsetting-assessment"
-digest = "sha256:927133aa231d03675e607253b6d621d14dbd874309e715d3a3efaf3402a8f427"
+digest = "sha256:03ea08209bc8cfcf1995276ef7e4d0a620db611c2f818a7a3a0c01ea477c6ba8"
 
 [[tasks]]
 name = "open-accounting-bench/sc-option-value-sensitivity"
-digest = "sha256:8782bb8059fdc73061951f5c591a9e1f986db17d1a2e33a234c48f771f1b1a0b"
+digest = "sha256:e59d6d941ec683081344610fb5d2c3194aea7f1ee74586dd196a9bcda27dd487"
 
 [[tasks]]
 name = "open-accounting-bench/sc-professional-conduct"
-digest = "sha256:27df6df9a0c28a2c2eaf8c24efbd500a1a08cb5ca5b76d92b42eb94b4acbe814"
+digest = "sha256:75adb37d1396b4247c89f2edd8a9ada268dbc53806c2ee7e8a2a338ff1991f83"
 
 [[tasks]]
 name = "open-accounting-bench/sc-related-party-identification"
-digest = "sha256:40056d7548acb0c1c05608e942ed37cdb0a6e6c25f5a46697edaf244876dcc8c"
+digest = "sha256:3a36689f5f48edfb47d03cc941e21eef78aca58e62504033afe2f6ddd9fa9b67"
 
 [[tasks]]
 name = "open-accounting-bench/sc-s-corp-eligibility"
-digest = "sha256:9fb70da83a11f0052774c01f57dd61de7266bc8b1ff01278f335f7f56e70db23"
+digest = "sha256:f52a035b70b3e7cbd0ae17a43e88a7858e13f782650dcc6d204831e7a83dc51e"
 
 [[tasks]]
 name = "open-accounting-bench/sc-service-organization-reliance"
-digest = "sha256:f4a105c1ef2f334a2d083acaa75b0bc3f4b23b7a4c1236b0cb92257ba3d36da9"
+digest = "sha256:53a3e6e53307547ef162095f3d0815c46b411a176fff934ea34c6e8e2032d61c"
 
 [[tasks]]
 name = "open-accounting-bench/sc-soc-opinion-modification"
-digest = "sha256:afe64d330acbf6e2da79ab0205486264e7bc71d3bf94efd2a160b3f29fe2a5af"
+digest = "sha256:02f1a898b05ef3318d250a94a872746ac59fc66013b84cdb71f90d8725a92575"
 
 [[tasks]]
 name = "open-accounting-bench/sc-special-journal-routing"
-digest = "sha256:b43022456f34e98e77da435a434b3c6d78d37fb8250d200ec5bf37e0ba7140a2"
+digest = "sha256:6d4a09b5e45cb0aa82d96de57712862c9bfacb6ff9b602387cf62b74e3199e00"
 
 [[tasks]]
 name = "open-accounting-bench/sc-subsequent-event-classification"
-digest = "sha256:36fd56dd0cee4ed3ad7743571c89f1e3bf6e6c159178c9a6945e8943fd501fd8"
+digest = "sha256:8f7dd53a94e5400642acce04e5289fc2a59b3f9076b99b7dd4343b42e687bfe5"
 
 [[tasks]]
 name = "open-accounting-bench/sc-suspense-account-cause"
-digest = "sha256:aba7a236b834ca9bfdd0036c9600b3af40aa3a28274c66d511a1a063892099dc"
+digest = "sha256:e415bd82a1e52d1115fcd7781c074d61e58bbe1a03757406a9f679f48c89fc29"
 
 [[tasks]]
 name = "open-accounting-bench/sc-system-description-gap"
-digest = "sha256:48aef96f6538b8a28ec45c76ca07b6f8f7828478b86bd79f16ad263b38cd4b1e"
+digest = "sha256:964fb3f3dd05e110e0189519964b77ea38655d0acb1926260c1c6c1a6f67755f"
 
 [[tasks]]
 name = "open-accounting-bench/sc-tax-authority-disclosure"
-digest = "sha256:7c9e400304fd477aeb54ec3cb90f2b4aff6ead797ef3cb3d8db46ebd5b0196e3"
+digest = "sha256:927d82c1cc5066f3eba0d33950c95d48f998d745d93315eed9d8a1c81197bbe7"
 
 [[tasks]]
 name = "open-accounting-bench/sc-tax-practice-ethics"
-digest = "sha256:36cac21a10775f74eb9720d685e725a56b66184a918a81e9a1593560f42295b3"
+digest = "sha256:667e7f24a4b3f991bb1777896b011310729109aba6133a3015db8d6957c6c478"
 
 [[tasks]]
 name = "open-accounting-bench/sc-transaction-statement-impact"
-digest = "sha256:689bace081fba3ff0fc4bb0257b11c91c5120b9b1ff976a141775e7813f7b8a8"
+digest = "sha256:9090059e045e0677754f66f6d2d56e0c21f4b60e8ba8ee4746a69daf83ba95bb"
 
 [[tasks]]
 name = "open-accounting-bench/schedule-recalculation-difference"
-digest = "sha256:0e86adca2ee714dbc96f1021189728052cfdfa661d00ad0290cb2a81d0ba6c08"
+digest = "sha256:006421507c2ed07e25d2f49d27e4096bed7e788918e483c4ff4f25b1385cad69"
 
 [[tasks]]
 name = "open-accounting-bench/section1231-capital-amount"
-digest = "sha256:943b4f8ae189d40067ff98ee53b669cd6d842bc84c8c9c15c60b8d42bf38a62b"
+digest = "sha256:e02e7aa7304f02083218d07b99b5c5c2d80f94741d10a05a3b7823b653c90b11"
 
 [[tasks]]
 name = "open-accounting-bench/section704c-contributor-gain"
-digest = "sha256:887267267ea6fcaaf107cf47be6ea52feb4326898395b23778fcf5e5ec0b4a80"
+digest = "sha256:5823715500430d5da12fbb0f975e8ac6defd472105287f2d2e87117239e782f6"
 
 [[tasks]]
 name = "open-accounting-bench/securities-revaluation-misstatement"
-digest = "sha256:0c3ddb0ae8f002f2e7158fcf690fc70b17b482930c9fcd16ad44c34c4eeab46d"
+digest = "sha256:a45ebb5ec8a43ee08662624ac1a2d9f5cd151dab0f8b2575e060313b3e380dec"
 
 [[tasks]]
 name = "open-accounting-bench/segment-margin"
-digest = "sha256:56a8470275e01d72d397993dc3ee8dd80ba34c102354e8926afea1ff8543b093"
+digest = "sha256:1da9f4a6c5309e6b8b087d616e6fdaf67c605a588e9878f53a354e29e8b75b72"
 
 [[tasks]]
 name = "open-accounting-bench/separate-statements-investment"
-digest = "sha256:dd86a5347a44718f04036c0cbcf3500138afbc7051c11598da7327df842b8814"
+digest = "sha256:f5c408f876f05fc6c3ac54eb547e69e54812829310484ec51f01d2784204be33"
 
 [[tasks]]
 name = "open-accounting-bench/share-based-compensation-monthly"
-digest = "sha256:5748d0aadc6b0fa1127ad93d24787d723bba395aaa790c9ec98e518386b91932"
+digest = "sha256:cd434621aa3bf30dc65d5aa98f1094da0c340c3fa6ecab650321a0957903a436"
 
 [[tasks]]
 name = "open-accounting-bench/short-term-note-payment"
-digest = "sha256:7888ea43f23fea7661ce70323fb483674e62d91fb11e3cfe8c19275d8a307406"
+digest = "sha256:2b9375318e6b55843c4f433a5afeef7065278d101c55d4dc3f151be9a53f5764"
 
 [[tasks]]
 name = "open-accounting-bench/single-audit-type-a-count"
-digest = "sha256:5e0ca75821624c946ffb0f9e42284a60b747b9a096b68e92461ba6489af305f5"
+digest = "sha256:d9f72bc9e42eeac20b277893569a33795368c1478f10b239e9174783d57a1633"
 
 [[tasks]]
 name = "open-accounting-bench/small-stock-dividend"
-digest = "sha256:3cb4ca36d2ac1790484b2403420684e30d0c1e796a662491eef35731e65f93f4"
+digest = "sha256:0bfcf4cde9f49dbb901f0750f40a6d8e29b6cb9e52603ca71bcc6e5a467ccbff"
 
 [[tasks]]
 name = "open-accounting-bench/sql-join-excluded-count"
-digest = "sha256:7a6f503829aab1f9c00bc8df836d0e697f8aecd2228a4be5bf062aa486dd745e"
+digest = "sha256:05d71edd0f71921519d14c151e362a28592e190bb96e99f8a69633411c6a7770"
 
 [[tasks]]
 name = "open-accounting-bench/standard-cost-per-unit"
-digest = "sha256:48d5c8e76cedcfe99403c9881f67c05194304babb4723e5f68f26190ce2f0742"
+digest = "sha256:678e74cb05d8bf45550495b868e1a4b71b609f3473462cd5ff340dc732e1cc9e"
 
 [[tasks]]
 name = "open-accounting-bench/state-apportionment-income"
-digest = "sha256:812a80703b98e739bc45784ff687ea53ce70c9cfd574160ec6ee23ae30017566"
+digest = "sha256:005b1e8fd284db81707014fa01361d694bca0b0753bf618d89f32fe89c3807a7"
 
 [[tasks]]
 name = "open-accounting-bench/step-acquisition-remeasurement-gain"
-digest = "sha256:fba8e1404611784d79376237d8f77e6d4675372c0c1d15bfb3a42e5dd1568ba1"
+digest = "sha256:1b5a84b4510dada3ceaeebb75b804f2c3cf681ae681dbbecaacb750945499fa1"
 
 [[tasks]]
 name = "open-accounting-bench/straight-line-depreciation"
-digest = "sha256:d84b285ddb7aa18ec954f1ab847a5c7eb5388f0ec6d65ae5f8b56c81f996d998"
+digest = "sha256:29ea9311fc9c1d1f4d65e68676991356cba1e03422a6e444e2cc71c00d02fa5f"
 
 [[tasks]]
 name = "open-accounting-bench/substantive-analytic-difference"
-digest = "sha256:6166a677eb17901909735208e3bc75e8e036ff55d231c6ff5dad41a7e26b48a5"
+digest = "sha256:83ffad790da2218f5a7b8430a1c0dd5d6e0230f6b116a1f8719a1ed9950e9127"
 
 [[tasks]]
 name = "open-accounting-bench/supplies-adjustment"
-digest = "sha256:8a08980feb88c8942f77593173c5a8e61460f19ca4b66029f806a5574bdf704d"
+digest = "sha256:9c5174a4fe11ba28f9a3bad75dbe3b896746bc2ac95298e40bca1e70b46451a7"
 
 [[tasks]]
 name = "open-accounting-bench/suspense-clearance"
-digest = "sha256:76c4d2dcdb10f731276b8085edf4d399da45d3583d5bba326a7fdcba17452b73"
+digest = "sha256:5c28aa138ec59bb3b97ca9bedc0a83e91b0389e2ba8331631bd7e8bb93c1d082"
 
 [[tasks]]
 name = "open-accounting-bench/tax-basis-net-income"
-digest = "sha256:c6efa61da1e422db2212df534112d58989e066a9b3f19ac1ba5400e61def3795"
+digest = "sha256:97042193a05b0852d4e646bf561133fd3bde102f2bc29ea5e01eafc1220c86cd"
 
 [[tasks]]
 name = "open-accounting-bench/tax-cost-recovery-deduction"
-digest = "sha256:d8cb3c3dc138f62038d0ec5b2532df3913af0ec0442e19f9f4370fbc6ee7628d"
+digest = "sha256:668011367eef55be682b3f2c81fcdcbd6eec3765e4724d02141c7a10bf60436d"
 
 [[tasks]]
 name = "open-accounting-bench/tax-equivalent-yield"
-digest = "sha256:df4af3ee02258f3db0106e679d41c39e618aacadc1dcc5a14f67f710a59c59fb"
+digest = "sha256:b8bbd995d672de99a27dbc8fd83d3cf7ea0493b2788c2137c0b02b086f14b9d3"
 
 [[tasks]]
 name = "open-accounting-bench/tax-penalty-combined"
-digest = "sha256:7594759c90c145641839bb4fa6bc301de95fb7d147e0542ac2b9e067d1a0e4d7"
+digest = "sha256:633fe5151141b7f3828627b5744d280217165d742ecdf3df568985a73b936ef5"
 
 [[tasks]]
 name = "open-accounting-bench/tax-return-crossfoot-difference"
-digest = "sha256:9d126f2e46c1fb94b04317121cbeec61fc558ce8cf7c7719713b3092893aef7f"
+digest = "sha256:28b0c1bf2f6484637bcd04b297930863a02f2716664a92d64eeb686d2841765c"
 
 [[tasks]]
 name = "open-accounting-bench/taxable-gifts-total"
-digest = "sha256:cb97219839f769532ca8d046ed7a37ea2b4241664cfc7d263ac44e1678f52ad5"
+digest = "sha256:c61463a88c4785dbb762ada66d35e57c7bf3b7f92ba9e39f1251c4730bc60872"
 
 [[tasks]]
 name = "open-accounting-bench/three-way-match-exceptions"
-digest = "sha256:90283c199e867b81f3ff7b4bffc7f6c208dd098ee5ed2a56955cbe2d835683c5"
+digest = "sha256:99a07f0905d0f116750ccbcc91947acd7a9a8880462c2413143933286cf4d6a8"
 
 [[tasks]]
 name = "open-accounting-bench/total-current-liabilities"
-digest = "sha256:d6e44612b750c0c9624c052e0fd4182342b53dd79bb98fe049cf10e4ef68a312"
+digest = "sha256:0b23b5cf3ca88db6fb5e39d5a6211a40e5c95a9b339377fafe35ef5547d4c04e"
 
 [[tasks]]
 name = "open-accounting-bench/trading-securities-fair-value"
-digest = "sha256:12c3f762c3bbd82f567fe13af216e338b7a4b7fe93ced713bc5e6a077c3193ba"
+digest = "sha256:854a4674042d54b84d48866d1b65c8a038cb3fe8edfd10a891ec9b2553b741c1"
 
 [[tasks]]
 name = "open-accounting-bench/treasury-stock-reissuance"
-digest = "sha256:4d477bc9a755144c9df995153f465d1a3d0911662caf2445ecd79e6aaf50fbe9"
+digest = "sha256:fe319eab0eba68aeb5d4f309ec03e242a0770cdafc43e18ef1338a530364962e"
 
 [[tasks]]
 name = "open-accounting-bench/treasury-stock-repurchase"
-digest = "sha256:883efa7975156cae48612a12b6044067ee9677a44b6e601329033ab3b2e00199"
+digest = "sha256:07847d8289a342195048e1ee66acfcf0107f753921c443a5b5d1043ee4c6756f"
 
 [[tasks]]
 name = "open-accounting-bench/trial-balance-debit-total"
-digest = "sha256:3f3c68be632826cfc0bc24b30dacc639153fca9529896f1fdddb70b0835212e6"
+digest = "sha256:57402f9aaf3e121208b55b6de1f47b895467f1227fedbe22a4f7f3747956dd58"
 
 [[tasks]]
 name = "open-accounting-bench/trust-accounting-income"
-digest = "sha256:641d2f4e540e6978f9f1448eac64fb3cae2a03abbc5e4d7985b16ed9675b2b51"
+digest = "sha256:55c5df66c5e647bccef51d513805b1bd64eeffd68d9c8b348ac706849f7556ea"
 
 [[tasks]]
 name = "open-accounting-bench/trust-dni-computation"
-digest = "sha256:6f026da0c2431944e981e08b5bb0ee8bcd63ee67e1f9bb11bc1e62d1da3c94e2"
+digest = "sha256:47758d0facbd0108076b3b1618eec9723b5ce2eee83a60ba4e8e1bf67d32669f"
 
 [[tasks]]
 name = "open-accounting-bench/uncorrected-misstatement-total"
-digest = "sha256:1c75bf947cae344e3a193eddb59ee24aa6d0d08d49a66ee1090a58172209a2b0"
+digest = "sha256:87fd270c02595281fdd1bcc1a201a79d40b1c1b14b1fe73a4b0629b6c8534aa1"
 
 [[tasks]]
 name = "open-accounting-bench/unearned-revenue-release"
-digest = "sha256:06e0f8b11f11ddc40b1b87af0e2ecd73df42e803b4b2dbb3a8cdd4903e1e24e3"
+digest = "sha256:df4128d94e36a44c5de0d80b752e218d49cbf2765b7b9eddeacf8ccbea63a182"
 
 [[tasks]]
 name = "open-accounting-bench/units-of-production-depreciation"
-digest = "sha256:0dea5abb10bdbc57f828aa948d0b46dd50429900b212afb1f3b63f934a11151c"
+digest = "sha256:5cb7b68f7766db3e5997f84e801981d61a712c3a25de4926b25cacdbb4c8a4f9"
 
 [[tasks]]
 name = "open-accounting-bench/varying-interest-allocation"
-digest = "sha256:00ee9520513061a34950da0164fd3e663b13a2949c4862939f22470cd5d36c3d"
+digest = "sha256:f8d48a92f2b89be9a4f00ac186e0426c47df89b96cab74eb01bed1950c9b3271"
 
 [[tasks]]
 name = "open-accounting-bench/warranty-provision-and-claims"
-digest = "sha256:4c2c31c4aec5fdd187bcd9ccae9dcad81379dcddd3e8cacc59dd7935e8d19904"
+digest = "sha256:507bba50e3f1bea2f6dbb9fcbf8f6bea70ebaea46caf850a931d25c2e9c2a769"
 
 [[tasks]]
 name = "open-accounting-bench/weighted-average-cost-of-capital"
-digest = "sha256:1a2b32c00ddfdb9bc013ef5d4c39bb7af3e26cdbb827075404c366c20fb19482"
+digest = "sha256:2f57ac273ecd70f753ebe8ec8a3d22bc25cb29249438919006982d8bee2a1995"
 
 [[tasks]]
 name = "open-accounting-bench/weighted-average-ending-inventory"
-digest = "sha256:1335305407f9a6ca088a6cc73e8d9a9d9ddd64acaf639be99e37ff75b70d097c"
+digest = "sha256:a43d75b51d13c88ebdc405f3c38ce592aa0f9532ca2373f52c083e044b05f12c"
 
 [[tasks]]
 name = "open-accounting-bench/written-off-receivable-recovery"
-digest = "sha256:cec79d2c4ac4f438450d1e6bab5e120fcc41e4fcb645a342ba916d5e97f5d0c7"
+digest = "sha256:013509c52a75089d290d5dcc51e6ac7be2258b21891f7da14245109cc8dc637e"

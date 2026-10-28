@@ -12,14 +12,14 @@ task_id = "aro-accretion"
 family = "provisions-contingencies"
 difficulty = "easy"
 category = "financial-accounting"
-framework = "core"
+framework = "us-gaap"
 level = "vocational"
 format = "journal-entry"
 skill = "application"
-standards = ["asc:410", "ias:37"]
+standards = ["asc:410"]
 track = "stable"
 seed = 256
-generator_version = "0.4.0"
+generator_version = "0.5.0"
 ledger_engine = "beancount"
 
 [verifier]

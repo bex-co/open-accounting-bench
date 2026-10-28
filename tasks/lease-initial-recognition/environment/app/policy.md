@@ -12,6 +12,6 @@
   within the reporting period unless the task states otherwise.
 - At lease commencement, recognize a right-of-use asset and a lease
   liability at the present value of lease payments (annual payment
-  x the annuity factor stated in the lease document, used as given).
+  x the present-value annuity factor for the stated rate and term).
   With no prepayments, incentives, or initial direct costs, the two
   opening amounts are equal.

@@ -22,6 +22,6 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -5000.00 USD
 
 2026-01-01 * "Underwriter" "Bonds issued at a discount"
-  Assets:Bank:Checking  68111.51 USD
-  Liabilities:DiscountOnBondsPayable  3888.49 USD
+  Assets:Bank:Checking  68111.61 USD
+  Liabilities:DiscountOnBondsPayable  3888.39 USD
   Liabilities:BondsPayable  -72000.00 USD

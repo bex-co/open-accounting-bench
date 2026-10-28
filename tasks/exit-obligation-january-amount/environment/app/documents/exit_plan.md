@@ -1,4 +1,4 @@
-# Exit plan communicated 2026-01-10
+# Exit plan communicated 2026-01-01
 
 | Group | Terms | Amount (USD) |
 |---|---|---:|

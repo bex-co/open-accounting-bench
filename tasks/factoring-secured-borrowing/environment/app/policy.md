@@ -10,8 +10,8 @@
   Only items with a useful life over one year are capitalized as assets.
 - Every transaction must balance (debits equal credits) and be dated
   within the reporting period unless the task states otherwise.
-- A transfer of receivables that does not surrender control (here:
-  full recourse and retained collections) is a SECURED BORROWING,
-  not a sale: cash is debited net of the fee, the fee is expensed,
-  a secured-borrowing liability is credited for the advance, and
-  receivables remain on the books.
+- Pledging receivables as collateral, without transferring legal
+  title or giving the lender a right to sell or pledge them, is a
+  SECURED BORROWING, not a sale: cash is debited net of the fee,
+  the fee is expensed, a secured-borrowing liability is credited
+  for the advance, and receivables remain on the books.

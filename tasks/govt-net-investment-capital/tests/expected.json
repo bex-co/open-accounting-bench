@@ -2,7 +2,7 @@
   "task_id": "govt-net-investment-capital",
   "family": "governmental-accounting",
   "seed": 325,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

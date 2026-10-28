@@ -2,13 +2,13 @@
   "task_id": "lease-initial-recognition",
   "family": "leases",
   "seed": 195,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
   "expected_deltas": {
-    "Assets:RightOfUseAsset": "258860.70",
-    "Liabilities:LeaseLiability": "-258860.70"
+    "Assets:RightOfUseAsset": "258860.30",
+    "Liabilities:LeaseLiability": "-258860.30"
   },
   "allowed_extra_accounts": [],
   "expected_new_transactions": 1,
@@ -17,7 +17,7 @@
     "2026-01-01"
   ],
   "required_final_balances": {
-    "Liabilities:LeaseLiability": "-258860.70"
+    "Liabilities:LeaseLiability": "-258860.30"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

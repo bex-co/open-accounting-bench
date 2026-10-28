@@ -2,7 +2,7 @@
   "task_id": "inventory-costing-nrv",
   "family": "inventory",
   "seed": 112,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

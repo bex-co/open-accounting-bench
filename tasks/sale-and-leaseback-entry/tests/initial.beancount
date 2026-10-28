@@ -16,6 +16,7 @@ option "operating_currency" "USD"
 2026-01-01 open Assets:AccumulatedDepreciation USD
 2026-01-01 open Expenses:Depreciation USD
 2026-01-01 open Income:GainLossOnDisposal USD
+2026-01-01 open Assets:Building USD
 2026-01-01 open Assets:RightOfUseAsset USD
 2026-01-01 open Liabilities:LeaseLiability USD
 2026-01-01 open Liabilities:DeferredRevenue USD
@@ -25,6 +26,6 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -20000.00 USD
 
 2026-01-01 * "Opening" "Opening carrying amount: headquarters building"
-  Assets:Equipment  225000.00 USD
+  Assets:Building  225000.00 USD
   Assets:AccumulatedDepreciation  -22000.00 USD
   Equity:Opening-Balances  -203000.00 USD

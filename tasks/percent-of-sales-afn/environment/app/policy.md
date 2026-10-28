@@ -6,4 +6,6 @@ sales) - (forecast profit retained: forecast sales x margin x
 (1 - payout ratio)).
 
 - Items stated not to vary with sales never enter the calculation.
+- Report the signed result: a negative amount is a financing
+  surplus (negative additional funds needed).
 - Answer in USD in `/app/answer.json`.

@@ -2,7 +2,7 @@
   "task_id": "sc-independence-prohibited-service",
   "family": "audit-planning",
   "seed": 382,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

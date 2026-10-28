@@ -13,13 +13,13 @@ family = "fixed-assets"
 difficulty = "hard"
 category = "financial-accounting"
 framework = "ifrs"
-level = "vocational"
+level = "university"
 format = "journal-entry"
 skill = "application"
 standards = ["ifrs:5"]
 track = "stable"
 seed = 210
-generator_version = "0.4.0"
+generator_version = "0.5.0"
 ledger_engine = "beancount"
 
 [verifier]

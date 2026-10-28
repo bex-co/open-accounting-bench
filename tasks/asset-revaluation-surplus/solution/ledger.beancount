@@ -16,6 +16,7 @@ option "operating_currency" "USD"
 2026-01-01 open Assets:AccumulatedDepreciation USD
 2026-01-01 open Expenses:Depreciation USD
 2026-01-01 open Income:GainLossOnDisposal USD
+2026-01-01 open Assets:Building USD
 2026-01-01 open Equity:RevaluationSurplus USD
 
 2026-01-01 * "Opening" "Opening bank balance"
@@ -23,14 +24,14 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -20000.00 USD
 
 2026-01-01 * "Opening" "Opening carrying amount: production hall"
-  Assets:Equipment  290000.00 USD
+  Assets:Building  290000.00 USD
   Assets:AccumulatedDepreciation  -35000.00 USD
   Equity:Opening-Balances  -255000.00 USD
 
 2026-01-31 * "Valuation" "Eliminate accumulated depreciation on revaluation"
   Assets:AccumulatedDepreciation  35000.00 USD
-  Assets:Equipment  -35000.00 USD
+  Assets:Building  -35000.00 USD
 
 2026-01-31 * "Valuation" "Restate asset to fair value"
-  Assets:Equipment  110000.00 USD
+  Assets:Building  110000.00 USD
   Equity:RevaluationSurplus  -110000.00 USD

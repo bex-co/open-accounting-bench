@@ -15,4 +15,5 @@
 - `Assets:AccumulatedDepreciation` — Accumulated depreciation on equipment (contra-asset; credit balance)
 - `Expenses:Depreciation` — Depreciation expense
 - `Income:GainLossOnDisposal` — Gain (credit) or loss (debit) on disposal of non-current assets
+- `Assets:Building` — Buildings (multi-year useful life)
 - `Equity:RevaluationSurplus` — Revaluation surplus in other comprehensive income

@@ -2,7 +2,7 @@
   "task_id": "interim-income-tax-expense",
   "family": "income-taxes",
   "seed": 202,
-  "generator_version": "0.4.0",
+  "generator_version": "0.5.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

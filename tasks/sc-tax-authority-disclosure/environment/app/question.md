@@ -1,6 +1,6 @@
 # Question — tax authority and disclosure
 
-Position support: **The only support is a well-reasoned law-review article and a private letter ruling issued to another taxpayer with similar facts.**
+Position support: **The only listed authority is an old private letter ruling with materially different facts; a well-reasoned law-review article also agrees with the taxpayer.**
 
 Using `/app/policy.md`, select exactly one option.
 
