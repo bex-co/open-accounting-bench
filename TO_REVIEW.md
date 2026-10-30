@@ -348,6 +348,34 @@ crosswalk mappings.
   original batch entries above remain Pending for the human
   reviewer's consolidated sign-off; no item in this response is
   marked reviewed by an agent.
+- 2026-10-30 — second review-response changes under
+  GENERATOR_VERSION 0.6.0. Maintainer decisions recorded for
+  confirmation: (1) FSA tasks ask for net economic benefit compared
+  with paying eligible expenses from after-tax pay; (2) the
+  single-audit task uses the current USD 1,000,000 law, keeping
+  "USD 1,000,000 or more" for whether a single audit is required
+  and "exceed" for Type A programs, with generated totals in the
+  USD 34m-or-below tier; (3) Judgement is V when one stated fact
+  mechanically triggers a classification and U only when the
+  solver must weigh competing indicators or apply a qualitative
+  threshold the policy does not settle; and (4) "(borderline)" is
+  used only for a university label resting on exactly two
+  U-or-higher scores. The rubric and its consistency test now state
+  and enforce the last two decisions. Fixed forward, in particular:
+  split credit-card entries; current single-audit threshold and
+  old-threshold trap; FSA net benefit; constructive ownership
+  capped at 100%; plausible periodic-inventory and lease traps;
+  payroll withholding setup; material inventory-error scale;
+  IFRS 9 derecognition and ASC 805 screen wording; current federal
+  equipment threshold; QBI/estimated-tax/Section 1374 caveats;
+  Section 755 wording; seed guards for negative liabilities,
+  zero capital-loss carryforwards, both NIIT branches, margins,
+  FX moves, pension AOCI scale, educator amounts, and inventory-
+  days rounding. Level re-scores include `sc-control-assessment`
+  and `sc-derecognition-assessment` to university (borderline)
+  under the Judgement decision. All earlier entries remain Pending
+  for the human reviewer's consolidated sign-off; no item in this
+  response is marked reviewed by an agent.
 
 
 ## Reviewed

@@ -45,7 +45,7 @@ vocational or professional. Score the task as delivered — instruction,
 | Dependent steps | One or two; amounts read off a document | Three or more, with derived intermediates | Long chains across topics (measure → tax effect → presentation) |
 | Problem identification | Exact transaction and action named | A goal is given; solver finds the items | Solver must notice something is wrong, often in prior work |
 | Evidence quality | One clean document | Several documents, with distractors a plausible mistake uses | Incomplete or conflicting evidence; solver decides what to rely on |
-| Judgement | One admissible treatment | Choose among defined methods or classify against stated criteria | Estimates, materiality, substance over form; the task fixes one defensible answer by construction |
+| Judgement | One admissible treatment; a single stated fact triggers the classification | Choose among defined methods, weigh indicators that point different ways, or apply a qualitative threshold the policy does not settle | Estimates, materiality, substance over form; the task fixes one defensible answer by construction |
 | Scope | One transaction, period, entity | Several periods or linked accounts | Several entities, restatement, cross-period effects |
 | Standards depth | Bookkeeping conventions | The main rule of one standard | Boundaries, exceptions, interacting standards |
 
@@ -65,8 +65,11 @@ to seeded facts. A policy that states the decisive rule cannot score P
 on rule provision.
 
 The two-dimension thresholds make labels sensitive to a single score.
-Record all seven scores in the family PR and mark the level
-**borderline** when flipping any one dimension would change it.
+Record all seven scores in the family PR. Mark a level
+**borderline** only when a university label rests on the minimum
+two U-or-higher scores, so removing one would drop it to
+vocational; do not flag vocational tasks merely because one more
+U would raise them.
 
 **Score at the strict reading** (adopted 2026-10-25, applied to every
 task): a dimension is U or P only if the task as delivered actually
@@ -74,7 +77,11 @@ demands it. Dependent steps count only when an intermediate value must
 be derived — amounts readable off a document, or a target balance the
 instruction states, do not count. A document counts as a distractor
 only if a plausible mistake uses it; combining several clean documents
-is not enough. Scope is U only for genuinely multi-period work or
+is not enough. Judgement is V when one stated fact mechanically
+triggers a classification; it is U only when the solver must weigh
+indicators pointing different ways or apply a qualitative threshold
+(such as "substantially all" or "significant") that the policy does
+not settle. Scope is U only for genuinely multi-period work or
 several accounts whose movement the solver must work out. When in
 doubt, score V.
 
@@ -109,7 +116,7 @@ D = standards depth):
 | `bond-discount-amortization` | V | U | V | V | V | V | U | university (borderline) |
 | `cvp-target-profit-units` | V | V | V | V | V | V | V | vocational |
 | `process-costing-equivalent-units` | V | U | V | V | V | V | V | vocational |
-| `operating-cash-flow-indirect` | V | U | V | V | V | V | U | university (borderline) |
+| `operating-cash-flow-indirect` | V | V | V | V | V | V | U | vocational |
 | `inventory-days-on-hand` | V | V | V | V | V | V | V | vocational |
 | `equity-issue-above-par` | V | V | V | V | V | V | V | vocational |
 | `cash-dividend-declaration` | V | V | V | V | V | V | V | vocational |
@@ -153,7 +160,7 @@ D = standards depth):
 | `sc-special-journal-routing` | V | V | V | V | V | V | V | vocational |
 | `short-term-note-payment` | V | V | V | V | V | V | V | vocational |
 | `credit-card-sale-fee` | V | V | V | V | V | V | V | vocational |
-| `patent-amortization` | V | V | V | U | V | V | U | university (borderline) |
+| `patent-amortization` | V | V | V | V | V | V | U | vocational |
 | `loss-contingency-accrual` | V | V | V | U | U | V | U | university |
 | `bond-issued-at-premium` | V | V | V | V | V | V | U | vocational |
 | `closing-drawing-account` | V | V | V | V | V | V | V | vocational |
@@ -200,10 +207,10 @@ D = standards depth):
 | `nfp-conditional-vs-unconditional` | V | V | V | V | U | V | U | university (borderline) |
 | `adjusted-receivable-balance` | V | V | V | V | V | V | V | vocational |
 | `ppe-additions-inferred` | V | V | V | V | V | V | V | vocational |
-| `fixed-overhead-volume-variance` | V | V | V | V | V | V | V | vocational |
+| `fixed-overhead-volume-variance` | V | V | V | U | V | V | V | vocational |
 | `cumulative-preferred-dividend` | V | U | V | V | V | V | V | vocational |
 | `weighted-average-cost-of-capital` | V | U | V | V | V | V | V | vocational |
-| `standard-cost-per-unit` | V | U | V | V | V | V | V | vocational |
+| `standard-cost-per-unit` | V | U | V | U | V | V | V | university (borderline) |
 | `sc-job-vs-process-costing` | V | V | V | V | V | V | V | vocational |
 | `government-grant-release` | V | V | V | V | V | V | U | vocational |
 | `investment-property-fair-value` | V | V | V | V | V | V | U | vocational |
@@ -249,7 +256,7 @@ D = standards depth):
 | `duplicate-payments-total` | V | V | U | U | V | V | V | university (borderline) |
 | `sc-audit-procedure-selection` | V | V | V | V | V | V | V | vocational |
 | `sc-control-design-gap` | V | V | V | V | V | V | V | vocational |
-| `inventory-error-income-effect` | V | U | V | V | V | V | U | university (borderline) |
+| `inventory-error-income-effect` | V | V | V | V | V | U | V | vocational |
 | `inventory-lcm-value` | V | U | V | V | V | V | U | university (borderline) |
 | `sc-fraud-triangle-classification` | V | V | V | V | V | V | V | vocational |
 | `expected-profit-choice` | V | U | V | V | V | V | V | vocational |
@@ -259,7 +266,7 @@ D = standards depth):
 | `partnership-retirement-settlement` | V | U | V | V | V | V | V | vocational |
 | `biological-asset-fair-value` | V | V | V | V | V | V | U | vocational |
 | `sc-debt-equity-classification` | V | V | V | V | V | V | U | vocational |
-| `sc-control-assessment` | V | V | V | V | V | V | U | vocational |
+| `sc-control-assessment` | V | V | V | V | U | V | U | university (borderline) |
 | `profit-from-capital-movements` | V | V | V | V | V | V | V | vocational |
 | `sales-from-markup-reconstruction` | V | U | V | V | V | V | V | vocational |
 | `inventory-cost-inclusions` | V | V | V | U | V | V | U | university (borderline) |
@@ -278,7 +285,7 @@ D = standards depth):
 | `sc-suspense-account-cause` | V | V | V | V | V | V | V | vocational |
 | `sc-business-vs-asset-acquisition` | V | V | V | V | V | V | U | vocational |
 | `contract-modification-revenue` | V | V | V | V | V | V | U | vocational |
-| `sc-derecognition-assessment` | V | V | V | V | V | V | U | vocational |
+| `sc-derecognition-assessment` | V | V | V | V | U | V | U | university (borderline) |
 | `lease-component-allocation` | V | V | V | V | V | V | U | vocational |
 | `sc-offsetting-assessment` | V | V | V | V | V | V | U | vocational |
 | `sc-related-party-identification` | V | V | V | V | V | V | U | vocational |
@@ -430,7 +437,7 @@ problem the task hands over. An analysis task can be vocational.
 | `capitalized-cost-bundle` | fixed-assets | journal-entry | core | application | — | Capitalize the whole invoice |
 | `employer-payroll-taxes` | payroll | journal-entry | core | application | — | Deduct from employee wages |
 | `current-portion-reclass` | borrowings | journal-entry | core | application | — | Reclassify the whole balance |
-| `periodic-purchase-with-freight` | inventory | journal-entry | core | application | — | Freight buried in purchases |
+| `periodic-purchase-with-freight` | inventory | journal-entry | core | application | — | Inventory debited (perpetual habit) |
 | `bad-debt-percent-of-sales` | receivables | journal-entry | core | application | — | Aging-style true-up |
 | `cash-discount-receipt` | receivables | journal-entry | core | application | — | Discount left in receivables |
 | `abc-overhead-assigned` | activity-based-costing | numeric | core | application | — | Plantwide DLH rate |
@@ -481,7 +488,7 @@ problem the task hands over. An analysis task can be vocational.
 | `direct-materials-used` | job-order-costing | numeric | core | application | — | Purchases only |
 | `sc-subsequent-event-classification` | financial-reporting | single-choice | core | remembering-understanding | `asc:855`, `ias:10` | Later fire treated as adjusting |
 | `treasury-stock-reissuance` | equity | journal-entry | core | application | — | Excess credited to income |
-| `lease-initial-recognition` | leases | journal-entry | core | application | `asc:842`, `ifrs:16` | Debit rent expense |
+| `lease-initial-recognition` | leases | journal-entry | core | application | `asc:842`, `ifrs:16` | Undiscounted payments recognized |
 | `fx-payable-remeasurement` | foreign-currency | journal-entry | core | application | `asc:830`, `ias:21` | Remeasure inventory too |
 | `development-cost-capitalization` | intangible-assets | journal-entry | ifrs | application | `ias:38` | Capitalize all project spend |
 | `inventory-error-correction` | accounting-changes-errors | journal-entry | core | application | `asc:250`, `ias:8` | Correction through current COGS |
@@ -517,7 +524,7 @@ problem the task hands over. An analysis task can be vocational.
 | `trial-balance-debit-total` | ledger-integrity-reporting | numeric | core | application | — | Contra-assets as debits |
 | `post-closing-debit-total` | ledger-integrity-reporting | numeric | core | application | — | Pre-closing debit total |
 | `adjusted-wage-expense` | adjustments-corrections | numeric | core | application | — | Answer cash paid |
-| `inventory-method-profit-difference` | inventory | numeric | core | application | — | Answer FIFO COGS |
+| `inventory-method-profit-difference` | inventory | numeric | core | application | — | Profit gap direction reversed |
 | `minimum-transfer-price` | responsibility-accounting | numeric | core | application | — | Variable production cost only |
 | `debt-modification-percent-change` | borrowings | numeric | core | application | `asc:470-50`, `ifrs:9` | Compare face amounts |
 | `mc-temporary-accounts` | ledger-integrity-reporting | multiple-choice | core | remembering-understanding | — | Permanent contra-assets as temporary |
@@ -654,7 +661,7 @@ problem the task hands over. An analysis task can be vocational.
 | `basis-adjustment-754-allocation` | passthrough-taxation | numeric | core | application | — | Adjustment spread by fair value |
 | `income-shifting-pv-saving` | income-taxes | numeric | core | application | — | Nominal comparison, no present value |
 | `sc-income-sourcing` | income-taxes | single-choice | core | application | — | Services sourced where paid |
-| `fsa-tax-saving` | income-taxes | numeric | core | application | — | Saving counted on forfeited balance |
+| `fsa-tax-saving` | income-taxes | numeric | core | application | — | Forfeiture ignored in net benefit |
 | `builtin-gains-tax-base` | corporate-taxation | numeric | core | application | — | Post-conversion gains in the base |
 | `varying-interest-allocation` | passthrough-taxation | numeric | core | application | — | Year-end percentage all year |
 | `sc-audit-opinion-type` | audit-planning | single-choice | core | application | — | Adverse for confined departures |
@@ -675,7 +682,7 @@ problem the task hands over. An analysis task can be vocational.
 | `substantive-analytic-difference` | audit-evidence | numeric | core | application | — | Expectation built from recorded amount |
 | `securities-revaluation-misstatement` | audit-evidence | numeric | core | application | — | Client price accepted for unquoted holding |
 | `allowance-estimate-reperformance` | audit-evidence | numeric | core | application | — | Flat rate used instead of bucket rates |
-| `single-audit-type-a-count` | audit-planning | numeric | core | application | — | Awarded amounts used instead of expended |
+| `single-audit-type-a-count` | audit-planning | numeric | core | application | — | Superseded USD 750k threshold applied |
 | `known-misstatement-from-sample` | audit-evidence | numeric | core | application | — | Absolute differences accumulated |
 | `audit-data-missing-entries` | audit-analytics | numeric | core | application | — | Extract accepted as complete |
 

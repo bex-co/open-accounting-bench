@@ -3,7 +3,7 @@ artifacts = ["/app/ledger.beancount"]
 
 [task]
 name = "open-accounting-bench/factoring-secured-borrowing"
-description = "Treat a with-recourse factoring as a secured borrowing"
+description = "Treat pledged receivables as a secured borrowing"
 authors = []
 keywords = ["factoring", "secured-borrowing", "derecognition"]
 
@@ -19,7 +19,7 @@ skill = "analysis"
 standards = ["asc:860", "ifrs:9"]
 track = "stable"
 seed = 241
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

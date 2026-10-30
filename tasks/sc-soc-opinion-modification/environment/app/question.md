@@ -4,7 +4,7 @@ Findings: **A material departure from the applicable criteria affects one commit
 
 Using `/app/policy.md`, which opinion is issued? Select exactly one option.
 
-- A. Unqualified
+- A. Unmodified
 - B. Adverse
 - C. Disclaimer
 - D. Qualified

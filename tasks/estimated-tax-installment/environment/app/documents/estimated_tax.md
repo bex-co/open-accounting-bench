@@ -4,3 +4,5 @@
 |---|---:|
 | Prior-year total tax (12-month return) | 18400.00 |
 | Expected current-year total tax | 26800.00 |
+
+Prior-year adjusted gross income did not exceed USD 150,000.

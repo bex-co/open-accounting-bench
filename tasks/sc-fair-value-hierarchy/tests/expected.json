@@ -2,7 +2,7 @@
   "task_id": "sc-fair-value-hierarchy",
   "family": "fair-value-measurement",
   "seed": 235,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

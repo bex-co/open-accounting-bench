@@ -2,7 +2,7 @@
   "task_id": "patent-amortization",
   "family": "intangible-assets",
   "seed": 170,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -22,7 +22,7 @@
   "forbid_new_accounts": true,
   "category": "financial-accounting",
   "framework": "core",
-  "level": "university",
+  "level": "vocational",
   "skill": "application",
   "standards": [
     "asc:350",

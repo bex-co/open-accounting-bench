@@ -13,13 +13,13 @@ family = "cash-flow-statement"
 difficulty = "easy"
 category = "financial-accounting"
 framework = "core"
-level = "university"
+level = "vocational"
 format = "numeric"
 skill = "application"
 standards = ["asc:230", "ias:7"]
 track = "stable"
 seed = 126
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

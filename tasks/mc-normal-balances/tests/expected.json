@@ -2,7 +2,7 @@
   "task_id": "mc-normal-balances",
   "family": "transaction-classification",
   "seed": 166,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "multiple-choice",
   "currency": "USD",
   "tolerance": "0.01",

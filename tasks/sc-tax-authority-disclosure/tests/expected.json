@@ -2,7 +2,7 @@
   "task_id": "sc-tax-authority-disclosure",
   "family": "income-taxes",
   "seed": 339,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

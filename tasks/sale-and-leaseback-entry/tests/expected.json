@@ -2,7 +2,7 @@
   "task_id": "sale-and-leaseback-entry",
   "family": "leases",
   "seed": 226,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

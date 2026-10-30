@@ -13,5 +13,6 @@
 - `Expenses:Repairs` — Repairs and maintenance
 - `Expenses:Utilities` — Utilities
 - `Liabilities:AccountsPayable` — Trade payables (supplier invoices on credit)
+- `Assets:Inventory` — Inventory (adjusted only from the periodic physical count)
 - `Expenses:Purchases` — Purchases of merchandise (periodic system)
 - `Expenses:FreightIn` — Freight-in on merchandise purchases

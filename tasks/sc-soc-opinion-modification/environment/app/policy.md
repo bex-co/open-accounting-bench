@@ -1,6 +1,6 @@
 # SOC opinion types (applies to this task)
 
-- Unqualified: no material departure (isolated, immaterial
+- Unmodified: no material departure (isolated, immaterial
   deviations do not modify the opinion).
 - Qualified: a material departure OR scope limitation that is
   material but NOT pervasive.

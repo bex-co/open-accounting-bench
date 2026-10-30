@@ -2,7 +2,7 @@
   "task_id": "pension-expense-and-contribution",
   "family": "employee-benefits",
   "seed": 242,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -23,7 +23,7 @@
   ],
   "required_final_balances": {
     "Liabilities:NetPensionLiability": "-28100.00",
-    "Equity:AccumulatedOtherComprehensiveIncome": "3000.00"
+    "Equity:AccumulatedOtherComprehensiveIncome": "91000.00"
   },
   "forbid_new_accounts": true,
   "category": "financial-accounting",

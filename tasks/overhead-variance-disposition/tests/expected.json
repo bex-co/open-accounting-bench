@@ -2,7 +2,7 @@
   "task_id": "overhead-variance-disposition",
   "family": "job-order-costing",
   "seed": 183,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

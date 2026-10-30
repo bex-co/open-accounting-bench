@@ -23,8 +23,8 @@ option "operating_currency" "USD"
   Equity:Opening-Balances  -20000.00 USD
 
 2026-01-01 * "Opening" "Opening retained earnings (as previously reported)"
-  Equity:Opening-Balances  68900.00 USD
-  Equity:RetainedEarnings  -68900.00 USD
+  Equity:Opening-Balances  19800.00 USD
+  Equity:RetainedEarnings  -19800.00 USD
 
 2026-01-01 * "Opening" "Opening inventory as previously reported: 280 ceramic planters"
   Assets:Inventory  3080.00 USD

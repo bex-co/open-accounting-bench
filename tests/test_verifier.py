@@ -838,6 +838,19 @@ def test_reclassifying_whole_note_balance_fails():
     _assert_semantic_trap(instance, wrong)
 
 
+def test_periodic_purchase_to_inventory_fails():
+    """Trap: perpetual-style debit to Inventory under a periodic system."""
+    instance = FAMILIES["periodic-purchase-with-freight"](144)
+    total = -_deltas(instance)["Liabilities:AccountsPayable"]
+    date = instance.expected["expected_period"][0]
+    wrong = instance.initial_ledger + _entry(
+        date,
+        "Supplier",
+        [("Assets:Inventory", total), ("Liabilities:AccountsPayable", -total)],
+    )
+    _assert_semantic_trap(instance, wrong)
+
+
 def test_freight_buried_in_purchases_fails():
     """Trap: debit freight-in to purchases instead of its own account."""
     instance = FAMILIES["periodic-purchase-with-freight"](144)
@@ -999,6 +1012,30 @@ def test_card_sale_at_net_deposit_fails():
         [("Assets:Bank:Checking", net), ("Income:Sales", -net)],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+def test_card_sale_split_entries_pass():
+    """Booking the gross card sale and processor fee separately is correct."""
+    instance = FAMILIES["credit-card-sale-fee"](169)
+    d = _deltas(instance)
+    gross = -d["Income:Sales"]
+    fee = d["Expenses:CreditCardFees"]
+    date = instance.expected["expected_period"][0]
+    split = (
+        instance.initial_ledger
+        + _entry(
+            date,
+            "Card processor",
+            [("Assets:Bank:Checking", gross), ("Income:Sales", -gross)],
+        )
+        + _entry(
+            date,
+            "Card processor",
+            [("Expenses:CreditCardFees", fee), ("Assets:Bank:Checking", -fee)],
+        )
+    )
+    report = verify(instance.initial_ledger, split, instance.expected)
+    assert report.reward == 1, report.to_report_json()
 
 
 def test_patent_amortized_over_legal_life_fails():
@@ -1202,14 +1239,23 @@ def test_treasury_reissuance_gain_to_income_fails():
     _assert_semantic_trap(instance, wrong)
 
 
-def test_lease_treated_as_rent_expense_fails():
-    """Trap: debit rent expense instead of recognizing a right-of-use asset."""
+def test_lease_at_undiscounted_payments_fails():
+    """Trap: recognize the lease at total undiscounted payments, not PV."""
+    import re
+    from decimal import Decimal
+
     instance = FAMILIES["lease-initial-recognition"](195)
-    present_value = _deltas(instance)["Assets:RightOfUseAsset"]
+    terms = instance.app_files["documents/lease_terms.md"]
+    years = int(re.search(r"Term (\d+) years", terms)[1])
+    payment = Decimal(re.search(r"Payments of USD ([\d]+\.[\d]{2})", terms)[1])
+    undiscounted = payment * years
     wrong = instance.initial_ledger + _entry(
         "2026-01-01",
         "Lessor",
-        [("Expenses:Rent", present_value), ("Liabilities:LeaseLiability", -present_value)],
+        [
+            ("Assets:RightOfUseAsset", undiscounted),
+            ("Liabilities:LeaseLiability", -undiscounted),
+        ],
     )
     _assert_semantic_trap(instance, wrong)
 

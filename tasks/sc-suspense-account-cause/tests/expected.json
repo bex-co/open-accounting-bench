@@ -2,7 +2,7 @@
   "task_id": "sc-suspense-account-cause",
   "family": "ledger-integrity-reporting",
   "seed": 292,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

@@ -1,6 +1,6 @@
 # Question — derecognition assessment
 
-Transfer: **Securities were sold under an agreement to repurchase the same securities in 30 days at a fixed price.**
+Transfer: **A loan portfolio was transferred with a guarantee capped at 10% of its value, so neither substantially all risks and rewards were transferred nor retained. The transferor holds a call option that constrains the transferee from selling the portfolio.**
 
 Using `/app/policy.md`, should the transferor derecognize the asset? Select exactly one option.
 

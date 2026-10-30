@@ -1,6 +1,6 @@
-# Question — expected FSA tax saving
+# Question — net benefit compared with paying from after-tax pay
 
-Using `/app/documents/fsa_election.md` and `/app/policy.md`, compute the **expected tax saving** in USD.
+Using `/app/documents/fsa_election.md` and `/app/policy.md`, compute the **net benefit compared with paying the expenses from after-tax pay** in USD.
 
 ## Answer format
 

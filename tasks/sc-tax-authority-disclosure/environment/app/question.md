@@ -1,6 +1,6 @@
 # Question — tax authority and disclosure
 
-Position support: **The only listed authority is an old private letter ruling with materially different facts; a well-reasoned law-review article also agrees with the taxpayer.**
+Position support: **The only listed authority is a private letter ruling on closely analogous but distinguishable facts; a well-reasoned law-review article also agrees with the taxpayer.**
 
 Using `/app/policy.md`, select exactly one option.
 

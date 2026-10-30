@@ -13,13 +13,13 @@ family = "standard-costing"
 difficulty = "easy"
 category = "management-accounting"
 framework = "core"
-level = "vocational"
+level = "university"
 format = "numeric"
 skill = "application"
 standards = []
 track = "stable"
 seed = 220
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

@@ -2,8 +2,8 @@
 
 | Item | USD |
 |---|---:|
-| Net income | 54600.00 |
+| Net income | 44850.00 |
 | Interest expense | 7100.00 |
-| Income tax expense | 9900.00 |
-| Depreciation and amortization | 17300.00 |
-| One-off plant-closure loss (in net income) | 2500.00 |
+| Income tax expense | 14950.00 |
+| Depreciation and amortization | 16900.00 |
+| One-off plant-closure loss (in net income) | 7600.00 |

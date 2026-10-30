@@ -1,4 +1,4 @@
-# Sales invoice — Juniper Hotels
+# Sales invoice and internal perpetual record — Juniper Hotels
 
 Date: 2026-01-24
 Item: LED desk lamps

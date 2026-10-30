@@ -22,6 +22,7 @@ option "operating_currency" "USD"
   Assets:Bank:Checking  80000.00 USD
   Equity:Opening-Balances  -80000.00 USD
 
-2026-01-31 * "Payroll" "January gross wages (employee entry already recorded)"
+2026-01-31 * "Payroll" "January wages paid net of employee social contributions"
   Expenses:Wages  46000.00 USD
-  Assets:Bank:Checking  -46000.00 USD
+  Liabilities:FICAPayable  -3519.00 USD
+  Assets:Bank:Checking  -42481.00 USD

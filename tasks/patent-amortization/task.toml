@@ -13,13 +13,13 @@ family = "intangible-assets"
 difficulty = "easy"
 category = "financial-accounting"
 framework = "core"
-level = "university"
+level = "vocational"
 format = "journal-entry"
 skill = "application"
 standards = ["asc:350", "ias:38"]
 track = "stable"
 seed = 170
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

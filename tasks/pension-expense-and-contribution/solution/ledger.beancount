@@ -26,8 +26,8 @@ option "operating_currency" "USD"
   Liabilities:NetPensionLiability  -34000.00 USD
 
 2026-01-01 * "Opening" "Unrecognized actuarial losses in AOCI"
-  Equity:AccumulatedOtherComprehensiveIncome  4000.00 USD
-  Equity:Opening-Balances  -4000.00 USD
+  Equity:AccumulatedOtherComprehensiveIncome  92000.00 USD
+  Equity:Opening-Balances  -92000.00 USD
 
 2026-01-20 * "Pension plan" "Pension cost and January funding"
   Expenses:Pension  3600.00 USD

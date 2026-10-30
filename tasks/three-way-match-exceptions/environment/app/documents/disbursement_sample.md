@@ -2,10 +2,10 @@
 
 | Item | PO qty | PO unit price | Received qty | Amount paid | Client stamp |
 |---|---:|---:|---:|---:|---|
-| D1 | 70 | 13.50 | 70 | 945.00 | Matched (client stamp) |
-| D2 | 110 | 15.75 | 110 | 1732.50 | Matched (client stamp) |
-| D3 | 110 | 17.00 | 110 | 1870.00 | Matched (client stamp) |
-| D4 | 190 | 10.25 | 190 | 1947.50 | Matched (client stamp) |
-| D5 | 160 | 17.50 | 160 | 2800.00 | Matched (client stamp) |
-| D6 | 40 | 11.25 | 40 | 500.00 | Matched (client stamp) |
-| D7 | 190 | 9.50 | 190 | 1805.00 | Matched (client stamp) |
+| D1 | 90 | 13.50 | 90 | 1215.00 | Matched (client stamp) |
+| D2 | 130 | 15.75 | 130 | 2047.50 | Matched (client stamp) |
+| D3 | 130 | 17.00 | 130 | 2210.00 | Matched (client stamp) |
+| D4 | 130 | 16.75 | 130 | 2177.50 | Matched (client stamp) |
+| D5 | 60 | 11.25 | 60 | 725.00 | Matched (client stamp) |
+| D6 | 120 | 19.75 | 100 | 2370.00 | Matched (client stamp) |
+| D7 | 140 | 18.00 | 140 | 2520.00 | Matched (client stamp) |

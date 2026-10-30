@@ -2,7 +2,7 @@
   "task_id": "sc-option-value-sensitivity",
   "family": "financial-analysis",
   "seed": 329,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

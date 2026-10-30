@@ -2,7 +2,7 @@
   "task_id": "credit-card-sale-fee",
   "family": "transaction-classification",
   "seed": 169,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -12,7 +12,10 @@
     "Income:Sales": "-9500.00"
   },
   "allowed_extra_accounts": [],
-  "expected_new_transactions": 1,
+  "expected_new_transactions": [
+    1,
+    2
+  ],
   "expected_period": [
     "2026-01-23",
     "2026-01-23"

@@ -2,7 +2,7 @@
   "task_id": "mc-reportable-segments",
   "family": "segment-reporting",
   "seed": 250,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "multiple-choice",
   "currency": "USD",
   "tolerance": "0.01",

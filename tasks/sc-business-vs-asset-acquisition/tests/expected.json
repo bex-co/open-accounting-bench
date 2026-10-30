@@ -2,7 +2,7 @@
   "task_id": "sc-business-vs-asset-acquisition",
   "family": "business-combinations",
   "seed": 293,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "single-choice",
   "currency": "USD",
   "tolerance": "0.01",

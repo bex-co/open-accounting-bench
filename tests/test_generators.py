@@ -71,7 +71,10 @@ def test_level_scores_match_labels_and_generators():
         ups = sum(1 for s in scores if s in "UP")
         professional = scores.count("P") >= 2 and any(scores[i] == "P" for i in (2, 3, 4))
         derived = "professional" if professional else ("university" if ups >= 2 else "vocational")
-        assert label.replace(" (borderline)", "") == derived, (task_id, scores, label)
+        expected_label = (
+            "university (borderline)" if derived == "university" and ups == 2 else derived
+        )
+        assert label == expected_label, (task_id, scores, label)
         assert FAMILIES[task_id](1).level == derived, task_id
 
 
@@ -142,6 +145,99 @@ def test_review_regressions_seed_sweeps():
         assert abs(half_up - Decimal(control.expected["gold"])) <= Decimal(
             control.expected["abs_tolerance"]
         ), seed
+
+
+def test_second_review_regressions_seed_sweeps():
+    """Seeds 0-999: second-review ranges and current-law thresholds hold."""
+    import re
+    from decimal import Decimal
+
+    def doc(instance):
+        return next(v for k, v in instance.app_files.items() if k.startswith("documents/"))
+
+    def amounts(text):
+        return [Decimal(x) for x in re.findall(r"\| ([+-]?[\d]+\.[\d]{2}) \|", text)]
+
+    niit_branches = set()
+    for seed in range(1000):
+        ownership = doc(FAMILIES["constructive-ownership-percent"](seed))
+        holdings = [int(x) for x in re.findall(r"owns (\d+)%", ownership[:170])]
+        assert sum(holdings[:3]) <= 100, seed
+
+        _assets, liabilities, _d_assets, d_liabilities = amounts(
+            doc(FAMILIES["accounting-equation-missing-equity"](seed))
+        )
+        assert liabilities + d_liabilities >= 0, seed
+
+        capital = FAMILIES["capital-loss-carryforward"](seed)
+        assert Decimal(capital.expected["gold"]) > 0, seed
+        assert "USD 0.00" not in doc(capital), seed
+
+        fsa_doc = doc(FAMILIES["fsa-tax-saving"](seed))
+        election, expenses = amounts(fsa_doc)
+        fsa_rate = Decimal(re.search(r"rate \| (\d+)%", fsa_doc)[1]) / 100
+        fsa = FAMILIES["fsa-tax-saving"](seed).expected
+        assert Decimal(fsa["gold"]) == election * fsa_rate - (election - expenses), seed
+        assert Decimal(fsa["trap_value"]) == election * fsa_rate, seed
+        assert Decimal(fsa["gold"]) > 0, seed
+
+        single_doc = doc(FAMILIES["single-audit-type-a-count"](seed))
+        expended = [
+            Decimal(value)
+            for value in re.findall(r"\| [\d]+\.[\d]{2} \| ([\d]+\.[\d]{2}) \|", single_doc)
+        ]
+        single = FAMILIES["single-audit-type-a-count"](seed).expected
+        assert sum(expended) <= Decimal("34000000.00"), seed
+        assert all(v != Decimal("1000000.00") for v in expended), seed
+        assert Decimal(single["gold"]) == sum(v > 1000000 for v in expended), seed
+        assert Decimal(single["trap_value"]) == sum(v > 750000 for v in expended), seed
+        assert Decimal(single["trap_value"]) > Decimal(single["gold"]), seed
+
+        cash_amounts = amounts(doc(FAMILIES["cash-to-accrual-profit"](seed)))
+        revenue = cash_amounts[0] + cash_amounts[2]
+        cash_gold = Decimal(FAMILIES["cash-to-accrual-profit"](seed).expected["gold"])
+        assert cash_gold / revenue <= Decimal("0.6"), seed
+
+        net, _interest, tax, _dna, _oneoff = amounts(
+            doc(FAMILIES["adjusted-ebitda-computation"](seed))
+        )
+        assert net >= 0 and tax / (net + tax) <= Decimal("0.5"), seed
+
+        niit_amounts = amounts(doc(FAMILIES["individual-tax-with-niit"](seed)))
+        niit_branches.add("excess" if niit_amounts[2] < niit_amounts[1] else "nii")
+
+        pension = FAMILIES["pension-expense-and-contribution"](seed).expected
+        amortization = -Decimal(
+            pension["expected_deltas"]["Equity:AccumulatedOtherComprehensiveIncome"]
+        )
+        final_aoci = Decimal(
+            pension["required_final_balances"]["Equity:AccumulatedOtherComprehensiveIncome"]
+        )
+        opening_aoci = final_aoci + amortization
+        assert opening_aoci / amortization >= 60, seed
+
+        fx_doc = doc(FAMILIES["fx-payable-remeasurement"](seed))
+        spots = [Decimal(x) for x in re.findall(r"USD ([0-9.]+) per EUR", fx_doc)]
+        assert abs((spots[1] - spots[0]) / spots[0]) <= Decimal("0.05"), seed
+
+        educator = amounts(doc(FAMILIES["tax-return-crossfoot-difference"](seed)))[-1]
+        assert educator <= Decimal("300.00"), seed
+
+        days = FAMILIES["inventory-days-on-hand"](seed).expected
+        assert Decimal(days["abs_tolerance"]) >= Decimal("0.5"), seed
+
+        error = FAMILIES["inventory-error-correction"](seed)
+        retained = Decimal(
+            re.search(
+                r"Opening retained earnings.*?Equity:Opening-Balances\s+([\d.]+) USD",
+                error.initial_ledger,
+                re.S,
+            )[1]
+        )
+        error_amount = Decimal(error.expected["expected_deltas"]["Assets:Inventory"])
+        assert error_amount / retained >= Decimal("0.01"), seed
+
+    assert niit_branches == {"excess", "nii"}
 
 
 def test_exact_factor_answers_fit_tolerances():

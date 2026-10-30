@@ -13,13 +13,13 @@ family = "consolidation"
 difficulty = "easy"
 category = "financial-accounting"
 framework = "ifrs"
-level = "vocational"
+level = "university"
 format = "single-choice"
 skill = "application"
 standards = ["ifrs:10"]
 track = "stable"
 seed = 276
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

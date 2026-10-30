@@ -2,7 +2,7 @@
   "task_id": "share-based-compensation-monthly",
   "family": "share-based-payment",
   "seed": 211,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",

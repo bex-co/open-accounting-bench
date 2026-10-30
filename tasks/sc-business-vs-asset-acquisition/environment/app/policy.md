@@ -1,5 +1,8 @@
 # What is a business? (applies to this task)
 
+- Concentration screen: if substantially all the fair value is
+  concentrated in a single identifiable asset or a group of
+  similar identifiable assets, the set is NOT a business.
 - A business is an integrated set of inputs and a SUBSTANTIVE
   PROCESS applied to them that together can create outputs. Outputs
   (current sales) are helpful evidence but are not required if a

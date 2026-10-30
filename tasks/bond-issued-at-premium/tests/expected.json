@@ -2,7 +2,7 @@
   "task_id": "bond-issued-at-premium",
   "family": "borrowings",
   "seed": 172,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "journal-entry",
   "currency": "USD",
   "tolerance": "0.01",
@@ -12,7 +12,10 @@
     "Liabilities:PremiumOnBondsPayable": "-24566.98"
   },
   "allowed_extra_accounts": [],
-  "expected_new_transactions": 1,
+  "expected_new_transactions": [
+    1,
+    2
+  ],
   "expected_period": [
     "2026-01-01",
     "2026-01-01"

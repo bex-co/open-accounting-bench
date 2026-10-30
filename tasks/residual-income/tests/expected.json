@@ -2,7 +2,7 @@
   "task_id": "residual-income",
   "family": "responsibility-accounting",
   "seed": 204,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",

@@ -1,6 +1,6 @@
 # Employer payroll taxes — January 2026
 
-Gross wages for January (already recorded and paid): USD 46000.00.
+Gross wages for January: USD 46000.00. Employee social contributions have already been withheld and net wages paid.
 The employer's own taxes on those wages, not yet recorded:
 
 - Social contributions (employer match): 7.65% of gross wages

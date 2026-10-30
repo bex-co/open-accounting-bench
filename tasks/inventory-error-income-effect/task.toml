@@ -13,13 +13,13 @@ family = "inventory"
 difficulty = "easy"
 category = "financial-accounting"
 framework = "core"
-level = "university"
+level = "vocational"
 format = "numeric"
 skill = "application"
 standards = ["asc:330", "ias:2"]
 track = "stable"
 seed = 266
-generator_version = "0.5.0"
+generator_version = "0.6.0"
 ledger_engine = "beancount"
 
 [verifier]

@@ -2,7 +2,7 @@
   "task_id": "inventory-error-income-effect",
   "family": "inventory",
   "seed": 266,
-  "generator_version": "0.5.0",
+  "generator_version": "0.6.0",
   "format": "numeric",
   "currency": "USD",
   "tolerance": "0.01",
@@ -18,7 +18,7 @@
   "trap_value": "0",
   "category": "financial-accounting",
   "framework": "core",
-  "level": "university",
+  "level": "vocational",
   "skill": "application",
   "standards": [
     "asc:330",

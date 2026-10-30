@@ -26,5 +26,5 @@ option "operating_currency" "USD"
   Liabilities:AccountsPayable  -105000.00 USD
 
 2026-01-31 * "Nordhaus GmbH" "Remeasure euro payable to closing spot"
-  Expenses:ForeignExchangeLoss  5000.00 USD
-  Liabilities:AccountsPayable  -5000.00 USD
+  Expenses:ForeignExchangeLoss  2000.00 USD
+  Liabilities:AccountsPayable  -2000.00 USD

@@ -8,4 +8,4 @@
 | Business income | 9800.00 |
 | Capital gain | 4400.00 |
 | TOTAL income as reported on the draft | 71400.00 |
-| Educator-expense adjustment (below total income) | 2200.00 |
+| Educator-expense adjustment (below total income) | 300.00 |
