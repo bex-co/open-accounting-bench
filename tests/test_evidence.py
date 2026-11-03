@@ -14,6 +14,7 @@ from oab.evidence import (
     validate_evidence_pack,
 )
 from oab.generate import write_task
+from oab.verify import parse_ledger
 from oab.workflow_families import DYNAMIC_FAMILIES
 
 
@@ -37,6 +38,14 @@ def test_clean_pack_is_deterministic_and_reconciles():
     assert first.master.contracts
     assert first.anomalies == []
     assert "ledger.beancount" in first.files
+    ledger = parse_ledger(first.files["ledger.beancount"])
+    assert {
+        "Liabilities:AccruedWages",
+        "Liabilities:NotesPayable",
+        "Expenses:Wages",
+        "Expenses:Depreciation",
+    } <= set(ledger.opens)
+    assert f"{first.periods[0].start} open Assets:Bank:Checking" in first.files["ledger.beancount"]
     assert "documents/bank_statements.csv" in first.files
     assert "subledgers/accounts_receivable.csv" in first.files
 

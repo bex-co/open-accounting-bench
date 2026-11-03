@@ -61,10 +61,14 @@ EXTRA_ACCOUNTS = [
     (INVENTORY, "Merchandise inventory"),
     (ACCUMULATED_DEPRECIATION, "Accumulated depreciation (contra asset)"),
     (AP, "Supplier payables"),
+    (ACCRUED_WAGES, "Wages earned by employees but not yet paid"),
+    (NOTES_PAYABLE, "Notes payable"),
     (CONTRACT_LIABILITY, "Customer amounts received before performance"),
     (PRODUCT_REVENUE, "Product revenue"),
     (SERVICE_REVENUE, "Service revenue"),
     (COST_OF_SALES, "Cost of products sold"),
+    (WAGES, "Employee wages"),
+    (DEPRECIATION, "Depreciation expense"),
 ]
 
 ANOMALY_KINDS = (
@@ -1324,7 +1328,7 @@ def _document_rows(documents: Iterable[Document]) -> list[list[object]]:
 
 def _render_files(builder: _PackBuilder, opening_balances: dict[str, Decimal]) -> dict[str, str]:
     master = builder.master
-    ledger = _ledger_header(ZERO, EXTRA_ACCOUNTS)
+    ledger = _ledger_header(ZERO, EXTRA_ACCOUNTS, start=builder.master.periods[0].start)
     ledger += _txn(
         master.periods[0].start,
         master.company_name,

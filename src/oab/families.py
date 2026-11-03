@@ -86,17 +86,22 @@ def _chart_md(extra: list[tuple[str, str]] | None = None) -> str:
     return f"# Chart of accounts\n\n{rows}\n"
 
 
-def _ledger_header(opening_bank: Decimal, extra: list[tuple[str, str]] | None = None) -> str:
+def _ledger_header(
+    opening_bank: Decimal,
+    extra: list[tuple[str, str]] | None = None,
+    *,
+    start: str = "2026-01-01",
+) -> str:
     """Opening ledger. `extra` opens family-local accounts without touching CHART,
     so adding a family never changes existing Stable tasks."""
     accounts = CHART + (extra or [])
-    opens = "\n".join(f"2026-01-01 open {account} USD" for account, _ in accounts)
+    opens = "\n".join(f"{start} open {account} USD" for account, _ in accounts)
     return f"""option "title" "Acme Widgets LLC"
 option "operating_currency" "USD"
 
 {opens}
 
-2026-01-01 * "Opening" "Opening bank balance"
+{start} * "Opening" "Opening bank balance"
   {BANK}  {money(opening_bank)} USD
   Equity:Opening-Balances  -{money(opening_bank)} USD
 """

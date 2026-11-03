@@ -281,6 +281,97 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Rolls the carrying amount forward by the amortization and posts the entry; issuance and repayment are not tested."
 
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.A"
+target_item = 3
+target_skill = "analysis"
+target_text_sha256 = "sha256:7f8c1ee80a4cf0a533178c332ff1f3abcd5f6222766b70b645cfdc94cd3476ad"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Dynamic close pilot diagnoses a returned customer check and adjusts cash and receivables within a complete month-end workflow."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.B"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:38ce1b0e201f3aab4bc6b7d6cb2764eb41a167d80e735315c38537e59cfaf875"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Measures an aging and specific-risk credit-loss allowance after first resolving revenue cutoff in the same close."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.C"
+target_item = 2
+target_skill = "application"
+target_text_sha256 = "sha256:dbdbe41094f660dc3d8427017f49be9efd64d7eabccf78acbccb278816e58bb2"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Writes inventory down for a signed count shortage and lower NRV as one determination in a multi-issue close."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.D"
+target_item = 1
+target_skill = "application"
+target_text_sha256 = "sha256:822ca3623d0ca1dcec8751a1d1e730edee35cc372b5340a4dca8d8b34a32c303"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Reverses a capitalized routine repair into expense after weighing the invoice description against capitalization policy."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.G"
+target_item = 2
+target_skill = "application"
+target_text_sha256 = "sha256:9125fdefa82f6c01d0ad91c19d756bdff99cf0d5a84af5cc50887ca557cace6e"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Creates current-period supplier and interest accruals and defers unexpired rent from conflicting close evidence."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.II.H.1"
+target_item = 3
+target_skill = "application"
+target_text_sha256 = "sha256:dcb048890159c7ea3cb2310d46ca784af23fb600499fa59a0a5de902f5be1d34"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 4
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Accrues one month of stated-rate note interest and reclassifies the current principal portion; effective-interest amortization is not the focus."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FAR.III.C"
+target_item = 4
+target_skill = "application"
+target_text_sha256 = "sha256:730b9f73b369ec8321821257e5161037395f9cb35ed89e2014855d71fe3fbaf2"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Reverses revenue for goods not yet shipped using signed carrier evidence; price allocation is not tested."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

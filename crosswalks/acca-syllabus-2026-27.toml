@@ -367,6 +367,90 @@ mapper = "oab-maintainers (agent draft)"
 reviewer = "Tian Pan (maintainer)"
 comment = "Calculates and records one month's interest expense and coupon accrual in the ledger; statement presentation is not tested."
 
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.E1(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:e16ccf6413464618103505f97fb9fdf4cb0bb926e55bfc7ac23056562a450634"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Records a returned customer check from the bank statement as part of a complete month-end close."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.D8(h)"
+target_skill = "S"
+target_text_sha256 = "sha256:78558321fda4a3d0940f8e6ae478077fdc8f1ada51b2ee1e9c1a253a05e6c5a4"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Creates an aging and specific-risk allowance after excluding a reversed unshipped sale."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.D3(c)"
+target_skill = "S"
+target_text_sha256 = "sha256:6c1f482a4e7b878626574a2a7e10c325459c1f8e260c811b04a6fdac724d0603"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Applies lower of cost and NRV together with a signed count shortage in a multi-issue close."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.D4(d)"
+target_skill = "S"
+target_text_sha256 = "sha256:96cfb3e3027894310cb102deb33923f7060196993582e34d7eccb450c508972f"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Identifies a capitalized routine repair and returns it to expense under the stated capitalization policy."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.D7(a)"
+target_skill = "S"
+target_text_sha256 = "sha256:14fc3c8001af3df3594de93380ed2abcdc04b7fbe14db814f3acb2a99ec3195b"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 6
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Applies accrual accounting across supplier, rent, revenue, and interest period boundaries in one workflow."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FA.D10(j)"
+target_skill = "S"
+target_text_sha256 = "sha256:55ac10df10a0d63bea1461805d034c83d28ee4c2440a3c1c2ec8d788da8f307c"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Accrues January note interest and separately reclassifies principal due within twelve months."
+
+[[mapping]]
+generator = "month-end-close-workflow"
+target_id = "FR.B10(b)"
+target_skill = "2"
+target_text_sha256 = "sha256:1117bba172894657f006832eb62de6ec7658589c4e5dcadc5bb02a13490f128e"
+relationship = "intersects-with"
+rationale = "semantic"
+strength = 5
+status = "proposed"
+mapper = "oab-maintainers (agent draft)"
+comment = "Uses signed shipment evidence to reverse point-in-time revenue recognized before shipment."
+
 # Items judged not agent-gradable (reviewed gradability triage).
 # Absent items are in scope; see docs/metrics.md#framework-coverage.
 

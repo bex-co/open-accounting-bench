@@ -710,6 +710,20 @@ not counted in the Stable coverage matrix below.
 instance. It is test infrastructure for the contract—not a claim of
 professional difficulty or curriculum coverage.
 
+`month-end-close-workflow` is the first Dynamic professional pilot.
+It starts from a validated three-period evidence pack, leaves the
+current month in draft, and activates seven of eight linked close
+clusters per seed: revenue cutoff, receivables allowance, inventory
+count/NRV, unrecorded payables, prepayment cutoff, fixed-asset
+treatment, debt interest/classification, and bank reconciliation.
+The agent submits an adjusted ledger and structured close schedule;
+54 typed checks cover issue dispositions, local and period deltas,
+final trial-balance values, current-period performance, and cutoff
+integrity. Its seven-dimension scores in rubric order are
+P/P/P/U/P/U/P, deriving `professional`. This is a design label, not a
+difficulty result: the family remains Dynamic-only until the
+calibration protocol produces a promote/tune/reject verdict.
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced
@@ -743,7 +757,8 @@ placeholders tracked as issues, not directories.
 
 Stable format coverage: journal-entry ×90, multiple-choice ×4,
 single-choice ×42, numeric ×155. Workflow currently has one Dynamic
-conformance fixture and no Stable instance; open-text is deferred
+conformance fixture and one Dynamic professional pilot, with no
+Stable instance; open-text is deferred
 (needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)

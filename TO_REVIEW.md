@@ -396,6 +396,23 @@ crosswalk mappings.
   fixture's sign conventions (ledger-signed trial-balance JSON versus
   positive performance-report values) before later workflow families
   copy them.
+- 2026-10-27 — Dynamic professional pilot `month-end-close-workflow`
+  (no Stable seed). What to review: the eight-cluster close blueprint;
+  sparse policy wording and evidence precedence; revenue shipment
+  cutoff; aging/specific-risk allowance rates; inventory shortage and
+  NRV measurement; unrecorded supplier accrual; six-month rent
+  deferral; routine-repair capitalization reversal; note interest and
+  current-portion classification; NSF treatment; oracle entries,
+  mutants, equivalent decompositions, final trial balance and
+  current-period statement signs; and the recorded professional
+  seven-dimension scores P/P/P/U/P/U/P. Proposed AICPA/ACCA crosswalk
+  records were added and remain unreviewed proposals. Specific
+  concern: one cluster is omitted per seed by rotation, so check that
+  each seven-cluster instance remains a complete close rather than a
+  missing-work trap. The evidence toolkit integration also fixed four
+  previously unopened ledger accounts and its hardcoded 2026 ledger
+  header date; no Stable family expectations changed and no
+  `GENERATOR_VERSION` bump was made.
 
 
 ## Reviewed
