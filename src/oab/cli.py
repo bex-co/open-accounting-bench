@@ -19,7 +19,15 @@ from pathlib import Path
 
 from oab.families import FAMILIES, STABLE_SEEDS, STANDARD_REF, TAXONOMY
 from oab.generate import write_dataset_files, write_task
-from oab.verify import grade_answer, verify
+from oab.verify import grade_answer, grade_workflow, load_workflow_artifacts, verify
+from oab.workflow import (
+    LEDGER_ARTIFACT,
+    WORKFLOW_FORMAT,
+    json_workflow_artifacts,
+    validate_workflow_spec,
+    workflow_artifact_paths,
+)
+from oab.workflow_families import ALL_FAMILIES
 
 _COMMON_FILES = [
     "task.toml",
@@ -34,7 +42,7 @@ _COMMON_FILES = [
 
 
 def required_files(fmt: str) -> list[str]:
-    if fmt == "journal-entry":
+    if fmt in {"journal-entry", WORKFLOW_FORMAT}:
         return _COMMON_FILES + [
             "environment/app/ledger.beancount",
             "tests/initial.beancount",
@@ -51,12 +59,20 @@ def task_format(task_dir: Path) -> str:
 
 
 def artifact_for_format(fmt: str) -> str:
-    return "/app/ledger.beancount" if fmt == "journal-entry" else "/app/answer.json"
+    return LEDGER_ARTIFACT if fmt in {"journal-entry", WORKFLOW_FORMAT} else "/app/answer.json"
+
+
+def artifact_paths_for_expected(fmt: str, expected: dict) -> list[str]:
+    if fmt != WORKFLOW_FORMAT:
+        return [artifact_for_format(fmt)]
+    return workflow_artifact_paths(expected.get("workflow"))
 
 
 def _cmd_list(_args) -> int:
-    for task_id, fn in sorted(FAMILIES.items()):
-        print(f"{task_id}\tfamily-seed(stable)={STABLE_SEEDS[task_id]}\t{fn.__name__}")
+    for task_id, fn in sorted(ALL_FAMILIES.items()):
+        stable_seed = STABLE_SEEDS.get(task_id)
+        seed_label = stable_seed if stable_seed is not None else "dynamic-only"
+        print(f"{task_id}\tfamily-seed(stable)={seed_label}\t{fn.__name__}")
     return 0
 
 
@@ -74,7 +90,7 @@ def _cmd_generate(args) -> int:
     if not args.family or args.seed is None:
         print("error: pass --all, or --family F --seed N", file=sys.stderr)
         return 2
-    instance = FAMILIES[args.family](args.seed)
+    instance = ALL_FAMILIES[args.family](args.seed)
     track = "stable" if STABLE_SEEDS.get(args.family) == args.seed else "dynamic"
     path = write_task(instance, out, track=track)
     print(f"generated {path} (seed {args.seed}, track {track})")
@@ -103,17 +119,37 @@ def _expected_shape_failures(name: str, fmt: str, expected: dict) -> list[str]:
             Decimal(str(expected.get("gold")))
         except (InvalidOperation, ValueError, TypeError):
             failures.append(f"{name}: numeric gold must be a number")
+    elif fmt == WORKFLOW_FORMAT:
+        if not expected.get("expected_deltas"):
+            failures.append(f"{name}: workflow expected_deltas must be non-empty")
+        failures.extend(
+            f"{name}: {failure}" for failure in validate_workflow_spec(expected.get("workflow"))
+        )
     elif fmt == "open-text":
         failures.append(f"{name}: open-text has no deterministic grader yet")
     return failures
 
 
-def _grade(task_dir: Path, artifact: Path | None) -> dict:
+def _grade(
+    task_dir: Path,
+    artifact: Path | None,
+    artifact_root: Path | None = None,
+) -> dict:
     expected = json.loads((task_dir / "tests" / "expected.json").read_text())
-    if expected.get("format", "journal-entry") == "journal-entry":
+    fmt = expected.get("format", "journal-entry")
+    if fmt == "journal-entry":
         initial = (task_dir / "tests" / "initial.beancount").read_text()
         final = Path(artifact).read_text() if artifact is not None else initial
         return verify(initial, final, expected).to_report_json()
+    if fmt == WORKFLOW_FORMAT:
+        initial = (task_dir / "tests" / "initial.beancount").read_text()
+        final = Path(artifact).read_text() if artifact is not None else initial
+        return grade_workflow(
+            initial,
+            final,
+            expected,
+            load_workflow_artifacts(expected, artifact_root),
+        ).to_report_json()
     answer_text = Path(artifact).read_text() if artifact is not None else None
     return grade_answer(expected, answer_text).to_report_json()
 
@@ -121,11 +157,15 @@ def _grade(task_dir: Path, artifact: Path | None) -> dict:
 def _cmd_verify(args) -> int:
     task_dir = Path(args.task_dir)
     fmt = task_format(task_dir)
-    if fmt == "journal-entry":
+    artifact_root = None
+    if fmt == WORKFLOW_FORMAT:
+        artifact = Path(args.ledger) if args.ledger else task_dir / "solution" / "ledger.beancount"
+        artifact_root = Path(args.artifact_root) if args.artifact_root else artifact.parent
+    elif fmt == "journal-entry":
         artifact = Path(args.ledger) if args.ledger else task_dir / "solution" / "ledger.beancount"
     else:
         artifact = Path(args.answer) if args.answer else task_dir / "solution" / "answer.json"
-    report = _grade(task_dir, artifact)
+    report = _grade(task_dir, artifact, artifact_root=artifact_root)
     print(json.dumps(report, indent=2))
     return 0 if report["reward"]["reward"] == 1 else 1
 
@@ -150,8 +190,10 @@ def validate_tasks(tasks_root: Path) -> list[str]:
             continue
         if config.get("schema_version") != "1.3":
             failures.append(f"{name}: schema_version must be 1.3")
-        if config.get("artifacts") != [artifact_for_format(fmt)]:
-            failures.append(f"{name}: artifacts must declare {artifact_for_format(fmt)}")
+        expected = json.loads((task_dir / "tests" / "expected.json").read_text())
+        artifact_paths = artifact_paths_for_expected(fmt, expected)
+        if config.get("artifacts") != artifact_paths:
+            failures.append(f"{name}: artifacts must declare {artifact_paths}")
         if config.get("verifier", {}).get("environment_mode") != "separate":
             failures.append(f"{name}: verifier must use a separate environment")
         metadata = config.get("metadata", {})
@@ -163,12 +205,19 @@ def validate_tasks(tasks_root: Path) -> list[str]:
             isinstance(ref, str) and STANDARD_REF.match(ref) for ref in standards
         ):
             failures.append(f"{name}: metadata.standards={standards!r} must be asc/ias/ifrs refs")
-        expected = json.loads((task_dir / "tests" / "expected.json").read_text())
         if metadata.get("format") != expected.get("format"):
             failures.append(f"{name}: task.toml format != expected.json format")
         instruction = (task_dir / "instruction.md").read_text()
-        if artifact_for_format(fmt) not in instruction:
-            failures.append(f"{name}: instruction must name {artifact_for_format(fmt)}")
+        for artifact_path in artifact_paths:
+            if artifact_path not in instruction:
+                failures.append(f"{name}: instruction must name {artifact_path}")
+        if fmt == WORKFLOW_FORMAT:
+            for artifact in json_workflow_artifacts(expected.get("workflow")):
+                path = artifact.get("path")
+                if isinstance(path, str):
+                    rel = path.removeprefix("/app/")
+                    if not (task_dir / "solution" / rel).is_file():
+                        failures.append(f"{name}: missing solution/{rel}")
         if metadata.get("task_id") != name:
             failures.append(f"{name}: metadata.task_id must equal directory name")
         if metadata.get("seed") != expected.get("seed"):
@@ -178,15 +227,28 @@ def validate_tasks(tasks_root: Path) -> list[str]:
         failures += _expected_shape_failures(name, fmt, expected)
         if (task_dir / "tests" / "grader.py").read_text() != core:
             failures.append(f"{name}: tests/grader.py drifted from oab._verifier_core")
-        if fmt == "journal-entry":
+        if fmt in {"journal-entry", WORKFLOW_FORMAT}:
             initial = (task_dir / "environment" / "app" / "ledger.beancount").read_text()
             if initial != (task_dir / "tests" / "initial.beancount").read_text():
                 failures.append(f"{name}: tests/initial.beancount != environment ledger")
             if initial == (task_dir / "solution" / "ledger.beancount").read_text():
                 failures.append(f"{name}: solution ledger must differ from initial")
-            oracle = _grade(task_dir, task_dir / "solution" / "ledger.beancount")
-            nop = _grade(task_dir, task_dir / "tests" / "initial.beancount")
-            nop_label = "untouched ledger must not pass"
+            if fmt == WORKFLOW_FORMAT:
+                oracle = _grade(
+                    task_dir,
+                    task_dir / "solution" / "ledger.beancount",
+                    artifact_root=task_dir / "solution",
+                )
+                nop = _grade(
+                    task_dir,
+                    task_dir / "tests" / "initial.beancount",
+                    artifact_root=None,
+                )
+                nop_label = "untouched ledger with missing workflow artifacts must not pass"
+            else:
+                oracle = _grade(task_dir, task_dir / "solution" / "ledger.beancount")
+                nop = _grade(task_dir, task_dir / "tests" / "initial.beancount")
+                nop_label = "untouched ledger must not pass"
         else:
             oracle = _grade(task_dir, task_dir / "solution" / "answer.json")
             nop = _grade(task_dir, None)
@@ -244,7 +306,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("list").set_defaults(fn=_cmd_list)
     gen = sub.add_parser("generate")
     gen.add_argument("--all", action="store_true")
-    gen.add_argument("--family", choices=sorted(FAMILIES))
+    gen.add_argument("--family", choices=sorted(ALL_FAMILIES))
     gen.add_argument("--seed", type=int)
     gen.add_argument("--out", default="tasks")
     gen.set_defaults(fn=_cmd_generate)
@@ -252,6 +314,10 @@ def main(argv: list[str] | None = None) -> int:
     ver.add_argument("--task-dir", required=True)
     ver.add_argument("--ledger", help="defaults to the task's solution ledger")
     ver.add_argument("--answer", help="defaults to the task's solution answer")
+    ver.add_argument(
+        "--artifact-root",
+        help="directory containing /app-relative workflow artifacts (default: ledger directory)",
+    )
     ver.set_defaults(fn=_cmd_verify)
     rep = sub.add_parser("report")
     rep.add_argument("--job", required=True, help="Harbor job directory")

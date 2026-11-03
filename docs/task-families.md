@@ -16,7 +16,9 @@ Every task carries a five-axis taxonomy (`task.toml [metadata]`,
 - `level`: vocational / university / professional — who is expected
   to do the work ([rubric](#assigning-level))
 - `format`: journal-entry / single-choice / multiple-choice / numeric /
-  open-text (open-text has no deterministic grader yet)
+  workflow / open-text (workflow is a ledger plus structured JSON
+  artifacts graded by typed deterministic checks; open-text has no
+  deterministic grader yet)
 - `skill`: remembering-understanding / application / analysis /
   evaluation — the cognitive operation the task demands, using the
   AICPA blueprint's revised-Bloom levels so crosswalks compare like
@@ -688,6 +690,26 @@ problem the task hands over. An analysis task can be vocational.
 
 Stable seeds: 101–391 (`STABLE_SEEDS` in `src/oab/families.py`).
 
+## Professional workflow format (Dynamic-first)
+
+Workflow families model a scenario as an issue graph: seeded facts and
+evidence lead to named determinations, and each determination carries
+typed deterministic checks over ledger state and structured JSON
+schedules/reports. The author schema lives in `src/oab/workflow.py`;
+the verifier semantics are in [verification.md](verification.md#workflow-format).
+
+New workflow generators register in `DYNAMIC_FAMILIES`
+(`src/oab/workflow_families.py`) and have no Stable seed. They can be
+generated and calibrated as Dynamic instances first. Promotion is a
+separate, explicit step: move the generator into `FAMILIES`, assign a
+Stable seed, regenerate `tasks/`, and apply the generator-version rules
+in [governance.md](governance.md). Until then, a workflow generator is
+not counted in the Stable coverage matrix below.
+
+`workflow-conformance-fixture` is the current Dynamic conformance
+instance. It is test infrastructure for the contract—not a claim of
+professional difficulty or curriculum coverage.
+
 ## Coverage matrix (category × framework)
 
 Cell values: number of Stable tasks; `planned` cells are roadmap
@@ -700,9 +722,10 @@ placeholders tracked as issues, not directories.
 | tax | 51 | — | — | planned |
 | audit-assurance | 34 | — | planned | — |
 
-Format coverage: journal-entry ×90, multiple-choice ×4, single-choice ×42,
-numeric ×155; open-text is
-deferred (needs a judge design — see [methodology.md](methodology.md)).
+Stable format coverage: journal-entry ×90, multiple-choice ×4,
+single-choice ×42, numeric ×155. Workflow currently has one Dynamic
+conformance fixture and no Stable instance; open-text is deferred
+(needs a judge design — see [methodology.md](methodology.md)).
 
 ## Roadmap to 12–15 generators (memo §10)
 
@@ -729,7 +752,7 @@ the focal element:
 
 | Field | Meaning |
 |---|---|
-| `generator` | `FAMILIES` key (generators, not family labels: two generators in one family can test different things) |
+| `generator` | Registered generator key (`FAMILIES` or `DYNAMIC_FAMILIES`; generators, not family labels: two generators in one family can test different things) |
 | `target_id` | The framework's own numbering — AICPA `Section.Area.Group[.Topic]` (`FAR.II.A`), ACCA `Exam.<capability><section>(<outcome>)` (`FA.E1(c)`) |
 | `target_item` | AICPA only: 1-based row of the representative task within `target_id`. The blueprint does not number tasks, so OAB assigns these per edition |
 | `target_skill` | The framework's level for that item (AICPA skill; ACCA `K`/`S` or `1`–`3`) |
@@ -773,6 +796,7 @@ Every generated task must satisfy, before merge:
 - At least one plausible wrong attempt fails on a non-structural
   dimension (trap test under `tests/`).
 - Same seed → byte-identical task directory (digest in manifest).
-- Instruction states absolute paths and the single output file
-  (`/app/ledger.beancount` or `/app/answer.json`); policy in
-  `/app/policy.md` removes accounting ambiguity.
+- Instruction states absolute paths for every declared output artifact
+  (`/app/ledger.beancount`, `/app/answer.json`, or a workflow task's
+  ledger plus JSON artifacts); policy in `/app/policy.md` removes
+  accounting ambiguity.

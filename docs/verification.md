@@ -2,10 +2,11 @@
 
 Grading is deterministic, state-based, and LLM-free. Implementation:
 `src/oab/_verifier_core.py` (copied verbatim into each task as
-`tests/grader.py`; CI checks for drift). Inputs: the agent's final
-`/app/ledger.beancount`, the held-out initial ledger, and
-`tests/expected.json`. Outputs: `/logs/verifier/reward.json`,
-`report.json`, `run.log`.
+`tests/grader.py`; CI checks for drift). Inputs: the agent's declared
+artifacts (the final `/app/ledger.beancount` for journal-entry tasks,
+plus structured JSON artifacts for `workflow` tasks), the held-out
+initial ledger where applicable, and `tests/expected.json`. Outputs:
+`/logs/verifier/reward.json`, `report.json`, `run.log`.
 
 ## Five layers
 
@@ -33,6 +34,41 @@ entry instead of two entries, or reversal-plus-rebooking instead of a
 single reclassification entry (all covered by tests). Where a family
 allows several decompositions, `expected_new_transactions` is a range.
 
+## Workflow format
+
+`format = "workflow"` keeps the five ledger layers above as its
+integrity baseline and adds a `workflow_rubric` layer. The held-out
+`expected.workflow` object (author schema and validator:
+`src/oab/workflow.py`) declares:
+
+- `artifacts` — exactly one ledger artifact plus one or more JSON
+  schedule/report artifacts under `/app`;
+- `determinations` — the accounting conclusions the scenario asks the
+  agent to reach, grouped into issue clusters and optionally weighted;
+- `checks` — typed deterministic assertions, each attached to exactly
+  one determination. The closed vocabulary covers overall and
+  per-period account deltas, final balances, cleared subledgers,
+  cutoff windows with no added transactions, evidence dispositions in
+  JSON, JSON report values, forbidden account movement, and
+  ledger-to-JSON balance reconciliation.
+
+Every `gate: true` check must pass, along with all five baseline
+layers, for `reward = 1`. Non-gate checks are diagnostic. A
+determination's score is the fraction of its checks that pass;
+`rubric_completion` is the weighted mean across determinations, so
+duplicating an assertion cannot earn more than its underlying
+determination. `report.json` carries per-check, per-determination, and
+per-cluster details; `reward.json` also exposes
+`workflow_check_completion` (the raw check fraction) and
+`parse_failure`. Rubric completion is diagnostic only and never makes
+a task "completed" without reward 1.
+
+Workflow families are Dynamic-first: they live in
+`DYNAMIC_FAMILIES` until calibration and review justify promotion to
+`FAMILIES` with a frozen Stable seed. The Dynamic
+`workflow-conformance-fixture` exercises every check type through the
+public generator, Harbor packaging, CLI validation, and verifier.
+
 ## `expected.json` schema
 
 | Field | Meaning |
@@ -46,6 +82,7 @@ allows several decompositions, `expected_new_transactions` is a range.
 | `required_final_balances` | `{account: "amount"}` absolute final balances |
 | `reconciliation` | Optional `{account, statement_balance}` external evidence |
 | `forbid_new_accounts` | Reject newly opened accounts (default true) |
+| `workflow` | Workflow format only: versioned artifacts, determinations, and typed checks (`src/oab/workflow.py`) |
 
 ## Ledger subset
 

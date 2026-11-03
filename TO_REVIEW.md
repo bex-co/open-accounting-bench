@@ -376,6 +376,26 @@ crosswalk mappings.
   under the Judgement decision. All earlier entries remain Pending
   for the human reviewer's consolidated sign-off; no item in this
   response is marked reviewed by an agent.
+- 2026-10-27 — workflow rubric contract (Dynamic conformance fixture;
+  no new Stable family). What to review: the new `workflow` scoring
+  semantics — typed checks grouped by determination, gate versus
+  diagnostic checks, weighted determination completion,
+  artifact/evidence-disposition handling, and the Dynamic-first
+  lifecycle. No existing Stable family's accounting semantics or
+  expectations changed, so no `GENERATOR_VERSION` bump was made;
+  Stable tasks were regenerated only because each embeds the verifier
+  core verbatim. Conformance fixture to check:
+  `workflow-conformance-fixture` policy, evidence dispositions, oracle
+  entries, structured report values, mutants, equivalent
+  split/combined entries, and its university label. It is contract
+  infrastructure, not a Stable task or curriculum claim, and it has no
+  crosswalk proposal. Specific concerns: confirm determination-level
+  averaging is the right anti-double-counting unit before a
+  professional pilot uses it; confirm gate checks should all block
+  reward 1 while non-gate checks remain diagnostic; and check the
+  fixture's sign conventions (ledger-signed trial-balance JSON versus
+  positive performance-report values) before later workflow families
+  copy them.
 
 
 ## Reviewed

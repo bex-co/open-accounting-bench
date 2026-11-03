@@ -19,7 +19,7 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from oab.families import FAMILIES
+from oab.workflow_families import ALL_FAMILIES as GENERATORS
 
 # NIST IR 8278A Rev.1 §3.2.6 / §3.2.5. "not related to" is never recorded.
 RELATIONSHIPS = ("equal", "superset-of", "subset-of", "intersects-with")
@@ -97,8 +97,8 @@ def validate_crosswalk(cw: Crosswalk) -> list[str]:
     seen: set[tuple[str, str]] = set()
     for i, m in enumerate(cw.mappings):
         where = f"{name}: mapping[{i}]"
-        if m.get("generator") not in FAMILIES:
-            failures.append(f"{where}: generator {m.get('generator')!r} not in FAMILIES")
+        if m.get("generator") not in GENERATORS:
+            failures.append(f"{where}: generator {m.get('generator')!r} not a registered generator")
         target_id = m.get("target_id")
         if not isinstance(target_id, str) or section_of(target_id) not in denominators:
             failures.append(f"{where}: target_id {target_id!r} must start with a denominator key")

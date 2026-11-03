@@ -48,9 +48,11 @@ tests/            Separate-verifier image, grader, held-out expectations
 solution/         Reference final ledger (held out from the agent)
 ```
 
-The agent works in an isolated, no-network container and produces one
-graded file (`/app/ledger.beancount`, or `/app/answer.json` for
-choice/numeric formats). Grading uses Harbor's separate verifier
+The agent works in an isolated, no-network container and produces the
+task's declared graded artifacts (`/app/ledger.beancount`,
+`/app/answer.json` for choice/numeric formats, or a ledger plus
+structured JSON schedules/reports for workflow format). Grading uses
+Harbor's separate verifier
 environment: the ledger is declared as an artifact in `task.toml`,
 copied into a pristine verifier container, and graded there. The
 reference ledger in `solution/` is never used at grading time; it exists
@@ -64,15 +66,16 @@ report.json   Per-layer pass/fail with human-readable failures
 run.log       Raw verifier output
 ```
 
-Primary metric: **Verified Task Completion Rate** (all five layers
-pass). See [docs/metrics.md](docs/metrics.md).
+Primary metric: **Verified Task Completion Rate** (reward 1; workflow
+tasks must also pass every gate in their deterministic rubric). See
+[docs/metrics.md](docs/metrics.md).
 
 ## Tracks
 
 | Track | Purpose | How |
 |---|---|---|
 | Stable | Frozen, versioned instances for comparability | Committed under `tasks/` (fixed seeds) |
-| Dynamic | Fresh instances from the same families | `oab generate --family F --seed N` |
+| Dynamic | Fresh instances from Stable families and Dynamic-first workflow generators | `oab generate --family F --seed N` |
 | Holdout | Generalization check vs. generator overfitting | Unpublished families/seeds; governance in [docs/governance.md](docs/governance.md) |
 
 ## Task families
@@ -128,6 +131,8 @@ Generate fresh Dynamic-track instances and grade locally without Harbor:
 uv run oab list
 uv run oab generate --family bank-recon-missing-fee --seed 777 --out /tmp/oab-dynamic
 uv run oab verify --task-dir /tmp/oab-dynamic/bank-recon-missing-fee   # oracle ledger
+uv run oab generate --family workflow-conformance-fixture --seed 42 --out /tmp/oab-workflow
+uv run oab verify --task-dir /tmp/oab-workflow/workflow-conformance-fixture
 uv run oab validate --tasks tasks                                     # repo health
 ```
 
@@ -135,9 +140,11 @@ uv run oab validate --tasks tasks                                     # repo hea
 
 ```text
 src/oab/        Generator + verifier package (stdlib only)
-  families.py   Parameterized task families (seed -> instance)
+  families.py   Stable parameterized task families (seed -> instance)
+  workflow.py   Workflow issue-graph/check schema and validator
+  workflow_families.py  Dynamic-first workflow generators
   generate.py   Instance -> Harbor task directory, dataset files
-  _verifier_core.py  Five-layer grader; copied verbatim into each task
+  _verifier_core.py  Deterministic grader; copied verbatim into each task
   cli.py        oab generate / verify / validate / report / list
   report.py     Harbor job -> runs.jsonl + stratified leaderboard.md
 tasks/          Stable-track Harbor dataset (+ dataset.toml, manifest, metric.py)

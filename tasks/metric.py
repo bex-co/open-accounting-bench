@@ -40,6 +40,18 @@ def main(input_path: Path, output_path: Path) -> None:
         metrics["unauthorized_modification_rate"] = (
             1.0 - metrics["operational_integrity"]
         )
+        for workflow_metric in (
+            "workflow_rubric",
+            "rubric_completion",
+            "workflow_check_completion",
+        ):
+            values = [
+                float(r[workflow_metric])
+                for r in rewards
+                if isinstance(r.get(workflow_metric), int | float)
+            ]
+            if values:
+                metrics[workflow_metric] = sum(values) / len(values)
     output_path.write_text(json.dumps(metrics, indent=2) + "\n")
 
 

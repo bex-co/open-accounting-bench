@@ -36,6 +36,7 @@ TAXONOMY: dict[str, tuple[str, ...]] = {
         "single-choice",
         "multiple-choice",
         "numeric",
+        "workflow",
         "open-text",
     ),
     "skill": ("remembering-understanding", "application", "analysis", "evaluation"),
@@ -132,6 +133,10 @@ class TaskInstance:
     # Answer-file shape (format != "journal-entry"): reference answer
     # object written to solution/answer.json; solution_ledger unused.
     solution_answer: dict | None = None
+    # Workflow shape: additional reference artifacts keyed by their
+    # /app-relative path (for example "workflow.json"). The ledger stays
+    # in solution_ledger.
+    solution_files: dict[str, str] = field(default_factory=dict)
 
     @property
     def initial_ledger(self) -> str:

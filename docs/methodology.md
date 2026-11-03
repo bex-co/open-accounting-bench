@@ -22,10 +22,12 @@ at grading time.
 
 ## Dynamic generation, reproducibility
 
-Each task family is a parameterized generator (`src/oab/families.py`).
-An instance is fully determined by `(family, seed, generator_version)`,
-all recorded in `task.toml` metadata, `tests/expected.json`, and
-`tasks/manifest.json`. Varying only numbers is not enough to resist
+Each task family is a parameterized generator (Stable generators in
+`src/oab/families.py`; Dynamic-first workflow generators in
+`src/oab/workflow_families.py`). An instance is fully determined by
+`(family, seed, generator_version)`, all recorded in `task.toml`
+metadata and `tests/expected.json` (and in `tasks/manifest.json` for
+Stable instances). Varying only numbers is not enough to resist
 overfitting; families also vary vendors, dates, document structure, and
 —which accounts/traps are in play — as families grow.
 
@@ -47,7 +49,7 @@ opaque global number:
 
 Every task is also tagged by `category` (financial/management/tax/
 audit-assurance), `level` (vocational/university/professional),
-`format` (journal-entry, choice, numeric, open-text), `skill`
+`format` (journal-entry, choice, numeric, workflow, open-text), `skill`
 (revised-Bloom: remembering-understanding … evaluation), and the
 `standards` it rests on; see [task-families.md](task-families.md) for
 the coverage matrix.
@@ -102,8 +104,12 @@ will come from standards/jurisdiction packs and multi-step workflows.
 
 ## Known limits (v0.1)
 
-- Single-currency, single-period, small-chart scenarios.
+- Stable scenarios remain mostly single-currency, single-period, and
+  small-chart. The workflow contract supports multi-period,
+  multi-artifact scenarios, but professional workflow families are
+  Dynamic-first until difficulty calibration justifies a Stable freeze.
 - A small Beancount subset (see [verification.md](verification.md)).
 - Synthetic documents; no scanned-document OCR tasks yet.
-- Deterministic tasks only; judgment-heavy treatments are deferred
-  until rubric-based grading is designed.
+- Deterministic tasks only. Professional judgement is admitted only
+  where scenario facts and policies fix one defensible state that typed
+  workflow checks can grade; open-text judgement remains deferred.

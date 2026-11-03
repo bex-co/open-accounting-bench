@@ -34,6 +34,8 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 ZERO = Decimal("0")
+_WORKFLOW_FORMAT = "workflow"
+_DEFAULT_WORKFLOW_ARTIFACT = "/app/workflow.json"
 _DATE = r"\d{4}-\d{2}-\d{2}"
 _ACCOUNT = r"[A-Z][A-Za-z0-9-]*(?::[A-Z0-9][A-Za-z0-9-]*)+"
 _RE_OPEN = re.compile(rf"^({_DATE})\s+open\s+({_ACCOUNT})\b")
@@ -186,6 +188,7 @@ class LayerResult:
 class Report:
     layers: dict[str, LayerResult]
     extras: dict[str, float] = field(default_factory=dict)
+    details: dict = field(default_factory=dict)
 
     @property
     def reward(self) -> int:
@@ -203,7 +206,7 @@ class Report:
         return rewards
 
     def to_report_json(self) -> dict:
-        return {
+        report = {
             "reward": self.to_reward_json(),
             "layers": {
                 name: {
@@ -215,13 +218,34 @@ class Report:
             },
             "extras": self.extras,
         }
+        if self.details:
+            report["details"] = self.details
+        return report
 
 
 def _close(actual: Decimal, expected: Decimal, tolerance: Decimal) -> bool:
     return abs(actual - expected) <= tolerance
 
 
+def _parse_resolved_ledger(text: str) -> tuple[Ledger, list[str]]:
+    ledger = parse_ledger(text)
+    problems = list(ledger.errors)
+    problems += resolve_transactions(ledger)
+    return ledger, problems
+
+
 def verify(initial_text: str, final_text: str, expected: dict) -> Report:
+    initial, _initial_problems = _parse_resolved_ledger(initial_text)
+    final, structural_problems = _parse_resolved_ledger(final_text)
+    return _verify_ledgers(initial, final, expected, structural_problems)
+
+
+def _verify_ledgers(
+    initial: Ledger,
+    final: Ledger,
+    expected: dict,
+    structural_problems: list[str],
+) -> Report:
     currency = expected.get("currency", "USD")
     tolerance = Decimal(str(expected.get("tolerance", "0.01")))
     expected_deltas = {
@@ -229,12 +253,6 @@ def verify(initial_text: str, final_text: str, expected: dict) -> Report:
         for account, value in expected.get("expected_deltas", {}).items()
     }
     allowed_extra = set(expected.get("allowed_extra_accounts", []))
-
-    initial = parse_ledger(initial_text)
-    resolve_transactions(initial)
-    final = parse_ledger(final_text)
-    structural_problems = list(final.errors)
-    structural_problems += resolve_transactions(final)
 
     # Layer 1: syntax and structure.
     for txn in final.transactions:
@@ -367,6 +385,410 @@ def _added_transactions(initial: Ledger, final: Ledger) -> list[Transaction]:
     return added
 
 
+def _decimal_value(value) -> Decimal | None:
+    if isinstance(value, bool):
+        return None
+    try:
+        return Decimal(str(value))
+    except (InvalidOperation, ValueError, TypeError):
+        return None
+
+
+def _json_path_value(value, path: str):
+    current = value
+    for part in path.split("."):
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        elif isinstance(current, list) and part.isdigit() and int(part) < len(current):
+            current = current[int(part)]
+        else:
+            return False, None
+    return True, current
+
+
+@dataclass
+class _WorkflowContext:
+    deltas: dict[str, Decimal]
+    final_balances: dict[tuple[str, str], Decimal]
+    postings_by_account: dict[tuple[str, str], list[tuple[str, Decimal | None]]]
+    added_dates: list[str]
+    json_artifacts: dict[str, object]
+    currency: str
+    tolerance: Decimal
+
+
+@dataclass
+class _WorkflowOutcome:
+    passed: bool
+    actual: object
+    expected: object
+    failure: str | None = None
+
+
+def _period_account_delta(postings: list[tuple[str, Decimal | None]], period) -> Decimal | None:
+    if not isinstance(period, list) or len(period) != 2:
+        return None
+    start, end = period
+    total = ZERO
+    for date, amount in postings:
+        if not (start <= date <= end):
+            continue
+        if amount is None:
+            return None
+        total += amount
+    return total
+
+
+def _numeric_outcome(
+    actual: Decimal, expected, tolerance: Decimal, *, invalid_expected: str
+) -> _WorkflowOutcome:
+    want = _decimal_value(expected)
+    if want is None:
+        return _WorkflowOutcome(False, str(actual), expected, invalid_expected)
+    return _WorkflowOutcome(_close(actual, want, tolerance), str(actual), str(want))
+
+
+def _parse_workflow_json(
+    spec: dict, artifacts: dict | None
+) -> tuple[dict[str, object], list[str], bool]:
+    artifacts = artifacts or {}
+    parsed: dict[str, object] = {}
+    failures: list[str] = []
+    parse_failure = False
+    for artifact in spec.get("artifacts", []):
+        if not isinstance(artifact, dict) or artifact.get("kind") != "json":
+            continue
+        path = artifact.get("path")
+        if not isinstance(path, str):
+            continue
+        required = artifact.get("required", True) is not False
+        raw = artifacts.get(path)
+        if raw is None:
+            if required:
+                failures.append(f"required workflow artifact missing: {path}")
+                parse_failure = True
+            continue
+        if isinstance(raw, dict | list):
+            parsed[path] = raw
+            continue
+        if not isinstance(raw, str) or not raw.strip():
+            failures.append(f"workflow artifact is empty: {path}")
+            parse_failure = True
+            continue
+        try:
+            value = json.loads(raw)
+        except (json.JSONDecodeError, ValueError) as exc:
+            failures.append(f"workflow artifact {path} is not valid JSON: {exc}")
+            parse_failure = True
+            continue
+        if not isinstance(value, dict):
+            failures.append(f"workflow artifact {path} must contain a JSON object")
+            parse_failure = True
+            continue
+        parsed[path] = value
+    return parsed, failures, parse_failure
+
+
+def load_workflow_artifacts(expected: dict, artifact_root: Path | None) -> dict[str, str | None]:
+    """Read declared JSON workflow artifacts below an `/app`-shaped root."""
+
+    artifacts: dict[str, str | None] = {}
+    spec = expected.get("workflow", {})
+    if not isinstance(spec, dict):
+        return artifacts
+    for artifact in spec.get("artifacts", []):
+        if not isinstance(artifact, dict) or artifact.get("kind") != "json":
+            continue
+        path = artifact.get("path")
+        if not isinstance(path, str):
+            continue
+        if artifact_root is None:
+            artifacts[path] = None
+            continue
+        candidate = artifact_root / path.removeprefix("/app/")
+        artifacts[path] = candidate.read_text(encoding="utf-8") if candidate.exists() else None
+    return artifacts
+
+
+def _workflow_numeric_equal(actual, expected, tolerance: Decimal) -> bool | None:
+    actual_decimal = _decimal_value(actual)
+    expected_decimal = _decimal_value(expected)
+    if actual_decimal is None or expected_decimal is None:
+        return None
+    return _close(actual_decimal, expected_decimal, tolerance)
+
+
+def _evaluate_workflow_check(check: dict, context: _WorkflowContext) -> _WorkflowOutcome:
+    check_type = check.get("type")
+    currency = str(check.get("currency", context.currency))
+    tolerance = _decimal_value(check.get("tolerance", context.tolerance))
+    if tolerance is None or tolerance < 0:
+        return _WorkflowOutcome(False, None, check.get("expected"), "invalid check tolerance")
+    account = check.get("account")
+    expected = check.get("expected")
+
+    if check_type in {
+        "account_delta",
+        "final_balance",
+        "subledger_cleared",
+        "forbidden_account_delta",
+    }:
+        if not isinstance(account, str):
+            return _WorkflowOutcome(False, None, expected, "check account is missing")
+        if check_type == "account_delta":
+            return _numeric_outcome(
+                context.deltas.get(account, ZERO),
+                expected,
+                tolerance,
+                invalid_expected="expected account delta is not numeric",
+            )
+        if check_type == "final_balance":
+            return _numeric_outcome(
+                context.final_balances.get((account, currency), ZERO),
+                expected,
+                tolerance,
+                invalid_expected="expected final balance is not numeric",
+            )
+        actual = (
+            context.final_balances.get((account, currency), ZERO)
+            if check_type == "subledger_cleared"
+            else context.deltas.get(account, ZERO)
+        )
+        return _WorkflowOutcome(_close(actual, ZERO, tolerance), str(actual), "0")
+
+    if check_type == "period_account_delta":
+        if not isinstance(account, str):
+            return _WorkflowOutcome(False, None, expected, "check account is missing")
+        actual = _period_account_delta(
+            context.postings_by_account.get((account, currency), []),
+            check.get("period"),
+        )
+        if actual is None:
+            return _WorkflowOutcome(False, None, expected, "invalid period-account-delta check")
+        return _numeric_outcome(
+            actual,
+            expected,
+            tolerance,
+            invalid_expected="invalid period-account-delta check",
+        )
+
+    if check_type == "cutoff_no_transactions":
+        period = check.get("period")
+        if not isinstance(period, list) or len(period) != 2:
+            return _WorkflowOutcome(False, None, period, "invalid cutoff period")
+        offenders = [date for date in context.added_dates if period[0] <= date <= period[1]]
+        return _WorkflowOutcome(not offenders, offenders, [])
+
+    if check_type in {"evidence_disposition", "json_value", "cross_artifact_balance"}:
+        artifact_path = check.get("artifact", _DEFAULT_WORKFLOW_ARTIFACT)
+        document = context.json_artifacts.get(artifact_path)
+        path = check.get("path")
+        if document is None or not isinstance(path, str):
+            return _WorkflowOutcome(
+                False,
+                None,
+                expected,
+                f"workflow JSON artifact unavailable: {artifact_path}",
+            )
+        found, actual = _json_path_value(document, path)
+        if not found:
+            return _WorkflowOutcome(False, None, expected, f"JSON path not found: {path}")
+        if check_type == "evidence_disposition":
+            key = check.get("key")
+            if not isinstance(actual, dict) or not isinstance(key, str) or key not in actual:
+                return _WorkflowOutcome(
+                    False,
+                    None,
+                    expected,
+                    f"evidence disposition not found: {path}.{key}",
+                )
+            actual = actual[key]
+            return _WorkflowOutcome(actual == expected, actual, expected)
+        if check_type == "json_value":
+            numeric = _workflow_numeric_equal(actual, expected, tolerance)
+            if numeric is not None:
+                return _WorkflowOutcome(numeric, actual, expected)
+            return _WorkflowOutcome(actual == expected, actual, expected)
+        if not isinstance(account, str):
+            return _WorkflowOutcome(False, actual, expected, "check account is missing")
+        want = context.final_balances.get((account, currency), ZERO)
+        numeric = _workflow_numeric_equal(actual, want, tolerance)
+        if numeric is None:
+            return _WorkflowOutcome(False, actual, str(want), "cross-artifact value is not numeric")
+        return _WorkflowOutcome(numeric, actual, str(want))
+
+    return _WorkflowOutcome(False, None, expected, f"unknown workflow check type {check_type!r}")
+
+
+def grade_workflow(
+    initial_text: str,
+    final_text: str,
+    expected: dict,
+    artifacts: dict | None = None,
+) -> Report:
+    """Grade a ledger-plus-structured-artifact professional workflow.
+
+    The five ledger layers remain the integrity baseline.  The workflow
+    layer evaluates typed checks grouped by determination: duplicating one
+    assertion cannot earn more than its determination, while every
+    ``gate`` check must pass for reward 1.  ``rubric_completion`` is a
+    diagnostic in reward extras; it never substitutes for verified
+    completion.
+    """
+
+    spec = expected.get("workflow")
+    if not isinstance(spec, dict):
+        spec = {}
+    currency = str(expected.get("currency", "USD"))
+    tolerance = _decimal_value(expected.get("tolerance", "0.01"))
+    if tolerance is None:
+        tolerance = Decimal("0.01")
+
+    initial, _initial_problems = _parse_resolved_ledger(initial_text)
+    final, structural_problems = _parse_resolved_ledger(final_text)
+    base = _verify_ledgers(initial, final, expected, structural_problems)
+    final_balances = compute_balances(final)
+    initial_balances = compute_balances(initial)
+    deltas = account_deltas(initial_balances, final_balances, currency)
+    added = _added_transactions(initial, final)
+    postings_by_account: dict[tuple[str, str], list[tuple[str, Decimal | None]]] = {}
+    for txn in added:
+        for posting in txn.postings:
+            if posting.currency is None:
+                continue
+            postings_by_account.setdefault((posting.account, posting.currency), []).append(
+                (txn.date, posting.amount)
+            )
+    json_artifacts, artifact_failures, parse_failure = _parse_workflow_json(spec, artifacts)
+    context = _WorkflowContext(
+        deltas=deltas,
+        final_balances=final_balances,
+        postings_by_account=postings_by_account,
+        added_dates=[txn.date for txn in added],
+        json_artifacts=json_artifacts,
+        currency=currency,
+        tolerance=tolerance,
+    )
+
+    raw_determinations = spec.get("determinations", [])
+    determinations: dict[str, dict] = {}
+    if isinstance(raw_determinations, list):
+        for item in raw_determinations:
+            if isinstance(item, dict) and isinstance(item.get("id"), str):
+                determinations[item["id"]] = item
+
+    raw_checks = spec.get("checks", [])
+    checks = (
+        [item for item in raw_checks if isinstance(item, dict)]
+        if isinstance(raw_checks, list)
+        else []
+    )
+    results: list[dict] = []
+    results_by_determination: dict[str, list[dict]] = {
+        determination_id: [] for determination_id in determinations
+    }
+    gate_failures = list(artifact_failures)
+    if not determinations:
+        gate_failures.append("workflow spec has no determinations")
+    if not checks:
+        gate_failures.append("workflow spec has no checks")
+
+    for check in checks:
+        determination_id = str(check.get("determination", ""))
+        determination = determinations.get(determination_id, {})
+        outcome = _evaluate_workflow_check(check, context)
+        passed = outcome.passed
+        failure = outcome.failure
+        actual = outcome.actual
+        want = outcome.expected
+        if determination_id not in determinations:
+            passed = False
+            failure = f"unknown determination {determination_id!r}"
+        result = {
+            "id": check.get("id"),
+            "type": check.get("type"),
+            "determination": determination_id,
+            "cluster": determination.get("cluster"),
+            "gate": check.get("gate", True) is not False,
+            "passed": bool(passed),
+            "actual": actual,
+            "expected": want,
+        }
+        if failure:
+            result["failure"] = failure
+        elif not passed:
+            result["failure"] = f"expected {want!r}, got {actual!r}"
+        results.append(result)
+        if determination_id in results_by_determination:
+            results_by_determination[determination_id].append(result)
+        if result["gate"] and not passed:
+            gate_failures.append(f"{result['id']}: {result['failure']}")
+
+    determination_details: dict[str, dict] = {}
+    weighted_total = 0.0
+    weight_sum = 0.0
+    cluster_values: dict[str, list[tuple[float, float]]] = {}
+    for determination_id, determination in determinations.items():
+        own = results_by_determination[determination_id]
+        score = (sum(1 for item in own if item["passed"]) / len(own)) if own else 0.0
+        weight_value = determination.get("weight", 1)
+        weight = (
+            float(weight_value)
+            if isinstance(weight_value, int | float) and float(weight_value) > 0
+            else 1.0
+        )
+        weighted_total += score * weight
+        weight_sum += weight
+        cluster = str(determination.get("cluster", ""))
+        cluster_values.setdefault(cluster, []).append((score, weight))
+        determination_details[determination_id] = {
+            "cluster": cluster,
+            "weight": weight,
+            "score": score,
+            "passed": bool(own) and all(item["passed"] for item in own if item["gate"]),
+            "checks": [item["id"] for item in own],
+        }
+
+    rubric_completion = weighted_total / weight_sum if weight_sum else 0.0
+    check_completion = (
+        sum(1 for item in results if item["passed"]) / len(results) if results else 0.0
+    )
+    clusters = {
+        cluster: sum(score * weight for score, weight in values)
+        / sum(weight for _score, weight in values)
+        for cluster, values in sorted(cluster_values.items())
+    }
+    workflow_layer = LayerResult(
+        score=rubric_completion,
+        passed=not gate_failures,
+        failures=gate_failures,
+    )
+    layers = dict(base.layers)
+    layers["workflow_rubric"] = workflow_layer
+    extras = dict(base.extras)
+    extras.update(
+        {
+            "rubric_completion": rubric_completion,
+            "workflow_check_completion": check_completion,
+            "parse_failure": 1.0 if parse_failure else 0.0,
+        }
+    )
+    return Report(
+        layers=layers,
+        extras=extras,
+        details={
+            "workflow": {
+                "schema_version": spec.get("schema_version"),
+                "checks": results,
+                "determinations": determination_details,
+                "clusters": clusters,
+                "rubric_completion": rubric_completion,
+                "workflow_check_completion": check_completion,
+            }
+        },
+    )
+
+
 def grade_answer(expected: dict, answer_text: str | None) -> Report:
     """Grade an answer-file task (single/multiple choice, numeric).
 
@@ -482,6 +904,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ledger", help="final ledger path (journal-entry tasks)")
     parser.add_argument("--initial", help="initial ledger path (journal-entry tasks)")
     parser.add_argument("--answer", help="answer.json path (answer-file tasks)")
+    parser.add_argument(
+        "--artifact-root",
+        default="/app",
+        help="root for /app workflow artifacts (workflow tasks)",
+    )
     parser.add_argument("--expected", required=True, help="expected.json path")
     parser.add_argument(
         "--out",
@@ -497,6 +924,11 @@ def main(argv: list[str] | None = None) -> int:
             initial_text = Path(args.initial).read_text(encoding="utf-8")
             final_text = Path(args.ledger).read_text(encoding="utf-8")
             report = verify(initial_text, final_text, expected)
+        elif expected.get("format") == _WORKFLOW_FORMAT:
+            initial_text = Path(args.initial).read_text(encoding="utf-8")
+            final_text = Path(args.ledger).read_text(encoding="utf-8")
+            workflow_artifacts = load_workflow_artifacts(expected, Path(args.artifact_root))
+            report = grade_workflow(initial_text, final_text, expected, workflow_artifacts)
         else:
             answer_path = Path(args.answer) if args.answer else None
             answer_text = (

@@ -20,11 +20,16 @@ the PR, then:
 
 1. Implement `family_fn(seed) -> TaskInstance` in `src/oab/families.py`
    (copy an existing family). Use `random.Random(seed)` only — same
-   seed must give a byte-identical instance.
-2. Register it in `FAMILIES`; pick a Stable seed in `STABLE_SEEDS`.
+   seed must give a byte-identical instance. Professional workflow
+   pilots instead start in `src/oab/workflow_families.py`.
+2. Register a Stable family in `FAMILIES` and pick its seed in
+   `STABLE_SEEDS`. Register a workflow pilot in `DYNAMIC_FAMILIES`
+   with no Stable seed; promotion to `FAMILIES` is a later explicit
+   step after calibration.
 3. State expectations as accounting state (`expected_deltas`, final
-   balances, reconciliation), never as exact ledger text. Allow
-   equivalent decompositions with ranges where they exist.
+   balances, reconciliation; workflow determinations and typed checks),
+   never as exact ledger text. Allow equivalent decompositions with
+   ranges where they exist.
 4. Include a trap: at least one balanced-but-wrong attempt must fail a
    non-structural layer. Add it to `tests/test_verifier.py`.
 5. Regenerate and verify:
@@ -35,6 +40,10 @@ the PR, then:
    harbor run -p tasks/<task-id> -a oracle   # must score reward 1
    uv run pytest
    ```
+
+   For a Dynamic workflow pilot, also generate representative seeds
+   outside `tasks/`, run `oab validate` on that output directory, and
+   check oracle, no-op, mutant, and equivalent submissions in tests.
 
 6. Accounting review (deferred): add the family to
    [TO_REVIEW.md](TO_REVIEW.md) with what a reviewer should check.

@@ -21,13 +21,19 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
 - Crosswalk: proposed `[[mapping]]` records in `crosswalks/` for the
   blueprint/syllabus items the generator touches (or a note that none
   apply).
+- Workflow format only: the issue graph — seeded facts/evidence,
+  determinations and clusters, downstream ledger/report effects,
+  plausible wrong paths, submitted artifacts, and which issues vary or
+  remain inactive by seed.
 
 ## 2. Oracle derivation
 
 - How the expected outcome is computed from the generated facts
   (journal entries: account deltas; choice: gold option ids; numeric:
-  formula and tolerances). The oracle must be derivable by a second
-  accountant from the evidence alone.
+  formula and tolerances; workflow: typed checks grouped by
+  determination, gate versus diagnostic status, and artifact schemas).
+  The oracle must be derivable by a second accountant from the evidence
+  alone.
 - What varies with the seed (amounts, dates, names, option order...)
   and what stays fixed. Same seed must reproduce the task byte-for-byte.
 
@@ -56,8 +62,13 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
 ## Checklist (machine gates run by `oab validate` + CI)
 
 - [ ] Registered in `FAMILIES` with a Stable seed in `STABLE_SEEDS`
+  (workflow pilots instead register in `DYNAMIC_FAMILIES` with no
+  Stable seed until an explicit promotion step)
 - [ ] Oracle scores reward 1; untouched initial state scores 0
 - [ ] Trap test added under `tests/` and fails the intended layer
+- [ ] Workflow only: mutants lose their mapped determination/check
+  groups; equivalent entry decompositions pass; a generated Dynamic
+  instance passes `oab validate`
 - [ ] `uv run oab generate --all` leaves no uncommitted diff
 - [ ] `harbor run -p tasks/<task-id> -a oracle` passes; `-a nop` fails
 - [ ] Coverage matrix row updated in `docs/task-families.md`

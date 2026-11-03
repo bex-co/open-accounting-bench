@@ -19,7 +19,7 @@ Scoped guides:
 
 | Path | Contents |
 | --- | --- |
-| `src/oab/` | Generator + verifier package, stdlib only: `families.py` (seed → instance), `generate.py` (instance → Harbor task), `_verifier_core.py` (five-layer grader), `cli.py` |
+| `src/oab/` | Generator + verifier package, stdlib only: `families.py` (Stable seed → instance), `workflow_families.py` (Dynamic-first workflow generators), `workflow.py` (issue-graph/check schema), `generate.py` (instance → Harbor task), `_verifier_core.py` (deterministic grader), `cli.py` |
 | `tasks/` | Stable-track Harbor dataset — **generated**, never hand-edited |
 | `crosswalks/` | Typed mappings from generators to external curricula (AICPA blueprint, ACCA syllabus), one file per edition — IDs only, never their text |
 | `tests/` | Verifier layers, generator determinism, task health |

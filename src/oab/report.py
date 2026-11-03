@@ -94,6 +94,8 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
             "model": agent.get("model_name"),
             "reward": float(reward.get("reward", 0) or 0),
             "rewards": reward,
+            "rubric_completion": reward.get("rubric_completion"),
+            "workflow_check_completion": reward.get("workflow_check_completion"),
             "answer": (answer or {}).get("final_answer"),
             "confidence": reward.get("confidence", (answer or {}).get("confidence")),
             "parse_failure": reward.get("parse_failure"),
@@ -114,6 +116,11 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
 
 def _answer_key(value) -> str:
     return json.dumps(value, sort_keys=True, default=str)
+
+
+def _mean_numeric(rows: list[dict], key: str) -> float | None:
+    values = [float(row[key]) for row in rows if isinstance(row.get(key), int | float)]
+    return sum(values) / len(values) if values else None
 
 
 def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
@@ -138,6 +145,7 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
             agreement = modal_n / len(trials)
             modal_trials = [r for r in trials if _answer_key(r["answer"]) == modal]
             score = sum(r["reward"] for r in modal_trials) / len(modal_trials)
+
         tasks[task_id] = {
             "task_id": task_id,
             "n_trials": len(trials),
@@ -145,6 +153,8 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
             "mean_reward": mean_reward,
             "score": score,
             "agreement": agreement,
+            "mean_rubric_completion": _mean_numeric(trials, "rubric_completion"),
+            "mean_workflow_check_completion": _mean_numeric(trials, "workflow_check_completion"),
             **{axis: all_trials[0].get(axis) for axis in AXES},
         }
     return tasks
@@ -224,6 +234,26 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
             f"| {task['task_id']} | {task.get('format')} | {task['n_trials']} "
             f"| {task['n_errored']} | {score} | {agreement} |"
         )
+    workflow_tasks = [
+        task for task in tasks.values() if task.get("mean_rubric_completion") is not None
+    ]
+    if workflow_tasks:
+        lines += [
+            "",
+            "## Workflow rubric",
+            "",
+            "Rubric completion is diagnostic; verified completion above still requires reward 1.",
+            "",
+            "| Task | Rubric | Checks |",
+            "|---|---:|---:|",
+        ]
+        for task in workflow_tasks:
+            checks = task.get("mean_workflow_check_completion")
+            checks_label = f"{checks * 100:.1f}%" if checks is not None else "-"
+            lines.append(
+                f"| {task['task_id']} | {task['mean_rubric_completion'] * 100:.1f}% "
+                f"| {checks_label} |"
+            )
     for axis in AXES:
         lines += ["", f"## By {axis}", "", f"| {axis} | Tasks | Score |", "|---|---:|---:|"]
         for group, (count, mean) in _group_means(tasks, axis).items():

@@ -24,7 +24,7 @@
           "category": {"enum": ["financial-accounting", "management-accounting", "tax", "audit-assurance"]},
           "framework": {"enum": ["core", "ifrs", "us-gaap"]},
           "level": {"enum": ["vocational", "university", "professional"]},
-          "format": {"enum": ["journal-entry", "single-choice", "multiple-choice", "numeric", "open-text"]},
+          "format": {"enum": ["journal-entry", "single-choice", "multiple-choice", "numeric", "workflow", "open-text"]},
           "skill": {"enum": ["remembering-understanding", "application", "analysis", "evaluation"]},
           "standards": {
             "type": "array",
