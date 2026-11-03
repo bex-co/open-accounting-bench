@@ -142,6 +142,7 @@ uv run oab validate --tasks tasks                                     # repo hea
 src/oab/        Generator + verifier package (stdlib only)
   families.py   Stable parameterized task families (seed -> instance)
   workflow.py   Workflow issue-graph/check schema and validator
+  evidence.py   Deterministic synthetic company histories and evidence packs
   workflow_families.py  Dynamic-first workflow generators
   generate.py   Instance -> Harbor task directory, dataset files
   _verifier_core.py  Deterministic grader; copied verbatim into each task

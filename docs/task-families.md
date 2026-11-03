@@ -710,6 +710,25 @@ not counted in the Stable coverage matrix below.
 instance. It is test infrastructure for the contract—not a claim of
 professional difficulty or curriculum coverage.
 
+Workflow evidence should be built with `src/oab/evidence.py` rather
+than hand-written around a generator. `generate_company_history(seed)`
+returns a validated `EvidencePack`: synthetic master data, balanced
+opening balances and three periods of ledger activity, reconciling
+receivable/payable/inventory/fixed-asset/payroll/bank/contract
+subledgers, CSV/JSON source documents, trial balances, and rendered
+app files. `clean_example_pack(seed)` contains no seeded anomalies;
+`dirty_example_pack(seed)` registers six. All twelve anomaly
+primitives—revisions, duplicates, stale policy, amount mismatch,
+contradictory logs, late corroboration, goods in transit, unrecorded
+invoices, subsequent receipts/payments, missing source copies, and
+false alarms—carry a determination, disposition, authoritative
+document, precedence rule, and plausible wrong disposition. Clean
+references reconcile exactly; dirty references are intentional only
+when registered. `validate_evidence_pack` and
+`validate_evidence_budgets` fail generation on orphan references,
+unregistered contradictions, unresolved precedence, or packs above
+the documented file/byte/line budgets.
+
 ## Coverage matrix (category × framework)
 
 Cell values: number of Stable tasks; `planned` cells are roadmap

@@ -170,6 +170,21 @@ def _cmd_verify(args) -> int:
     return 0 if report["reward"]["reward"] == 1 else 1
 
 
+def _workflow_evidence_failures(name: str, task_dir: Path, expected: dict) -> list[str]:
+    failures: list[str] = []
+    workflow = expected.get("workflow", {})
+    if not isinstance(workflow, dict):
+        return failures
+    for determination in workflow.get("determinations", []):
+        if not isinstance(determination, dict):
+            continue
+        for reference in determination.get("evidence", []):
+            if isinstance(reference, str) and "/" in reference:
+                if not (task_dir / "environment" / "app" / reference).is_file():
+                    failures.append(f"{name}: workflow evidence file missing: {reference}")
+    return failures
+
+
 def validate_tasks(tasks_root: Path) -> list[str]:
     """Return a list of validation failures (empty = all tasks healthy)."""
     failures: list[str] = []
@@ -218,6 +233,7 @@ def validate_tasks(tasks_root: Path) -> list[str]:
                     rel = path.removeprefix("/app/")
                     if not (task_dir / "solution" / rel).is_file():
                         failures.append(f"{name}: missing solution/{rel}")
+            failures += _workflow_evidence_failures(name, task_dir, expected)
         if metadata.get("task_id") != name:
             failures.append(f"{name}: metadata.task_id must equal directory name")
         if metadata.get("seed") != expected.get("seed"):

@@ -41,7 +41,11 @@ the PR, then:
    uv run pytest
    ```
 
-   For a Dynamic workflow pilot, also generate representative seeds
+   For a Dynamic workflow pilot, build its company history through
+   `oab.evidence.generate_company_history` (or the clean/dirty example
+   helpers), keep every contradiction registered as an anomaly with
+   an authoritative document and precedence rule, and respect the
+   evidence file/byte/line budgets. Also generate representative seeds
    outside `tasks/`, run `oab validate` on that output directory, and
    check oracle, no-op, mutant, and equivalent submissions in tests.
 
