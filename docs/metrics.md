@@ -36,10 +36,12 @@ separately.
 - `runs.jsonl` — one row per trial: `task_id`, taxonomy
   (`category`/`framework`/`level`/`format`/`skill`), `family`, `seed`,
   `generator_version`, `track`, `agent`, `model`, `reward` + full
-  `rewards`, workflow rubric/check completion when present, `answer`,
-  `confidence`, `parse_failure`, token
-  counts, `cost_usd`, `task_checksum`, job timestamp. This is the auditable
-  run registry; archive it with any published result.
+  `rewards`, workflow rubric/check completion when present, sanitized
+  workflow cluster scores and check IDs/cluster/pass values (never
+  verifier expected or actual values), `answer`, `confidence`,
+  `parse_failure`, token counts, `cost_usd`, `wall_seconds`,
+  `task_checksum`, and job timestamp. This is the auditable run
+  registry; archive it with any published result.
   Trials with an exception and no reward (infrastructure failures
   before grading) are marked `graded: false` with their
   `exception` type: excluded from every score denominator in
@@ -52,8 +54,9 @@ separately.
   choice formats, mean reward otherwise; run Harbor with `-k 3`),
   per-taxonomy-axis group means, mean cost per trial and per
   verified trial, parse-failure rate, workflow rubric/check means
-  when workflow rewards are present, and confidence-bin reward
-  rates. Costs come from Harbor's `cost_usd` when present, else
+  and rubric range, issue-cluster means, per-check pass counts,
+  mean wall time and mean cost when workflow reports are present, and
+  confidence-bin reward rates. Costs come from Harbor's `cost_usd` when present, else
   token counts × an external price table (`--prices`, see
   `prices.example.json`; always cite its `as_of` date).
 
@@ -63,6 +66,28 @@ and numeric (within absolute + relative tolerance), and
 negative; `reward` still requires the exact gold set).
 `format_validity` / `parse_failure` expose output-format sensitivity
 without removing failures from any denominator.
+
+## Workflow difficulty calibration
+
+A workflow family is not called professionally difficult from its
+design label alone. Before agents run, record the panel date, exact
+agent/model identifiers, generated seeds, attempts per seed, Harbor
+settings, generator/scoring version, task checksums, budgets, and
+denominators. Every planned trial is accounted for as graded,
+infrastructure-excluded, or missing; parse failures with a verifier
+result stay graded, while infrastructure failures are counted and
+listed but excluded from capability denominators. Retries never
+silently replace a capability result.
+
+Report verified completion separately from diagnostic rubric
+completion, with rubric/check distributions by seed and attempt,
+issue-cluster and per-check pass rates, saturated/dead or duplicated
+checks, adjudicated false accepts/rejects, parse failures, cost, and
+wall time. A dated model panel is a diagnostic snapshot—not the
+definition of accounting correctness and not a vendor ranking. The
+release decision is explicitly **promote**, **tune and recalibrate**,
+or **reject**, and it must state whether later workflow families may
+proceed and whether any Stable freeze is authorized.
 
 ## Framework coverage
 

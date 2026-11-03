@@ -34,6 +34,7 @@ from oab.families import (
     CREDIT_ALLOWANCE,
     CREDIT_LOSS,
     CURRENT_PORTION,
+    DEPRECIATION,
     FAMILIES,
     INTEREST_PAYABLE,
     INVENTORY,
@@ -636,6 +637,7 @@ PREPAID_RENT = "Assets:PrepaidRent"
 CREDIT_LOSS_EXPENSE = CREDIT_LOSS
 RENT_EXPENSE = "Expenses:Rent"
 INTEREST_EXPENSE = "Expenses:Interest"
+DEPRECIATION_EXPENSE = DEPRECIATION
 INVENTORY_WRITE_DOWN = WRITE_DOWN
 
 CLOSE_EXTRA_ACCOUNTS = [
@@ -663,9 +665,10 @@ CLOSE_POLICY = """# Month-end close policy
 - Close period: the final period in `trial_balances.csv`. The ledger is
   append-only: add balanced entries dated in the close period; never
   edit or delete an existing transaction.
-- Materiality for this close: record every known adjustment of USD 100
-  or more. Amounts below USD 25 are clearly trivial. The seeded close
-  items are all at or above the recording threshold.
+- Materiality for this close: record every adjustment specifically
+  evidenced in the close documents, even if it is below USD 100. The
+  USD 100 recording threshold applies only to unlisted differences;
+  amounts below USD 25 are clearly trivial.
 - Evidence precedence: signed carrier/shipping logs prevail over sales
   orders for shipment; signed physical counts prevail over unsigned
   count copies; current policy and revised statements prevail over
@@ -674,9 +677,12 @@ CLOSE_POLICY = """# Month-end close policy
   second asset, liability, revenue, or expense.
 - Product revenue is recognized when goods ship. Service revenue is
   recognized when the stated milestone is complete.
-- Expected credit losses use the aging schedule: 1% current, 5% at
-  1–30 days overdue, 20% over 30 days overdue, and 100% for a customer
-  identified as bankrupt. Exclude any receivable that is reversed
+- Expected credit losses use the aging schedule. Apply each aging
+  row's `loss_rate` to that row: 1% current, 5% at 1–30 days overdue,
+  20% over 30 days overdue, and 100% only for a receivable row whose
+  `specific_risk` is `bankrupt`. Other rows for the same customer use
+  their own row rate. Include a returned-check row when it is listed
+  in the aging schedule, and exclude any receivable that is reversed
   because the related sale was not earned.
 - Inventory is carried at the lower of cost and net realizable value.
   A signed count shortage is written down in the close period.
@@ -686,10 +692,19 @@ CLOSE_POLICY = """# Month-end close policy
 - Capitalize only costs that create a separable future benefit or
   materially extend an asset's life/capacity. Routine maintenance is
   expensed.
-- Interest accrues with time. Debt principal due within twelve months
-  after period-end is current.
+- Interest accrues with time. One month of interest is principal ×
+  annual rate / 12, with no actual-days adjustment. Debt principal due
+  within twelve months after period-end is current. A revised lender
+  schedule supersedes a stale schedule.
 - A customer check returned for insufficient funds reinstates the
   receivable and reduces cash in the period the bank returns it.
+- In `/app/workflow.json`, each `evidence` value must be exactly one of
+  these disposition codes, with no prose: `reverse-premature-sale`,
+  `record-allowance`, `write-down-to-count-nrv`,
+  `accrue-current-period`, `defer-unexpired`, `expense-routine-repair`,
+  `accrue-and-reclassify`, `record-nsf`, `exclude-next-period`,
+  `ignore-duplicate-copy`, `keep-capitalized`, and
+  `use-revised-schedule`.
 """
 
 
@@ -707,49 +722,63 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
 
-    omitted = CLOSE_CLUSTERS[seed % len(CLOSE_CLUSTERS)]
-    active = [cluster for cluster in CLOSE_CLUSTERS if cluster != omitted]
-    active_set = set(active)
-
     draft_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
     oracle_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
     draft_balances = dict(balances)
 
     revenue_customer = rng.choice(pack.master.customers)
     revenue_amount = Decimal(rng.randrange(1000, 2501, 25))
-    if "revenue-cutoff" in active_set:
-        draft_entries.append(
-            (
-                f"{current.label}-30",
-                revenue_customer.name,
-                "Draft product sale",
-                [(AR, revenue_amount), (PRODUCT_REVENUE, -revenue_amount)],
-            )
+    draft_entries.append(
+        (
+            f"{current.label}-30",
+            revenue_customer.name,
+            "Draft product sale",
+            [(AR, revenue_amount), (PRODUCT_REVENUE, -revenue_amount)],
         )
+    )
 
     prepaid_total = Decimal(rng.choice([1800, 2400, 3000]))
     prepaid_monthly = prepaid_total / Decimal(6)
     prepaid_defer = prepaid_total - prepaid_monthly
-    if "prepayment-cutoff" in active_set:
-        draft_entries.append(
-            (
-                f"{current.label}-02",
-                "Landlord",
-                "Draft six-month rent payment expensed",
-                [(RENT_EXPENSE, prepaid_total), (BANK, -prepaid_total)],
-            )
+    draft_entries.append(
+        (
+            f"{current.label}-02",
+            "Landlord",
+            "Draft six-month rent payment expensed",
+            [(RENT_EXPENSE, prepaid_total), (BANK, -prepaid_total)],
         )
+    )
 
     repair_amount = Decimal(rng.randrange(600, 1401, 25))
-    if "fixed-asset-treatment" in active_set:
-        draft_entries.append(
-            (
-                f"{current.label}-12",
-                "Supplier",
-                "Draft equipment repair capitalized",
-                [(EQUIPMENT, repair_amount), (AP, -repair_amount)],
-            )
+    repair_depreciation = (repair_amount / Decimal(60)).quantize(CENT)
+    capital_improvement_amount = repair_amount + Decimal("1000.00")
+    draft_entries.append(
+        (
+            f"{current.label}-12",
+            "Supplier",
+            "Draft equipment repair capitalized",
+            [(EQUIPMENT, repair_amount), (AP, -repair_amount)],
         )
+    )
+    draft_entries.append(
+        (
+            f"{current.label}-20",
+            "Supplier",
+            "Capital improvement extending equipment life",
+            [(EQUIPMENT, capital_improvement_amount), (AP, -capital_improvement_amount)],
+        )
+    )
+    draft_entries.append(
+        (
+            current.end,
+            "Fixed assets",
+            "Depreciation on capitalized routine tune-up",
+            [
+                (DEPRECIATION_EXPENSE, repair_depreciation),
+                (ACCUMULATED_DEPRECIATION, -repair_depreciation),
+            ],
+        )
+    )
 
     for _date, _payee, _narration, postings in draft_entries:
         _apply_postings(draft_balances, postings)
@@ -790,27 +819,40 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 risk,
             ]
         )
-    if "revenue-cutoff" in active_set:
-        aging_rows.append(
-            [
-                "close-premature-sale",
-                revenue_customer.id,
-                money(revenue_amount),
-                "2026-02-14",
-                "unshipped",
-                "0",
-                "not-shipped",
-            ]
-        )
-    inventory_record = max(
-        pack.subledgers["inventory"], key=lambda record: record.quantity or Decimal("0")
+    aging_rows.append(
+        [
+            "close-premature-sale",
+            revenue_customer.id,
+            money(revenue_amount),
+            "2026-02-14",
+            "unshipped",
+            "0",
+            "not-shipped",
+        ]
     )
-    inventory_item = next(item for item in pack.master.items if item.id == inventory_record.item_id)
+    items_by_id = {item.id: item for item in pack.master.items}
+    inventory_by_quantity = sorted(
+        pack.subledgers["inventory"],
+        key=lambda record: record.quantity or Decimal("0"),
+        reverse=True,
+    )
+    inventory_record = inventory_by_quantity[0]
+    inventory_item = items_by_id[inventory_record.item_id]
     shortage_units = Decimal(rng.randrange(2, 7))
     markdown = Decimal(rng.randrange(3, 9))
     nrv = inventory_item.unit_cost - markdown
     counted_units = (inventory_record.quantity or Decimal("0")) - shortage_units
     write_down = shortage_units * inventory_item.unit_cost + counted_units * markdown
+    secondary_inventory_record = next(
+        (record for record in inventory_by_quantity if record.id != inventory_record.id),
+        None,
+    )
+    secondary_nrv = None
+    if secondary_inventory_record is not None:
+        secondary_inventory_item = items_by_id[secondary_inventory_record.item_id]
+        secondary_markdown = (secondary_inventory_item.unit_cost * Decimal("0.20")).quantize(CENT)
+        secondary_nrv = secondary_inventory_item.unit_cost - secondary_markdown
+        write_down += (secondary_inventory_record.quantity or Decimal("0")) * secondary_markdown
 
     supplier_amount = Decimal(rng.randrange(350, 901, 25))
     note_principal = -draft_bal(NOTES_PAYABLE)
@@ -818,87 +860,88 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     interest = (note_principal * annual_rate / Decimal(12)).quantize(CENT)
     current_portion = min(note_principal, Decimal(rng.randrange(1000, 2501, 250)))
     nsf_amount = Decimal(rng.randrange(300, 801, 25))
+    nsf_customer = rng.choice(pack.master.customers)
+    nsf_due_date = f"{pack.periods[-2].label}-23"
+    nsf_loss_rate = Decimal("0.20")
+    allowance += (nsf_amount * nsf_loss_rate).quantize(CENT)
+    aging_rows.append(
+        [
+            "close-nsf-check",
+            nsf_customer.id,
+            money(nsf_amount),
+            nsf_due_date,
+            "over-30",
+            str(nsf_loss_rate),
+            "returned-check",
+        ]
+    )
+    february_utility_amount = supplier_amount + Decimal("25.00")
+    stale_annual_rate = annual_rate + Decimal("0.03")
+    stale_current_portion = min(note_principal, current_portion + Decimal("500.00"))
 
-    if "revenue-cutoff" in active_set:
-        oracle_entries.append(
+    oracle_entries.extend(
+        [
             (
                 current.end,
                 revenue_customer.name,
                 "Reverse premature product sale",
                 [(PRODUCT_REVENUE, revenue_amount), (AR, -revenue_amount)],
-            )
-        )
-    if "receivables-allowance" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Controller",
                 "Record credit-loss allowance",
                 [(CREDIT_LOSS_EXPENSE, allowance), (ALLOWANCE, -allowance)],
-            )
-        )
-    if "inventory-valuation" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Warehouse",
                 "Record inventory write-down",
                 [(INVENTORY_WRITE_DOWN, write_down), (INVENTORY, -write_down)],
-            )
-        )
-    if "unrecorded-payables" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Supplier",
                 "Accrue unrecorded supplier service",
                 [(UTILITIES_EXPENSE, supplier_amount), (AP, -supplier_amount)],
-            )
-        )
-    if "prepayment-cutoff" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Landlord",
                 "Defer unexpired prepaid rent",
                 [(PREPAID_RENT, prepaid_defer), (RENT_EXPENSE, -prepaid_defer)],
-            )
-        )
-    if "fixed-asset-treatment" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Supplier",
                 "Expense routine equipment repair",
-                [(REPAIRS_EXPENSE, repair_amount), (EQUIPMENT, -repair_amount)],
-            )
-        )
-    if "debt-interest-classification" in active_set:
-        oracle_entries.append(
+                [
+                    (REPAIRS_EXPENSE, repair_amount),
+                    (ACCUMULATED_DEPRECIATION, repair_depreciation),
+                    (EQUIPMENT, -repair_amount),
+                    (DEPRECIATION_EXPENSE, -repair_depreciation),
+                ],
+            ),
             (
                 current.end,
                 "Lender",
                 "Accrue January note interest",
                 [(INTEREST_EXPENSE, interest), (INTEREST_PAYABLE, -interest)],
-            )
-        )
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Lender",
                 "Reclassify current portion of note",
                 [(NOTES_PAYABLE, current_portion), (CURRENT_PORTION, -current_portion)],
-            )
-        )
-    if "bank-reconciliation" in active_set:
-        oracle_entries.append(
+            ),
             (
                 current.end,
                 "Bank",
                 "Record returned customer check",
                 [(AR, nsf_amount), (BANK, -nsf_amount)],
-            )
-        )
+            ),
+        ]
+    )
 
     final_balances = dict(draft_balances)
     for _date, _payee, _narration, postings in oracle_entries:
@@ -939,11 +982,16 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     inventory_rows: list[list[object]] = [
         ["item_id", "item", "book_quantity", "signed_count_quantity", "unit_cost", "nrv_per_unit"]
     ]
-    items_by_id = {item.id: item for item in pack.master.items}
     for record in pack.subledgers["inventory"]:
         item = items_by_id[record.item_id]
-        if record.id == inventory_record.id and "inventory-valuation" in active_set:
+        if record.id == inventory_record.id:
             count_quantity, item_nrv = counted_units, nrv
+        elif (
+            secondary_inventory_record is not None
+            and record.id == secondary_inventory_record.id
+            and secondary_nrv is not None
+        ):
+            count_quantity, item_nrv = record.quantity or Decimal("0"), secondary_nrv
         else:
             count_quantity, item_nrv = record.quantity or Decimal("0"), item.unit_cost
         inventory_rows.append(
@@ -959,43 +1007,47 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
 
     close_evidence = f"""# Current-period close evidence
 
-Current period ends {current.end}. Amounts are USD.
+Current period ends {current.end}. Amounts are USD. The January
+draft entries identified below are already posted in
+`ledger.beancount` after the pack trial-balance/subledger extraction;
+reconcile January from the ledger and these close files.
 
-## Revenue and shipment
+## Revenue, receivables, and inventory
 
-- Sales order for {revenue_customer.name}: USD {money(revenue_amount)},
-  requested ship date {current.label}-30.
-- Signed carrier log: the same goods were tendered to the carrier on
-  2026-02-02. The draft ledger already contains a {current.label}-30
+- `close_revenue_cutoff.csv` gives the sales order and signed carrier
+  ship date. The draft ledger already contains a {current.label}-30
   product sale for this order.
+- `close_ar_aging.csv` is the close aging schedule. It includes the
+  returned-check row from `close_bank_advice.csv` and lists the
+  reversed unshipped sale separately.
+- `close_inventory_count.csv` is the signed count. Reconcile every
+  item's book quantity, signed count, unit cost, and NRV; more than
+  one item can require write-down.
 
-## Supplier, rent, and equipment documents
+## Supplier, rent, and equipment source documents
 
-- Supplier service was received {current.label}-29 for USD
-  {money(supplier_amount)}; the invoice is dated 2026-02-03 and is not
-  in the draft accounts-payable subledger. A duplicate copy of the
-  same invoice was also received.
-- Rent payment of USD {money(prepaid_total)} on {current.label}-02
-  covers six months beginning {current.label}-01. The draft ledger
-  charged the full payment to rent expense.
-- Equipment invoice of USD {money(repair_amount)} on
-  {current.label}-12 describes a routine tune-up and replacement of
-  worn belts; it does not extend useful life or increase capacity.
-  The draft ledger capitalized the invoice.
+- `close_supplier_invoices.csv` contains utility service invoices,
+  including an original current-period invoice that is not in the
+  draft accounts-payable subledger, a duplicate copy, and a
+  February service invoice.
+- `close_rent_agreement.csv` gives the January rent payment and
+  service term. The draft ledger charged the full payment to rent
+  expense.
+- `close_equipment_invoices.csv` contains a routine tune-up that the
+  draft ledger capitalized and depreciated for January, and a
+  separate capital improvement that the draft ledger capitalized.
 
-## Debt schedule
+## Debt schedules
 
-- Note principal in the draft trial balance bears interest at
-  {money(annual_rate * Decimal(100))}% per year. January interest has
-  not been accrued. USD {money(current_portion)} of principal is due
-  within twelve months after {current.end}; the remainder is due
-  after that window.
+- `close_debt_schedules.csv` contains stale and revised lender
+  schedules for the same note. January interest has not been accrued
+  and no current portion has been reclassified in the draft ledger.
 
-## Bank statement
+## Bank advice and other documents
 
-- The bank returned a customer check for USD {money(nsf_amount)} on
-  {current.end} for insufficient funds. The draft ledger has not
-  recorded the return.
+- `close_bank_advice.csv` identifies the customer check returned for
+  insufficient funds on {current.end} and its original receivable due
+  date. The draft ledger has not recorded the return.
 - A March supplier quote was also received for possible February
   work. No goods or services were received by {current.end}.
 """
@@ -1036,9 +1088,16 @@ Current period ends {current.end}. Amounts are USD.
         "current_portion_long_term_debt": CURRENT_PORTION,
         "interest_payable": INTEREST_PAYABLE,
     }
+    integrity_dispositions = {
+        "february-utility-service": "exclude-next-period",
+        "duplicate-utility-invoice": "ignore-duplicate-copy",
+        "capital-equipment-improvement": "keep-capitalized",
+        "stale-debt-schedule": "use-revised-schedule",
+    }
     solution_workflow = {
-        "evidence": {cluster: dispositions[cluster] for cluster in active}
-        | {"march-supplier-quote": "exclude-next-period"},
+        "evidence": {cluster: dispositions[cluster] for cluster in CLOSE_CLUSTERS}
+        | {"march-supplier-quote": "exclude-next-period"}
+        | integrity_dispositions,
         "trial_balance": {
             field: money(final_bal(account)) for field, account in trial_fields.items()
         },
@@ -1078,6 +1137,140 @@ Current period ends {current.end}. Amounts are USD.
                     ],
                 ]
             ),
+            "documents/close_supplier_invoices.csv": _csv(
+                [
+                    [
+                        "invoice_id",
+                        "service",
+                        "service_date",
+                        "invoice_date",
+                        "amount",
+                        "status",
+                        "duplicate_of",
+                    ],
+                    [
+                        "close-utility-001",
+                        "Utility service",
+                        f"{current.label}-29",
+                        "2026-02-03",
+                        money(supplier_amount),
+                        "original-unrecorded",
+                        "",
+                    ],
+                    [
+                        "close-utility-001-copy",
+                        "Utility service",
+                        f"{current.label}-29",
+                        "2026-02-03",
+                        money(supplier_amount),
+                        "duplicate-copy",
+                        "close-utility-001",
+                    ],
+                    [
+                        "close-utility-002",
+                        "Utility service",
+                        "2026-02-10",
+                        "2026-02-11",
+                        money(february_utility_amount),
+                        "original-unrecorded",
+                        "",
+                    ],
+                ]
+            ),
+            "documents/close_rent_agreement.csv": _csv(
+                [
+                    ["payment_date", "amount", "term_start", "term_months", "draft_treatment"],
+                    [
+                        f"{current.label}-02",
+                        money(prepaid_total),
+                        f"{current.label}-01",
+                        "6",
+                        "full-payment-expensed",
+                    ],
+                ]
+            ),
+            "documents/close_equipment_invoices.csv": _csv(
+                [
+                    [
+                        "invoice_id",
+                        "date",
+                        "description",
+                        "amount",
+                        "draft_treatment",
+                        "life_or_capacity_effect",
+                        "january_depreciation_recorded",
+                    ],
+                    [
+                        "close-equipment-repair",
+                        f"{current.label}-12",
+                        "Routine tune-up and replacement of worn belts",
+                        money(repair_amount),
+                        "capitalized",
+                        "none",
+                        money(repair_depreciation),
+                    ],
+                    [
+                        "close-equipment-improvement",
+                        f"{current.label}-20",
+                        "Capital improvement: new motor extending useful life; "
+                        "placed in service 2026-02-01",
+                        money(capital_improvement_amount),
+                        "capitalized",
+                        "extends-life",
+                        "0.00",
+                    ],
+                ]
+            ),
+            "documents/close_debt_schedules.csv": _csv(
+                [
+                    [
+                        "schedule_id",
+                        "status",
+                        "principal",
+                        "annual_rate_percent",
+                        "principal_due_within_12_months",
+                        "principal_due_after_12_months",
+                    ],
+                    [
+                        "close-debt-stale",
+                        "stale",
+                        money(note_principal),
+                        money(stale_annual_rate * Decimal(100)),
+                        money(stale_current_portion),
+                        money(note_principal - stale_current_portion),
+                    ],
+                    [
+                        "close-debt-revised",
+                        "revised",
+                        money(note_principal),
+                        money(annual_rate * Decimal(100)),
+                        money(current_portion),
+                        money(note_principal - current_portion),
+                    ],
+                ]
+            ),
+            "documents/close_bank_advice.csv": _csv(
+                [
+                    [
+                        "advice_id",
+                        "customer_id",
+                        "customer_name",
+                        "amount",
+                        "returned_date",
+                        "original_receivable_due_date",
+                        "reason",
+                    ],
+                    [
+                        "close-nsf-advice",
+                        nsf_customer.id,
+                        nsf_customer.name,
+                        money(nsf_amount),
+                        current.end,
+                        nsf_due_date,
+                        "insufficient-funds",
+                    ],
+                ]
+            ),
             "workflow.json": json.dumps(starter_workflow, indent=2) + "\n",
         }
     )
@@ -1091,11 +1284,23 @@ Current period ends {current.end}. Amounts are USD.
             "subledgers/accounts_receivable.csv",
         ],
         "inventory-valuation": ["documents/close_inventory_count.csv", "subledgers/inventory.csv"],
-        "unrecorded-payables": ["documents/close_evidence.md", "subledgers/accounts_payable.csv"],
-        "prepayment-cutoff": ["documents/close_evidence.md"],
-        "fixed-asset-treatment": ["documents/close_evidence.md", "subledgers/fixed_assets.csv"],
-        "debt-interest-classification": ["documents/close_evidence.md", "trial_balances.csv"],
-        "bank-reconciliation": ["documents/close_evidence.md", "documents/bank_statements.csv"],
+        "unrecorded-payables": [
+            "documents/close_supplier_invoices.csv",
+            "subledgers/accounts_payable.csv",
+        ],
+        "prepayment-cutoff": ["documents/close_rent_agreement.csv"],
+        "fixed-asset-treatment": [
+            "documents/close_equipment_invoices.csv",
+            "subledgers/fixed_assets.csv",
+        ],
+        "debt-interest-classification": [
+            "documents/close_debt_schedules.csv",
+            "trial_balances.csv",
+        ],
+        "bank-reconciliation": [
+            "documents/close_bank_advice.csv",
+            "documents/bank_statements.csv",
+        ],
     }
     issue_titles = {
         "revenue-cutoff": "Correct premature revenue cutoff",
@@ -1165,12 +1370,12 @@ Current period ends {current.end}. Amounts are USD.
         "inventory-valuation": INVENTORY_WRITE_DOWN,
         "unrecorded-payables": UTILITIES_EXPENSE,
         "prepayment-cutoff": RENT_EXPENSE,
-        "fixed-asset-treatment": REPAIRS_EXPENSE,
+        "fixed-asset-treatment": ACCUMULATED_DEPRECIATION,
         "debt-interest-classification": NOTES_PAYABLE,
         "bank-reconciliation": AR,
     }
     current_period = [current.start, current.end]
-    for cluster in active:
+    for cluster in CLOSE_CLUSTERS:
         determination_id = cluster
         determinations.append(
             workflow_determination(
@@ -1237,7 +1442,12 @@ Current period ends {current.end}. Amounts are USD.
                 "integrity",
                 "integrity",
                 "Respect period cutoff and leave unrelated balances untouched",
-                evidence=["documents/close_evidence.md"],
+                evidence=[
+                    "documents/close_evidence.md",
+                    "documents/close_supplier_invoices.csv",
+                    "documents/close_equipment_invoices.csv",
+                    "documents/close_debt_schedules.csv",
+                ],
             ),
         ]
     )
@@ -1302,6 +1512,17 @@ Current period ends {current.end}. Amounts are USD.
                 expected="exclude-next-period",
             ),
         ]
+    )
+    checks.extend(
+        workflow_check(
+            f"integrity-{key}",
+            "evidence_disposition",
+            "integrity",
+            path="evidence",
+            key=key,
+            expected=expected,
+        )
+        for key, expected in integrity_dispositions.items()
     )
 
     required_final = {account: money(final_bal(account)) for account in trial_fields.values()}

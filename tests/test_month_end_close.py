@@ -1,5 +1,7 @@
 """Month-end close professional workflow pilot."""
 
+import csv
+import io
 import json
 import re
 from decimal import Decimal
@@ -68,6 +70,58 @@ def test_close_pilot_shape_and_level():
     assert "journal entry" not in policy
 
 
+def test_close_contract_discloses_codes_and_keeps_all_clusters_in_scope():
+    for seed in range(16):
+        instance = _instance(seed)
+        spec = instance.expected["workflow"]
+        clusters = {item["cluster"] for item in spec["determinations"]}
+        assert CLUSTERS <= clusters, seed
+        policy = instance.app_files["policy.md"]
+        expected_codes = {
+            check["expected"] for check in spec["checks"] if check["type"] == "evidence_disposition"
+        }
+        assert expected_codes <= set(re.findall(r"`([^`]+)`", policy)), seed
+        assert "utility service" in instance.app_files["documents/close_evidence.md"].lower()
+
+
+def test_close_tuned_contract_links_nsf_and_false_alarms():
+    for seed in range(8):
+        instance = _instance(seed)
+        policy = " ".join(instance.app_files["policy.md"].split())
+        assert "each aging row's `loss_rate`" in policy
+        assert "annual rate / 12" in policy
+        assert "even if it is below USD 100" in policy
+        for path in (
+            "documents/close_supplier_invoices.csv",
+            "documents/close_debt_schedules.csv",
+            "documents/close_equipment_invoices.csv",
+            "documents/close_rent_agreement.csv",
+            "documents/close_bank_advice.csv",
+        ):
+            assert path in instance.app_files, (seed, path)
+        assert len(instance.expected["workflow"]["checks"]) >= 63
+
+        aging = list(
+            csv.DictReader(io.StringIO(instance.app_files["documents/close_ar_aging.csv"]))
+        )
+        assert any(row["record_id"] == "close-nsf-check" for row in aging)
+        expected_allowance = sum(
+            (Decimal(row["amount"]) * Decimal(row["loss_rate"])).quantize(Decimal("0.01"))
+            for row in aging
+            if row["bucket"] != "unshipped"
+        )
+        workflow = json.loads(instance.solution_files["workflow.json"])
+        assert Decimal(workflow["trial_balance"]["allowance_for_credit_losses"]) == (
+            -expected_allowance
+        )
+        assert workflow["evidence"]["february-utility-service"] == "exclude-next-period"
+        assert workflow["evidence"]["duplicate-utility-invoice"] == "ignore-duplicate-copy"
+        assert workflow["evidence"]["capital-equipment-improvement"] == "keep-capitalized"
+        assert workflow["evidence"]["stale-debt-schedule"] == "use-revised-schedule"
+        assert "Capital improvement" in instance.initial_ledger
+        assert "Depreciation on capitalized" in instance.initial_ledger
+
+
 def test_close_oracle_noop_and_seed_sweep():
     for seed in range(25):
         instance = _instance(seed)
@@ -81,13 +135,13 @@ def test_close_oracle_noop_and_seed_sweep():
         assert Decimal(workflow["trial_balance"]["bank"]) > 0
         assert Decimal(workflow["trial_balance"]["inventory"]) >= 0
         clusters = {item["cluster"] for item in instance.expected["workflow"]["determinations"]}
-        assert len(clusters & CLUSTERS) == 7
+        assert len(clusters & CLUSTERS) == 8
 
 
 def test_close_issue_omission_mutants_lose_their_clusters():
     instance = _instance(7)
     blocks = _blocks(instance)
-    assert len(blocks) >= 7
+    assert len(blocks) >= 8
     details = _workflow_details(_grade(instance))
     determination_clusters = {
         item["id"]: details["determinations"][item["id"]]["cluster"]
@@ -98,7 +152,7 @@ def test_close_issue_omission_mutants_lose_their_clusters():
         for determination_id, cluster in determination_clusters.items()
         if cluster in CLUSTERS
     ]
-    assert len(issue_determinations) == 7
+    assert len(issue_determinations) == 8
 
     # Omitting one adjustment block at a time must lose at least one
     # determination; across the sweep every issue cluster is lost once.

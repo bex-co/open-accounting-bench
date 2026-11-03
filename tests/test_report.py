@@ -33,10 +33,20 @@ MANIFEST = {
 }
 
 
-def _trial(job: Path, name: str, task_id: str, reward: dict, answer=None, cost=None):
+def _trial(
+    job: Path,
+    name: str,
+    task_id: str,
+    reward: dict,
+    answer=None,
+    cost=None,
+    workflow_report: dict | None = None,
+):
     trial = job / name
     (trial / "verifier").mkdir(parents=True)
     (trial / "verifier" / "reward.json").write_text(json.dumps(reward))
+    if workflow_report is not None:
+        (trial / "verifier" / "report.json").write_text(json.dumps(workflow_report))
     agent_result = {"n_input_tokens": 1000, "n_output_tokens": 500, "cost_usd": cost}
     (trial / "result.json").write_text(
         json.dumps(
@@ -45,6 +55,8 @@ def _trial(job: Path, name: str, task_id: str, reward: dict, answer=None, cost=N
                 "task_checksum": "abc",
                 "config": {"agent": {"name": "test-agent", "model_name": "m/test"}},
                 "agent_result": agent_result,
+                "started_at": "2026-01-01T00:00:00Z",
+                "finished_at": "2026-01-01T00:02:30Z",
             }
         )
     )
@@ -119,3 +131,108 @@ def test_write_report_outputs(tmp_path: Path):
     assert "Excluded as infrastructure errors: 1 trial(s)" in board
     assert "## By framework" in board
     assert "## Confidence calibration" in board
+
+
+def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path):
+    manifest = {
+        "tasks": [
+            {
+                "task_id": "wf-z",
+                "family": "wf",
+                "seed": 7,
+                "generator_version": "0.7.0",
+                "track": "dynamic",
+                "category": "financial-accounting",
+                "framework": "core",
+                "level": "professional",
+                "format": "workflow",
+            }
+        ]
+    }
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    reward = {
+        "reward": 0,
+        "rubric_completion": 0.5,
+        "workflow_check_completion": 0.5,
+        "parse_failure": 0.0,
+    }
+
+    def workflow_report(*, revenue: bool, cluster_score: float) -> dict:
+        return {
+            "details": {
+                "workflow": {
+                    "clusters": {"revenue-cutoff": cluster_score, "bank": 1.0},
+                    "checks": [
+                        {
+                            "id": "revenue-primary",
+                            "cluster": "revenue-cutoff",
+                            "passed": revenue,
+                            "actual": "should-not-be-copied",
+                        },
+                        {"id": "bank-primary", "cluster": "bank", "passed": True},
+                    ],
+                }
+            }
+        }
+
+    _trial(
+        job,
+        "wf-z__a",
+        "wf-z",
+        reward,
+        workflow_report=workflow_report(revenue=True, cluster_score=1.0),
+    )
+    _trial(
+        job,
+        "wf-z__b",
+        "wf-z",
+        {**reward, "rubric_completion": 0.25, "workflow_check_completion": 0.25},
+        workflow_report=workflow_report(revenue=False, cluster_score=0.0),
+    )
+    err = job / "wf-z__err"
+    err.mkdir()
+    (err / "result.json").write_text(
+        json.dumps(
+            {
+                "task_name": "open-accounting-bench/wf-z",
+                "config": {"agent": {"name": "test-agent", "model_name": "m/test"}},
+                "agent_result": {},
+                "exception_info": {"exception_type": "InstallError"},
+            }
+        )
+    )
+
+    rows = load_runs(job, manifest)
+    graded = [row for row in rows if row["graded"]]
+    assert graded[0]["wall_seconds"] == 150.0
+    assert graded[0]["workflow_clusters"] == {"bank": 1.0, "revenue-cutoff": 1.0}
+    assert graded[0]["workflow_checks"] == [
+        {"id": "revenue-primary", "cluster": "revenue-cutoff", "passed": True},
+        {"id": "bank-primary", "cluster": "bank", "passed": True},
+    ]
+    task = aggregate_tasks(rows)["wf-z"]
+    assert task["n_trials"] == 2
+    assert task["n_errored"] == 1
+    assert task["rubric_min"] == 0.25
+    assert task["rubric_max"] == 0.5
+    assert task["mean_wall_seconds"] == 150.0
+    assert task["workflow_cluster_means"] == {"bank": 1.0, "revenue-cutoff": 0.5}
+    assert task["workflow_check_rates"]["revenue-primary"] == {
+        "cluster": "revenue-cutoff",
+        "passed": 1,
+        "total": 2,
+        "rate": 0.5,
+    }
+
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest))
+    _, board_path = write_report(job, manifest_path, out_dir=tmp_path / "out")
+    board = board_path.read_text()
+    assert "## Workflow issue clusters" in board
+    assert "| wf-z | revenue-cutoff | 50.0% |" in board
+    assert "## Workflow checks" in board
+    assert "| wf-z | revenue-primary | revenue-cutoff | 1/2 | 50.0% |" in board
+    assert "150.0" in board
+    assert "should-not-be-copied" not in board

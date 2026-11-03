@@ -249,7 +249,9 @@ def test_report_keeps_workflow_rubric_separate_from_completion():
     board = render_leaderboard(rows, tasks, None)
     assert "Overall verified completion: **0.0%**" in board
     assert "## Workflow rubric" in board
-    assert "| workflow-conformance-fixture | 75.0% | 80.0% |" in board
+    assert (
+        "| workflow-conformance-fixture | 1 | 75.0% | 75.0%–75.0% | 80.0% | 0.0% | - | - |" in board
+    )
 
 
 def test_generated_workflow_task_validates(tmp_path: Path):

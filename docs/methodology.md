@@ -35,6 +35,27 @@ Tracks: **Stable** (frozen seeds, committed), **Dynamic** (fresh seeds
 at run time), **Holdout** (unpublished families/seeds for
 generalization; see [governance.md](governance.md)).
 
+### Professional workflow lifecycle
+
+Professional workflow generators start Dynamic-first. Before a
+calibration panel, the public task contract must disclose or make
+derivable every graded disposition code, account choice, sign
+convention, and evidence precedence rule; every material evidence item
+in scope must map to an intended determination. Hidden exact strings
+and evidence that looks actionable but is absent from expectations
+are generator defects, not difficulty.
+
+The lifecycle is: oracle/no-op, omission and wrong-disposition
+mutants, and equivalent split/combined-entry tests; a preregistered
+multi-tier, multi-seed, repeated-attempt panel; failure adjudication
+against submitted ledgers and schedules; check/cluster discrimination
+analysis; and an explicit promote, tune-and-recalibrate, or reject
+verdict. Tuning may change issue activation, evidence conflict,
+policy sparsity, cutoff pressure, downstream dependencies, or check
+grouping, followed by oracle/mutant/seed sweeps and a confirmation
+slice. No Stable freeze follows from length, bulk, ambiguity, or a
+design label alone; a freeze is a separate versioned release step.
+
 ## Coverage layers
 
 Scores are reported per capability and regulatory context, never as one

@@ -712,17 +712,22 @@ professional difficulty or curriculum coverage.
 
 `month-end-close-workflow` is the first Dynamic professional pilot.
 It starts from a validated three-period evidence pack, leaves the
-current month in draft, and activates seven of eight linked close
+current month in draft, and activates all eight linked close
 clusters per seed: revenue cutoff, receivables allowance, inventory
 count/NRV, unrecorded payables, prepayment cutoff, fixed-asset
 treatment, debt interest/classification, and bank reconciliation.
 The agent submits an adjusted ledger and structured close schedule;
-54 typed checks cover issue dispositions, local and period deltas,
+63 typed checks cover issue dispositions, local and period deltas,
 final trial-balance values, current-period performance, and cutoff
 integrity. Its seven-dimension scores in rubric order are
 P/P/P/U/P/U/P, deriving `professional`. This is a design label, not a
-difficulty result: the family remains Dynamic-only until the
-calibration protocol produces a promote/tune/reject verdict.
+difficulty result. A dated 2026-11 calibration panel (24 graded
+trials) and tuned confirmation slice (12 graded trials) found
+strong-tier saturation—both strong tiers reached 100% rubric and
+full completion in confirmation, while the lower tier remained far
+below—so the release verdict is **tune and recalibrate**. The family
+remains Dynamic-only, with no Stable freeze, until a recalibrated
+panel produces a promote verdict.
 
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`

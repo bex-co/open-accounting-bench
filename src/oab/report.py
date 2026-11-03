@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
 AXES = ("category", "framework", "level", "format", "skill")
@@ -43,6 +44,53 @@ def _read_json(path: Path) -> dict | None:
     except (OSError, ValueError):
         return None
     return value if isinstance(value, dict) else None
+
+
+def _duration_seconds(start: object, finish: object) -> float | None:
+    if not isinstance(start, str) or not isinstance(finish, str):
+        return None
+    try:
+        first = datetime.fromisoformat(start.replace("Z", "+00:00"))
+        last = datetime.fromisoformat(finish.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    seconds = (last - first).total_seconds()
+    return seconds if seconds >= 0 else None
+
+
+def _workflow_details(report: dict) -> dict:
+    details = report.get("details") or {}
+    workflow = details.get("workflow") if isinstance(details, dict) else None
+    return workflow if isinstance(workflow, dict) else {}
+
+
+def _workflow_clusters(details: dict) -> dict[str, float]:
+    clusters = details.get("clusters") or {}
+    if not isinstance(clusters, dict):
+        return {}
+    return {
+        str(name): float(score)
+        for name, score in sorted(clusters.items())
+        if isinstance(score, int | float)
+    }
+
+
+def _workflow_checks(details: dict) -> list[dict]:
+    checks = details.get("checks") or []
+    if not isinstance(checks, list):
+        return []
+    out = []
+    for check in checks:
+        if not isinstance(check, dict) or not check.get("id"):
+            continue
+        out.append(
+            {
+                "id": str(check["id"]),
+                "cluster": str(check.get("cluster") or ""),
+                "passed": bool(check.get("passed")),
+            }
+        )
+    return out
 
 
 def _task_id_of(trial_result: dict, trial_dir: Path) -> str:
@@ -82,6 +130,11 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
         task_id = _task_id_of(result, trial_dir)
         entry = by_task.get(task_id, {})
         reward = _read_json(trial_dir / "verifier" / "reward.json") or {}
+        workflow_details = (
+            _workflow_details(_read_json(trial_dir / "verifier" / "report.json") or {})
+            if entry.get("format") == "workflow" or "rubric_completion" in reward
+            else {}
+        )
         exception = (result.get("exception_info") or {}).get("exception_type")
         agent = (result.get("config") or {}).get("agent") or {}
         agent_result = result.get("agent_result") or {}
@@ -96,6 +149,9 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
             "rewards": reward,
             "rubric_completion": reward.get("rubric_completion"),
             "workflow_check_completion": reward.get("workflow_check_completion"),
+            "workflow_clusters": _workflow_clusters(workflow_details),
+            "workflow_checks": _workflow_checks(workflow_details),
+            "wall_seconds": _duration_seconds(result.get("started_at"), result.get("finished_at")),
             "answer": (answer or {}).get("final_answer"),
             "confidence": reward.get("confidence", (answer or {}).get("confidence")),
             "parse_failure": reward.get("parse_failure"),
@@ -118,9 +174,41 @@ def _answer_key(value) -> str:
     return json.dumps(value, sort_keys=True, default=str)
 
 
+def _numeric_values(rows: list[dict], key: str) -> list[float]:
+    return [float(row[key]) for row in rows if isinstance(row.get(key), int | float)]
+
+
 def _mean_numeric(rows: list[dict], key: str) -> float | None:
-    values = [float(row[key]) for row in rows if isinstance(row.get(key), int | float)]
+    values = _numeric_values(rows, key)
     return sum(values) / len(values) if values else None
+
+
+def _numeric_range(rows: list[dict], key: str) -> tuple[float | None, float | None]:
+    values = _numeric_values(rows, key)
+    return (min(values), max(values)) if values else (None, None)
+
+
+def _workflow_cluster_means(rows: list[dict]) -> dict[str, float]:
+    values: dict[str, list[float]] = {}
+    for row in rows:
+        for name, score in (row.get("workflow_clusters") or {}).items():
+            values.setdefault(name, []).append(score)
+    return {name: sum(scores) / len(scores) for name, scores in sorted(values.items())}
+
+
+def _workflow_check_rates(rows: list[dict]) -> dict[str, dict]:
+    rates: dict[str, dict] = {}
+    for row in rows:
+        for check in row.get("workflow_checks") or []:
+            entry = rates.setdefault(
+                check["id"],
+                {"cluster": check.get("cluster") or "", "passed": 0, "total": 0},
+            )
+            entry["total"] += 1
+            entry["passed"] += 1 if check.get("passed") else 0
+    for entry in rates.values():
+        entry["rate"] = entry["passed"] / entry["total"] if entry["total"] else 0.0
+    return dict(sorted(rates.items()))
 
 
 def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
@@ -146,6 +234,7 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
             modal_trials = [r for r in trials if _answer_key(r["answer"]) == modal]
             score = sum(r["reward"] for r in modal_trials) / len(modal_trials)
 
+        rubric_min, rubric_max = _numeric_range(trials, "rubric_completion")
         tasks[task_id] = {
             "task_id": task_id,
             "n_trials": len(trials),
@@ -154,7 +243,14 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
             "score": score,
             "agreement": agreement,
             "mean_rubric_completion": _mean_numeric(trials, "rubric_completion"),
+            "rubric_min": rubric_min,
+            "rubric_max": rubric_max,
             "mean_workflow_check_completion": _mean_numeric(trials, "workflow_check_completion"),
+            "workflow_cluster_means": _workflow_cluster_means(trials),
+            "workflow_check_rates": _workflow_check_rates(trials),
+            "parse_failure_rate": _mean_numeric(trials, "parse_failure"),
+            "mean_wall_seconds": _mean_numeric(trials, "wall_seconds"),
+            "mean_cost_usd": _mean_numeric(trials, "cost_usd"),
             **{axis: all_trials[0].get(axis) for axis in AXES},
         }
     return tasks
@@ -244,16 +340,57 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
             "",
             "Rubric completion is diagnostic; verified completion above still requires reward 1.",
             "",
-            "| Task | Rubric | Checks |",
-            "|---|---:|---:|",
+            "| Task | Graded | Rubric | Rubric range | Checks | Parse failures "
+            "| Mean wall (sec) | Mean cost |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for task in workflow_tasks:
             checks = task.get("mean_workflow_check_completion")
             checks_label = f"{checks * 100:.1f}%" if checks is not None else "-"
-            lines.append(
-                f"| {task['task_id']} | {task['mean_rubric_completion'] * 100:.1f}% "
-                f"| {checks_label} |"
+            rubric_min, rubric_max = task.get("rubric_min"), task.get("rubric_max")
+            range_label = (
+                f"{rubric_min * 100:.1f}%–{rubric_max * 100:.1f}%"
+                if rubric_min is not None and rubric_max is not None
+                else "-"
             )
+            parse = task.get("parse_failure_rate")
+            parse_label = f"{parse * 100:.1f}%" if parse is not None else "-"
+            wall = task.get("mean_wall_seconds")
+            wall_label = f"{wall:.1f}" if wall is not None else "-"
+            cost = task.get("mean_cost_usd")
+            cost_label = f"${cost:.4f}" if cost is not None else "-"
+            lines.append(
+                f"| {task['task_id']} | {task['n_trials']} | "
+                f"{task['mean_rubric_completion'] * 100:.1f}% | {range_label} | "
+                f"{checks_label} | {parse_label} | {wall_label} | {cost_label} |"
+            )
+        cluster_tasks = [task for task in workflow_tasks if task.get("workflow_cluster_means")]
+        if cluster_tasks:
+            lines += [
+                "",
+                "## Workflow issue clusters",
+                "",
+                "| Task | Cluster | Mean completion |",
+                "|---|---|---:|",
+            ]
+            for task in cluster_tasks:
+                for cluster, mean in task["workflow_cluster_means"].items():
+                    lines.append(f"| {task['task_id']} | {cluster} | {mean * 100:.1f}% |")
+        check_tasks = [task for task in workflow_tasks if task.get("workflow_check_rates")]
+        if check_tasks:
+            lines += [
+                "",
+                "## Workflow checks",
+                "",
+                "| Task | Check | Cluster | Passed | Rate |",
+                "|---|---|---|---:|---:|",
+            ]
+            for task in check_tasks:
+                for check_id, entry in task["workflow_check_rates"].items():
+                    lines.append(
+                        f"| {task['task_id']} | {check_id} | {entry['cluster']} | "
+                        f"{entry['passed']}/{entry['total']} | {entry['rate'] * 100:.1f}% |"
+                    )
     for axis in AXES:
         lines += ["", f"## By {axis}", "", f"| {axis} | Tasks | Score |", "|---|---:|---:|"]
         for group, (count, mean) in _group_means(tasks, axis).items():

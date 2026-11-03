@@ -413,6 +413,32 @@ crosswalk mappings.
   previously unopened ledger accounts and its hardcoded 2026 ledger
   header date; no Stable family expectations changed and no
   `GENERATOR_VERSION` bump was made.
+- 2026-11-03 — month-end workflow calibration tuning at
+  `GENERATOR_VERSION` 0.7.0 (Dynamic pilot still has no Stable seed).
+  What to review: all eight close clusters are now active on every
+  seed; disclosed evidence-disposition codes; row-level aging
+  `loss_rate` with 100% only for a receivable row marked
+  `bankrupt`; inclusion of the returned-check receivable in aging at
+  the stated bucket rate; two inventory NRV/shortage measurements;
+  monthly note interest as principal × annual rate / 12 with no
+  day-count adjustment; recording specifically evidenced close items
+  even below USD 100; routine-repair expensing with reversal of one
+  month of draft depreciation over a stated 60-month life; keeping a
+  life-extending capital improvement capitalized with no January
+  depreciation before its February in-service date; revised-over-stale
+  lender schedule precedence; duplicate/February utility invoice and
+  March quote exclusion dispositions; oracle/mutant entries, final
+  trial-balance and income-statement signs; workflow cluster/check
+  reporting and determination-weighted rubric scoring; and the
+  unchanged professional level scores/crosswalk proposals. The dated
+  calibration verdict is tune and recalibrate because strong tiers
+  saturated, so no Stable freeze or difficulty claim is made.
+  Specific concerns: confirm the row-level bankrupt allowance and
+  NSF bucket are the intended accounting scope; confirm draft
+  January overlays may remain absent from pre-draft pack
+  trial-balance/subledger/bank extracts when the close evidence says
+  to reconcile January from the ledger and close files; and confirm
+  the capital improvement's February in-service convention.
 
 
 ## Reviewed
