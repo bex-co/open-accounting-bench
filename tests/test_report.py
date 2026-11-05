@@ -322,3 +322,18 @@ def test_report_cli_passes_k(tmp_path: Path):
         == 0
     )
     assert "Reliability (k=2)" in (out / "leaderboard.md").read_text()
+
+
+def test_reliability_ignores_errored_trials_and_groups_by_family(tmp_path: Path):
+    job = make_job(tmp_path)  # mc-x: 3 graded (1, 1, 0) + 1 infrastructure error
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+    tasks = aggregate_tasks(load_runs(job, MANIFEST), k=3)
+    assert tasks["mc-x"]["n_trials"] == 3  # the errored trial is not an attempt
+    assert tasks["mc-x"]["pass_hat_k"] == 0.0
+    assert tasks["mc-x"]["pass_at_k"] == 1.0
+    assert tasks["je-y"]["pass_at_k"] is None  # one attempt < k
+    _runs, board_path = write_report(job, manifest, out_dir=tmp_path / "out", k=3)
+    board = board_path.read_text()
+    assert "## By family" in board
+    assert "| f | 2 | 50.0% | 100.0% | 0.0% |" in board
