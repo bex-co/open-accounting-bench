@@ -1,6 +1,7 @@
 """Month-end close professional workflow pilot."""
 
 import csv
+import functools
 import io
 import json
 import re
@@ -35,8 +36,26 @@ ISSUE_DETERMINATIONS = {
 }
 
 
+NEXT_PERIOD_ACCRUAL = (
+    '2026-01-31 * "Supplier" "Accrue February utility invoice"\n'
+    "  Expenses:Utilities  400.00 USD\n"
+    "  Liabilities:AccountsPayable  -400.00 USD\n"
+)
+
+
 def _instance(seed: int = 42):
     return DYNAMIC_FAMILIES[FAMILY](seed)
+
+
+def _is_clean(instance) -> bool:
+    return "clean-month" in instance.keywords
+
+
+def _adjusting_instance(seed: int):
+    """An instance from the adjustment variant (not a clean-month control)."""
+    instance = _instance(seed)
+    assert not _is_clean(instance), seed
+    return instance
 
 
 def _grade(instance, ledger=None, workflow=None):
@@ -188,8 +207,7 @@ def test_close_oracle_noop_and_seed_sweep():
 
 
 def test_close_issue_omission_mutants_lose_their_clusters():
-    instance = _instance(8)
-    assert not _is_clean(instance)
+    instance = _adjusting_instance(8)
     blocks = _blocks(instance)
     assert len(blocks) >= 15
     details = _workflow_details(_grade(instance))
@@ -220,8 +238,7 @@ def test_close_issue_omission_mutants_lose_their_clusters():
 
 
 def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
-    instance = _instance(11)
-    assert not _is_clean(instance)
+    instance = _adjusting_instance(11)
     blocks = _blocks(instance)
 
     duplicate = instance.solution_ledger + "\n" + blocks[0] + "\n"
@@ -248,8 +265,7 @@ def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
 
 
 def test_close_partial_attempt_has_interpretable_cluster_scores():
-    instance = _instance(3)
-    assert not _is_clean(instance)
+    instance = _adjusting_instance(3)
     blocks = _blocks(instance)
     partial = instance.initial_ledger + blocks[0] + "\n"
     report = _grade(instance, ledger=partial)
@@ -261,8 +277,7 @@ def test_close_partial_attempt_has_interpretable_cluster_scores():
 
 
 def test_close_combined_entry_is_equivalent():
-    instance = _instance(19)
-    assert not _is_clean(instance)
+    instance = _adjusting_instance(19)
     blocks = _blocks(instance)
     first, second, *rest = blocks
     postings = []
@@ -287,12 +302,9 @@ def test_generated_close_task_validates(tmp_path: Path):
 # --- Clean-month negative control (w2/m2) -------------------------------
 
 
-def _is_clean(instance) -> bool:
-    return "clean-month" in instance.keywords
-
-
-def _clean_seeds(limit: int = 40) -> list[int]:
-    return [seed for seed in range(limit) if _is_clean(_instance(seed))]
+@functools.cache
+def _clean_seeds(limit: int = 40) -> tuple[int, ...]:
+    return tuple(seed for seed in range(limit) if _is_clean(_instance(seed)))
 
 
 def test_some_seeds_draw_a_clean_month_and_most_do_not():
@@ -336,12 +348,7 @@ def test_clean_month_over_action_fails_non_structural_layers():
         for block in instance.initial_ledger.split("\n\n")
         if "Record credit-loss allowance" in block
     )
-    next_period_accrual = (
-        '2026-01-31 * "Supplier" "Accrue February utility invoice"\n'
-        "  Expenses:Utilities  400.00 USD\n"
-        "  Liabilities:AccountsPayable  -400.00 USD\n"
-    )
-    for extra in (allowance_entry.strip() + "\n", next_period_accrual):
+    for extra in (allowance_entry.strip() + "\n", NEXT_PERIOD_ACCRUAL):
         ledger = instance.initial_ledger + "\n" + extra
         report = _grade(instance, ledger=ledger)
         assert report.reward == 0
@@ -355,12 +362,7 @@ def test_clean_month_over_action_fails_non_structural_layers():
 def test_over_action_diagnostic_only_on_no_action_tasks():
     clean = _instance(_clean_seeds()[0])
     assert _grade(clean).to_reward_json()["over_action"] == 0.0
-    extra = (
-        '2026-01-31 * "Supplier" "Accrue February utility invoice"\n'
-        "  Expenses:Utilities  400.00 USD\n"
-        "  Liabilities:AccountsPayable  -400.00 USD\n"
-    )
-    over = _grade(clean, ledger=clean.initial_ledger + "\n" + extra)
+    over = _grade(clean, ledger=clean.initial_ledger + "\n" + NEXT_PERIOD_ACCRUAL)
     assert over.to_reward_json()["over_action"] == 1.0
-    adjustments = _instance(8)
+    adjustments = _adjusting_instance(8)
     assert "over_action" not in _grade(adjustments).to_reward_json()

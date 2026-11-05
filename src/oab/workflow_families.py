@@ -758,6 +758,25 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     # entry is already in the ledger, so the correct close appends
     # nothing. Drawn from its own stream so other seeds are unchanged.
     clean = random.Random(seed ^ 0xC1EA4).random() < 0.2
+    # Source-file status per evidence item: (adjustment variant, clean).
+    # Items not listed carry no draft-treatment status in their source.
+    status = {
+        key: pair[clean]
+        for key, pair in {
+            "unrecorded-payables": ("original-unrecorded", "accrued-in-ledger"),
+            "prepayment-cutoff": (
+                "full-payment-expensed",
+                "expensed-then-unexpired-portion-deferred",
+            ),
+            "fixed-asset-treatment": ("capitalized", "capitalized-then-reclassified-to-repairs"),
+            "bank-fee-reconciliation": (
+                "revised-bank-fee-not-in-draft-ledger",
+                "revised-bank-fee-recorded",
+            ),
+            "service-revenue-milestone": ("draft-released-early", "released-early-then-deferred"),
+            "inventory-goods-in-transit": ("in-transit-not-in-draft-ledger", "in-transit-recorded"),
+        }.items()
+    }
     current = pack.periods[-1]
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
@@ -1141,6 +1160,8 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     expected_deltas = {
         account: amount for account, amount in sorted(expected_deltas.items()) if amount != 0
     }
+    if clean:  # the adjustments are already posted; the correct close adds nothing
+        expected_deltas = {}
 
     # Current-period statement values from pack activity plus draft and
     # oracle postings. Signs follow ledger presentation internally.
@@ -1227,13 +1248,10 @@ the same files as actionable items.
     initial_ledger = "\n".join([ledger_lines[0], *opens, *ledger_lines[1:]]) + "\n"
     for entry_date, payee, narration, postings in draft_entries:
         initial_ledger += _txn(entry_date, payee, narration, postings)
+    oracle_text = "".join(_txn(*entry) for entry in oracle_entries)
     if clean:
-        for entry_date, payee, narration, postings in oracle_entries:
-            initial_ledger += _txn(entry_date, payee, narration, postings)
-    solution_ledger = initial_ledger
-    if not clean:
-        for entry_date, payee, narration, postings in oracle_entries:
-            solution_ledger += _txn(entry_date, payee, narration, postings)
+        initial_ledger += oracle_text
+    solution_ledger = initial_ledger if clean else initial_ledger + oracle_text
 
     dispositions = {
         "revenue-cutoff": "reverse-premature-sale",
@@ -1356,7 +1374,7 @@ the same files as actionable items.
                         f"{current.label}-29",
                         "2026-02-03",
                         money(supplier_amount),
-                        "accrued-in-ledger" if clean else "original-unrecorded",
+                        status["unrecorded-payables"],
                         "",
                         "unrecorded-payables",
                     ],
@@ -1407,11 +1425,7 @@ the same files as actionable items.
                         money(prepaid_total),
                         f"{current.label}-16",
                         "6",
-                        (
-                            "expensed-then-unexpired-portion-deferred"
-                            if clean
-                            else "full-payment-expensed"
-                        ),
+                        status["prepayment-cutoff"],
                         "prepayment-cutoff",
                     ],
                 ]
@@ -1433,7 +1447,7 @@ the same files as actionable items.
                         f"{current.label}-12",
                         "Routine tune-up and replacement of worn belts",
                         money(repair_amount),
-                        "capitalized-then-reclassified-to-repairs" if clean else "capitalized",
+                        status["fixed-asset-treatment"],
                         "none",
                         money(repair_depreciation),
                         "fixed-asset-treatment",
@@ -1517,11 +1531,7 @@ the same files as actionable items.
                         money(bank_fee_amount),
                         current.end,
                         "",
-                        (
-                            "revised-bank-fee-recorded"
-                            if clean
-                            else "revised-bank-fee-not-in-draft-ledger"
-                        ),
+                        status["bank-fee-reconciliation"],
                         "bank-fee-reconciliation",
                     ],
                 ]
@@ -1552,7 +1562,7 @@ the same files as actionable items.
                         service_customer.id,
                         money(service_milestone_amount),
                         "2026-02-15",
-                        "released-early-then-deferred" if clean else "draft-released-early",
+                        status["service-revenue-milestone"],
                         "service-revenue-milestone",
                     ],
                 ]
@@ -1602,7 +1612,7 @@ the same files as actionable items.
                         f"{current.label}-30",
                         "FOB shipping point",
                         "2026-02-02",
-                        "in-transit-recorded" if clean else "in-transit-not-in-draft-ledger",
+                        status["inventory-goods-in-transit"],
                         "inventory-goods-in-transit",
                     ],
                 ]
@@ -1962,11 +1972,7 @@ the same files as actionable items.
             "month-end-close",
             seed,
             format=WORKFLOW_FORMAT,
-            expected_deltas=(
-                {}
-                if clean
-                else {account: money(amount) for account, amount in expected_deltas.items()}
-            ),
+            expected_deltas={account: money(amount) for account, amount in expected_deltas.items()},
             expected_new_transactions=0 if clean else [1, 40],
             expected_period=current_period,
             required_final_balances=required_final,

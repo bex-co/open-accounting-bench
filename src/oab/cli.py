@@ -21,7 +21,13 @@ from pathlib import Path
 from oab.audit import task_dirs as audit_task_dirs
 from oab.families import FAMILIES, STABLE_SEEDS, STANDARD_REF, TAXONOMY
 from oab.generate import write_dataset_files, write_task
-from oab.verify import grade_answer, grade_workflow, load_workflow_artifacts, verify
+from oab.verify import (
+    grade_answer,
+    grade_workflow,
+    is_no_action,
+    load_workflow_artifacts,
+    verify,
+)
 from oab.workflow import (
     LEDGER_ARTIFACT,
     WORKFLOW_FORMAT,
@@ -104,8 +110,10 @@ def _expected_shape_failures(name: str, fmt: str, expected: dict) -> list[str]:
     from decimal import Decimal, InvalidOperation
 
     failures: list[str] = []
+    # A no-action control (zero new transactions) legitimately changes nothing.
+    needs_deltas = not is_no_action(expected)
     if fmt == "journal-entry":
-        if not expected.get("expected_deltas"):
+        if needs_deltas and not expected.get("expected_deltas"):
             failures.append(f"{name}: journal-entry expected_deltas must be non-empty")
     elif fmt == "single-choice":
         if not isinstance(expected.get("gold"), str) or not expected["gold"]:
@@ -122,9 +130,7 @@ def _expected_shape_failures(name: str, fmt: str, expected: dict) -> list[str]:
         except (InvalidOperation, ValueError, TypeError):
             failures.append(f"{name}: numeric gold must be a number")
     elif fmt == WORKFLOW_FORMAT:
-        # A clean-month control declares zero new transactions: the correct
-        # close changes nothing, so its deltas are legitimately empty.
-        if not expected.get("expected_deltas") and expected.get("expected_new_transactions") != 0:
+        if needs_deltas and not expected.get("expected_deltas"):
             failures.append(f"{name}: workflow expected_deltas must be non-empty")
         failures.extend(
             f"{name}: {failure}" for failure in validate_workflow_spec(expected.get("workflow"))
@@ -251,11 +257,8 @@ def validate_tasks(tasks_root: Path) -> list[str]:
             initial = (task_dir / "environment" / "app" / "ledger.beancount").read_text()
             if initial != (task_dir / "tests" / "initial.beancount").read_text():
                 failures.append(f"{name}: tests/initial.beancount != environment ledger")
-            no_action = fmt == WORKFLOW_FORMAT and expected.get("expected_new_transactions") == 0
-            if (
-                not no_action
-                and initial == (task_dir / "solution" / "ledger.beancount").read_text()
-            ):
+            solution = (task_dir / "solution" / "ledger.beancount").read_text()
+            if not is_no_action(expected) and initial == solution:
                 failures.append(f"{name}: solution ledger must differ from initial")
             if fmt == WORKFLOW_FORMAT:
                 oracle = _grade(

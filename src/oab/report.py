@@ -317,7 +317,7 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
         )
     if parse:
         lines.append(f"Parse-failure rate: {sum(parse) / len(parse) * 100:.1f}%.")
-    over = [r["over_action"] for r in rows if isinstance(r.get("over_action"), int | float)]
+    over = _numeric_values(rows, "over_action")
     if over:
         acted = int(sum(over))
         lines.append(

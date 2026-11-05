@@ -247,6 +247,11 @@ def new_transaction_bounds(expected: dict) -> tuple[int, int] | None:
     return (want, want) if isinstance(want, int) else (want[0], want[1])
 
 
+def is_no_action(expected: dict) -> bool:
+    """A control whose correct answer appends nothing (zero new transactions)."""
+    return new_transaction_bounds(expected) == (0, 0)
+
+
 def numeric_tolerance(expected: dict, gold: Decimal) -> Decimal:
     """Allowed absolute error for a numeric answer: abs + rel * |gold|."""
     abs_tol = Decimal(str(expected.get("abs_tolerance", "0")))
@@ -357,7 +362,7 @@ def _verify_ledgers(
     )
     # No-action controls (the correct answer adds nothing): report whether
     # the agent acted anyway. Diagnostic only; the layers decide reward.
-    extras = {"over_action": 1.0 if new_count else 0.0} if bounds == (0, 0) else {}
+    extras = {"over_action": 1.0 if new_count else 0.0} if is_no_action(expected) else {}
 
     # Layer 4: financial reconciliation.
     recon_failures: list[str] = []
