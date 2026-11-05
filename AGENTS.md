@@ -47,12 +47,13 @@ make lint        # ruff check + ruff format --check over src and tests
 make test        # pytest
 make validate    # oab validate: structure, grader sync, oracle vs nop
 make crosswalk   # oab crosswalk: mapping records valid; prints coverage
+make audit       # oab audit: mutated oracles; wrong answers fail, equivalent ones pass
 make generate    # regenerate tasks/; any diff belongs in the same commit as its source change
 make oracle      # needs Harbor + Docker: every Stable task scores reward 1
 python3 scripts/check-agent-guidance.py   # after instruction, skill, or symlink changes
 ```
 
-CI (`.github/workflows/ci.yml`) runs lint, tests, validation, crosswalk checks, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
+CI (`.github/workflows/ci.yml`) runs lint, tests, validation, the verifier mutation audit, crosswalk checks, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
 
 ## Roadmap board and shipping
 

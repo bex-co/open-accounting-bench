@@ -136,6 +136,7 @@ uv run oab verify --task-dir /tmp/oab-workflow/workflow-conformance-fixture
 uv run oab generate --family month-end-close-workflow --seed 42 --out /tmp/oab-close
 uv run oab verify --task-dir /tmp/oab-close/month-end-close-workflow
 uv run oab validate --tasks tasks                                     # repo health
+uv run oab audit --tasks tasks                                        # grader false-accept/reject audit
 ```
 
 ## Repository layout
@@ -148,7 +149,8 @@ src/oab/        Generator + verifier package (stdlib only)
   workflow_families.py  Dynamic-first workflow generators
   generate.py   Instance -> Harbor task directory, dataset files
   _verifier_core.py  Deterministic grader; copied verbatim into each task
-  cli.py        oab generate / verify / validate / report / list
+  audit.py      Mutation probes for the grader's false-accept/reject audit
+  cli.py        oab generate / verify / validate / audit / report / list
   report.py     Harbor job -> runs.jsonl + stratified leaderboard.md
 tasks/          Stable-track Harbor dataset (+ dataset.toml, manifest, metric.py)
 tests/          Repo tests: verifier layers, generator determinism, task health

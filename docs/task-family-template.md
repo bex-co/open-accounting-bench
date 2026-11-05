@@ -75,6 +75,7 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   `validate_evidence_pack` and stay within the evidence budgets;
   all names and records are original synthetic data
 - [ ] `uv run oab generate --all` leaves no uncommitted diff
+- [ ] `uv run oab audit` reports no false accepts or false rejects
 - [ ] `harbor run -p tasks/<task-id> -a oracle` passes; `-a nop` fails
 - [ ] Coverage matrix row updated in `docs/task-families.md`
 - [ ] `uv run oab crosswalk` passes with the new mappings

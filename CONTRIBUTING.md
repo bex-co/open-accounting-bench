@@ -37,6 +37,7 @@ the PR, then:
    ```bash
    uv run oab generate --all
    uv run oab validate
+   uv run oab audit                          # no false accepts or rejects
    harbor run -p tasks/<task-id> -a oracle   # must score reward 1
    uv run pytest
    ```
@@ -58,6 +59,9 @@ the PR, then:
 Do not hand-edit anything under `tasks/<task-id>/` — it is generated.
 Do not edit `tasks/*/tests/grader.py` — it is a verbatim copy of
 `src/oab/_verifier_core.py` (edit the core, then regenerate).
+Verifier changes start with a failing test and must leave `oab audit`
+at zero false accepts and zero false rejects
+([docs/verification.md](docs/verification.md#mutation-audit-false-accepts-and-false-rejects)).
 
 ## Changing the verifier
 
