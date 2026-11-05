@@ -272,3 +272,53 @@ def test_pass_at_k_and_pass_hat_k_estimators():
     assert pass_at_k(5, 2, 1) == pass_hat_k(5, 2, 1) == 2 / 5
     # fewer attempts than k: not available, never 0
     assert pass_at_k(2, 2, 3) is None and pass_hat_k(2, 2, 3) is None
+
+
+def test_reliability_columns_in_leaderboard(tmp_path: Path):
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    for suffix, reward in zip("abc", (1, 1, 0), strict=True):
+        _trial(job, f"je-y__{suffix}", "je-y", {"reward": reward})
+    for suffix in "abc":
+        _trial(job, f"mc-x__{suffix}", "mc-x", {"reward": 1}, {"final_answer": ["A"]})
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+
+    _runs, board_path = write_report(job, manifest, out_dir=tmp_path / "out")
+    board = board_path.read_text()
+    # Default k = fewest graded attempts on any task (3 here).
+    assert "Reliability (k=3): pass@3 **100.0%**, pass^3 **50.0%**" in board
+    assert "| je-y | journal-entry | 3 | 0 | 66.7% | - | 100.0% | 0.0% |" in board
+    assert "| mc-x | multiple-choice | 3 | 0 | 100.0% | 1.00 | 100.0% | 100.0% |" in board
+
+    _runs, board_path = write_report(job, manifest, out_dir=tmp_path / "k4", k=4)
+    board = board_path.read_text()
+    assert "Reliability (k=4): not available (no task has 4 graded attempts)" in board
+    assert "| je-y | journal-entry | 3 | 0 | 66.7% | - | n/a | n/a |" in board
+
+
+def test_report_cli_passes_k(tmp_path: Path):
+    from oab.cli import main
+
+    job = make_job(tmp_path)
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+    out = tmp_path / "out"
+    assert (
+        main(
+            [
+                "report",
+                "--job",
+                str(job),
+                "--manifest",
+                str(manifest),
+                "--out",
+                str(out),
+                "--k",
+                "2",
+            ]
+        )
+        == 0
+    )
+    assert "Reliability (k=2)" in (out / "leaderboard.md").read_text()

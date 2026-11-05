@@ -297,6 +297,7 @@ def _cmd_report(args) -> int:
             Path(args.manifest),
             prices=prices,
             out_dir=Path(args.out) if args.out else None,
+            k=args.k,
         )
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -366,6 +367,11 @@ def main(argv: list[str] | None = None) -> int:
     rep.add_argument("--manifest", default="tasks/manifest.json")
     rep.add_argument("--prices", help="JSON price table (see prices.example.json)")
     rep.add_argument("--out", help="output directory (default: the job directory)")
+    rep.add_argument(
+        "--k",
+        type=int,
+        help="attempts per task for pass@k / pass^k (default: fewest graded attempts on any task)",
+    )
     rep.set_defaults(fn=_cmd_report)
     cw = sub.add_parser("crosswalk")
     cw.add_argument("--dir", default="crosswalks")

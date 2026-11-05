@@ -263,6 +263,7 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
         tasks[task_id] = {
             "task_id": task_id,
             "n_trials": len(trials),
+            "n_successes": sum(1 for r in trials if r["reward"] == 1),
             "n_errored": len(all_trials) - len(trials),
             "mean_reward": mean_reward,
             "score": score,
@@ -276,9 +277,44 @@ def aggregate_tasks(rows: list[dict]) -> dict[str, dict]:
             "parse_failure_rate": _mean_numeric(trials, "parse_failure"),
             "mean_wall_seconds": _mean_numeric(trials, "wall_seconds"),
             "mean_cost_usd": _mean_numeric(trials, "cost_usd"),
-            **{axis: all_trials[0].get(axis) for axis in AXES},
+            **{axis: all_trials[0].get(axis) for axis in (*AXES, "family")},
         }
     return tasks
+
+
+def default_k(tasks: dict[str, dict]) -> int | None:
+    """Fewest graded attempts on any graded task, so every task has a value."""
+    counts = [task["n_trials"] for task in tasks.values() if task["n_trials"]]
+    return min(counts) if counts else None
+
+
+def _reliability(task: dict, k: int | None) -> tuple[float | None, float | None]:
+    if k is None:
+        return None, None
+    n, c = task["n_trials"], task["n_successes"]
+    return pass_at_k(n, c, k), pass_hat_k(n, c, k)
+
+
+def _pct(value: float | None) -> str:
+    return f"{value * 100:.1f}%" if value is not None else "n/a"
+
+
+def _mean(values: list[float]) -> float | None:
+    return sum(values) / len(values) if values else None
+
+
+def _group_reliability(
+    tasks: dict[str, dict], axis: str, k: int | None
+) -> dict[str, tuple[float | None, float | None]]:
+    groups: dict[str, tuple[list[float], list[float]]] = {}
+    for task in tasks.values():
+        at, hat = _reliability(task, k)
+        if at is None or hat is None:
+            continue
+        ats, hats = groups.setdefault(str(task.get(axis)), ([], []))
+        ats.append(at)
+        hats.append(hat)
+    return {g: (_mean(a), _mean(h)) for g, (a, h) in groups.items()}
 
 
 def _group_means(tasks: dict[str, dict], axis: str) -> dict[str, tuple[int, float]]:
@@ -309,7 +345,10 @@ def _confidence_bins(rows: list[dict]) -> list[tuple[str, int, float]]:
     return out
 
 
-def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | None) -> str:
+def render_leaderboard(
+    rows: list[dict], tasks: dict[str, dict], prices: dict | None, k: int | None = None
+) -> str:
+    k = k if k is not None else default_k(tasks)
     graded_tasks = [t for t in tasks.values() if t["score"] is not None]
     overall = sum(t["score"] for t in graded_tasks) / len(graded_tasks) if graded_tasks else 0.0
     n_graded = sum(1 for r in rows if r.get("graded", True))
@@ -324,6 +363,20 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
         f"{n_graded} graded trial(s).",
         "",
     ]
+    reliable = [r for task in tasks.values() if None not in (r := _reliability(task, k))]
+    if k is not None and reliable:
+        lines += [
+            f"Reliability (k={k}): pass@{k} **{_mean([r[0] for r in reliable]) * 100:.1f}%**, "
+            f"pass^{k} **{_mean([r[1] for r in reliable]) * 100:.1f}%** over "
+            f"{len(reliable)} task(s) with at least {k} graded attempts. pass^{k} (every "
+            "attempt verified) is the deployment bar; mean reward is diagnostic.",
+            "",
+        ]
+    elif k is not None:
+        lines += [
+            f"Reliability (k={k}): not available (no task has {k} graded attempts).",
+            "",
+        ]
     if n_errored:
         exceptions = Counter(r.get("exception") for r in rows if not r.get("graded", True))
         detail = ", ".join(f"{name} x{count}" for name, count in sorted(exceptions.items()))
@@ -352,15 +405,16 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
         "",
         "## Per task",
         "",
-        "| Task | Format | Graded | Errored | Score | Agreement |",
-        "|---|---|---:|---:|---:|---:|",
+        f"| Task | Format | Graded | Errored | Score | Agreement | pass@{k} | pass^{k} |",
+        "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for task in tasks.values():
         agreement = f"{task['agreement']:.2f}" if task["agreement"] is not None else "-"
         score = f"{task['score'] * 100:.1f}%" if task["score"] is not None else "n/a"
+        at, hat = _reliability(task, k)
         lines.append(
             f"| {task['task_id']} | {task.get('format')} | {task['n_trials']} "
-            f"| {task['n_errored']} | {score} | {agreement} |"
+            f"| {task['n_errored']} | {score} | {agreement} | {_pct(at)} | {_pct(hat)} |"
         )
     workflow_tasks = [
         task for task in tasks.values() if task.get("mean_rubric_completion") is not None
@@ -423,10 +477,18 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
                         f"| {task['task_id']} | {check_id} | {entry['cluster']} | "
                         f"{entry['passed']}/{entry['total']} | {entry['rate'] * 100:.1f}% |"
                     )
-    for axis in AXES:
-        lines += ["", f"## By {axis}", "", f"| {axis} | Tasks | Score |", "|---|---:|---:|"]
+    for axis in (*AXES, "family"):
+        lines += [
+            "",
+            f"## By {axis}",
+            "",
+            f"| {axis} | Tasks | Score | pass@{k} | pass^{k} |",
+            "|---|---:|---:|---:|---:|",
+        ]
+        reliability = _group_reliability(tasks, axis, k)
         for group, (count, mean) in _group_means(tasks, axis).items():
-            lines.append(f"| {group} | {count} | {mean * 100:.1f}% |")
+            at, hat = reliability.get(group, (None, None))
+            lines.append(f"| {group} | {count} | {mean * 100:.1f}% | {_pct(at)} | {_pct(hat)} |")
     bins = _confidence_bins(rows)
     if bins:
         lines += [
@@ -447,6 +509,7 @@ def write_report(
     manifest_path: Path,
     prices: dict | None = None,
     out_dir: Path | None = None,
+    k: int | None = None,
 ) -> tuple[Path, Path]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     rows = load_runs(job_dir, manifest, prices=prices)
@@ -460,5 +523,5 @@ def write_report(
         "".join(json.dumps(row, default=str) + "\n" for row in rows), encoding="utf-8"
     )
     board_path = out / "leaderboard.md"
-    board_path.write_text(render_leaderboard(rows, tasks, prices), encoding="utf-8")
+    board_path.write_text(render_leaderboard(rows, tasks, prices, k=k), encoding="utf-8")
     return runs_path, board_path
