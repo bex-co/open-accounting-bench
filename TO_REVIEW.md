@@ -439,6 +439,50 @@ crosswalk mappings.
   trial-balance/subledger/bank extracts when the close evidence says
   to reconcile January from the ledger and close files; and confirm
   the capital improvement's February in-service convention.
+- 2026-11-04 — hardened month-end workflow recalibration at
+  `GENERATOR_VERSION` 0.8.0 (Dynamic pilot still has no Stable seed).
+  What to review: 15 issue determinations across nine clusters and
+  70 typed checks; discovery-based workflow evidence from
+  `documents/close_*.csv` `evidence_key`/`evidence_keys` with an
+  intentionally empty starter evidence object; quantity-linked
+  premature product-sale revenue and COGS reversals tied to the
+  signed inventory count; deferral of an unearned February service
+  milestone and the January completed-milestone false alarm; 0%
+  reserve for an aging row settled in full by the February evidence
+  cutoff; FOB shipping-point goods in transit in
+  `Assets:GoodsInTransit` against accounts payable; half-month
+  expiry in the first and last months of a mid-month six-month rent
+  prepayment; overtime wages accrued to `Liabilities:AccruedWages`;
+  routine-repair expensing with draft depreciation reversal;
+  fixed-asset impairment through accumulated depreciation; a
+  January 15 principal payment with January interest on average
+  opening/ending principal and separate current-portion
+  classification; NSF reinstatement plus a revised bank fee credited
+  to bank; final trial-balance/current-period signs, including
+  goods-in-transit and accrued-wages reporting fields; and the
+  unchanged professional level scores/crosswalk proposals. Stable
+  tasks were regenerated for the 0.8.0 version/digest change; the
+  Dynamic family has no Stable freeze. Specific concerns: confirm
+  the signed count for the premature-sale item is unambiguously
+  linked to subledger/book quantity plus the unshipped order;
+  confirm the January service false alarm is coherent although it
+  is evidence-only and has no separate draft transaction; confirm
+  the fixed-asset review may use pack master asset cost and
+  accumulated depreciation while January repair/improvement draft
+  overlays remain ledger-only; confirm a revised bank-advice fee is
+  a direct bank charge rather than an accrued liability (panel
+  adjudication flagged the current "accrued" wording as a
+  plausible false reject: one strong trial credited accounts
+  payable, and another booked only the increase over the
+  recurring statement fee already in the draft; a wording
+  clarification is queued for the next tuning pass); and
+  confirm the explicitly scoped absence of January draft overlays
+  from pack trial-balance/subledger/bank extracts. The hardened
+  recalibration panel completed 24/24 graded trials and the dated
+  verdict is tune and recalibrate (strong tiers 5/8 and 6/8 full
+  at 97–99% mean rubric, above the preregistered target band), so
+  no promote decision, Stable freeze, or difficulty claim is made
+  by this entry.
 
 
 ## Reviewed

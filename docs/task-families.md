@@ -712,22 +712,29 @@ professional difficulty or curriculum coverage.
 
 `month-end-close-workflow` is the first Dynamic professional pilot.
 It starts from a validated three-period evidence pack, leaves the
-current month in draft, and activates all eight linked close
-clusters per seed: revenue cutoff, receivables allowance, inventory
-count/NRV, unrecorded payables, prepayment cutoff, fixed-asset
-treatment, debt interest/classification, and bank reconciliation.
-The agent submits an adjusted ledger and structured close schedule;
-63 typed checks cover issue dispositions, local and period deltas,
-final trial-balance values, current-period performance, and cutoff
-integrity. Its seven-dimension scores in rubric order are
-P/P/P/U/P/U/P, deriving `professional`. This is a design label, not a
-difficulty result. A dated 2026-11 calibration panel (24 graded
-trials) and tuned confirmation slice (12 graded trials) found
-strong-tier saturation—both strong tiers reached 100% rubric and
-full completion in confirmation, while the lower tier remained far
-below—so the release verdict is **tune and recalibrate**. The family
-remains Dynamic-only, with no Stable freeze, until a recalibrated
-panel produces a promote verdict.
+current month in draft, and activates 15 issue determinations across
+nine linked close clusters per seed: revenue cutoff, receivables
+allowance, inventory valuation, unrecorded payables, prepayment
+cutoff, payroll cutoff, fixed-asset treatment, debt
+interest/classification, and bank reconciliation. Close facts are
+distributed across dedicated `documents/close_*.csv` sources; the
+starter workflow evidence object is empty, so agents discover
+`evidence_key`/`evidence_keys` from those sources. The agent
+submits an adjusted ledger and structured close schedule; 70 typed
+checks cover issue dispositions, primary state deltas, downstream
+final balances, trial-balance reporting, current-period performance,
+and cutoff integrity. Its seven-dimension scores in rubric order
+are P/P/P/U/P/U/P, deriving `professional`. This is a design label,
+not a difficulty result. Dated 2026-11 calibration panels found
+strong-tier saturation: at 0.7.0 both strong tiers reached 100%
+rubric and full completion in a tuned confirmation slice, and the
+hardened 0.8.0 recalibration (24 graded trials) reduced full
+completion (strong tiers 5/8 and 6/8) but kept mean rubric at
+97–99%, above the preregistered 40–70% target band, while the
+lower tier remained far below. The release verdict therefore
+remains **tune and recalibrate**, and the family stays
+Dynamic-only, with no Stable freeze, until a recalibration panel
+produces a promote verdict.
 
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
