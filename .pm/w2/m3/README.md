@@ -1,6 +1,6 @@
 # w2 · m3 — pass^k and pass@k reliability metrics
 
-**Worker:** worker2 **Goal:** `oab report` and the dataset metric report pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** todo (t001, t002 done)
+**Worker:** worker2 **Goal:** `oab report` reports pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** todo (t001, t002 done)
 
 ## Tasks (in order)
 
@@ -8,16 +8,19 @@
 | ---- | ----- | --- | ---------- |
 | t001 | Define the estimators — **DONE** | 30m | — |
 | t002 | Aggregate in `oab report` — **DONE** | 60m | t001 |
-| t003 | Expose in the dataset metric | 45m | t001 |
 | t004 | Document the metrics | 30m | t002 |
-| t005 | Adoption surface | 20m | t002, t003, t004 |
+| t005 | Adoption surface | 20m | t002, t004 |
 | t006 | Simplify | 15m | t005 |
 | t007 | Test coverage | 20m | t005 |
 | t008 | Closeout | 10m | t007 |
 
+## Dropped
+
+- ~~**t003**~~ — Expose in the dataset metric — dropped 2026-11-05: impossible under Harbor 0.24.0. `harbor/metrics/uv_script.py` hands the dataset metric script anonymous reward dicts (one JSON line per trial, `RewardDict = dict[str, NumericReward]`, no task identity), so `tasks/metric.py` cannot group attempts by task. Harbor's own `utils/pass_at_k.py` also returns nothing when a reward dict has more than one key, as OAB's do. `oab report` (t002) is where pass@k and pass^k are computed.
+
 ## Definition of done
 
-Runs with k ≥ 2 attempts show pass@k and pass^k in `oab report` and the Harbor dataset metric; the estimators are unit-tested on edge cases; `docs/metrics.md` documents them.
+Runs with k ≥ 2 attempts show pass@k and pass^k in `oab report` (the Harbor dataset metric cannot carry them — see Dropped); the estimators are unit-tested on edge cases; `docs/metrics.md` documents them.
 
 ## Source + Goal linkage
 
@@ -25,4 +28,4 @@ Runs with k ≥ 2 attempts show pass@k and pass^k in `oab report` and the Harbor
 - **Goal linkage:** B3 — gives labs and agent builders a reliability measure suited to accounting deployment, where every-time correctness matters more than average.
 - **Expected outcome:** Anyone running OAB with `-k` sees how often a model is right on every attempt, not only on average.
 - **Why now:** It is a prerequisite for the roadmap's first baseline runs; changing the headline metric after baselines are published would force reruns.
-- **Closing tasks:** Adoption surface included (new report columns and metric keys). Accounting review omitted: aggregation only, no change to accounting semantics or verifier scoring.
+- **Closing tasks:** Adoption surface included (new report columns and option). Accounting review omitted: aggregation only, no change to accounting semantics or verifier scoring.
