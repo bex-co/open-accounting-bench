@@ -7,7 +7,7 @@
 - [x] **m1** — [Verifier false-accept/reject audit and adversarial suite](./done/m1/README.md) (11 tasks) ← from brainstorm 2026-11-04
 - [x] **m2** — [Clean-month negative controls](./done/m2/README.md) (9 tasks) ← from brainstorm 2026-11-04
 - [x] **m3** — [pass^k and pass@k reliability metrics](./done/m3/README.md) (7 tasks) ← from brainstorm 2026-11-04
-- [ ] **m4** — [Account-vs-amount failure diagnostics](./m4/README.md) (8 tasks) ← from brainstorm 2026-11-04
+- [x] **m4** — [Account-vs-amount failure diagnostics](./done/m4/README.md) (8 tasks) ← from brainstorm 2026-11-04
 - [ ] **m5** — [Machine-readable review registry and reviewed-only reporting](./m5/README.md) (7 tasks) ← from brainstorm 2026-11-04
 
 ## Inbox
