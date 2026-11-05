@@ -93,7 +93,11 @@ def _cmd_generate(args) -> int:
         for task_id, seed in sorted(STABLE_SEEDS.items()):
             dirs.append(write_task(FAMILIES[task_id](seed), out, track="stable"))
             print(f"generated {dirs[-1]} (seed {seed})")
-        write_dataset_files(out, dirs)
+        from oab.reviews import effective_statuses, load_registry
+
+        registry = Path(args.registry)
+        reviews = effective_statuses(load_registry(registry), out) if registry.is_file() else {}
+        write_dataset_files(out, dirs, reviews)
         print(f"wrote {out}/dataset.toml, manifest.json, metric.py")
         return 0
     if not args.family or args.seed is None:
@@ -338,7 +342,9 @@ def _cmd_audit(args) -> int:
 
 
 def _cmd_reviews(args) -> int:
-    from oab.reviews import fingerprint, load_registry, review_summary, validate_registry
+    from collections import Counter
+
+    from oab.reviews import effective_statuses, fingerprint, load_registry, validate_registry
 
     tasks_root = Path(args.tasks)
     if args.fingerprint:
@@ -349,7 +355,7 @@ def _cmd_reviews(args) -> int:
     failures = validate_registry(rows, set(STABLE_SEEDS), to_review)
     for failure in failures:
         print(f"FAIL {failure}")
-    counts = review_summary(rows, tasks_root)
+    counts = Counter(effective_statuses(rows, tasks_root).values())
     print(
         f"{len(rows)} families: {counts['reviewed']} reviewed, "
         f"{counts['lapsed']} lapsed (content changed since review), {counts['pending']} pending"
@@ -374,6 +380,9 @@ def main(argv: list[str] | None = None) -> int:
     gen.add_argument("--family", choices=sorted(ALL_FAMILIES))
     gen.add_argument("--seed", type=int)
     gen.add_argument("--out", default="tasks")
+    gen.add_argument(
+        "--registry", default="reviews.toml", help="review registry for manifest `review`"
+    )
     gen.set_defaults(fn=_cmd_generate)
     ver = sub.add_parser("verify")
     ver.add_argument("--task-dir", required=True)

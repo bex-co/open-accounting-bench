@@ -279,9 +279,8 @@ def task_digest(task_dir: Path) -> str:
     return f"sha256:{outer.hexdigest()}"
 
 
-def build_manifest(task_dirs: list[Path], reviews: dict[str, str] | None = None) -> dict:
+def build_manifest(task_dirs: list[Path], reviews: dict[str, str]) -> dict:
     """Dataset manifest; `reviews` maps task id -> effective review status."""
-    reviews = reviews or {}
     entries = []
     for task_dir in task_dirs:
         expected = json.loads((task_dir / "tests" / "expected.json").read_text(encoding="utf-8"))
@@ -398,18 +397,11 @@ if __name__ == "__main__":
 '''
 
 
-def _review_statuses(tasks_root: Path) -> dict[str, str]:
-    """Effective review status per family from the repo's reviews.toml."""
-    from oab.reviews import effective_status, load_registry
-
-    registry = tasks_root.parent / "reviews.toml"
-    if not registry.is_file():
-        return {}
-    return {row["id"]: effective_status(row, tasks_root) for row in load_registry(registry)}
-
-
-def write_dataset_files(tasks_root: Path, task_dirs: list[Path]) -> dict:
-    manifest = build_manifest(task_dirs, _review_statuses(tasks_root))
+def write_dataset_files(
+    tasks_root: Path, task_dirs: list[Path], reviews: dict[str, str] | None = None
+) -> dict:
+    """Write manifest, dataset.toml, metric.py; `reviews` is id -> review status."""
+    manifest = build_manifest(task_dirs, reviews or {})
     (tasks_root / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )

@@ -20,12 +20,14 @@ import hashlib
 import json
 import re
 import tomllib
+from collections import Counter
 from pathlib import Path
 
+from oab.generate import _collect_task_files
+
 STATUSES = ("pending", "reviewed")
-EFFECTIVE_STATUSES = ("pending", "reviewed", "lapsed")
 REVIEWED_FIELDS = ("reviewer", "date", "fingerprint")
-_EXCLUDED = {"task.toml", "tests/grader.py", "tests/test.sh", "tests/Dockerfile"}
+_EXCLUDED = {"task.toml", "tests/grader.py", "tests/test.sh"}
 _VERSION_KEYS = {"generator_version"}
 
 
@@ -35,7 +37,8 @@ def fingerprint(task_dir: Path) -> str:
     container plumbing are excluded, so only content changes lapse a review.
     """
     digest = hashlib.sha256()
-    for path in sorted(p for p in task_dir.rglob("*") if p.is_file()):
+    # Same file set Harbor's digest uses (editor and cache files ignored).
+    for path in sorted(_collect_task_files(task_dir)):
         rel = path.relative_to(task_dir).as_posix()
         if rel in _EXCLUDED or rel.endswith("Dockerfile"):
             continue
@@ -58,6 +61,7 @@ def pending_family_ids(to_review: str) -> set[str]:
 
 
 def effective_status(row: dict, tasks_root: Path) -> str:
+    # Rows are keyed by family id, which is also the Stable task id and dir.
     if row.get("status") != "reviewed":
         return "pending"
     task_dir = tasks_root / row["id"]
@@ -69,10 +73,9 @@ def effective_status(row: dict, tasks_root: Path) -> str:
 def validate_registry(rows: list[dict], family_ids: set[str], to_review: str) -> list[str]:
     """Registry drift: CI fails on any returned message."""
     failures: list[str] = []
-    seen: dict[str, int] = {}
+    seen = Counter(row.get("id") for row in rows)
     for row in rows:
         family = row.get("id")
-        seen[family] = seen.get(family, 0) + 1
         if row.get("status") not in STATUSES:
             failures.append(f"{family}: status must be one of {STATUSES}")
         if row.get("status") == "reviewed":
@@ -95,8 +98,6 @@ def validate_registry(rows: list[dict], family_ids: set[str], to_review: str) ->
     return failures
 
 
-def review_summary(rows: list[dict], tasks_root: Path) -> dict[str, int]:
-    counts = dict.fromkeys(EFFECTIVE_STATUSES, 0)
-    for row in rows:
-        counts[effective_status(row, tasks_root)] += 1
-    return counts
+def effective_statuses(rows: list[dict], tasks_root: Path) -> dict[str, str]:
+    """Family id -> pending / reviewed / lapsed."""
+    return {row["id"]: effective_status(row, tasks_root) for row in rows}

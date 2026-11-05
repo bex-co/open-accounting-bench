@@ -93,6 +93,7 @@ def test_manifest_carries_effective_review_status():
 
 def test_generated_manifest_marks_changed_reviewed_task_lapsed(tmp_path: Path):
     from oab.generate import write_dataset_files
+    from oab.reviews import effective_statuses
 
     tasks_root = tmp_path / "tasks"
     task = shutil.copytree(
@@ -102,6 +103,12 @@ def test_generated_manifest_marks_changed_reviewed_task_lapsed(tmp_path: Path):
         f'[[family]]\nid = "{task.name}"\nstatus = "reviewed"\nreviewer = "R"\n'
         f'date = "2026-01-01"\nfingerprint = "{fingerprint(task)}"\n'
     )
-    assert write_dataset_files(tasks_root, [task])["tasks"][0]["review"] == "reviewed"
+
+    def manifest_review() -> str:
+        rows = load_registry(tmp_path / "reviews.toml")
+        manifest = write_dataset_files(tasks_root, [task], effective_statuses(rows, tasks_root))
+        return manifest["tasks"][0]["review"]
+
+    assert manifest_review() == "reviewed"
     (task / "instruction.md").write_text("Changed instruction.\n")
-    assert write_dataset_files(tasks_root, [task])["tasks"][0]["review"] == "lapsed"
+    assert manifest_review() == "lapsed"
