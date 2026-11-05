@@ -155,6 +155,7 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
             "answer": (answer or {}).get("final_answer"),
             "confidence": reward.get("confidence", (answer or {}).get("confidence")),
             "parse_failure": reward.get("parse_failure"),
+            "over_action": reward.get("over_action"),
             "input_tokens": agent_result.get("n_input_tokens"),
             "output_tokens": agent_result.get("n_output_tokens"),
             "cost_usd": _cost(agent_result, agent.get("model_name"), prices),
@@ -316,6 +317,13 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
         )
     if parse:
         lines.append(f"Parse-failure rate: {sum(parse) / len(parse) * 100:.1f}%.")
+    over = [r["over_action"] for r in rows if isinstance(r.get("over_action"), int | float)]
+    if over:
+        acted = int(sum(over))
+        lines.append(
+            f"Over-action rate (no-action controls): **{acted / len(over) * 100:.1f}%** "
+            f"({acted} of {len(over)} trials changed a ledger that needed no change)."
+        )
     lines += [
         "",
         "## Per task",

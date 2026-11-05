@@ -355,6 +355,9 @@ def _verify_ledgers(
         passed=not economic_failures,
         failures=economic_failures,
     )
+    # No-action controls (the correct answer adds nothing): report whether
+    # the agent acted anyway. Diagnostic only; the layers decide reward.
+    extras = {"over_action": 1.0 if new_count else 0.0} if bounds == (0, 0) else {}
 
     # Layer 4: financial reconciliation.
     recon_failures: list[str] = []
@@ -418,7 +421,8 @@ def _verify_ledgers(
             "economic_consistency": economic,
             "reconciliation_accuracy": reconciliation,
             "operational_integrity": integrity,
-        }
+        },
+        extras=extras,
     )
 
 

@@ -350,3 +350,17 @@ def test_clean_month_over_action_fails_non_structural_layers():
         assert not layers["economic_consistency"].passed
         assert not layers["operational_integrity"].passed
         assert not layers["workflow_rubric"].passed
+
+
+def test_over_action_diagnostic_only_on_no_action_tasks():
+    clean = _instance(_clean_seeds()[0])
+    assert _grade(clean).to_reward_json()["over_action"] == 0.0
+    extra = (
+        '2026-01-31 * "Supplier" "Accrue February utility invoice"\n'
+        "  Expenses:Utilities  400.00 USD\n"
+        "  Liabilities:AccountsPayable  -400.00 USD\n"
+    )
+    over = _grade(clean, ledger=clean.initial_ledger + "\n" + extra)
+    assert over.to_reward_json()["over_action"] == 1.0
+    adjustments = _instance(8)
+    assert "over_action" not in _grade(adjustments).to_reward_json()

@@ -236,3 +236,24 @@ def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path
     assert "| wf-z | revenue-primary | revenue-cutoff | 1/2 | 50.0% |" in board
     assert "150.0" in board
     assert "should-not-be-copied" not in board
+
+
+def test_over_action_rate_from_no_action_trials(tmp_path: Path):
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    _trial(job, "close__a", "month-end-close-workflow", {"reward": 1, "over_action": 0.0})
+    _trial(job, "close__b", "month-end-close-workflow", {"reward": 0, "over_action": 1.0})
+    _trial(job, "close__c", "month-end-close-workflow", {"reward": 1, "over_action": 0.0})
+    _trial(job, "je-y__a", "je-y", {"reward": 1})
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+    runs_path, board_path = write_report(job, manifest, out_dir=tmp_path / "out")
+    rows = {
+        json.loads(line)["trial"]: json.loads(line) for line in runs_path.read_text().splitlines()
+    }
+    assert rows["close__b"]["over_action"] == 1.0
+    assert rows["je-y__a"]["over_action"] is None
+    assert (
+        "Over-action rate (no-action controls): **33.3%** (1 of 3 trials" in board_path.read_text()
+    )

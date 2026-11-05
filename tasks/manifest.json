@@ -14,7 +14,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:245d32f0d63a5c4e21e0eee1519486ab5cf4666f2f82df4ee8bd113aa038e7df"
+      "digest": "sha256:35bbde44b1508e57501bec92b442af95212e4c0726dac1e4bb0b94537296a79a"
     },
     {
       "task_id": "absorption-variable-income-difference",
@@ -28,7 +28,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:708916ad9323385f5f45b443d10c39925a8d53b19fe79aa90e28571ad45d8a99"
+      "digest": "sha256:d694f8c7d0550513556a3391b9df5014492c44d9ec6636d25ff3fa03c14b8186"
     },
     {
       "task_id": "accounting-equation-missing-equity",
@@ -42,7 +42,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:51598f90c883c3a4aeaa392f23b7c7411a20ec7413f206e9d72aef693fe6d436"
+      "digest": "sha256:9833d89a00fd11e7c438da54d46b3f75ff4947faa152c292791e9e08fe03dd16"
     },
     {
       "task_id": "accrual-deferral-reversal",
@@ -56,7 +56,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:06d43dc9dd0f4729197183f960c042c9701f9f3c535f1bbfda872c92a53bddc5"
+      "digest": "sha256:cbb42c254503a806b43f3a19322189dd5a4d4f8748fed38d087a6a55726a4760"
     },
     {
       "task_id": "accrued-wages-adjustment",
@@ -70,7 +70,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e96c2043f4802b799cce2ec85a315f32737620c34ce47009c5dd9221e2224fa6"
+      "digest": "sha256:ffd9270158897dac4346fc6f6100437b124c01eafc429120865b5c165b0efd95"
     },
     {
       "task_id": "adjusted-ebitda-computation",
@@ -84,7 +84,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7e1ba4fd3a70496d79152e171944e83ee28e3ee9bbb3b72f2427e0bc2ba752e1"
+      "digest": "sha256:a796f8efafe05504d2aa4d00e4c4cd4e7d18920e9142e68b5034f0d1abf63fbc"
     },
     {
       "task_id": "adjusted-profit-from-draft",
@@ -98,7 +98,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1f1e9b55a79bc67f7536159d24d5076ac4585c84a4200e277ef027c5f505d006"
+      "digest": "sha256:0f59dcfbf7878b709090fefdd08c3b960eb996a03a93e5faae50b2231c1f70fb"
     },
     {
       "task_id": "adjusted-receivable-balance",
@@ -112,7 +112,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:197b983c1cfc0ecaa149919700ce39505daa68b0c3c556d64e58de52bc1c40b9"
+      "digest": "sha256:1fea3b893678fda894fc4437780d61bebae560ef8dea893e5db01b734f1acc41"
     },
     {
       "task_id": "adjusted-wage-expense",
@@ -126,7 +126,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e862ea905ea1c416def10573249dc181cc307f7dd12b6789549e17f85a76fc4a"
+      "digest": "sha256:bede1b6b9ad7e755b6fd6ba6227366c4f9fc32a93c7461ce5ff9eeeca5c01e55"
     },
     {
       "task_id": "agent-commission-revenue",
@@ -143,7 +143,7 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:3f9e877a3df46507bfad3bffd5f5ee05124b89948a14f30512fdf9fecd9092b3"
+      "digest": "sha256:2453c4b7d7e985c96196031d8b8c2ef10f423943e22a10798fd829d0de2c7d6b"
     },
     {
       "task_id": "agi-above-line-adjustments",
@@ -157,7 +157,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:05372cea9827d4e9b0cf2a89a234711cd4143e3b9d73e3cf1c4fe0856a916e70"
+      "digest": "sha256:2f62d40ef97b2ca204756e6caa4b70fd38f801bda83221418776ad3f62f4c989"
     },
     {
       "task_id": "allowance-estimate-reperformance",
@@ -171,7 +171,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8c7ead616f14e94d6f3bee74d25206286d1b655792bbe1d7c2f784e4bd674c72"
+      "digest": "sha256:c713d920ec7247b7fb05608be63bf29e716ace398aad6388307fcb872e0eef0c"
     },
     {
       "task_id": "allowance-movement-expense",
@@ -185,7 +185,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9a1f55e097a22aadd5de72901a0cc6abb62f59c69a4a9353416451da5be0f352"
+      "digest": "sha256:395187cba0c9b5366fa160686b74c6a143bc3f2e35583dd3cd574498c963494d"
     },
     {
       "task_id": "aro-accretion",
@@ -201,7 +201,7 @@
       "standards": [
         "asc:410"
       ],
-      "digest": "sha256:f96f2a5cedffc0713fae4de6cf73d7197c3391c1535166c51c49a24c29f1b013"
+      "digest": "sha256:944c9726b13245ad9eb9296f8ddb3a05b60ead5ca838577f303c60d62be3bacb"
     },
     {
       "task_id": "asset-revaluation-surplus",
@@ -217,7 +217,7 @@
       "standards": [
         "ias:16"
       ],
-      "digest": "sha256:0b53d2faa7713e5ad7c93b85a7ec924d5a515666ad7cd4c0ebd2ba8528191afe"
+      "digest": "sha256:1d460af37f7fa2d47391caa9b083eeb9494beadf2db4e74abc704676ec48f3b5"
     },
     {
       "task_id": "asset-turnover-ratio",
@@ -231,7 +231,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0311f8ede61500e39add165eaf9229255835e2971ab3953d195bc5893336e106"
+      "digest": "sha256:522ab86f88ecac8a50055cb8031f631e0c768ba3a0db9f0f4d7c4d4b881e0bb2"
     },
     {
       "task_id": "audit-data-missing-entries",
@@ -245,7 +245,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:58d981d73ea7d6dc91bcb63c6b99be78d1cfb0f3d24e9892fcdec4b6a258247d"
+      "digest": "sha256:6331eddbb01f19d4a71accaebd60cf39bc84131109d1762a342a9ce8faf54dbf"
     },
     {
       "task_id": "bad-debt-percent-of-sales",
@@ -259,7 +259,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4b1322002b7aac1fcaa49ae5079a4d9b91c3adec155ecd0738eb5009a846d31e"
+      "digest": "sha256:d9318a91110560118834510fcfdcca2ad9ced33682aab007ade4e99838d1956e"
     },
     {
       "task_id": "bank-adjusted-balance",
@@ -273,7 +273,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:54206cd511f95495617f35b9b7ed963ab0f98121afee98c31dad926661b6669d"
+      "digest": "sha256:99b5b322abd203676f4b5281a31a5d832bec9c7d369cd82ba1c009d04e785efc"
     },
     {
       "task_id": "bank-recon-missing-fee",
@@ -287,7 +287,7 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:4575848287f2b94096d42decda38850c5535571e3ce3698e2bb8f0b0471ea134"
+      "digest": "sha256:0c96456b812c29f2d147ddee4805d22f61760bfcca863d1560396aace2d87c90"
     },
     {
       "task_id": "basis-adjustment-754-allocation",
@@ -301,7 +301,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bb18b36cf490313112d0f8203faafd639fccd0280a65f5297dd70f55b79ba199"
+      "digest": "sha256:9da6dc9eac4454dc7621a34abf81f23aa40f41339dfd3fcf4b6342351aa9d42d"
     },
     {
       "task_id": "basket-purchase-allocation",
@@ -315,7 +315,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:70485cc86ad3b140549164e9b29e56d730e72334fe574761652645d3d4b28213"
+      "digest": "sha256:5f33ca1c63f233f593bdb12c76be765093e3a5c39f0d95f6968e74756aa1cd9d"
     },
     {
       "task_id": "below-market-imputed-interest",
@@ -329,7 +329,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:85af8e55fedd775c6f6303b90c3ed5521d188c47978d38362968f01bf9bbd6a8"
+      "digest": "sha256:8298af39460abb2e23396585ef7bbc34679dd7e1c183e61fa8c653e32c90d8cd"
     },
     {
       "task_id": "benefit-plan-net-assets",
@@ -345,7 +345,7 @@
       "standards": [
         "asc:962"
       ],
-      "digest": "sha256:9a998620eaadfab0f125b2f093b67ad9efa093ce89b523e97fea628b22d343f1"
+      "digest": "sha256:41b102e7fbdcc3823eff2c8f7aa64c0b624a9d9004e090e624e7d98c17754079"
     },
     {
       "task_id": "biological-asset-fair-value",
@@ -361,7 +361,7 @@
       "standards": [
         "ias:41"
       ],
-      "digest": "sha256:4cde1c104b9a7b6784d8a61083e18054d3374cb253c23850f897bc4b78c88b6f"
+      "digest": "sha256:2f7e7eda81bb05ec91d75a052fd6311dbc5fb08e246acfdd57cdc23d1d2ed336"
     },
     {
       "task_id": "bond-discount-amortization",
@@ -378,7 +378,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:a00156d3d2e37cd922f5ede112d3864480ec1cb1b58fed9d7a4129b84a5f576c"
+      "digest": "sha256:58c72392bc8ad6a9d6f790f10cc75772d5a8cafb1c708a3e1598b0c7733bc5d8"
     },
     {
       "task_id": "bond-early-retirement",
@@ -395,7 +395,7 @@
         "asc:405-20",
         "ifrs:9"
       ],
-      "digest": "sha256:c5eb6ff7d5607af7f979a642b483d53ca96ba80d7b05055bedc0d2ca24dc61e7"
+      "digest": "sha256:76bbd58ca7b22f0fe4d1da21fb78d381704d8020d6962dbd31ef6bd4fed21867"
     },
     {
       "task_id": "bond-issue-price",
@@ -412,7 +412,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:70617b54802207d120cde51750ed29061dd86ab3e04c12e3e546595b33e8f2b2"
+      "digest": "sha256:5eb99eda0771e66b69fc8221e5a12a8759519016c1a8f1fedcab730369791d26"
     },
     {
       "task_id": "bond-issued-at-premium",
@@ -429,7 +429,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:acdc358bed763188885beffd25bf71cde28f6ede254a8b8130ba813d4bd5292e"
+      "digest": "sha256:7fa6f410fa6525d0dd2af4fe384ac45b5f8f8064b07d84d55236e381267a3391"
     },
     {
       "task_id": "breakeven-sales-dollars",
@@ -443,7 +443,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:09df63412a4e9580f02a15e9da8c75bd6bb08a05f055d0fcd0f779f48eb3e555"
+      "digest": "sha256:67cc6bdb9c163d0ec8640fd8decb4a80e0511ead270a24d691c4a0555c768732"
     },
     {
       "task_id": "budget-vs-actual-net-variance",
@@ -457,7 +457,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8e34024a83e6e537cb48c13432258a01bf9c93ac82c70565e70a19ce8b2198fc"
+      "digest": "sha256:6f67914452e80558c1f5d2ba47f808729a409e058cedf5885c4b3e5ed329f607"
     },
     {
       "task_id": "builtin-gains-tax-base",
@@ -471,7 +471,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a29cd01a0296132872e9209a15f9d1c36391a93ff43a8ee326576e28e64b84a8"
+      "digest": "sha256:ae6b57c7a3d4d5b98644e7d72b020140257bffbae36f2f9aefb09298c436b52c"
     },
     {
       "task_id": "business-combination-acquisition",
@@ -488,7 +488,7 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:6574ce42e4674c7ea80574accaed91ff496deb9ee1c253bdab32f62ec731aebc"
+      "digest": "sha256:92797a0a818d43620e874d0d7bbcaacd672e1f5fb381d836f2cd693324a85de6"
     },
     {
       "task_id": "c-corporation-taxable-income",
@@ -502,7 +502,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:816f30b5ec81f6b1ea34866e3ab6ca9cedfcc51d1f03d05e13e49548a6c7398a"
+      "digest": "sha256:853521fd88258334ee546bc291674a7856de29df2d9ae679f20239d0b2bf0b01"
     },
     {
       "task_id": "capital-loss-carryforward",
@@ -516,7 +516,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c37692532705d9edccab771bac6216d9f57b137de3716ef571e6840ed7f9644d"
+      "digest": "sha256:757342988ee05b460c966180171535f39ca4ac1dba0ec010ee4b52ddbd1ead0e"
     },
     {
       "task_id": "capitalized-cost-bundle",
@@ -530,7 +530,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4255375e6049065111c11167d070d8f5b57efea9b8d41138da34f6f9b01c9522"
+      "digest": "sha256:2e36b15bedcb134e335362274d1984b4827cf86f76a7c91e665ae4927593fc4a"
     },
     {
       "task_id": "capm-expected-return",
@@ -544,7 +544,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:44f7979a1c785d271ed8bcf592f7fc4d1225059367e97f8e8f638711adfc7035"
+      "digest": "sha256:3b0912de54ecf3489794cbe892f801a32ff9f21a386e449c696054899a43752c"
     },
     {
       "task_id": "cash-and-equivalents-total",
@@ -558,7 +558,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fd363db78b2d2100e7f126824336be84bf12e7ab1e31121808ca3f78d8e68f37"
+      "digest": "sha256:e8d9235a140e0ae474c2e379013637367ccd32f323fc962aacafeefdde983d6b"
     },
     {
       "task_id": "cash-collected-from-customers",
@@ -575,7 +575,7 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:922114f0d5ed8a25e1554ab3b263a52f0a641cd51e54ab80bd3ef388eb7e3c07"
+      "digest": "sha256:2bf8e5bda3af2413df9faf1c2107d9dfa9e79f33be40d7f76388d74cfacf9538"
     },
     {
       "task_id": "cash-collections-budget",
@@ -589,7 +589,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f3c6029f51fce93e643012d77f862886b1d66263703762b62575f3f8b2fb0060"
+      "digest": "sha256:dc59afd2b33e1f686180fc73d0e83d7b7f5c7c80e906dea959389070d2292dbc"
     },
     {
       "task_id": "cash-discount-receipt",
@@ -603,7 +603,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2a571ffefb44442bf2599bc70449e96dd4755929bc41734d874941d56d4dede6"
+      "digest": "sha256:e70bd48334146bfd6e3fb8c89433bd59e6eadb6a73a25120b8332b1a6a27239b"
     },
     {
       "task_id": "cash-dividend-declaration",
@@ -617,7 +617,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d2fa275e9b7fbc49f0860fd4fc85f9dcb875e8c6bba1d5ed58d5d2b5d4f7af9e"
+      "digest": "sha256:d9e2b4f876bea80a749ef799347dd9aedaa89606e33778fde3d022719189a4ca"
     },
     {
       "task_id": "cash-flow-hedge-fair-value",
@@ -633,7 +633,7 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:f40b16f6b1a0528a86b03f136ff0c15ce9313304387e8668142e7fd18bdbf48a"
+      "digest": "sha256:0a3857da3484261fa5e807a0496009df1e2f47c1c782b72041cc6b8bea224d0a"
     },
     {
       "task_id": "cash-to-accrual-profit",
@@ -647,7 +647,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bd0ba2d43a632ebef420c9930d45dc83429b3bf28926e271880f21eb5ed3f816"
+      "digest": "sha256:0a577021c9f1e3e68a38fbbd1b8a49fab91354f78083047610b1cb7c115e3d69"
     },
     {
       "task_id": "change-control-deviation-count",
@@ -661,7 +661,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d8820080d94482038216a38fa32a4d7363dc483213cb53ca796aa9ee6b7a8608"
+      "digest": "sha256:9a56c6df7a2ab7fdc783156e86978346f9d2fe9efbf2efb03b1169277fd48d52"
     },
     {
       "task_id": "charitable-noncash-deduction",
@@ -675,7 +675,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fc402aed7d2e36782316df47c34d16510cf9999404572f314cfc88c2e9924cbe"
+      "digest": "sha256:8590aacd592d08182f77f2cb533491602eb8e8430838e38b2dd45fb117622597"
     },
     {
       "task_id": "classify-operating-expense",
@@ -689,7 +689,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:050f6a5b5ea069eec05e2f82e37f2d8fd97a4db20f368671b481cf462742bde1"
+      "digest": "sha256:73f91a3f80fba6c9825d7ab276e821324a6b067d031caaa0905321e6e75114a7"
     },
     {
       "task_id": "closing-drawing-account",
@@ -703,7 +703,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c960e08a1d812c846d66076f69b5e7251f79023c8391e9db6b9d57dbc041067a"
+      "digest": "sha256:492fb7d463766d6605ca1a8331fea9fa2e4d73fda6f32633bc428101809adb7a"
     },
     {
       "task_id": "closing-entries-income-summary",
@@ -717,7 +717,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:170ed4577c7306337e303a239a05d22a7290cf888c778c0712567eb36d544985"
+      "digest": "sha256:83539fb8bc408dafc92366cd41f350060cac22a29e2c3644dc3f331aee81acc6"
     },
     {
       "task_id": "compliance-violations-count",
@@ -731,7 +731,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b5758df846cac30e2b2ab8a96c171509060492dcd5054c1ee147a33b88465d57"
+      "digest": "sha256:fa9b263f8ad5affd6bdf5229cceb50fe8bd6f4b6309f02c2ff6c35c1cd31f723"
     },
     {
       "task_id": "consignment-sale-recognition",
@@ -748,7 +748,7 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:d024b2e2d8dabde97ec573b32ab39d5434a11287cb28289ffc7bd62d4f216213"
+      "digest": "sha256:43a9b88bb8fd64b25dd4fc6a311e8687b2a3a3b6abdf1a3bc530376856b371e1"
     },
     {
       "task_id": "consolidation-intercompany-elimination",
@@ -765,7 +765,7 @@
         "asc:810",
         "ifrs:10"
       ],
-      "digest": "sha256:1ae73bdf66703ea56fe63b73201f3e0bcd77eecb2d2bb5159b7e9e44135e6d1a"
+      "digest": "sha256:78db54f7d16384032a24dc50ad704587c437aeef6fd9931bc62e9aafca9a3e4a"
     },
     {
       "task_id": "constructive-ownership-percent",
@@ -779,7 +779,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:15a6f9c4b6ffecb26d6be55220249d9648dada23e197f411ecb07f6e9f0dc6f0"
+      "digest": "sha256:45bae9f24e21f7ed797415ef5ee0184bdf0fa2055698284bbb044e181e881cc1"
     },
     {
       "task_id": "contract-acquisition-cost",
@@ -796,7 +796,7 @@
         "asc:340-40",
         "ifrs:15"
       ],
-      "digest": "sha256:65a8762f5991d5ab5ad4f1a68304c609d8a707bff0ffb4814b65bb5c8f1d1ab2"
+      "digest": "sha256:f8954913ba143c6ce1388b9741c361a8b0e35ce1b5f599d7029d0d5525a43c31"
     },
     {
       "task_id": "contract-modification-revenue",
@@ -813,7 +813,7 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:0687b5be5708d22f6100ea68c9f3ea9d4eb66ae876ca752c8ed94df50f0b9b63"
+      "digest": "sha256:44548073b148c7e8dd41722f17514fe175fa1233c2c337f972514972f4010df7"
     },
     {
       "task_id": "control-deviation-rate",
@@ -827,7 +827,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e61eaecd1adf6e9e769e45e6283d1da7ded8a5e1adef91e010e78b2a8a5cadd3"
+      "digest": "sha256:e0efeb83647638d52e887b3386fbc6c4f661ffb83e27e9a7aac89cac19a8a430"
     },
     {
       "task_id": "corporate-distribution-dividend",
@@ -841,7 +841,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:141ab23c95e64d6c94a4ebd1b3b346d1cf93d985a36cbcbdcc38253a0d03aa67"
+      "digest": "sha256:3d1fc84294b75529e08f9202e3b713b05f91acc33574d5f235fc1432919c3464"
     },
     {
       "task_id": "corporate-formation-gain",
@@ -855,7 +855,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:74554529b153e8b9a79ffe088aee9ad7a6df426f253ad533f29366cfd2675101"
+      "digest": "sha256:5a1dacbcae7707bb0e7193aa459824ce1cad469667b48fb22cf547d1c7b33a4f"
     },
     {
       "task_id": "correct-misclassification",
@@ -869,7 +869,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:cf91a67eb49fe6e5cb3c8ab7fabedbe67cd058a647ee7fa0c09cb2edafe1bedc"
+      "digest": "sha256:bfc4f8fe7738aa079b0643633c199d23238ed137d8692ba36542ca51eb64dda8"
     },
     {
       "task_id": "cost-of-goods-manufactured",
@@ -883,7 +883,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:839d832e7070f0839da77648b309b5c317e5b27ae05891205dddfd106e5021bc"
+      "digest": "sha256:e66d8de173b5bf02e26ec3d04656e6f22d5484adc02d4e4a712838c97395aa3f"
     },
     {
       "task_id": "credit-card-sale-fee",
@@ -897,7 +897,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a55118e52d19b1555a3c56cd29c5b0156961326ef1ff0163f705c834fb1ec37b"
+      "digest": "sha256:6b5cb76c757f8280a3fd5ea1fd1bba990b919149b30e2b6f686e6ce6033bee25"
     },
     {
       "task_id": "cumulative-preferred-dividend",
@@ -911,7 +911,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:81b7916f6752d163a430bab3233b5f355c00837cb4681446f3bcd25d8eb6bfe9"
+      "digest": "sha256:6d6e9b0a86c23a0735e0609432f399a1ab103a9d86e4f8048f6b6c774f013d72"
     },
     {
       "task_id": "current-income-tax-expense",
@@ -928,7 +928,7 @@
         "asc:740",
         "ias:12"
       ],
-      "digest": "sha256:1a4c42a5b54b15d2f30e67fd4fef0d763cf953c67c04792704422a16dbee6c84"
+      "digest": "sha256:c1dee848be9f7da2416aafc459bd062127989ed848ec816b03bb0e41d17fcfc9"
     },
     {
       "task_id": "current-portion-reclass",
@@ -942,7 +942,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:97ffead6569e2507056918117ba4fbbf982cbce909710d8a070b8f4ddaf1220f"
+      "digest": "sha256:5e791b24180065aaa39700567c2b48b17c349d95ed0299bb9e18be2525100e2f"
     },
     {
       "task_id": "current-ratio",
@@ -956,7 +956,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:64a793d141039c130660e7a31d43e89ec77b13e7fe1ef4c8c0997549b68631b9"
+      "digest": "sha256:4f024f6209977cdc65cff3b04e7bd762a567fca9b9a1920504c1235c8b968c43"
     },
     {
       "task_id": "cvp-target-profit-units",
@@ -970,7 +970,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:32edf366b39024e00182b7d9749df7d11cf3bdbdbb5314008a6dc495eddc96fe"
+      "digest": "sha256:26c7350621cb520806028ba59a491ba76245887e6451e8c4dbafd50554c3ced2"
     },
     {
       "task_id": "debt-covenant-ratio",
@@ -984,7 +984,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:67d25674c12866dc234b2348c6b62da5cad878c25177c1840b4ccedc3adc0753"
+      "digest": "sha256:80b3a49a4fea05553be16dc406d97a61349f422e7121f3cc028450d49e2a89d8"
     },
     {
       "task_id": "debt-modification-percent-change",
@@ -1001,7 +1001,7 @@
         "asc:470-50",
         "ifrs:9"
       ],
-      "digest": "sha256:980a5ea876d83f779aa1775192bb502eae23fc3405b9382fe590531dda59ab2a"
+      "digest": "sha256:e2e956f155473a4eae37cc5771dfebe2bbd389fadb2d39959ac2d1789b083466"
     },
     {
       "task_id": "debt-security-credit-loss",
@@ -1017,7 +1017,7 @@
       "standards": [
         "asc:326"
       ],
-      "digest": "sha256:8d5c96ef8e06de205be7fbbc9bd054d8273db990550e2eae4c6af4fe1c115e84"
+      "digest": "sha256:e7cf451a259988b56458d14ce04ab78725108703e35c0aee0fd2f49120a0e0bc"
     },
     {
       "task_id": "deferred-tax-asset-warranty",
@@ -1034,7 +1034,7 @@
         "asc:740",
         "ias:12"
       ],
-      "digest": "sha256:6df8161ec6cc55df412122018be4e9ba9c5134a77b0195be117c4fa59f1fa597"
+      "digest": "sha256:b716c9552943bd19978664f8992da222240c61da2b02bf13fc402bbead50d58f"
     },
     {
       "task_id": "depreciation-recapture-ordinary",
@@ -1048,7 +1048,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:826bb2452a373ed33b19a71ff5daa86e58e5de6001632a710ef9d29b7f8b7075"
+      "digest": "sha256:e5f60c5a31ed51b7123b6a0b3dc12172e4a03ccafc448959c5373848888f7ed2"
     },
     {
       "task_id": "development-cost-capitalization",
@@ -1064,7 +1064,7 @@
       "standards": [
         "ias:38"
       ],
-      "digest": "sha256:4a7644bc5db1b1a20270f673757c2edcdb0a6b595a0c623cafca17a26ecf644c"
+      "digest": "sha256:f5c027cf393fbf796da18e0df4eea0f245065640bfcd0a8e2dac5db94ea3ce3e"
     },
     {
       "task_id": "diluted-eps",
@@ -1081,7 +1081,7 @@
         "asc:260",
         "ias:33"
       ],
-      "digest": "sha256:0e21c75c86572dcb9df3debea3df79803581ede824e621ad50314ff832aabd85"
+      "digest": "sha256:98afd7dbcfdc68c834119999c7ca68af28cfcb2cbbd8b20975d4c827eac66813"
     },
     {
       "task_id": "direct-materials-used",
@@ -1095,7 +1095,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c5ce7e5fbbf633090b220d9388613978721338bfdae5ae2324c4bc4884e723ed"
+      "digest": "sha256:bd12296151a2d4e158cc1809f4356804c3b7d75533100d5dac7729e7f151483a"
     },
     {
       "task_id": "disallowed-loss-amount",
@@ -1109,7 +1109,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a8cf68ebc9c96693bd84b145697ca72b73e229ddfeaf4a3212f6ad67c33ce96f"
+      "digest": "sha256:f2895a20446e23cdc1f406fbcf165aff86387b2285346fcdbfa79289ee687663"
     },
     {
       "task_id": "disposal-of-subsidiary-gain",
@@ -1126,7 +1126,7 @@
         "asc:810",
         "ifrs:10"
       ],
-      "digest": "sha256:25b372158a1cb52696a7154d899c380cf740be7ac836e996a7be02b387e9e144"
+      "digest": "sha256:df8a59298b8f480533defdb486cacee93cde99456700e4cdbbdcc26b733596b4"
     },
     {
       "task_id": "duplicate-payments-total",
@@ -1140,7 +1140,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4f83076d974b0a310dee002a56b3a9699401624472333e0e718f16948827de20"
+      "digest": "sha256:2b43195daa4391b5bcae3f3156653b204f4e56686987b0ea4cfe153976f1e5e6"
     },
     {
       "task_id": "employer-payroll-taxes",
@@ -1154,7 +1154,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6aee0bfbfea6ade48182dc8615fbb441d27e63b66ef5c686f15c82e092e3b11a"
+      "digest": "sha256:1df770fcbabe491127e49614184f60a23e5d0ef8acedd4b83c323dacc044a608"
     },
     {
       "task_id": "ending-retained-earnings",
@@ -1168,7 +1168,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b0601fed74811f6d8c9a7581d9194576d2a42836a53021bc5f9811f257021037"
+      "digest": "sha256:00125fa718753b3ad23240c5c7498cca358a9351e014709c78b4702be3d6fcc1"
     },
     {
       "task_id": "equity-issue-above-par",
@@ -1182,7 +1182,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4c5b2277b235d004316042d0d58e8d85b60a8ddf3dda07f579cc21b9231990a7"
+      "digest": "sha256:68ca3bed897d10168f2123eda9785ebd549f48aa5c50926d9e2d7d37153805d6"
     },
     {
       "task_id": "equity-method-carrying-amount",
@@ -1199,7 +1199,7 @@
         "asc:323",
         "ias:28"
       ],
-      "digest": "sha256:dea55f95e3228be4f157bfc92c078d7276642d42b7947d3436c7ec1b33fbac12"
+      "digest": "sha256:7816df2b566404faba437c1045648b0c9ce1bcc9d615111b093e337f35ff5b6d"
     },
     {
       "task_id": "estimated-tax-installment",
@@ -1213,7 +1213,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b1e7369c0d74f197879022bed24c1557710f7b2db6038566e5ffcecf5fe0c9c3"
+      "digest": "sha256:d83efdfe90975a7c073e1062a056299fa1e9cebf9c5ec92f3be4e5bae5ed86ea"
     },
     {
       "task_id": "exit-obligation-january-amount",
@@ -1229,7 +1229,7 @@
       "standards": [
         "asc:420"
       ],
-      "digest": "sha256:e8aecdb2015670c1d8fffccdf984cd9d9c554fbddb5a86b970240ca4302c6711"
+      "digest": "sha256:e6291a44f4f4ea5e47959292b234760ef574b63c8a6801753c6da069a7a7d681"
     },
     {
       "task_id": "expected-profit-choice",
@@ -1243,7 +1243,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a0765c63f7123b88ae5cda5d6b63e951476f8461868efad775d31ca41b3c3cdc"
+      "digest": "sha256:cfe9011c72ebf2c89618c8cdb457933ee6851ed59edf775ab867d2712722916a"
     },
     {
       "task_id": "factoring-secured-borrowing",
@@ -1260,7 +1260,7 @@
         "asc:860",
         "ifrs:9"
       ],
-      "digest": "sha256:5906f13756db5516d51e7542d7f5b26d9b0ae53cee82f8133a323a47909d7f31"
+      "digest": "sha256:b3190aa8454de9048d6bd77070f624633f35981eb9ff7487b55619f204da7e73"
     },
     {
       "task_id": "fixed-overhead-volume-variance",
@@ -1274,7 +1274,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:45b77d8f26d43f5d218fc0e029ce6e0953e0eccb250be0f5520fd22e468e83dd"
+      "digest": "sha256:4dfd219dc581853b23a4afed1044a27bb36871290d206b0de3049fb5cf32f297"
     },
     {
       "task_id": "flexible-budget-total-cost",
@@ -1288,7 +1288,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c8ba751a08b2278a5e69601884ec5cb5120675283dfe95bb8d22ab4bc296ca9d"
+      "digest": "sha256:a180b5c9456922735305e9715fdf8a7ff187b27cd8ea878e28ea2ccac1cabaf1"
     },
     {
       "task_id": "free-cash-flow",
@@ -1305,7 +1305,7 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:e4fde847d0756e035c3350544e807b4611f3cbf8c3dc732a2fa5a9ccfcac790c"
+      "digest": "sha256:1bd824632954deac122e73461333125eddb473448756e7d22bd82e319558b8b7"
     },
     {
       "task_id": "fsa-tax-saving",
@@ -1319,7 +1319,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9b6b60447e0dab637da91e73d013f6a8d716f7f1a50f000fd48f81993f2eecc4"
+      "digest": "sha256:67eba789760987f218417389b57b376eb2536960a859a020dec5680146964621"
     },
     {
       "task_id": "fvoci-fair-value-adjustment",
@@ -1335,7 +1335,7 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:3147ea2c877a7e8169a2f964b6471b05a12908eb3e24d1b80d26f17551989c0c"
+      "digest": "sha256:a1b72c007668cd2b158994b937d21cb12462a12f6e8187621730046d524ea981"
     },
     {
       "task_id": "fx-payable-remeasurement",
@@ -1352,7 +1352,7 @@
         "asc:830",
         "ias:21"
       ],
-      "digest": "sha256:25f2eb9d021a672fba5f3f6394b31e7b95e6028b59bb37a9f1414a8d0ebf171b"
+      "digest": "sha256:9e07b7ff83f7641abad34cf60a2d02051751065de73807e318391e2d31dde2d5"
     },
     {
       "task_id": "fx-translation-adjustment",
@@ -1369,7 +1369,7 @@
         "asc:830",
         "ias:21"
       ],
-      "digest": "sha256:b5fb0189df47adedc5068108161cc8b2295243df698df0d65fdd451e113ba838"
+      "digest": "sha256:798e9892472a9d7cae0c8fdf9a3612a4b0cbf5e4fa08fdab80f141be4851127d"
     },
     {
       "task_id": "gift-card-breakage-revenue",
@@ -1386,7 +1386,7 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:4c949c71900edecdddc4d20c702b497283025d89ae06276e6b735d66fdfb117d"
+      "digest": "sha256:c94fc04d1ebc4816ed74efb6e61dfc80881f9c3c2b9277dd84373b3316838322"
     },
     {
       "task_id": "goodwill-impairment",
@@ -1402,7 +1402,7 @@
       "standards": [
         "ias:36"
       ],
-      "digest": "sha256:3e50ae314c428da6dcede39bd53448208ed920c76e8b8fadf50ea3a4e2e22a3a"
+      "digest": "sha256:38e843e530a5dc8e46c2d15b8cf2ed7a8ed852bc58835e2601bb62f96fb2a3a9"
     },
     {
       "task_id": "government-grant-release",
@@ -1418,7 +1418,7 @@
       "standards": [
         "ias:20"
       ],
-      "digest": "sha256:64785999d5f42037ee65f77a5c2edd783953fad3d79a5400af5a9fa891d07504"
+      "digest": "sha256:5f4365b4b74220fd4fb68712c7826ecacb9ce5126fc83b72f90e17e1d8a8a8cc"
     },
     {
       "task_id": "governmental-encumbrance-entry",
@@ -1432,7 +1432,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5fe05368ea3acf0a158516c1ce537cdf26c49c89363afd95ad54a18b7473f687"
+      "digest": "sha256:fcf5a4a522db4b5fde6db827ff148f42ecab6b8adadb28f456ecb6f4bf4ba51c"
     },
     {
       "task_id": "govt-capitalized-costs-total",
@@ -1446,7 +1446,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c3f6d1a5f36aa67379a7d118180d2950a467e5199851381fc5066f8dd5bba0f7"
+      "digest": "sha256:57ea13838d050930934dca937cc6cf4f8abc1eb1e3047bc743ad361a28ab41d5"
     },
     {
       "task_id": "govt-conversion-net-position",
@@ -1460,7 +1460,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:81c7fc18739d8f0096d568c82d8400929b9d2d89535743e26ef7f543cdb6e250"
+      "digest": "sha256:f312c9b64cfb4d98a23d26f68c415c14b9eab7d5f38af70e33b1bd653319f85e"
     },
     {
       "task_id": "govt-expenditures-december",
@@ -1474,7 +1474,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:92a143317b0636ae11ee15532fa96bd77dad491dca7f6ff38c6554cfb05a284e"
+      "digest": "sha256:8cd030781ebbca17c932f5a3f56e0042ab7306b1479571e42a36046de63368d6"
     },
     {
       "task_id": "govt-long-term-debt-total",
@@ -1488,7 +1488,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:46342783a2df2cd50775429a8dc5ce7b5240dd1588f07f2de427878de1468882"
+      "digest": "sha256:7bab98a4d5461e0c4dff920ca4f2f7e26819b10922a5400a2289f513f49a6d56"
     },
     {
       "task_id": "govt-net-investment-capital",
@@ -1502,7 +1502,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:78ea38b8b2efb2dbb54de2ae18eee1769c6655a79bb09c4685f86128020dfa6e"
+      "digest": "sha256:113061b9a98989960e05a7695769f4a76b9a113c140e7ae40ff1f9e98f5849ca"
     },
     {
       "task_id": "gross-profit-from-trial-balance",
@@ -1516,7 +1516,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:3109914889b2a29f5e73b4f2d892ae5ae9cc2ee3261a8fa4daae73b1413d2d8b"
+      "digest": "sha256:c5b13fe2c79ce72b81dc8569bfa00a51595deb8f4f287e6a721c304f11e50f95"
     },
     {
       "task_id": "held-for-sale-measurement",
@@ -1532,7 +1532,7 @@
       "standards": [
         "ifrs:5"
       ],
-      "digest": "sha256:7f143f86d630c02d8afa5088a7a13fac6cf70438675b62d458f9f7068efe68a7"
+      "digest": "sha256:f2f0b5f1c248fc121864b26adf22f296ba7f65d8be0bc8c7377678e83fc9887d"
     },
     {
       "task_id": "high-low-variable-cost",
@@ -1546,7 +1546,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d25bb2eadeda04a2f89412cbc1298c6cd507aaaef5be0f0db4ebf4b42d835c48"
+      "digest": "sha256:8067c3945c9f77dff0a2efd2786ab08b88df9318f641b0ab93fdce4312311337"
     },
     {
       "task_id": "htm-premium-amortization",
@@ -1562,7 +1562,7 @@
       "standards": [
         "asc:320"
       ],
-      "digest": "sha256:10eed92489f7f0d839e3804b88cbf219787145c53aab16d5aa8e461f81a3c9ab"
+      "digest": "sha256:144b332fa60b4f54d27f54f2d338ddb6ab34de723a9a95048724285f7d763f40"
     },
     {
       "task_id": "ifrs-capitalize-borrowing-costs",
@@ -1578,7 +1578,7 @@
       "standards": [
         "ias:23"
       ],
-      "digest": "sha256:7fb21e86c587138a45398d0fbca2ba1a74ab67715004226241530ea27f8739d2"
+      "digest": "sha256:6899312a7923084335984f56f7480c912b2a8a942dc463b2ec23087ec2a35484"
     },
     {
       "task_id": "incident-response-deviation-count",
@@ -1592,7 +1592,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:40c93bc28ba85d1dd60c18d6de931c2dd55c2c475d1f019d791a7217da866662"
+      "digest": "sha256:cc8efaf79d518a064d4cd1841bb3b09a1e555fe7688c439a87eaf6ebd468cb52"
     },
     {
       "task_id": "income-shifting-pv-saving",
@@ -1606,7 +1606,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6405c8ad1e5c0cc943d7b2c864f2eafb81c5e495f1148d8f7404f66a0301ad4e"
+      "digest": "sha256:da065af0323b1c251677fdfc44ade3ceda39663a5a02d0482a317632d111a11c"
     },
     {
       "task_id": "individual-gross-income-total",
@@ -1620,7 +1620,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6c73fef2afdd34f7d3d91212e83a2c77b315219e051f3cf1dce4bd598635ff08"
+      "digest": "sha256:8f77c412d11aebf30acd068bc40428b440b9c15344c7beb11178310dd551de74"
     },
     {
       "task_id": "individual-tax-with-niit",
@@ -1634,7 +1634,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f8672c3b2d37b7984baf08a46ef73b93e8edafa811e07bccf13af07a1cc7c08c"
+      "digest": "sha256:e2b973dc3a2d99673e388c48f1916542d4b425f701bc935b21c42230a99155b1"
     },
     {
       "task_id": "installment-sale-gain-year",
@@ -1648,7 +1648,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d46195510bfe32a97eb1656edf27801ccd4e6e83c735b20740b843f37328bac3"
+      "digest": "sha256:199678976426fbbc6abcc119db7e277f5f55993eeea8c48de4cf3247cccfa53d"
     },
     {
       "task_id": "interim-income-tax-expense",
@@ -1665,7 +1665,7 @@
         "asc:740",
         "ias:34"
       ],
-      "digest": "sha256:5893923092613e474d5a149f2d57fc73599743f5df169ea2a6bb749f3d53d1be"
+      "digest": "sha256:aefdeae56462de88f8795a001cc917652c9eaf0b803a66d8cfcd8fd0bbed56f6"
     },
     {
       "task_id": "internal-use-software-costs",
@@ -1681,7 +1681,7 @@
       "standards": [
         "asc:350-40"
       ],
-      "digest": "sha256:fb04301b5b0d3b0aebe6c5bd5155c12e987a8b7d7e90ea6cf77b88d36d0aa508"
+      "digest": "sha256:cf1cccf81ebd1b713d0d6491ea88558a592e20ca3326a905361967699faeb69b"
     },
     {
       "task_id": "inventory-cost-inclusions",
@@ -1698,7 +1698,7 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:c8570159460ddd27ab12a5af7e8913eadfd0f9fdae0357e9efd565e5f6ec4d69"
+      "digest": "sha256:81921cbb4dcd74334d434ce81cdbe11d4265e31649431b80fc392309104f625d"
     },
     {
       "task_id": "inventory-costing-nrv",
@@ -1712,7 +1712,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:92c528048df9bef7a14ea82d3d89245668ee1019c636baa3df498845256d9db2"
+      "digest": "sha256:2fc6e83f387cf03029bcdac64bcc7eb0fcfa57f9f31c8fec1d79334d296d4c8c"
     },
     {
       "task_id": "inventory-count-adjusted-balance",
@@ -1726,7 +1726,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:afcf24254ac5138d0921171fa03e9612266e093655275824de796483e687a959"
+      "digest": "sha256:d59252a4dc636cef97f00b7c5de9b95bfdcb365b0dbd7c367357737d1a10c893"
     },
     {
       "task_id": "inventory-days-on-hand",
@@ -1740,7 +1740,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:04b071ba9316dab18a8fde133ccc3603fc2e9271f55e5e25bdde3162bb06e9da"
+      "digest": "sha256:d0abd1ee3a14afb96f42c835d8795f5296ae295ac9359b3898fd8b18f85cfc6a"
     },
     {
       "task_id": "inventory-error-correction",
@@ -1757,7 +1757,7 @@
         "asc:250",
         "ias:8"
       ],
-      "digest": "sha256:3dede415eca44b6395ae8c871d48d489725612f7796068a2cee39c16b8f4739d"
+      "digest": "sha256:f2dcb6439ad4d30c5bb39789a4b357fb029ab5e784087328d39cc63daa3956a7"
     },
     {
       "task_id": "inventory-error-income-effect",
@@ -1774,7 +1774,7 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:57c0f4722a375daf5bcddf52878ece8b6045b48f5ae35a4a0c37690e10780a9a"
+      "digest": "sha256:7bd8d6b3691deb4f36168903a4b080d9666704c27f83c92b6a2451c902aaaf22"
     },
     {
       "task_id": "inventory-lcm-value",
@@ -1790,7 +1790,7 @@
       "standards": [
         "asc:330"
       ],
-      "digest": "sha256:413dec21e294914f56c20a753a66097fc68d896f2761b671c41deb7a284990d2"
+      "digest": "sha256:3270d5ad4293c1b8fb431141856c875cadd4af5b8bd5582aa2c0cb0ce959cc16"
     },
     {
       "task_id": "inventory-method-profit-difference",
@@ -1804,7 +1804,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a73620e6c38689ab943d4da30611461e12b00183ca296e2ae5ea3dc0b296b0dc"
+      "digest": "sha256:a5daa7e9881bcf46ee7913e92bffba26fb0d8fc461b634fdb11f278b030e313a"
     },
     {
       "task_id": "inventory-shrinkage-adjustment",
@@ -1818,7 +1818,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:92d7550cf9cd9fcb291781ea50e3062e020341977b1e3934c9eb9b527a7e2d9f"
+      "digest": "sha256:431702ee8e544f103125bd2d765821c3550c6418f89a03a682ccb8224b3946d6"
     },
     {
       "task_id": "investment-property-fair-value",
@@ -1834,7 +1834,7 @@
       "standards": [
         "ias:40"
       ],
-      "digest": "sha256:692bc8f58b3c9b1217067d41f09d3f3ee95f5e446ba7a70d51d8ec2f63afee0c"
+      "digest": "sha256:c1f14809e3134fbd5fef9df6bb58ab0419403c79bb8eb67c790f398ca53ba163"
     },
     {
       "task_id": "irr-from-annuity-factor",
@@ -1848,7 +1848,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a710465ea8699a5774e532fd40747f40fe98b04831bd65a40510c6cc61bf366a"
+      "digest": "sha256:2cfd96d79c25a250eeb6ba12a777a33a5a76ca222f20cc0c6a9a9a608c43478a"
     },
     {
       "task_id": "job-overhead-applied",
@@ -1862,7 +1862,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:896e06713ab24e401658f4314aa860d283bc1c6caa0da943d9aeb6eebb364331"
+      "digest": "sha256:2a61edaa089bd86612379cc76ce126bc695160b9388370297a824e20195fcfdf"
     },
     {
       "task_id": "known-misstatement-from-sample",
@@ -1876,7 +1876,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:367d642b073a409e9a3df1f4645a68d6fcd0940892b25a69468108f1b1515808"
+      "digest": "sha256:8d9d437595e7da039bfbc83dcb9dfaf97b5c557fb1d698b4da5fba9e80fb6404"
     },
     {
       "task_id": "labor-efficiency-variance",
@@ -1890,7 +1890,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:93515e24427fd43a5c8b77da495dd2e10653ff88e69b32d92f065d9adcab7963"
+      "digest": "sha256:7c5c3299b888edc93603b250e539854eb841878513e2abafc18ac483a8f7842a"
     },
     {
       "task_id": "lease-component-allocation",
@@ -1907,7 +1907,7 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:54a61a2c2369934ddb782828f5127e72a75eff36212f132ccb971e9488866302"
+      "digest": "sha256:8ec4d7b09381cdbdded552d99ffcc213ece59711907aea667d424eecd1a804ee"
     },
     {
       "task_id": "lease-initial-recognition",
@@ -1924,7 +1924,7 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:3d98b1186e5ca6e481ffe77aa9cf24fdb043c6691eed0a468877d90d1ef8a9be"
+      "digest": "sha256:29d200e6942e02101b08c13d048ba55c620a3345ce77366eec88147a8291b4ee"
     },
     {
       "task_id": "lease-liability-present-value",
@@ -1941,7 +1941,7 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:4d571ef5700827e3a24a67b41c4f74cb3d809fe561ffcd3f8cfebab99262ca50"
+      "digest": "sha256:ae64dad961f7cd778277eed0ba21cf302b62756d14dc51a3da5c21c2f978d5ed"
     },
     {
       "task_id": "ledger-account-balance-carried-down",
@@ -1955,7 +1955,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:17bf0dbc20adca1d7197dafba30ba9bfcb728df533d6e6a0b4276cf3be5ca08e"
+      "digest": "sha256:022a68ab1aa9eaf3626f600f9c9a05952444aaf23506eaf099eff049b947c997"
     },
     {
       "task_id": "lessor-sales-type-lease",
@@ -1972,7 +1972,7 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:ecc65ff369dbef4f73ebf6f26a8ab56beb4db71fa31fb73167cffb3fee0c1369"
+      "digest": "sha256:c44d226cf623c8c69cb25cdb3ff533964a375c5ef95e295e4e6bd65414ec58ca"
     },
     {
       "task_id": "lifo-ending-inventory",
@@ -1986,7 +1986,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ba9b0da6b0b76c7a08cc0535a4263d504b216833bc48995b835d0f0c4d5a42c1"
+      "digest": "sha256:20a5d96bbdb07e92ae13ae7ba7487c648fa78afc8444686d701f0a0e773c0690"
     },
     {
       "task_id": "likekind-exchange-gain",
@@ -2000,7 +2000,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6d10f2f6c8e56586f86e620124cad6ec1dc3e1f68b5ce9a1e2ac1e3a4c259c82"
+      "digest": "sha256:e2adf878b1af6370a678d406fb17d1b8a0ed15447ceb9321b27e5917457321ab"
     },
     {
       "task_id": "liquidation-shareholder-gain",
@@ -2014,7 +2014,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9ce5aafae676e43379ed5d78fee1d8fc2caf6928b9959b39c2c3af10c4d25c54"
+      "digest": "sha256:4cd83e1e5e5f42ad9e550ff30e1a91c5c932753f7fbe7af91366d196795325fe"
     },
     {
       "task_id": "loan-effective-interest",
@@ -2031,7 +2031,7 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:e51245f2ae802578e234efa4970df9c445fcc5baad791ee7eb5a48e6b4f37635"
+      "digest": "sha256:5d1fec71b5360eeb5472744693034065741ba90094c981f58a6fb7d4981b2645"
     },
     {
       "task_id": "long-lived-asset-impairment",
@@ -2047,7 +2047,7 @@
       "standards": [
         "ias:36"
       ],
-      "digest": "sha256:bc5cee371499546248acd9ceb5f77fddb1e114bb03c548670bfae734025e9158"
+      "digest": "sha256:c3bf3ed0edb9476db91f5a1207b21ac4d3f620129236f22ac4156584c3c9b586"
     },
     {
       "task_id": "loss-contingency-accrual",
@@ -2064,7 +2064,7 @@
         "asc:450",
         "ias:37"
       ],
-      "digest": "sha256:78f7ce9d7eed383ffc43852f47ef0444f8945639e9feee33a320d79b10a0dcc4"
+      "digest": "sha256:58c5430e452360c58be4b03182c91124e4b2a5d437638ef49c9ae18457fdaccf"
     },
     {
       "task_id": "make-or-buy-advantage",
@@ -2078,7 +2078,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4a97e7058ad90fc8efddca51d93cb1e8afa9f106e7db4cd939a099536c59d28a"
+      "digest": "sha256:a124f0d51ac1b0f9131feb7022a9a0837aa4b5e608c273a53149d146ed96b030"
     },
     {
       "task_id": "materials-price-variance",
@@ -2092,7 +2092,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bae410089e414e7b97a8b78f2dee0fd007fce818789845890786f9b92ce49fe4"
+      "digest": "sha256:72f3a637825f70ce1698d6f41e8b87ca00f0a8bdf1b57c2ce755177bf4d243aa"
     },
     {
       "task_id": "materials-quantity-variance",
@@ -2106,7 +2106,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:df6661c5699f41af0ba913958fdb3e932f7e29e32d03a6979814fdc0517bb24c"
+      "digest": "sha256:8991cf3e9da46c0807824c46747d0276310e774d6e2b06d8877a065afb1d753d"
     },
     {
       "task_id": "mc-capitalization-treatment",
@@ -2120,7 +2120,7 @@
       "format": "multiple-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1ee9c5d9553ac07f06efd20a0f7ef8ea022fb0e347c6dda54a5601377c79ce1c"
+      "digest": "sha256:8e1e268629f00f2be3043ddbc00a5eaa9dc5f60986ecc862feda65afa9c8375f"
     },
     {
       "task_id": "mc-normal-balances",
@@ -2134,7 +2134,7 @@
       "format": "multiple-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:0399b08fa85c65392162f58f3fb92eb892e93d952f7ec16ef66d83e29f47859f"
+      "digest": "sha256:37d1c353ae7ec3afe966a1cb178b145d0e74f0b13cbfda659f50e938700b27bc"
     },
     {
       "task_id": "mc-reportable-segments",
@@ -2151,7 +2151,7 @@
         "asc:280",
         "ifrs:8"
       ],
-      "digest": "sha256:aef0c8ea4e7363c5bec36b446f322d70ea5c3c8d3e1446b78867cafab8e2c7ea"
+      "digest": "sha256:99204272d0780fed7c0af213d8255fb706bd9e002c8eb1df712ed5a26c43a2be"
     },
     {
       "task_id": "mc-temporary-accounts",
@@ -2165,7 +2165,7 @@
       "format": "multiple-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:c71b2063a18eedeacb3544e4c402aac6100d106800d4625de6d7e6bf762f7997"
+      "digest": "sha256:66b4990dff73cd66ae2d96c46a19f48668a18d1c85c3732b59b7e1360092437e"
     },
     {
       "task_id": "mgmt-break-even-units",
@@ -2179,7 +2179,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6f5451a55380e9c050545687f74772712d39da828586bd57e75e2bd0f881106d"
+      "digest": "sha256:630e377e7988cb5d9d3dfce13481bd30c9f56614a3673b6842c20ced64002314"
     },
     {
       "task_id": "minimum-transfer-price",
@@ -2193,7 +2193,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d5930fe0b1a985c3b11b04eee350b9c97aa333ebb4a09feac15be49dcf7e249f"
+      "digest": "sha256:01cfc2ce26556a9a71a4d58d56e3dac2387eb42bd3a50da1c5f5420947b4b3e8"
     },
     {
       "task_id": "multiproduct-breakeven-units",
@@ -2207,7 +2207,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5178b4e7bcb808450437927cfb377a66d34b5a4c0232524ce7f26aa8ebbd3651"
+      "digest": "sha256:c4dc611d19ae18d50ef22ea752e00a95639756c660e5790a990146307d559d55"
     },
     {
       "task_id": "narrative-multi-transactions",
@@ -2221,7 +2221,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6a7c8ddf48f75f97f297aca7132f72447b31d40de3b61412328f43c7266becaa"
+      "digest": "sha256:7ec4cbfe758f15fc7e661c0d93fed65d1af9fdd1d5de086f81c6e01581e8eb61"
     },
     {
       "task_id": "natural-resource-depletion",
@@ -2235,7 +2235,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9f919e70bc1eeb48914c99680ec86a5ada2a397a99c239c4cb3642cc58dce80a"
+      "digest": "sha256:b5ca9c92c9a8073d00d21b5925bbaed3fd8615f3653be971ee1138c72e61099d"
     },
     {
       "task_id": "nfp-conditional-vs-unconditional",
@@ -2251,7 +2251,7 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:8d6d0454381b35e6c7cefb0ff76d2aef24f6fcc97414ee418043913ce5421f18"
+      "digest": "sha256:ad9bb5c30834f609dfad48e86f752b3bf530557ad9f0f42181ee7026b6f1ecf4"
     },
     {
       "task_id": "nfp-operating-cash-flow",
@@ -2268,7 +2268,7 @@
         "asc:230",
         "asc:958"
       ],
-      "digest": "sha256:cd37757fccc1e770e05294904e4119c15d7aa8a6b1fda29d789d6a2516ee04d6"
+      "digest": "sha256:6ee757960db98c91bc5778e2f400c8e4e5711c8a3f72ed371626c18eefa79eba"
     },
     {
       "task_id": "nfp-program-expense-allocation",
@@ -2284,7 +2284,7 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:f624b115b9d70e90a16a8c692fd075b4771206615d030581579b536eaef2d335"
+      "digest": "sha256:a4ca3cfb0a504ed5bdcd6250b3f2d4b5f2184d5dce52bdc51cdd3605abb12490"
     },
     {
       "task_id": "nfp-restricted-net-assets",
@@ -2300,7 +2300,7 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:f87d81eed06ab226484cbd5456ebfa525efc60116d938735b7a2b8e1712b9783"
+      "digest": "sha256:27aaab44bdd2eeff94ee603ccefe0cb5fed3dd721805541982299502fb37aeb8"
     },
     {
       "task_id": "nonexchange-revenue-recognized",
@@ -2314,7 +2314,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6bd5ff49183ad992dcdbf8231ce75e54c389eb6c1f58473a60446c763f4300e4"
+      "digest": "sha256:b812e2e9c1aae57f13b7ee3ee5ad9999ca1a3c6860e0f0a7ccc0760b24a43f05"
     },
     {
       "task_id": "note-dishonored",
@@ -2328,7 +2328,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4fb427019b63d97fa17815a026da63d002ab407c43e54b70cf35802e67007a7e"
+      "digest": "sha256:952012cbd81f4d9a2529c2704c89e165b204018181e762ec7f92f14b318fe467"
     },
     {
       "task_id": "note-interest-accrual",
@@ -2342,7 +2342,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bebe00626bcbbad9078bbc3fda216386791ae0050eb5da2cf21435206030e9c1"
+      "digest": "sha256:219c09330f8b55fc3386b1dc9288b03d40fd8dced8d8d3fa5ab757bda1c78bbd"
     },
     {
       "task_id": "notes-figures-difference",
@@ -2356,7 +2356,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:657eb129e0913418ff873e8f4f5f2b82ef326ccbc92a5c60f090c67e5c5a4ae0"
+      "digest": "sha256:a1241a0d86a0e56a4777e4b8fd6260b98e37d679d98c14d03adf49fb65188f01"
     },
     {
       "task_id": "npv-project-evaluation",
@@ -2370,7 +2370,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8e4d6dcb62899505f60b174951847dbfd1b0c97e46a948c32a81dbb1b8f479df"
+      "digest": "sha256:15248d5680c92b211ec95520d73d5eb5e77b7404874969708b63f5238cd9f0a9"
     },
     {
       "task_id": "operating-cash-flow-indirect",
@@ -2387,7 +2387,7 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:05f95e9d19990fbd77bc4416fc0a93060a80751afb2a895ebdf8630a09b5e01e"
+      "digest": "sha256:0d8a4568855a98c9bee2fa51c5c150cd72a79750df510b899e7f05d19cea352f"
     },
     {
       "task_id": "overhead-variance-disposition",
@@ -2401,7 +2401,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2fb131c4d28ffc29c78323c97618e6b60ef4df3a70010829231de368c94ba43a"
+      "digest": "sha256:4a285ca26d84ca08666f3d8bf4cd6e1231018a1dde87259efa1083399df1a62b"
     },
     {
       "task_id": "owner-ordinary-from-k1",
@@ -2415,7 +2415,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7cc9580781ec51bc685f3eaa11d072ff9c0efdc966635fdb37d4b7b2d46554e3"
+      "digest": "sha256:e6caffa2d29086fc5b4ecf8617cf383f5d06778eff8a6241923912033511b9cc"
     },
     {
       "task_id": "partnership-admission-bonus",
@@ -2429,7 +2429,7 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:dcd147e1b6e7ddb362272756d0f7d19372ded05762091c37967a0e01c5dadaff"
+      "digest": "sha256:e769afce0cf71e8333e8ae612d6e2cf4122fba1b1095fec19d328e252f79a3ed"
     },
     {
       "task_id": "partnership-contribution-gain",
@@ -2443,7 +2443,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e119ade8f42196c859003fdb1bdf3a76a82873646b6fa65e7c541b58b9097020"
+      "digest": "sha256:b87a66d06adefbd4f9364371cd15c9ec228835e00e7a0299203b60e62a8a4746"
     },
     {
       "task_id": "partnership-distribution-gain",
@@ -2457,7 +2457,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:132672b0ec2de2bf8bbbca923fb682decb64900dc0ea883803055d7b234c2bf0"
+      "digest": "sha256:a24b9b4e6e4eee0f820500c46a44d48a80ed6d2ddcbc3983f020c580f33ccd8b"
     },
     {
       "task_id": "partnership-formation-capital",
@@ -2471,7 +2471,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:11385d5194f8b485997428f2252fdc1bfbcc89bc382047ab59ec35cd412537b2"
+      "digest": "sha256:9ca55d84df93240c8edc55ec7a54aa0a7353cf7a76971f947f89420916275e47"
     },
     {
       "task_id": "partnership-income-allocation",
@@ -2485,7 +2485,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f11b05ed6f200386629a4bd92b4307d89aa4ff8f4e378bb9ac6aa822461221e6"
+      "digest": "sha256:77a3dfdda50153573924aa7cdd6e7ccb5324365ec5f03c2fb29adf162e08fde1"
     },
     {
       "task_id": "partnership-liquidation-distribution",
@@ -2499,7 +2499,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2bda7437a11f7b39f32009d5cd82a81d9724a796e39cedccd6ca8f6f3c04af96"
+      "digest": "sha256:15597592a059320e976f2edecc626fc4f2b637dae8d69c06f1072db37bb45f24"
     },
     {
       "task_id": "partnership-outside-basis",
@@ -2513,7 +2513,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d3aa62671e677f4091f2ad51c11d86ae0cc5db763246390f00613c7929d2e000"
+      "digest": "sha256:7223222379fa4849dd67a076d9547c04f3f218a9c0c58c740878bb3bc3b4ecca"
     },
     {
       "task_id": "partnership-retirement-settlement",
@@ -2527,7 +2527,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f79c6e8d5dd92aacc7cffc7e16773d9824c0bfa3f7ff9933d7363b11594b0687"
+      "digest": "sha256:9b1999a3f07647b5426af052ed6b0f5c4ac3053eb8cda55cf2770886d9d78a6e"
     },
     {
       "task_id": "passthrough-loss-limitation",
@@ -2541,7 +2541,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7ce97b55eebd23f5e63a2eeaea25c757edeedce5b35c1b81731cfd0a9aac78a2"
+      "digest": "sha256:91637003bcc4abaff006ce1ff62809b82954de486121067aa6b2ea64fe21d579"
     },
     {
       "task_id": "passthrough-ordinary-income",
@@ -2555,7 +2555,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6a947c8a2705ee35adb482cd7e2b5799dccd2cbec25e71fca002633d803f8f6e"
+      "digest": "sha256:feeff79eac0638dcebdf04fbff77fe80079e3f9a54aa987e172f73225b5c06f0"
     },
     {
       "task_id": "patent-amortization",
@@ -2572,7 +2572,7 @@
         "asc:350",
         "ias:38"
       ],
-      "digest": "sha256:92b0d603d7b25add36366f831e16143f091e310d5fa793b545b9cb5a68b0195c"
+      "digest": "sha256:bd1e3a15d1ee8c226bade029f9052b19a00b1fb72a86758bdec1e622d576cef8"
     },
     {
       "task_id": "payables-control-balance",
@@ -2586,7 +2586,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6c332a594bece7738215be65573bdb9d2d20f221acc3537fa703ef427d96ed19"
+      "digest": "sha256:e3b3786b07445b32dc6beade1647efa365909b215d761f83b25b93b717862c79"
     },
     {
       "task_id": "payables-statement-recon",
@@ -2600,7 +2600,7 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:97e0587a81c6e1e770ec1403910aa6e3cd9b9a7d6dcf90d61c4f8a0dd70f3a6d"
+      "digest": "sha256:8330b9af149dfe60800794ec710aea7ee89fea461963a06bdbaea3f4011e18ce"
     },
     {
       "task_id": "payback-period-years",
@@ -2614,7 +2614,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:dcba0e19e3104376e74cce928f9673ed4e36d2041defa5e3d9812616d4d4f6bb"
+      "digest": "sha256:e6c5bb9be596a113d7c3feb8b52fab65f4f9f5006e741769f772d49a82d42876"
     },
     {
       "task_id": "payroll-withholdings",
@@ -2628,7 +2628,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8d5853fe7f839fb2270a74ef5af9f9d561ac2f535442b6189b5d63c6cbd3ad18"
+      "digest": "sha256:6a2218ab6778bea8e8442df7fffca89248e9287725b7af07291266a7b4ca3ac9"
     },
     {
       "task_id": "pension-expense-and-contribution",
@@ -2644,7 +2644,7 @@
       "standards": [
         "asc:715"
       ],
-      "digest": "sha256:6edf39bed50ab3925f9c1f955d64f5a62c0936b28d72fd0e538377d551735ba9"
+      "digest": "sha256:389e496e5556c2e100579e8b9190573a40ec6854dc7ec95e38f087213b39d9b6"
     },
     {
       "task_id": "percent-of-sales-afn",
@@ -2658,7 +2658,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:52aeb9bc7bcf1145c4f4c683c3b3de334461675c9260eb7de7d43b528f5f2c7b"
+      "digest": "sha256:63ac595be9fb99e22b6c2d23e73b28fe36b78404d8f155ec35134949e597b861"
     },
     {
       "task_id": "performance-materiality",
@@ -2672,7 +2672,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ba693254c2396025b2cc99a5cb48ac5c88bc686c0608275ec6f1870400345a52"
+      "digest": "sha256:78b3276aca71780efd3e6129f520a24f342eceb3010ad0463575e06828b9a448"
     },
     {
       "task_id": "periodic-purchase-with-freight",
@@ -2686,7 +2686,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9e3cd41d777d16ce47074b704e9b35e02e3a433a20d626f723c029d3866f7ffa"
+      "digest": "sha256:dd8775cb7b3d2855064c1dfc934f24e328e091da4ed89c32fb319ce6605f12c8"
     },
     {
       "task_id": "perpetual-sale-with-cost",
@@ -2700,7 +2700,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0818f9fa712508c64b08534f09122d25e3f5ad38a2d90bc9241fe50c7931cdec"
+      "digest": "sha256:d0e06bf32f7aa3d4276e3e6e4bbe25e0981c5d2f919796f9efd82e4c67ded02d"
     },
     {
       "task_id": "petty-cash-replenishment",
@@ -2714,7 +2714,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:72fa42c7e5c6c6ec09da2f2d43d00bad8dc4ebc496b8f4bfdb30cd844321e571"
+      "digest": "sha256:a7e205a0f60ed6cfbf08a3c174f6c8bd8bd5892ab04eac454628a36b389d72a6"
     },
     {
       "task_id": "post-closing-debit-total",
@@ -2728,7 +2728,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d4d9557b899150667f9571a26aa7c14f15a56401ad0f7bdabc8f21f68a6e2951"
+      "digest": "sha256:2fcaf698d3975060cf9afd037a451f8a4bddd2aa52d470ada9f595f7f8b574f5"
     },
     {
       "task_id": "ppe-additions-inferred",
@@ -2742,7 +2742,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4e00c63c6e66badd2710d3fc0075433dd0d19ffde6bdee9da055918ce5ab9ad0"
+      "digest": "sha256:3eb8bc75225db6d269cea6faa8588556f040ac7e047f38ec7c82c752ca3e5245"
     },
     {
       "task_id": "ppe-disposal",
@@ -2756,7 +2756,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7790ac6889c69b6d33756fd591e7c8a932e178ecbc4872c84400e6b3cf592eb2"
+      "digest": "sha256:62671e233cb6c4c985628161d3bc800478f7a348007e331452e21f001691a164"
     },
     {
       "task_id": "predetermined-overhead-applied",
@@ -2770,7 +2770,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f4aa73bef4ce21af2676df3079afe3da8bfbc2f7435a50b387a03ea481fa0d3b"
+      "digest": "sha256:d3c6f5997267138b34e0034ce0f0d919ad1b8fb6f3ca41f70c80634c6cc89fcd"
     },
     {
       "task_id": "prepaid-insurance-adjustment",
@@ -2784,7 +2784,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6f55f144391d686a88d0cf0b2239be4bbc357ea7f6523fb070289970faeb63f7"
+      "digest": "sha256:00e6c161eb0329a4bed391dab54e31c0762248491885a7f4eac4eeef82d78c29"
     },
     {
       "task_id": "present-value-lump-sum",
@@ -2798,7 +2798,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f0c6304849b34d10f60e1eb942fa60687a62e410a8f369dbfe993803ab63ddfb"
+      "digest": "sha256:a5984ba7029cc8e3fd0acb524620d3f71798c31559cce49801e50dc418f8f47b"
     },
     {
       "task_id": "process-costing-equivalent-units",
@@ -2812,7 +2812,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:40d6db5f47bd75b17b1fd3633837f42e06b8af6f3270c8ab10c0011a14d0260b"
+      "digest": "sha256:62b8a006a11b161b98cd8380b43a7ff06323e9943e3f64a9420b5a19342fdcb6"
     },
     {
       "task_id": "production-budget-units",
@@ -2826,7 +2826,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:33978bc428d321ac824991a69958cc5218f7c2a80030f3cfe54641d7a9e14d25"
+      "digest": "sha256:ac97a805b546024a9c906d3deae522e8cfdad2120ad7820eb74a245ca81ddf05"
     },
     {
       "task_id": "profit-from-capital-movements",
@@ -2840,7 +2840,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ff5ac5b82d734c69a3ac0183eb18ced39b05ebe962fba3eee6defb2d1dcc9901"
+      "digest": "sha256:b51f0a141e92bb75533ae910c5aa45ea448bc0e50f4b6aa2569564b8f84add12"
     },
     {
       "task_id": "provision-rollforward-topup",
@@ -2857,7 +2857,7 @@
         "asc:420",
         "ias:37"
       ],
-      "digest": "sha256:e931cb40241aed6196cd6646319113b718df819f0316c123c1dd2a233557a1e5"
+      "digest": "sha256:37508b71c826cfd39b59d590d4f4adf30bfc4e75c6cbf45c071bc50db738292d"
     },
     {
       "task_id": "purchase-return-perpetual",
@@ -2871,7 +2871,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1b36912654aaed51730856dd8acd4e692f1cc13c7c87f12a329f036a0734ed0d"
+      "digest": "sha256:43172dce1b570af7c29777c490b5b2989cc9d0bb538997e6125860df5d89e7b9"
     },
     {
       "task_id": "qbi-deduction-amount",
@@ -2885,7 +2885,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1df0aea562a0724d18010c203a2f683e9265c4cfcb8830e6cb00ce22f05683f8"
+      "digest": "sha256:62b397566cc1158791d64e9fde59bd2bd16c2cafc8eb5e96ccdd9643565d3bfe"
     },
     {
       "task_id": "receivable-allowance-trueup",
@@ -2899,7 +2899,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:dec00d78a310024e60d4652f2cb6a03a1a7436a9283b9300630b3ab9f7c18a08"
+      "digest": "sha256:6042662d1db66d40500e4e2d3eb8d54e3067b6fb59fe7eab2b41de8fce988f8a"
     },
     {
       "task_id": "receivables-control-balance",
@@ -2913,7 +2913,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a6a2c6318eb13e529bd3b3945bc1dd5cdce2fb3ab98797e450d841ce536c42e3"
+      "digest": "sha256:ba2d5ef24da470ded99744d75b9afd837322a561c92a3691951ad7737e04ee95"
     },
     {
       "task_id": "receivables-payables-contra",
@@ -2927,7 +2927,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a2d231d2569ec97b76dad6dcc283642102eece584f8faa02f1cde06f0ecb09fd"
+      "digest": "sha256:e3e873dda442a392451cec56b982a9fc597ff5235402d974ea304014621ef212"
     },
     {
       "task_id": "related-party-resale-gain",
@@ -2941,7 +2941,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8efc4ee8fd7956c528384e397fc6bf41bd910b5a455bbcbf5ffb985399023914"
+      "digest": "sha256:f5076326df3ee242144bfd2ff9629b2460a399717d26c195079d39c72d8b1b2d"
     },
     {
       "task_id": "residual-income",
@@ -2955,7 +2955,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6f6c14de12cf1b987b408c0f2505080ab77c39f1201cbdf13412f362ce10e43c"
+      "digest": "sha256:e963f8a6e0c2f5196d03135695c864462becf04b33ab0a9f559ada2440a65ef6"
     },
     {
       "task_id": "restructuring-provision-amount",
@@ -2972,7 +2972,7 @@
         "asc:420",
         "ias:37"
       ],
-      "digest": "sha256:2dd313b535e7cb191652308a896a6cc14117c717d28a9beadf5ef4b1f77911e2"
+      "digest": "sha256:f4d970c2ad17d86656ecef35d698666b9cbe8cdc8a799a92625b74bec7f862a2"
     },
     {
       "task_id": "revenue-bundle-allocation",
@@ -2989,7 +2989,7 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:dd941e5a41819acde043274fef5f15fc9c20f5cb2f05308587a5f00cd91d1687"
+      "digest": "sha256:ec6d711bb0a7b2b771f94f6f44e91b2f668b27bfd69d95050e8ca036fb065e3b"
     },
     {
       "task_id": "s-corporation-aaa-ending",
@@ -3003,7 +3003,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:39af69b13b592a09e983a4ea24c38bbd69e64628214f12a247d180fd3b9e5ec9"
+      "digest": "sha256:03a7bb6fdefce6ae601c6eca9ddf1809704c0c5c8138f465941c0df5572aeb02"
     },
     {
       "task_id": "sale-and-leaseback-entry",
@@ -3019,7 +3019,7 @@
       "standards": [
         "asc:842"
       ],
-      "digest": "sha256:037e154201ccb9715501b7c5e43779b3904bdfe354f71b6d8f66e10847b62c7a"
+      "digest": "sha256:90d6fe21b23ed2423a0792ad4bf64365ecec0ba6c2c3bed1cf4c1c6c666e9f13"
     },
     {
       "task_id": "sales-from-markup-reconstruction",
@@ -3033,7 +3033,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0f5ada1a8c302d89fb40badb48f29f071b3d967e905cf92032ab0d2a7077ef9a"
+      "digest": "sha256:52ae54470391953093cbefa1ea5ad1d732d190dd48f3b0d5ccb8f355bb303d21"
     },
     {
       "task_id": "sales-mix-variance",
@@ -3047,7 +3047,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:929967fc2b843424d6088066fd6e1465949cdca1ce3b3a320c677fb02e958b1c"
+      "digest": "sha256:b2d6abd4fbb42d833c440e9933918b6967d369d8a557fa11caea04f1e7d8ae91"
     },
     {
       "task_id": "sales-return-restock",
@@ -3061,7 +3061,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ce7063971865a1be80f44709853303ad597bd5815ce96998b642a45e423a1858"
+      "digest": "sha256:105b477e4d70539bb2ecd96f76b81eb639fe5de3d63b9b258ed547eb3b42f848"
     },
     {
       "task_id": "sales-tax-collection",
@@ -3075,7 +3075,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1d754dd241029137c6d927c87e7b00d98277ba4f58d39886e3238b8b6e9ef126"
+      "digest": "sha256:378682f6bc612cd025845722bfa8645fc688c79bfb420e8bec561604927f3b61"
     },
     {
       "task_id": "sample-misstatement-projection",
@@ -3089,7 +3089,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ea9db00dd5fc8d5fc6c3d4135afa1d8742172e96a0ddd8c09f24351c688c8188"
+      "digest": "sha256:7dff2fc22d57ef9428e0d09ba09291c1c61c758b7cb4ff6c488cf4bcddeb27f7"
     },
     {
       "task_id": "sc-audit-opinion-type",
@@ -3103,7 +3103,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ed7f8f7909b8881ed7acb41a8bd4f6f0cb989dab001c2ca9ed549e7aa699a9fb"
+      "digest": "sha256:4fdd44437a53eaaca7e33e6b49bafb4bdbe159b4e3d423f3522600374a127c5b"
     },
     {
       "task_id": "sc-audit-procedure-selection",
@@ -3117,7 +3117,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f52ec30ca695ca4b12465fee78bf75f14f86407c348c503bb2cb7c5fb2f7f820"
+      "digest": "sha256:625c23bc46c20ef0973cc93a3470e94debc902ec6e0e7a72b496a3b0cef406aa"
     },
     {
       "task_id": "sc-backup-recovery-selection",
@@ -3131,7 +3131,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:85bff5b44786ac3580b4f0bfdce5ce61c6294ac2570c33ef7a46fe1ee215b79a"
+      "digest": "sha256:33ab3b8c39e5ccdffdcefdc59ff7daa8863364558a9dbe9805fee528aeacbee6"
     },
     {
       "task_id": "sc-business-vs-asset-acquisition",
@@ -3148,7 +3148,7 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:cd14ceca11426275b472cc349abff18b69ca835cdd13184c4e20a2eb3f33d44a"
+      "digest": "sha256:6762370ce6c5d7038e2129cb0316cd1892ac4787f7649b99cfb9b77a41d0e0a6"
     },
     {
       "task_id": "sc-capital-gain-classification",
@@ -3162,7 +3162,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f66f769cb46fad9bb70a89e4d04fa82dc8781fa54a5c5f285f90e9f398dfb22b"
+      "digest": "sha256:294af0ad38a7169a8db131e58fd72997abd059c0b17a943ab699b6c6af07d015"
     },
     {
       "task_id": "sc-cash-flow-classification",
@@ -3179,7 +3179,7 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:e2cdefd7a18334134e05bf053b83d5aa1d42339b52b5f70b318062d4c9c466b3"
+      "digest": "sha256:e361d06df5a67dbc47709f8c621c6f2e9a178474567212cae3008b206815e5e5"
     },
     {
       "task_id": "sc-component-unit-presentation",
@@ -3193,7 +3193,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0087f5a4170079a73893b9d46b8536e78ade98eb671034b8aca77ebff6d986a7"
+      "digest": "sha256:cc1c93d4cbb711908ee92815337f4808c548552d68984460e390a7dac30a7c61"
     },
     {
       "task_id": "sc-confirmation-response-classification",
@@ -3207,7 +3207,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e09504574cf60fa6e01b80f7072a63ae1a08175a6a02d435861837a4b8296055"
+      "digest": "sha256:99296d263253a48fe182b699030d061df00d3d53f7a4dbf1ea3ee24527aee3c3"
     },
     {
       "task_id": "sc-control-assessment",
@@ -3223,7 +3223,7 @@
       "standards": [
         "ifrs:10"
       ],
-      "digest": "sha256:07365645af404cd87b48bcd739ddadd81d013ef1d752c9c695d4a09889e432d5"
+      "digest": "sha256:3ebdef8d2fb149d7476ea15d34fadcbda1898f69c96d99324d06dc9ca853cc36"
     },
     {
       "task_id": "sc-control-deficiency-severity",
@@ -3237,7 +3237,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5410b86a25ce548f36edf38c89faab5ae21b1843013743112c6b51af2329bc3b"
+      "digest": "sha256:dc2b2b0859aad48b8f679a9bec23eb2ceeace6fcc8de12b87d00ec85caa9d3de"
     },
     {
       "task_id": "sc-control-design-gap",
@@ -3251,7 +3251,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:dc7875fdd79f8cc7a51b561a99bf80b60173b80dfd4fb51726a13437ee2d6cec"
+      "digest": "sha256:389b1877749d37d88c054d42b3be3d61fd62385805f5d14232c1d0dca70b8a5e"
     },
     {
       "task_id": "sc-database-integrity-gap",
@@ -3265,7 +3265,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:57e5ee531760d8df7d4efa84d8805d99089fecf17edef7ca1cbe8bd6f522a851"
+      "digest": "sha256:cda13fdf554875d6cb406030c1ad1e80549d95b6e6df55b758c5df40d659f093"
     },
     {
       "task_id": "sc-debt-equity-classification",
@@ -3281,7 +3281,7 @@
       "standards": [
         "ias:32"
       ],
-      "digest": "sha256:bf9ec8017a3a40076087e56b77c0aa6dfa8127a84887fb1d186af75e4c5f8cd0"
+      "digest": "sha256:f7308136cdf6937a58ac8cb7d3c86a0bfbaaf50c31cb6c2034aef48e4cf3703f"
     },
     {
       "task_id": "sc-derecognition-assessment",
@@ -3297,7 +3297,7 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:45529edf3dd97792e45386b582e286af8c22328c34a4c30ef2fe2056167f9b6c"
+      "digest": "sha256:15eca5d670d8fbc5eb1ba1fa611322b46e56d5ce961c7111f9cfd2ca94cd1756"
     },
     {
       "task_id": "sc-engagement-acceptance",
@@ -3311,7 +3311,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:04c8f2e8742c44d4a8151834471b88920215681fd18805e251537aceac98143f"
+      "digest": "sha256:e8d0ae6c45f88bdb64e74fa9eb8c02690c57112438210609fb3c3f2efd67cd2d"
     },
     {
       "task_id": "sc-ethics-threat-classification",
@@ -3325,7 +3325,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e2c8c7294aa36ec7c8266fc0a42cbf3d5d20b3ba7c78ce5b5c7b009e408480c9"
+      "digest": "sha256:32c284fe77434a9113c26ef5acf590a57bce1b47d5e4e910f60de16f460cb950"
     },
     {
       "task_id": "sc-evidence-reliability-choice",
@@ -3339,7 +3339,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c761bf2c397c522d09bb5da016b8cf5c2f6adf2bb6edb096384705cb3107466d"
+      "digest": "sha256:f8a7c5710fc16e842e009c31f2bc670e28fe3d5ae4071c06882a5a368a273398"
     },
     {
       "task_id": "sc-fair-value-hierarchy",
@@ -3356,7 +3356,7 @@
         "asc:820",
         "ifrs:13"
       ],
-      "digest": "sha256:c9f04b8cd11d0c84b9dab529f0579289ecfe169099edde0831826fd3e34e8462"
+      "digest": "sha256:e11571e4e5330f0006bd47ec035ed7dabbf9289ad98eaa6de19fcdf293f3a8ec"
     },
     {
       "task_id": "sc-filing-status",
@@ -3370,7 +3370,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0cc64a9aa73334939a2c246e570152ac227ed265f463e6a19bce753ec76cde97"
+      "digest": "sha256:d3fa4f4d5901ec6f1af79edc79dc74194cd7e3571850b836c4f637e32c91c80b"
     },
     {
       "task_id": "sc-fraud-triangle-classification",
@@ -3384,7 +3384,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:52eb0a7251e70e23c0e5bb93691fc642119574e93c7550949fccbcbe39e4ac81"
+      "digest": "sha256:a57ba362806430581df112d8653af43c649e458a23f4096ec3a733e8eeb4652a"
     },
     {
       "task_id": "sc-fund-balance-classification",
@@ -3398,7 +3398,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:206b849cac7f37339dffe814dd42120cbeb689b9e3d4c3863055b1edc1ff0969"
+      "digest": "sha256:ab56a97011c7c1e9309a327c075615e0d2240ece76b5f6facceaa6568ae4bd7f"
     },
     {
       "task_id": "sc-governmental-fund-assignment",
@@ -3412,7 +3412,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d828ee254b6edceef206896c318dee671f2bc82ac19354af54e30bcefffbbad5"
+      "digest": "sha256:7ef08d8699bbdccf55af158e32fff280438f62689ff7935571f6b52958ddf30d"
     },
     {
       "task_id": "sc-income-sourcing",
@@ -3426,7 +3426,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:098ab91efa644071d0a5c8e79cddaf0d03f25c753abd77b2b0cfd28e027c54d3"
+      "digest": "sha256:bbb405ead86563dab5d358307b129cbf9afa0b67e7d0a57258dd8ad5b630b13d"
     },
     {
       "task_id": "sc-independence-prohibited-service",
@@ -3440,7 +3440,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:99979aceb0fc474f1dcc7b2293b905c4fe2dba625607aefe695811dc7c1c96e6"
+      "digest": "sha256:b0ac9ceb634905ba8a339aafb4a041742d1be6dc57b7db76221a0a2289642180"
     },
     {
       "task_id": "sc-interfund-activity-type",
@@ -3454,7 +3454,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f371f4da820e540eae52c98ac93918318e9331433980bfea338bd05623ee3010"
+      "digest": "sha256:82d7710bd4b089911a368931197c7201fd7d00ab4764a12c2d817aa478f727eb"
     },
     {
       "task_id": "sc-investment-classification",
@@ -3470,7 +3470,7 @@
       "standards": [
         "asc:320"
       ],
-      "digest": "sha256:e700c15e1d633209ed91a18e9818cb27cbdcbeb3d762407a5894f7b38345561f"
+      "digest": "sha256:718f1459eaf1eac4cb6c05ebe239a623aeb7f63e68521dcd6ee1098f72c3d777"
     },
     {
       "task_id": "sc-job-vs-process-costing",
@@ -3484,7 +3484,7 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:4b5aa7bed01bc0c1ad296527a23db20d16899034f831066da60687a951194c5f"
+      "digest": "sha256:21898b531055194f2dcf58cbd4a08759d2efb342f42177a2c3ec2d993b75d89d"
     },
     {
       "task_id": "sc-measurement-basis",
@@ -3498,7 +3498,7 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:2a8d2e3fe49fbbb0ff4a8b6fcd1890467e2314233e744bb61e608146c4c54e24"
+      "digest": "sha256:13ca4ae5829a82f322e2bb5b9a1cf1f365083f4e2091e31eaa472cbfc842eb25"
     },
     {
       "task_id": "sc-offsetting-assessment",
@@ -3514,7 +3514,7 @@
       "standards": [
         "ias:32"
       ],
-      "digest": "sha256:d352960ba2fa99147d14b78fbd8d4c959162ed311f00df66d6dd88e5e06f0d5f"
+      "digest": "sha256:db2b93e238d3e392755e54876472f45bbf31b622a45c8ceb0012dc8998a3520e"
     },
     {
       "task_id": "sc-option-value-sensitivity",
@@ -3528,7 +3528,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ac312c2a27b72bca0ab061940d6039dad7d1c93ae944291bb0a86884e1e43161"
+      "digest": "sha256:3f580e0bcc63d33df9b729e01f9563727b7a6c5cc01c65be553b87d3c42589de"
     },
     {
       "task_id": "sc-professional-conduct",
@@ -3542,7 +3542,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:814d7c7f215fcc0072c6d5e919f8efcf97110767672882a9b0e510f5eb4efe07"
+      "digest": "sha256:83b1847b3f9fc32e68f264e849375d22573b8834d6abfa235ce3fb8a21b2cc11"
     },
     {
       "task_id": "sc-related-party-identification",
@@ -3558,7 +3558,7 @@
       "standards": [
         "ias:24"
       ],
-      "digest": "sha256:21699eeab04e0c1b00ec24b8fb267eeb3ffd9bbd9c744f4cf682b726bdb12fe6"
+      "digest": "sha256:c9640397422a31a669fbb4217485c0d0d1fc0ece69c0fb6b0870daa67cb74216"
     },
     {
       "task_id": "sc-s-corp-eligibility",
@@ -3572,7 +3572,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:afdf074af99ae28961eef9a30d813209a695013f356784a516a495ec2bbf3b35"
+      "digest": "sha256:e8c14ae001dcd1cd2a4b5bbc7b600c7b6c80ba77b6d5552518937afdae2e45e0"
     },
     {
       "task_id": "sc-service-organization-reliance",
@@ -3586,7 +3586,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e7d1b9110900ad056a217ed49cc05a60187660a0de3d93a1f8373445ad3e582f"
+      "digest": "sha256:47680218c4bd54a732397095fa50d3e184d0da3f07f0cd470f4e73612768d0f5"
     },
     {
       "task_id": "sc-soc-opinion-modification",
@@ -3600,7 +3600,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c65303718f0cf1e5065e7ec9282cd6a568806e324962480d06fa678f526c6dd5"
+      "digest": "sha256:5de839cbe987ac4c54706e8167673cce0260b43f530cb2afd434d46bea162be2"
     },
     {
       "task_id": "sc-special-journal-routing",
@@ -3614,7 +3614,7 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:477e39c29fce7b42bd975c5cfa5ceeaef37aa9fbefd5ff94ed6f5f9635b18300"
+      "digest": "sha256:c0b7db6266c4fbc45b73e4efda4a59f2021f582d9130cf18e91562f8dd352cbf"
     },
     {
       "task_id": "sc-subsequent-event-classification",
@@ -3631,7 +3631,7 @@
         "asc:855",
         "ias:10"
       ],
-      "digest": "sha256:2ae1ae30185cb14469be5de5198df994fdf9adc65d435d18d68aec790ac6bc8d"
+      "digest": "sha256:9175c1d5a223e92e88e2c1d9e45d3b968aba2dcf6251eaebbd0cf6cc8d9fb423"
     },
     {
       "task_id": "sc-suspense-account-cause",
@@ -3645,7 +3645,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d55cadfb6cd28a54553ab7d3ae692b149f674c75644db1f106914be338f9df0e"
+      "digest": "sha256:f63a1762874967c6b2ef63e1217ec9c13fd106c0df05b813bf70b8a51834ab59"
     },
     {
       "task_id": "sc-system-description-gap",
@@ -3659,7 +3659,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:85ae69c7ca702751a9ba75b5f9bc0ad34382c41dec69d580454247f0bbfd6df4"
+      "digest": "sha256:d6b256084dbafe2e77364f7f3cde5648adcbdce03f8b5c20a46c6035e6c8f72f"
     },
     {
       "task_id": "sc-tax-authority-disclosure",
@@ -3673,7 +3673,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7110b17a5dfe89a1da69836a406c1854f653ce4ea066e708f13fcd9e80685d65"
+      "digest": "sha256:3362676925645387e14e377e407cdad609fe5c614fe44d2d23b4b83d0200f730"
     },
     {
       "task_id": "sc-tax-practice-ethics",
@@ -3687,7 +3687,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:292355c009f7470aa9fe62d648c83a077f78aa85b7bb3f7ff3e70887c7e439c0"
+      "digest": "sha256:81396e26e3a2fa95c6e2370aa662b97c6289df16d7ef0d8f3fc5c8e72abec00f"
     },
     {
       "task_id": "sc-transaction-statement-impact",
@@ -3701,7 +3701,7 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4d22714d4d69d2f70efdd00768e40d1242efb92614a97735aa0f62523a8ef076"
+      "digest": "sha256:bef1f644888bd20377911809036648bf556503c00c5670e986fa6d14ba000a6d"
     },
     {
       "task_id": "schedule-recalculation-difference",
@@ -3715,7 +3715,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f0af7a5a4a383cea3ba8167e6619cd909f0fcae9ae8b0ff89a88f6607c54f382"
+      "digest": "sha256:921e46449cb3709d3d4484fd2e72b58315a4a802e849a46d78f954ee7d77983b"
     },
     {
       "task_id": "section1231-capital-amount",
@@ -3729,7 +3729,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1182b8b67794fb56c06559c931ec0ed8aa0773bc2077106bda41413aad507da2"
+      "digest": "sha256:66b78fbd10738bfbd7d9eb923fbbf0355f63504faa8fd26b75e0f4c9164e2885"
     },
     {
       "task_id": "section704c-contributor-gain",
@@ -3743,7 +3743,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:88059a1e54f75a45d2d3a2f147ccfa0c1258be82a83361060538ca995f12fa3d"
+      "digest": "sha256:293e5169281342317f818c47908dd2ffc104d5abb2c170f4a70838dae457905b"
     },
     {
       "task_id": "securities-revaluation-misstatement",
@@ -3757,7 +3757,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:373b22d5b8c57f8cfb5822a841ac55b46219a962d834f346481ae8e9f321bcdc"
+      "digest": "sha256:9c74166a09007173c9f8a918f19c0b117cd49391c610c67cf523dac77dcde1a5"
     },
     {
       "task_id": "segment-margin",
@@ -3771,7 +3771,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2c7a2eedf2070b7431fc464a163ee56002176827e2d609f1881c35a1bf959e52"
+      "digest": "sha256:d600c8212879ac31b4f2e6deeecb0ee3a9aa271e24c91e87fedc26d75e12190d"
     },
     {
       "task_id": "separate-statements-investment",
@@ -3787,7 +3787,7 @@
       "standards": [
         "ias:27"
       ],
-      "digest": "sha256:ecdfb504dd83fe514c1fd449f47f322257a53f2c0bf4a587b34e7127fb107ab8"
+      "digest": "sha256:ffabfb8ca90655dfa76239ebeafa5f1ffa2662fd8b20eacd48f62920678148c1"
     },
     {
       "task_id": "share-based-compensation-monthly",
@@ -3804,7 +3804,7 @@
         "asc:718",
         "ifrs:2"
       ],
-      "digest": "sha256:92368fad51335334f579221e756a188bb2b992dd89f749260f5ea2dcfb52af80"
+      "digest": "sha256:a7d01fa0be3648496488344da99eb1ddca03884431e8a5e1fd5b6aa41acfacee"
     },
     {
       "task_id": "short-term-note-payment",
@@ -3818,7 +3818,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bc73bc9672e23c33240c18823ce768bf615825aeb9fad35fb9091f7cc35806b0"
+      "digest": "sha256:4911ab3ab874b4e097a89ec55051a8a5f7d5efeebe0882c7cc72ca50b6091e36"
     },
     {
       "task_id": "single-audit-type-a-count",
@@ -3832,7 +3832,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f5b93d397872cd64c500528894f017ce90ee8810243927a7df927b11d0c76a55"
+      "digest": "sha256:10e1a2a6b2ad50e546fde77e2a028af7b58d47b41f073eb10d37b939bcb5c61d"
     },
     {
       "task_id": "small-stock-dividend",
@@ -3846,7 +3846,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:354d502a1f545bbfb361a8f05c6aef3f676f0e947b6de1ff70fd058b012ba14c"
+      "digest": "sha256:b07ef65201459a72e596811203c6a40e8e1becf74b360c5f8c30f32a671cda36"
     },
     {
       "task_id": "sql-join-excluded-count",
@@ -3860,7 +3860,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:eaf97845dbd2cef5359b28dafb435c8ceee95fefd3aea41e74e1622dce24314a"
+      "digest": "sha256:7b75a619862dced650bea9263109febfeff222bccdd6bff20b50029905aefda0"
     },
     {
       "task_id": "standard-cost-per-unit",
@@ -3874,7 +3874,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4d4d692e2e01e1031037e504a2ad3da7237451a6e3726189136eb5855221362f"
+      "digest": "sha256:6639f67a070e97fcb3d5f1c0fec97783d91e99c4aeb9f3b81e0783b727d2129c"
     },
     {
       "task_id": "state-apportionment-income",
@@ -3888,7 +3888,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2e8191d5abebec52ee7dd20563c5ee4955837d39398fbceb78fbc03ed3278caa"
+      "digest": "sha256:c15cfcc0d2a79bb8e56729ad98e00515fc395a94637ef15e6e5908f17a1a35bd"
     },
     {
       "task_id": "step-acquisition-remeasurement-gain",
@@ -3905,7 +3905,7 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:20baabcaebefe85aa40a80a39c416aa88f53eb21b8fb97a04e71ca0bf04e9c27"
+      "digest": "sha256:6752f05257391f7001ece24de05ed8dd75db5fc756ca45197f1a80070c03aa34"
     },
     {
       "task_id": "straight-line-depreciation",
@@ -3919,7 +3919,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:121e5f328452fa58ca10971ab7ac127a55dc7f65787ca7cf01c7c9036a03a2ef"
+      "digest": "sha256:b6e680a2579731c235d3c30ba05affba9f03a69b4cad3d0dccca65583288a404"
     },
     {
       "task_id": "substantive-analytic-difference",
@@ -3933,7 +3933,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7d8826700fbe201de3ff896215d1b2c751c95b3ee195e8875a56cb32bd2ebba1"
+      "digest": "sha256:d768cc3371da4b3196596eaac6eed076e1f1eb496f47ecef7b1e809835ddecd9"
     },
     {
       "task_id": "supplies-adjustment",
@@ -3947,7 +3947,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c7d830c788e324a003870680a320ee9321de3d3a9a9e66b4ab5cd2597701c346"
+      "digest": "sha256:efa1c43ea13182d76b667c538746e4a4d3906172b48ce7da865a7f4fdf8bf873"
     },
     {
       "task_id": "suspense-clearance",
@@ -3961,7 +3961,7 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:ef2475b33c0e02de97c0d907c595518701dc7b8f02ee83e1ee5c591327130142"
+      "digest": "sha256:de92a4b0defb216aae03dd65142526561ef0b4e2c4070a57ff84fd4de6d99f23"
     },
     {
       "task_id": "tax-basis-net-income",
@@ -3975,7 +3975,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4819abfd39a9f181d667c611cada9ba4470029663cbf48cd4783aafe82853c3a"
+      "digest": "sha256:f08b545aaaae43b7ec1d85252e8e573a52ba380977680bad540c0a4c7559ceb1"
     },
     {
       "task_id": "tax-cost-recovery-deduction",
@@ -3989,7 +3989,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fb3823640c925d799e49b784024cdcfee09a78abb5d3007c52c489782716b02d"
+      "digest": "sha256:60a326a72852796317f5b4e8c4ddee25d34f5c13d975123aef84e9c23430d7d2"
     },
     {
       "task_id": "tax-equivalent-yield",
@@ -4003,7 +4003,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c48a39ff19fc845964ca59584f11f952485430853e6229b9c29e514dfa5ee309"
+      "digest": "sha256:19f8cd8105ccd5ec51c9399184145c640b4fcf0fa790666b041f9bdae89e730f"
     },
     {
       "task_id": "tax-penalty-combined",
@@ -4017,7 +4017,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6e8ab882bbd1df34b8f392b612d3ead6cac7f9efa825ac761ab3fe54d82df71b"
+      "digest": "sha256:1aea8b1aaddfe69a3b98547e59281ba863bfc0d6af1a1878c52c17c22d0e98ca"
     },
     {
       "task_id": "tax-return-crossfoot-difference",
@@ -4031,7 +4031,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e400dd3f9846002c0f22be820af1ac63cf4eed5a7bcb472e9fc20502d066c58e"
+      "digest": "sha256:daea704cc8752adf1cdb91ad0b141904795d1be00af54160ed15d9cb974b1fd6"
     },
     {
       "task_id": "taxable-gifts-total",
@@ -4045,7 +4045,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b2c9ffd98216b64fe4dbad576e0ed4ab1290575d2fa2e2e1b72e32e212b6124a"
+      "digest": "sha256:2a0141a482e7812bf89b37faa28403d509d9ac8218e5e6a3bd2bbd1deb6b38d5"
     },
     {
       "task_id": "three-way-match-exceptions",
@@ -4059,7 +4059,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0595dab76f920445b50e4dd4bc25c300a18d40fbf2cf20a9ff2a7103267e06e4"
+      "digest": "sha256:5471539b0d154f702ab3f222f35b15e7e7f8a16d775581ac1b59fb975db70058"
     },
     {
       "task_id": "total-current-liabilities",
@@ -4073,7 +4073,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4e35828bde138619d4782d4f4689d0c9ee38b9a4153f71d72f4fbc442a857ad3"
+      "digest": "sha256:abbb8203e07daae4843a0423bfaffbfcc0aeeb32ee5e63c3332c43edf28fe8a7"
     },
     {
       "task_id": "trading-securities-fair-value",
@@ -4090,7 +4090,7 @@
         "asc:321",
         "ifrs:9"
       ],
-      "digest": "sha256:7ea825aee2872e2b0773d92543cc55f4d25326186078f8c9aadfb99367a60638"
+      "digest": "sha256:8fd701e09a779d7ea662bfa89e86d531434c3cdf8cb488775d81dd52c9ea379a"
     },
     {
       "task_id": "treasury-stock-reissuance",
@@ -4104,7 +4104,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:89ae75fdcba84b5ee1daf1ef8cd01c4590478a707bcb15694fdb24971aeac915"
+      "digest": "sha256:04d30904bdf1d37b984babe899dd1ba3694115e133518896518107cb197e2d95"
     },
     {
       "task_id": "treasury-stock-repurchase",
@@ -4118,7 +4118,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f53d4e2a4b99165d98d7c71f3acadf7b517b9ecf2ae0f4aadc11db525747f913"
+      "digest": "sha256:262ebcd5d69fe52e0893b3d2442e7bd7ca46aeafa6c4cf96f836fbde90d92c7e"
     },
     {
       "task_id": "trial-balance-debit-total",
@@ -4132,7 +4132,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1679105dc0833e5981ab3f461de35ba11b07692bfc08a45ddb0121588fe7603d"
+      "digest": "sha256:80993c3352589608059fcd2422c1f6dd592215b07ac2825fed3b8f8c49ce394f"
     },
     {
       "task_id": "trust-accounting-income",
@@ -4146,7 +4146,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f43732242ecfcdc805803d03392c5e61a9dbe3cc7646590268aa77f1b7f5e2ff"
+      "digest": "sha256:cff262616f05f238a34f2d7789564c214ed6a2da89d0b144b0bb05954ff6eae8"
     },
     {
       "task_id": "trust-dni-computation",
@@ -4160,7 +4160,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:3b2fb78ea562920d33820f9b99bb8b62c3b11c04936d1a60f049d0fce5faeb87"
+      "digest": "sha256:fd11dd9dcbe892f6bd8998fb1527c803049233a107768b7fbbc57551f2004d63"
     },
     {
       "task_id": "uncorrected-misstatement-total",
@@ -4174,7 +4174,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:87da746eed2f4ef637c77ae1a942e3847d5a2a3b53e35376dfbe804181756a90"
+      "digest": "sha256:59837eb2af91bdca8e01eb6aeeaf44295739a9d47ef29dbbaf2704ba08398e85"
     },
     {
       "task_id": "unearned-revenue-release",
@@ -4188,7 +4188,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d9008b41ccc240765d0b6106d8f8cf34951eb8f26841f876cb0e5ede3312a67b"
+      "digest": "sha256:ea483ae7b88ff1cc61f7625b4a95346623380595a9ffe9707d52fbbe3b250ab2"
     },
     {
       "task_id": "units-of-production-depreciation",
@@ -4202,7 +4202,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7d25e4c706554fdf7ead2258aff8c7d36f02d54a98460278decd480466c5c3be"
+      "digest": "sha256:3e9bfd83dfbbd3869ab8076f29f2cbcd7e663e3c7e9666c538682423aca0435b"
     },
     {
       "task_id": "varying-interest-allocation",
@@ -4216,7 +4216,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d839cee19221e1019f22bc18c2845b8eb012c275c1be601635f47e45a0e545bb"
+      "digest": "sha256:1735ab7936911edf488a7322dc888e9c2c3696755d0501cc87304dfbcd20d537"
     },
     {
       "task_id": "warranty-provision-and-claims",
@@ -4230,7 +4230,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:926124eca11abf7e1d5b196e113b53d55b78613acc66f07b480aff32430bd920"
+      "digest": "sha256:23468fe6eeb9c3c26d393f796beb395f6c5d9b0957bc92498b11c9b221df0994"
     },
     {
       "task_id": "weighted-average-cost-of-capital",
@@ -4244,7 +4244,7 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:db18830b7dc2497c2d52a5db228bf28bd8d0be6a3135a829b47cec223a3cb835"
+      "digest": "sha256:55e0c7e4bf749cdac14f90c0c721ddfaa491cda3ba0e942a801a89344f4fef81"
     },
     {
       "task_id": "weighted-average-ending-inventory",
@@ -4261,7 +4261,7 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:35c8091bd4bb96aede07716c213b810ab09e26f9961eb81cc2fe88c3b298c4eb"
+      "digest": "sha256:2987622151e564dfce6110dcb717058d71cd0e4dd47edef9431cfd8ed0481f56"
     },
     {
       "task_id": "written-off-receivable-recovery",
@@ -4275,7 +4275,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b4cc6cdc45e96a5bdfb430df5eb9670a6b7a6a8124f5e659efba101b6db28058"
+      "digest": "sha256:5a4743df46e269b35bbdef0a77c1ff5d36b400b1847193d0684839ea63738099"
     }
   ]
 }
