@@ -1,6 +1,6 @@
 # w2 · m3 — pass^k and pass@k reliability metrics
 
-**Worker:** worker2 **Goal:** `oab report` reports pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** todo (t001, t002, t004–t007 done)
+**Worker:** worker2 **Goal:** `oab report` reports pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** done
 
 ## Tasks (in order)
 
@@ -12,7 +12,7 @@
 | t005 | Adoption surface — **DONE** | 20m | t002, t004 |
 | t006 | Simplify — **DONE** | 15m | t005 |
 | t007 | Test coverage — **DONE** | 20m | t005 |
-| t008 | Closeout | 10m | t007 |
+| t008 | Closeout — **DONE** | 10m | t007 |
 
 ## Dropped
 
