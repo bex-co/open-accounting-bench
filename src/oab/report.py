@@ -22,6 +22,7 @@ from pathlib import Path
 
 AXES = ("category", "framework", "level", "format", "skill")
 GROUP_AXES = (*AXES, "family")
+DIAGNOSTIC_CLASSES = ("correct", "wrong-account", "wrong-amount", "missing")
 CHOICE_FORMATS = ("single-choice", "multiple-choice")
 BANDS = [
     (90, "Excellent (near-expert)"),
@@ -117,6 +118,21 @@ def _workflow_checks(details: dict) -> list[dict]:
     return out
 
 
+def _diagnostic_counts(report: dict) -> dict[str, int] | None:
+    """Per-class counts of the grader's account-vs-amount diagnostics.
+
+    Counts only: the classified account names are held-out expectations.
+    """
+    details = report.get("details")
+    diagnostics = details.get("diagnostics") if isinstance(details, dict) else None
+    if not isinstance(diagnostics, dict):
+        return None
+    classes = list((diagnostics.get("expected") or {}).values())
+    counts = {name: classes.count(name) for name in DIAGNOSTIC_CLASSES}
+    counts["extra"] = len(diagnostics.get("extra") or [])
+    return counts
+
+
 def _task_id_of(trial_result: dict, trial_dir: Path) -> str:
     name = trial_result.get("task_name") or ""
     if "/" in name:
@@ -154,8 +170,9 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
         task_id = _task_id_of(result, trial_dir)
         entry = by_task.get(task_id, {})
         reward = _read_json(trial_dir / "verifier" / "reward.json") or {}
+        verifier_report = _read_json(trial_dir / "verifier" / "report.json") or {}
         workflow_details = (
-            _workflow_details(_read_json(trial_dir / "verifier" / "report.json") or {})
+            _workflow_details(verifier_report)
             if entry.get("format") == "workflow" or "rubric_completion" in reward
             else {}
         )
@@ -180,6 +197,7 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
             "confidence": reward.get("confidence", (answer or {}).get("confidence")),
             "parse_failure": reward.get("parse_failure"),
             "over_action": reward.get("over_action"),
+            "diagnostics": _diagnostic_counts(verifier_report),
             "input_tokens": agent_result.get("n_input_tokens"),
             "output_tokens": agent_result.get("n_output_tokens"),
             "cost_usd": _cost(agent_result, agent.get("model_name"), prices),
@@ -477,6 +495,30 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
                 f"| {group} | {count} | {_pct(mean)} "
                 f"| {_pct(at.get(group, (0, None))[1])} | {_pct(hat.get(group, (0, None))[1])} |"
             )
+    diagnosed = [r for r in rows if r.get("graded", True) and r.get("diagnostics")]
+    if diagnosed:
+        lines += [
+            "",
+            "## Account-vs-amount diagnostics",
+            "",
+            "Shares of expected account changes per family (informational; never reward): "
+            "correct, right amount in the wrong account, right account with the wrong "
+            "amount, or missing. Extra = unexplained movements in other accounts.",
+            "",
+            "| family | Trials | Expected changes | Correct | Wrong account | Wrong amount "
+            "| Missing | Extra |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+        by_family: dict[str, list[dict]] = {}
+        for row in diagnosed:
+            by_family.setdefault(str(row.get("family")), []).append(row["diagnostics"])
+        for family, counts in sorted(by_family.items()):
+            totals = {name: sum(c[name] for c in counts) for name in (*DIAGNOSTIC_CLASSES, "extra")}
+            changes = sum(totals[name] for name in DIAGNOSTIC_CLASSES)
+            shares = " | ".join(
+                _pct(totals[name] / changes if changes else None) for name in DIAGNOSTIC_CLASSES
+            )
+            lines.append(f"| {family} | {len(counts)} | {changes} | {shares} | {totals['extra']} |")
     bins = _confidence_bins(rows)
     if bins:
         lines += [

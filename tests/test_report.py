@@ -337,3 +337,44 @@ def test_reliability_ignores_errored_trials_and_groups_by_family(tmp_path: Path)
     board = board_path.read_text()
     assert "## By family" in board
     assert "| f | 2 | 50.0% | 100.0% | 0.0% |" in board
+
+
+def test_account_amount_diagnostics_by_family(tmp_path: Path):
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+
+    def report(expected: dict, extra: list) -> dict:
+        return {"layers": {}, "details": {"diagnostics": {"expected": expected, "extra": extra}}}
+
+    _trial(
+        job,
+        "je-y__a",
+        "je-y",
+        {"reward": 1},
+        workflow_report=report({"Expenses:A": "correct", "Assets:Bank": "correct"}, []),
+    )
+    _trial(
+        job,
+        "je-y__b",
+        "je-y",
+        {"reward": 0},
+        workflow_report=report({"Expenses:A": "wrong-account", "Assets:Bank": "correct"}, []),
+    )
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+    runs_path, board_path = write_report(job, manifest, out_dir=tmp_path / "out")
+    rows = [json.loads(line) for line in runs_path.read_text().splitlines()]
+    wrong = next(r for r in rows if r["trial"] == "je-y__b")
+    # Counts only: expected account names are held-out verifier data.
+    assert wrong["diagnostics"] == {
+        "correct": 1,
+        "wrong-amount": 0,
+        "wrong-account": 1,
+        "missing": 0,
+        "extra": 0,
+    }
+    assert "Expenses:A" not in runs_path.read_text()
+    board = board_path.read_text()
+    assert "## Account-vs-amount diagnostics" in board
+    assert "| f | 2 | 4 | 75.0% | 25.0% | 0.0% | 0.0% | 0 |" in board
