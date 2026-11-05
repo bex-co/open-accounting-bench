@@ -500,6 +500,24 @@ crosswalk mappings.
   booking the right one. Also confirm the false-accept probe list
   (verification.md) has no wrong answer a reviewer would expect to be
   caught but that is missing.
+- 2026-11-05 — clean-month negative control in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.11.0; about
+  one seed in five, e.g. seeds 7, 15, 23, 33, 35, 36). Every correct
+  January close entry is already in the ledger, the close sources mark
+  six items recorded (`accrued-in-ledger`, `expensed-then-unexpired-
+  portion-deferred`, `capitalized-then-reclassified-to-repairs`,
+  `revised-bank-fee-recorded`, `released-early-then-deferred`,
+  `in-transit-recorded`), and the oracle appends nothing, reporting
+  every issue as `already-recorded` with the same adjusted trial
+  balance and income statement as the adjustment variant. Confirm:
+  (1) each of the 15 issues is unambiguously already handled from the
+  ledger plus sources, including the nine whose sources carry no
+  status (revenue cutoff and its cost, allowance, inventory write-down,
+  payroll, impairment, interest, current portion, returned check), so
+  no reasonable reviewer would still post an entry; (2) the new policy
+  rule and code `already-recorded` read correctly; (3) the over-action
+  trap — re-posting the recorded allowance or accruing the February
+  utility invoice in January — is a plausible mistake that must fail.
 
 
 ## Reviewed
