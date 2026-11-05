@@ -1,12 +1,12 @@
 # w2 · m3 — pass^k and pass@k reliability metrics
 
-**Worker:** worker2 **Goal:** `oab report` and the dataset metric report pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** todo
+**Worker:** worker2 **Goal:** `oab report` and the dataset metric report pass@k and pass^k from multi-attempt runs, so results show both best-case and every-time reliability. **Status:** todo (t001 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Define the estimators | 30m | — |
+| t001 | Define the estimators — **DONE** | 30m | — |
 | t002 | Aggregate in `oab report` | 60m | t001 |
 | t003 | Expose in the dataset metric | 45m | t001 |
 | t004 | Document the metrics | 30m | t002 |

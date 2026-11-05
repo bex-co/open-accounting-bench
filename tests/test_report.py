@@ -257,3 +257,18 @@ def test_over_action_rate_from_no_action_trials(tmp_path: Path):
     assert (
         "Over-action rate (no-action controls): **33.3%** (1 of 3 trials" in board_path.read_text()
     )
+
+
+def test_pass_at_k_and_pass_hat_k_estimators():
+    from oab.report import pass_at_k, pass_hat_k
+
+    # all pass / all fail
+    assert pass_at_k(3, 3, 3) == 1.0 and pass_hat_k(3, 3, 3) == 1.0
+    assert pass_at_k(3, 0, 3) == 0.0 and pass_hat_k(3, 0, 3) == 0.0
+    # n=4, c=2: pass@2 = 1 - C(2,2)/C(4,2) = 5/6; pass^2 = C(2,2)/C(4,2) = 1/6
+    assert pass_at_k(4, 2, 2) == 5 / 6
+    assert pass_hat_k(4, 2, 2) == 1 / 6
+    # k = 1 reduces to the mean success rate for both
+    assert pass_at_k(5, 2, 1) == pass_hat_k(5, 2, 1) == 2 / 5
+    # fewer attempts than k: not available, never 0
+    assert pass_at_k(2, 2, 3) is None and pass_hat_k(2, 2, 3) is None

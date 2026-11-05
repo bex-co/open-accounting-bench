@@ -17,6 +17,8 @@ from __future__ import annotations
 import json
 from collections import Counter
 from datetime import datetime
+from fractions import Fraction
+from math import comb
 from pathlib import Path
 
 AXES = ("category", "framework", "level", "format", "skill")
@@ -29,6 +31,28 @@ BANDS = [
     (0, "Poor (not suitable for professional use)"),
 ]
 CONFIDENCE_BINS = [(0, 50), (50, 70), (70, 85), (85, 95), (95, 101)]
+
+
+def pass_at_k(n: int, c: int, k: int) -> float | None:
+    """Unbiased pass@k from n graded attempts with c successes.
+
+    Probability that at least one of k attempts drawn without
+    replacement succeeds: 1 - C(n-c, k) / C(n, k). None when n < k.
+    """
+    if n < k or k < 1:
+        return None
+    return float(1 - Fraction(comb(n - c, k), comb(n, k)))
+
+
+def pass_hat_k(n: int, c: int, k: int) -> float | None:
+    """pass^k: probability that all k attempts succeed, C(c, k) / C(n, k).
+
+    The deployment bar for accounting agents: right every time, not
+    right on average. None when n < k.
+    """
+    if n < k or k < 1:
+        return None
+    return float(Fraction(comb(c, k), comb(n, k)))
 
 
 def band_for(percent: float) -> str:
