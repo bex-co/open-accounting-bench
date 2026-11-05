@@ -1995,3 +1995,58 @@ def test_metadata_line_detached_by_a_blank_line_is_a_structural_error():
     final = instance.solution_ledger + '\n  source: "orphaned"\n'
     report = verify(instance.initial_ledger, final, instance.expected)
     assert not report.layers["structural_validity"].passed
+
+
+# --- Account-vs-amount diagnostics (w2/m4): informational, never reward ---
+
+
+def _diagnostics(final: str) -> dict:
+    instance = _reference()
+    report = verify(instance.initial_ledger, final, instance.expected)
+    return report.to_report_json()["details"]["diagnostics"]
+
+
+def test_diagnostics_correct_entry():
+    instance = _reference()
+    diag = _diagnostics(instance.solution_ledger)
+    assert diag["expected"] == {
+        "Assets:Bank:Checking": "correct",
+        "Expenses:OfficeSupplies": "correct",
+    }
+    assert diag["extra"] == []
+
+
+def test_diagnostics_right_amount_wrong_account():
+    instance = _reference()
+    wrong = instance.solution_ledger.replace("  Expenses:OfficeSupplies", "  Assets:Equipment")
+    diag = _diagnostics(wrong)
+    assert diag["expected"]["Expenses:OfficeSupplies"] == "wrong-account"
+    assert diag["expected"]["Assets:Bank:Checking"] == "correct"
+    assert diag["extra"] == []  # Equipment is explained as the misposted account
+
+
+def test_diagnostics_right_account_wrong_amount():
+    instance = _reference()
+    wrong = instance.solution_ledger.replace("775.00 USD", "700.00 USD")
+    diag = _diagnostics(wrong)
+    assert set(diag["expected"].values()) == {"wrong-amount"}
+
+
+def test_diagnostics_missing_and_extra():
+    instance = _reference()
+    assert set(_diagnostics(instance.initial_ledger)["expected"].values()) == {"missing"}
+    extra = instance.solution_ledger + (
+        '\n2026-01-31 * "Probe" "Unrelated reclass"\n'
+        "  Expenses:Rent  100.00 USD\n"
+        "  Expenses:Utilities  -100.00 USD\n"
+    )
+    diag = _diagnostics(extra)
+    assert set(diag["expected"].values()) == {"correct"}
+    assert diag["extra"] == ["Expenses:Rent", "Expenses:Utilities"]
+
+
+def test_diagnostics_never_change_reward_json():
+    instance = _reference()
+    for final in (instance.solution_ledger, instance.initial_ledger):
+        rewards = verify(instance.initial_ledger, final, instance.expected).to_reward_json()
+        assert not any("diagnostic" in key for key in rewards)

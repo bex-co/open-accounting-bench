@@ -1,14 +1,14 @@
 # w2 · m4 — Account-vs-amount failure diagnostics
 
-**Worker:** worker2 **Goal:** Every journal-entry grade classifies each expected change as correct, right amount in the wrong account, right account with the wrong amount, missing, or extra, without changing the reward. **Status:** todo
+**Worker:** worker2 **Goal:** Every journal-entry grade classifies each expected change as correct, right amount in the wrong account, right account with the wrong amount, missing, or extra, without changing the reward. **Status:** todo (t001–t003 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Failing tests for the diagnostic classes | 45m | — |
-| t002 | Implement the diagnostic in the verifier core | 75m | t001 |
-| t003 | Regenerate tasks | 15m | t002 |
+| t001 | Failing tests for the diagnostic classes — **DONE** | 45m | — |
+| t002 | Implement the diagnostic in the verifier core — **DONE** | 75m | t001 |
+| t003 | Regenerate tasks — **DONE** | 15m | t002 |
 | t004 | Aggregate diagnostics in `oab report` | 45m | t002 |
 | t005 | Adoption surface | 20m | t003, t004 |
 | t006 | Simplify | 15m | t005 |

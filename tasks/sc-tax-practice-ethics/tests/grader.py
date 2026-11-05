@@ -428,7 +428,48 @@ def _verify_ledgers(
             "operational_integrity": integrity,
         },
         extras=extras,
+        details={"diagnostics": _diagnose(deltas, expected_deltas, allowed_extra, tolerance)},
     )
+
+
+def _diagnose(
+    deltas: dict[str, Decimal],
+    expected_deltas: dict[str, Decimal],
+    allowed_extra: set[str],
+    tolerance: Decimal,
+) -> dict:
+    """Classify each expected change; informational only, never reward.
+
+    correct        the account moved by the expected amount
+    wrong-amount   the account moved, by a different amount
+    wrong-account  the account did not move, but an unexpected account
+                   moved by exactly the expected amount (misposting)
+    missing        the account did not move and nothing explains it
+    ``extra`` lists unexpected accounts that moved and were not matched
+    as the destination of a misposting.
+    """
+    unexpected = {
+        account: delta
+        for account, delta in deltas.items()
+        if account not in expected_deltas
+        and account not in allowed_extra
+        and not _close(delta, ZERO, tolerance)
+    }
+    classes: dict[str, str] = {}
+    for account, want in expected_deltas.items():
+        got = deltas.get(account, ZERO)
+        if _close(got, want, tolerance):
+            classes[account] = "correct"
+        elif not _close(got, ZERO, tolerance):
+            classes[account] = "wrong-amount"
+        else:
+            match = next(
+                (other for other, delta in unexpected.items() if _close(delta, want, tolerance)),
+                None,
+            )
+            classes[account] = "missing" if match is None else "wrong-account"
+            unexpected.pop(match, None)
+    return {"expected": classes, "extra": sorted(unexpected)}
 
 
 def _added_transactions(initial: Ledger, final: Ledger) -> list[Transaction]:
@@ -835,6 +876,7 @@ def grade_workflow(
         layers=layers,
         extras=extras,
         details={
+            **base.details,
             "workflow": {
                 "schema_version": spec.get("schema_version"),
                 "checks": results,
@@ -842,7 +884,7 @@ def grade_workflow(
                 "clusters": clusters,
                 "rubric_completion": rubric_completion,
                 "workflow_check_completion": check_completion,
-            }
+            },
         },
     )
 
