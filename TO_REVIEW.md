@@ -483,6 +483,23 @@ crosswalk mappings.
   at 97–99% mean rubric, above the preregistered target band), so
   no promote decision, Stable freeze, or difficulty claim is made
   by this entry.
+- 2026-11-05 — verifier scoring changes from the w2/m1 mutation audit
+  (`GENERATOR_VERSION` 0.9.0 and 0.10.0; expectations unchanged, see
+  [docs/verification.md](docs/verification.md#mutation-audit-false-accepts-and-false-rejects)).
+  Confirm, as accounting practice, that these grading rules are right:
+  (1) append-only means an existing entry's description and flag are
+  part of the record, so rewording or re-flagging a posted entry fails
+  even when its amounts are untouched; (2) existing `open` directives
+  are part of the record, so deleting an unused account or loosening
+  its currency constraint fails; (3) any movement outside the expected
+  reporting-currency deltas, in any currency, is unauthorized;
+  (4) these are equivalent correct answers and now pass: entry or
+  posting metadata, the `txn` keyword, amounts written with other than
+  two decimals, splitting or merging entries within the allowed
+  transaction count, and posting a wrong entry, reversing it, then
+  booking the right one. Also confirm the false-accept probe list
+  (verification.md) has no wrong answer a reviewer would expect to be
+  caught but that is missing.
 
 
 ## Reviewed
