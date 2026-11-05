@@ -1,13 +1,13 @@
 # w2 · m1 — Verifier false-accept/reject audit and adversarial suite
 
-**Worker:** worker2 **Goal:** Every Stable task carries a measured false-accept and false-reject count from a reproducible mutation audit, and CI guards against regressions. **Status:** todo (t001 done)
+**Worker:** worker2 **Goal:** Every Stable task carries a measured false-accept and false-reject count from a reproducible mutation audit, and CI guards against regressions. **Status:** todo (t001, t002 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
 | t001 | Define mutation operators per answer format — **DONE** | 60m | — |
-| t002 | Implement `oab audit` | 75m | t001 |
+| t002 | Implement `oab audit` — **DONE** | 75m | t001 |
 | t003 | Run the full audit and resolve every finding | 90m | t002 |
 | t004 | Add a sampled audit to CI | 30m | t002 |
 | t005 | Publish audit results | 30m | t003 |

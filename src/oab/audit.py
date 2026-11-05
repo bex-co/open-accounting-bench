@@ -993,10 +993,141 @@ def load_case(task_dir: Path) -> AuditCase | None:
     return None
 
 
-def grade_probe(case: AuditCase, probe: Probe) -> dict:
-    """Grade a probe with the hermetic grader; returns the reward JSON."""
+def grade_probe(case: AuditCase, probe: Probe):
+    """Grade a probe with the hermetic grader; returns the verifier ``Report``."""
     if case.fmt == "journal-entry":
-        report = verify(case.initial or "", probe.artifact, case.expected)
-    else:
-        report = grade_answer(case.expected, probe.artifact)
-    return report.to_reward_json()
+        return verify(case.initial or "", probe.artifact, case.expected)
+    return grade_answer(case.expected, probe.artifact)
+
+
+# ---------------------------------------------------------------------------
+# Running the audit.
+
+
+@dataclass(frozen=True)
+class Outcome:
+    task_id: str
+    operator: str
+    kind: str
+    expected_reward: int
+    reward: int
+    declared_layer: str | None
+    failed_layers: tuple[str, ...]
+
+    @property
+    def misjudged(self) -> bool:
+        return self.reward != self.expected_reward
+
+    @property
+    def verdict(self) -> str:
+        if not self.misjudged:
+            return "ok"
+        return "false-accept" if self.kind == FALSE_ACCEPT else "false-reject"
+
+
+def audit_case(case: AuditCase) -> list[Outcome]:
+    outcomes = []
+    for probe in probes(case):
+        report = grade_probe(case, probe)
+        failed = tuple(name for name, layer in report.layers.items() if not layer.passed)
+        outcomes.append(
+            Outcome(
+                case.task_id,
+                probe.operator,
+                probe.kind,
+                probe.expect_reward,
+                report.reward,
+                probe.layer,
+                failed,
+            )
+        )
+    return outcomes
+
+
+def task_dirs(tasks_root: Path) -> list[Path]:
+    return sorted(p for p in tasks_root.iterdir() if p.is_dir() and (p / "task.toml").exists())
+
+
+def run_audit(tasks_root: Path, sample: int | None = None) -> tuple[list[Outcome], list[str]]:
+    """Audit every (or every ``sample``-th) task; returns outcomes and skipped task ids.
+
+    ``sample=N`` keeps every N-th task in sorted order, a deterministic
+    subset for fast CI runs.
+    """
+    dirs = task_dirs(tasks_root)
+    if sample and sample > 1:
+        dirs = dirs[::sample]
+    outcomes: list[Outcome] = []
+    skipped: list[str] = []
+    for task_dir in dirs:
+        case = load_case(task_dir)
+        if case is None:
+            skipped.append(task_dir.name)
+            continue
+        outcomes.extend(audit_case(case))
+    return outcomes, skipped
+
+
+def summarize(outcomes: list[Outcome], skipped: list[str]) -> dict:
+    """Machine-readable audit summary (stable key order for byte-identical output)."""
+    operators: dict[str, dict] = {}
+    for outcome in outcomes:
+        row = operators.setdefault(
+            outcome.operator,
+            {"kind": outcome.kind, "probes": 0, "misjudged": 0, "tasks": []},
+        )
+        row["probes"] += 1
+        if outcome.misjudged:
+            row["misjudged"] += 1
+            row["tasks"].append(outcome.task_id)
+    tasks: dict[str, dict] = {}
+    for outcome in outcomes:
+        row = tasks.setdefault(
+            outcome.task_id, {"probes": 0, "false_accepts": 0, "false_rejects": 0}
+        )
+        row["probes"] += 1
+        if outcome.verdict == "false-accept":
+            row["false_accepts"] += 1
+        elif outcome.verdict == "false-reject":
+            row["false_rejects"] += 1
+    fa_probes = [o for o in outcomes if o.kind == FALSE_ACCEPT]
+    fr_probes = [o for o in outcomes if o.kind == FALSE_REJECT]
+    return {
+        "tasks_audited": len(tasks),
+        "tasks_skipped": sorted(skipped),
+        "probes": len(outcomes),
+        "false_accept_probes": len(fa_probes),
+        "false_accepts": sum(o.misjudged for o in fa_probes),
+        "false_reject_probes": len(fr_probes),
+        "false_rejects": sum(o.misjudged for o in fr_probes),
+        "operators": dict(sorted(operators.items())),
+        "tasks": dict(sorted(tasks.items())),
+    }
+
+
+def render_markdown(summary: dict) -> str:
+    def rate(bad: int, total: int) -> str:
+        return f"{bad}/{total} ({bad / total:.1%})" if total else "0/0"
+
+    lines = [
+        "# Verifier mutation audit",
+        "",
+        f"- Tasks audited: {summary['tasks_audited']}"
+        + (
+            f" (skipped: {', '.join(summary['tasks_skipped'])})" if summary["tasks_skipped"] else ""
+        ),
+        f"- Probes: {summary['probes']}",
+        "- False accepts (wrong answer passed): "
+        + rate(summary["false_accepts"], summary["false_accept_probes"]),
+        "- False rejects (equivalent answer failed): "
+        + rate(summary["false_rejects"], summary["false_reject_probes"]),
+        "",
+        "| Operator | Probe | Applied | Misjudged | Example tasks |",
+        "|---|---|---:|---:|---|",
+    ]
+    for name, row in summary["operators"].items():
+        examples = ", ".join(row["tasks"][:3]) + (" …" if len(row["tasks"]) > 3 else "")
+        lines.append(
+            f"| `{name}` | {row['kind']} | {row['probes']} | {row['misjudged']} | {examples} |"
+        )
+    return "\n".join(lines) + "\n"

@@ -7,6 +7,7 @@ oab verify --task-dir DIR [--ledger/--answer PATH] grade locally
 oab validate [--tasks tasks]               structure + oracle/nop checks
 oab report --job DIR [--prices FILE]       aggregate a Harbor job
 oab crosswalk [--dir crosswalks]           validate crosswalks + coverage
+oab audit [--tasks tasks] [--out DIR]      verifier false-accept/reject audit
 """
 
 from __future__ import annotations
@@ -308,6 +309,21 @@ def _cmd_crosswalk(args) -> int:
     return 0
 
 
+def _cmd_audit(args) -> int:
+    from oab.audit import render_markdown, run_audit, summarize
+
+    outcomes, skipped = run_audit(Path(args.tasks), sample=args.sample)
+    summary = summarize(outcomes, skipped)
+    markdown = render_markdown(summary)
+    if args.out:
+        out = Path(args.out)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "audit.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        (out / "audit.md").write_text(markdown, encoding="utf-8")
+    print(markdown, end="")
+    return 1 if summary["false_accepts"] or summary["false_rejects"] else 0
+
+
 def _cmd_validate(args) -> int:
     failures = validate_tasks(Path(args.tasks))
     for failure in failures:
@@ -344,6 +360,11 @@ def main(argv: list[str] | None = None) -> int:
     cw = sub.add_parser("crosswalk")
     cw.add_argument("--dir", default="crosswalks")
     cw.set_defaults(fn=_cmd_crosswalk)
+    aud = sub.add_parser("audit", help="mutation audit of the verifier over generated tasks")
+    aud.add_argument("--tasks", default="tasks")
+    aud.add_argument("--out", help="write audit.json and audit.md to this directory")
+    aud.add_argument("--sample", type=int, help="audit every N-th task (deterministic subset)")
+    aud.set_defaults(fn=_cmd_audit)
     val = sub.add_parser("validate")
     val.add_argument("--tasks", default="tasks")
     val.set_defaults(fn=_cmd_validate)

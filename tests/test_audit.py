@@ -39,3 +39,27 @@ def test_probes_are_deterministic():
 )
 def test_every_operator_applies_to_some_stable_task(operator):
     assert any(operator(case) is not None for case in CASES), operator.operator
+
+
+def test_audit_cli_writes_identical_reports(tmp_path):
+    from oab.cli import main
+
+    first, second = tmp_path / "a", tmp_path / "b"
+    main(["audit", "--tasks", str(TASKS), "--sample", "40", "--out", str(first)])
+    main(["audit", "--tasks", str(TASKS), "--sample", "40", "--out", str(second)])
+    for name in ("audit.json", "audit.md"):
+        assert (first / name).read_bytes() == (second / name).read_bytes()
+
+
+def test_summary_counts_misjudgements_by_kind():
+    from oab.audit import Outcome, summarize
+
+    outcomes = [
+        Outcome("t", "a", FALSE_ACCEPT, 0, 1, "semantic_accuracy", ()),
+        Outcome("t", "b", FALSE_ACCEPT, 0, 0, "semantic_accuracy", ("semantic_accuracy",)),
+        Outcome("t", "c", FALSE_REJECT, 1, 0, None, ("structural_validity",)),
+    ]
+    summary = summarize(outcomes, [])
+    assert (summary["false_accepts"], summary["false_accept_probes"]) == (1, 2)
+    assert (summary["false_rejects"], summary["false_reject_probes"]) == (1, 1)
+    assert summary["tasks"]["t"] == {"probes": 3, "false_accepts": 1, "false_rejects": 1}
