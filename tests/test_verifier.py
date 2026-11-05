@@ -2049,3 +2049,16 @@ def test_diagnostics_never_change_reward_json():
     for final in (instance.solution_ledger, instance.initial_ledger):
         rewards = verify(instance.initial_ledger, final, instance.expected).to_reward_json()
         assert not any("diagnostic" in key for key in rewards)
+
+
+def test_diagnostics_extra_includes_foreign_currency_movements():
+    instance = _reference()
+    final = instance.solution_ledger.replace(
+        "  Assets:Bank:Checking  -775.00 USD\n",
+        "  Assets:Bank:Checking  -775.00 USD\n"
+        "  Expenses:Rent  100.00 EUR\n"
+        "  Expenses:Utilities  -100.00 EUR\n",
+    )
+    diag = _diagnostics(instance, final)
+    assert set(diag["expected"].values()) == {"correct"}
+    assert diag["extra"] == ["Expenses:Rent", "Expenses:Utilities"]

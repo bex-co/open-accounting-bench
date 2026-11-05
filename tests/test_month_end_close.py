@@ -391,3 +391,12 @@ def test_validate_relaxes_only_no_action_controls(tmp_path: Path):
     failures = "\n".join(validate_tasks(tmp_path))
     assert "workflow expected_deltas must be non-empty" in failures
     assert "solution ledger must differ from initial" in failures
+
+
+def test_workflow_report_carries_ledger_diagnostics():
+    instance = _adjusting_instance(8)
+    details = _grade(instance).to_report_json()["details"]
+    assert "workflow" in details
+    assert set(details["diagnostics"]["expected"].values()) == {"correct"}
+    nop = _grade(instance, ledger=instance.initial_ledger).to_report_json()["details"]
+    assert "missing" in set(nop["diagnostics"]["expected"].values())
