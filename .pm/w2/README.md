@@ -12,5 +12,4 @@
 
 ## Inbox
 
-- [002](./002.md) — Declared plausibility invariants for generator seed sweeps
 - [003](./003.md) — Evaluate keyed seed derivation for the Holdout track
