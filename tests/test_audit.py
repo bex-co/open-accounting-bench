@@ -1,5 +1,6 @@
 """Mutation audit: operators are deterministic, declared, and applicable."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -63,3 +64,19 @@ def test_summary_counts_misjudgements_by_kind():
     assert (summary["false_accepts"], summary["false_accept_probes"]) == (1, 2)
     assert (summary["false_rejects"], summary["false_reject_probes"]) == (1, 1)
     assert summary["tasks"]["t"] == {"probes": 3, "false_accepts": 1, "false_rejects": 1}
+
+
+def test_audit_fails_when_the_grader_regresses(monkeypatch, tmp_path):
+    """CI gate: a grader that accepts everything must make `oab audit` exit 1."""
+    import oab.audit as audit
+    from oab._verifier_core import LayerResult, Report
+    from oab.cli import main
+
+    def accept_everything(*_args):
+        return Report(layers={"structural_validity": LayerResult(1.0, True)})
+
+    monkeypatch.setattr(audit, "verify", accept_everything)
+    assert main(["audit", "--tasks", str(TASKS), "--sample", "40"]) == 1
+    assert main(["audit", "--tasks", str(TASKS), "--sample", "40", "--out", str(tmp_path)]) == 1
+    summary = json.loads((tmp_path / "audit.json").read_text())
+    assert summary["false_accepts"] > 0

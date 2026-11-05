@@ -1,4 +1,4 @@
-.PHONY: test lint validate crosswalk generate check-generated oracle
+.PHONY: test lint validate crosswalk audit generate check-generated oracle
 
 test:
 	uv run pytest
@@ -13,6 +13,10 @@ validate:
 # Crosswalk records validate; prints framework coverage.
 crosswalk:
 	uv run oab crosswalk --dir crosswalks
+
+# Mutation audit: wrong answers must fail, equivalent answers must pass.
+audit:
+	uv run oab audit --tasks tasks
 
 generate:
 	uv run oab generate --all --out tasks
