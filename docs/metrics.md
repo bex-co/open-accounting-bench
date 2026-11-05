@@ -84,8 +84,10 @@ attempts by task.
   and rubric range, issue-cluster means, per-check pass counts,
   mean wall time and mean cost when workflow reports are present, and
   confidence-bin reward rates, per-family account-vs-amount
-  diagnostic shares, and the share of graded tasks with an accounting
-  review on record (`--reviewed-only` scores only those tasks). Costs come from Harbor's `cost_usd` when present, else
+  diagnostic shares, the share of graded tasks with an accounting
+  review on record (`--reviewed-only` scores only those tasks), and the
+  reward rate by token-use tercile (descriptive only: harder tasks draw
+  more tokens, so compare budgets by rerunning with a controlled budget). Costs come from Harbor's `cost_usd` when present, else
   token counts × an external price table (`--prices`, see
   `prices.example.json`; always cite its `as_of` date).
 

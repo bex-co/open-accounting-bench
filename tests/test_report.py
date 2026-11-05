@@ -396,3 +396,28 @@ def test_reviewed_share_and_reviewed_only(tmp_path: Path):
     assert "| mc-x |" in board
     assert "| je-y |" not in board
     assert "restricted to reviewed tasks (--reviewed-only)" in board
+
+
+def test_reward_by_token_budget_terciles(tmp_path: Path):
+    job = _job(tmp_path)
+    tokens = [
+        (100, 50, 1),
+        (120, 60, 1),
+        (400, 200, 1),
+        (500, 250, 0),
+        (900, 600, 0),
+        (1000, 700, 0),
+    ]
+    for i, (n_in, n_out, reward) in enumerate(tokens):
+        trial = _trial(job, f"je-y__{i}", "je-y", {"reward": reward})
+        result = json.loads((trial / "result.json").read_text())
+        result["agent_result"].update({"n_input_tokens": n_in, "n_output_tokens": n_out})
+        (trial / "result.json").write_text(json.dumps(result))
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(MANIFEST))
+    _runs, board_path = write_report(job, manifest, out_dir=tmp_path / "out")
+    board = board_path.read_text()
+    assert "## Reward by token budget" in board
+    assert "| low | 2 | 150–180 | 100.0% |" in board
+    assert "| mid | 2 | 600–750 | 50.0% |" in board
+    assert "| high | 2 | 1500–1700 | 0.0% |" in board

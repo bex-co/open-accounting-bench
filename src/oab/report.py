@@ -381,6 +381,38 @@ def _diagnostics_by_family(rows: list[dict]) -> list[str]:
     return lines
 
 
+def _reward_by_token_budget(rows: list[dict]) -> list[str]:
+    """Leaderboard section: reward rate by token-use tercile of graded trials."""
+    spent = sorted(
+        (int(r["input_tokens"]) + int(r["output_tokens"]), r["reward"])
+        for r in rows
+        if r.get("graded", True)
+        and isinstance(r.get("input_tokens"), int | float)
+        and isinstance(r.get("output_tokens"), int | float)
+    )
+    if len(spent) < 3:
+        return []
+    lines = [
+        "",
+        "## Reward by token budget",
+        "",
+        "Graded trials split into terciles by tokens spent (input + output). Read "
+        "with care: harder tasks draw more tokens, so a lower rate in the high "
+        "tercile is not evidence that budget hurts; compare budget settings by "
+        "rerunning with a controlled budget.",
+        "",
+        "| Tercile | Trials | Tokens | Reward rate |",
+        "|---|---:|---|---:|",
+    ]
+    size = len(spent)
+    for index, label in enumerate(("low", "mid", "high")):
+        part = spent[index * size // 3 : (index + 1) * size // 3]
+        if part:
+            rate = sum(reward for _tokens, reward in part) / len(part)
+            lines.append(f"| {label} | {len(part)} | {part[0][0]}–{part[-1][0]} | {_pct(rate)} |")
+    return lines
+
+
 def render_leaderboard(
     rows: list[dict], tasks: dict[str, dict], prices: dict | None, reviewed_only: bool = False
 ) -> str:
@@ -543,6 +575,7 @@ def render_leaderboard(
                 f"| {_pct(at.get(group, (0, None))[1])} | {_pct(hat.get(group, (0, None))[1])} |"
             )
     lines += _diagnostics_by_family(rows)
+    lines += _reward_by_token_budget(rows)
     bins = _confidence_bins(rows)
     if bins:
         lines += [
