@@ -29,7 +29,13 @@ from datetime import date, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-from oab._verifier_core import _ACCOUNT, _DATE, _NUMBER
+from oab._verifier_core import (
+    _ACCOUNT,
+    _DATE,
+    _NUMBER,
+    new_transaction_bounds,
+    numeric_tolerance,
+)
 from oab.verify import grade_answer, parse_ledger, resolve_transactions, verify
 
 FALSE_ACCEPT = "false-accept"
@@ -214,11 +220,8 @@ def _explicit(txn: _Txn) -> _Txn | None:
 
 def _count_allows(expected: dict, count: int) -> bool:
     """Whether the grader's ``expected_new_transactions`` admits ``count``."""
-    want = expected.get("expected_new_transactions")
-    if want is None:
-        return True
-    low, high = (want, want) if isinstance(want, int) else want
-    return low <= count <= high
+    bounds = new_transaction_bounds(expected)
+    return bounds is None or bounds[0] <= count <= bounds[1]
 
 
 def _unrelated_accounts(case: AuditCase, view: _LedgerView) -> list[str]:
@@ -445,6 +448,51 @@ def _foreign_currency(case: AuditCase, view: _LedgerView) -> str | None:
         _Posting("  ", constrained[1], Decimal("-100.00"), foreign, None),
     ]
     return _replace(view, index, txn.render())
+
+
+def _unused_open_block(case: AuditCase, view: _LedgerView) -> int | None:
+    """Index of the last `open` line for an account no transaction touches."""
+    used = {
+        posting.account
+        for block in view.blocks
+        if (txn := _parse_txn(block)) is not None
+        for posting in txn.postings
+    }
+    unrelated = set(_unrelated_accounts(case, view)) - used
+    for index in range(len(view.blocks) - 1, -1, -1):
+        words = view.blocks[index][0].split()
+        if len(words) >= 3 and words[1] == "open" and words[2] in unrelated:
+            return index
+    return None
+
+
+@_ledger_probe(
+    "delete-initial-open",
+    FALSE_ACCEPT,
+    "operational_integrity",
+    "deletes an existing `open` directive for an unused account",
+)
+def _delete_initial_open(case: AuditCase, view: _LedgerView) -> str | None:
+    index = _unused_open_block(case, view)
+    if index is None:
+        return None
+    return _render([b for i, b in enumerate(view.blocks) if i != index])
+
+
+@_ledger_probe(
+    "edit-initial-open-currency",
+    FALSE_ACCEPT,
+    "operational_integrity",
+    "strips the currency constraint from an existing `open` directive",
+)
+def _edit_initial_open_currency(case: AuditCase, view: _LedgerView) -> str | None:
+    index = _unused_open_block(case, view)
+    if index is None:
+        return None
+    day, _open, account, *_constraint = view.blocks[index][0].split()
+    if not _constraint:
+        return None
+    return _replace(view, index, [f"{day} open {account}"])
 
 
 @_ledger_probe(
@@ -799,6 +847,8 @@ LEDGER_OPERATORS = [
     _misclassify,
     _extra_unrelated,
     _foreign_currency,
+    _delete_initial_open,
+    _edit_initial_open_currency,
     _outside_period,
     _duplicate_added,
     _open_new_account,
@@ -850,10 +900,7 @@ def _answer_probe(operator: str, kind: str, formats: set[str], note: str):
 
 
 def _tolerance(expected: dict) -> Decimal:
-    gold = Decimal(str(expected["gold"]))
-    return Decimal(str(expected.get("abs_tolerance", "0"))) + Decimal(
-        str(expected.get("rel_tolerance", "0"))
-    ) * abs(gold)
+    return numeric_tolerance(expected, Decimal(str(expected["gold"])))
 
 
 NUMERIC = {"numeric"}

@@ -1931,3 +1931,48 @@ def test_valid_beancount_spellings_pass(spelling):
     final = instance.solution_ledger.replace(oracle_entry, spelling)
     report = verify(instance.initial_ledger, final, instance.expected)
     assert report.reward == 1, report.to_report_json()
+
+
+def test_deleting_an_existing_open_directive_fails_integrity():
+    instance = _reference()
+    edited = instance.solution_ledger.replace("2026-01-01 open Expenses:Rent USD\n", "")
+    report = verify(instance.initial_ledger, edited, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["operational_integrity"].passed
+
+
+def test_stripping_an_open_constraint_does_not_admit_foreign_postings():
+    instance = _reference()
+    edited = (
+        instance.solution_ledger.replace("open Expenses:Rent USD", "open Expenses:Rent")
+        .replace("open Expenses:Utilities USD", "open Expenses:Utilities")
+        .replace(
+            "  Assets:Bank:Checking  -775.00 USD\n",
+            "  Assets:Bank:Checking  -775.00 USD\n"
+            "  Expenses:Rent  100.00 EUR\n"
+            "  Expenses:Utilities  -100.00 EUR\n",
+        )
+    )
+    report = verify(instance.initial_ledger, edited, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["structural_validity"].passed
+    assert not report.layers["operational_integrity"].passed
+
+
+def test_unauthorized_change_in_another_currency_fails_integrity():
+    """An account opened without a constraint still may not move in EUR."""
+    instance = _reference()
+    initial = instance.initial_ledger.replace("open Expenses:Rent USD", "open Expenses:Rent")
+    initial = initial.replace("open Expenses:Utilities USD", "open Expenses:Utilities")
+    final = instance.solution_ledger.replace(
+        "open Expenses:Rent USD", "open Expenses:Rent"
+    ).replace("open Expenses:Utilities USD", "open Expenses:Utilities")
+    final += (
+        '\n2026-01-31 * "Probe" "EUR reclass"\n'
+        "  Expenses:Rent  100.00 EUR\n"
+        "  Expenses:Utilities  -100.00 EUR\n"
+    )
+    expected = {**instance.expected, "expected_new_transactions": [1, 2]}
+    report = verify(initial, final, expected)
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["operational_integrity"].passed

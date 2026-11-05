@@ -239,6 +239,21 @@ def _close(actual: Decimal, expected: Decimal, tolerance: Decimal) -> bool:
     return abs(actual - expected) <= tolerance
 
 
+def new_transaction_bounds(expected: dict) -> tuple[int, int] | None:
+    """``expected_new_transactions`` as inclusive ``(low, high)``, or None."""
+    want = expected.get("expected_new_transactions")
+    if want is None:
+        return None
+    return (want, want) if isinstance(want, int) else (want[0], want[1])
+
+
+def numeric_tolerance(expected: dict, gold: Decimal) -> Decimal:
+    """Allowed absolute error for a numeric answer: abs + rel * |gold|."""
+    abs_tol = Decimal(str(expected.get("abs_tolerance", "0")))
+    rel_tol = Decimal(str(expected.get("rel_tolerance", "0")))
+    return abs_tol + rel_tol * abs(gold)
+
+
 def _parse_resolved_ledger(text: str) -> tuple[Ledger, list[str]]:
     ledger = parse_ledger(text)
     problems = list(ledger.errors)
@@ -273,7 +288,11 @@ def _verify_ledgers(
                 structural_problems.append(
                     f"{txn.date}: posting to unopened account {posting.account}"
                 )
-            allowed = final.open_currencies.get(posting.account)
+            # Constraints declared in the initial ledger bind even if the
+            # agent rewrote the `open` line; new accounts use their own.
+            allowed = initial.open_currencies.get(
+                posting.account, final.open_currencies.get(posting.account)
+            )
             if allowed and posting.currency is not None and posting.currency not in allowed:
                 structural_problems.append(
                     f"{txn.date}: {posting.currency} posting to {posting.account}, "
@@ -315,9 +334,9 @@ def _verify_ledgers(
     initial_sigs = Counter(txn.signature() for txn in initial.transactions)
     final_sigs = Counter(txn.signature() for txn in final.transactions)
     new_count = sum((final_sigs - initial_sigs).values())
-    want_new = expected.get("expected_new_transactions")
-    if want_new is not None:
-        low, high = (want_new, want_new) if isinstance(want_new, int) else want_new
+    bounds = new_transaction_bounds(expected)
+    if bounds is not None:
+        low, high = bounds
         if not (low <= new_count <= high):
             economic_failures.append(f"expected {low}..{high} new transactions, found {new_count}")
     for sig, count in (final_sigs - initial_sigs).items():
@@ -368,16 +387,20 @@ def _verify_ledgers(
     for identity, count in initial_ids.items():
         if final_ids.get(identity, 0) < count:
             integrity_failures.append(f"initial transaction altered or removed: {identity}")
-    for account, delta in deltas.items():
-        if account in expected_deltas or account in allowed_extra:
+    for account, opened in sorted(initial.opens.items()):
+        if final.opens.get(account) != opened or final.open_currencies.get(
+            account
+        ) != initial.open_currencies.get(account):
+            integrity_failures.append(f"initial open directive altered or removed: {account}")
+    # Expected deltas are stated in the reporting currency; any other
+    # movement, in any currency, is unauthorized unless explicitly allowed.
+    for account, cur in sorted(set(initial_balances) | set(final_balances)):
+        if account in allowed_extra or (cur == currency and account in expected_deltas):
             continue
+        delta = final_balances.get((account, cur), ZERO) - initial_balances.get(
+            (account, cur), ZERO
+        )
         if not _close(delta, ZERO, tolerance):
-            integrity_failures.append(f"unauthorized change to {account}: delta {delta} {currency}")
-    for (account, cur), balance in sorted(final_balances.items()):
-        if cur == currency or account in allowed_extra:
-            continue
-        delta = balance - initial_balances.get((account, cur), ZERO)
-        if delta != ZERO:
             integrity_failures.append(f"unauthorized change to {account}: delta {delta} {cur}")
     if expected.get("forbid_new_accounts", True):
         for account in sorted(set(final.opens) - set(initial.opens)):
@@ -901,15 +924,12 @@ def grade_answer(expected: dict, answer_text: str | None) -> Report:
         try:
             got = Decimal(str(final))
             gold = Decimal(str(expected.get("gold")))
-            abs_tol = Decimal(str(expected.get("abs_tolerance", "0")))
-            rel_tol = Decimal(str(expected.get("rel_tolerance", "0")))
-            within = abs(got - gold) <= abs_tol + rel_tol * abs(gold)
+            allowed_error = numeric_tolerance(expected, gold)
+            within = abs(got - gold) <= allowed_error
             score = 1.0 if within else 0.0
             passed = within
             if not within:
-                acc_failures.append(
-                    f"expected {gold} (+/- {abs_tol} + {rel_tol}*|gold|), got {got}"
-                )
+                acc_failures.append(f"expected {gold} (+/- {allowed_error}), got {got}")
         except (InvalidOperation, ValueError, TypeError):
             acc_failures.append("final_answer must be a number for numeric tasks")
             extras["parse_failure"] = 1.0

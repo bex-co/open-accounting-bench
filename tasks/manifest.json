@@ -1,12 +1,12 @@
 {
   "dataset": "open-accounting-bench/open-accounting-bench",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "tasks": [
     {
       "task_id": "abc-overhead-assigned",
       "family": "activity-based-costing",
       "seed": 147,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -14,13 +14,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ad4fe74142b8f858d1bd6e554dd0d93ecbf9ccf5f8d0b4fa373b60f7cd9d5def"
+      "digest": "sha256:2d7a4edae4a8920f8269aa5d446e7b6f316910d77ee93d45198e78e24506b6a7"
     },
     {
       "task_id": "absorption-variable-income-difference",
       "family": "absorption-variable-costing",
       "seed": 138,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -28,13 +28,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e846ade90a4529b5ff3ce72d1965318e5875133ec318c3d888230a740c2126b1"
+      "digest": "sha256:66f27672dd13dd0a5b159b0664698d15ea069b23d0c4156b3b1e1fd5d3c249fb"
     },
     {
       "task_id": "accounting-equation-missing-equity",
       "family": "financial-reporting",
       "seed": 160,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -42,13 +42,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f913119080dd7c28cf50ad8bbf83a589cca84e1aa158dfbdbec2f1c2ee9de5d4"
+      "digest": "sha256:bf0a3aa3ba467d965f33fc44c5d4f77777f5c06b04bf3efc37ff9bdadab295ac"
     },
     {
       "task_id": "accrual-deferral-reversal",
       "family": "accruals-deferrals",
       "seed": 109,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -56,13 +56,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:58907a084b7c90e4d411ad4908b5e54516d2bded9c06e1106a2b326542724d74"
+      "digest": "sha256:41afd3238dc4399744792c4f0156166d3ae8f92fc469ed196af252666eef2d84"
     },
     {
       "task_id": "accrued-wages-adjustment",
       "family": "accruals-deferrals",
       "seed": 119,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -70,13 +70,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:077bda9425486e4a1d462a6b57dc0d8b16ec97430d0e1b2ad5eba78442241243"
+      "digest": "sha256:12545d5ff8e1c996bd46d92c424ab8942b9a82e32db64adc0dbcb91e5d45f776"
     },
     {
       "task_id": "adjusted-ebitda-computation",
       "family": "financial-analysis",
       "seed": 328,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -84,13 +84,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2362aea0909fea4e904883d05aba7b7a5c2d89023a16ae1e765d43db906bf261"
+      "digest": "sha256:ba13f1b6ed62aaf474cef0b13b3468ed4c8f36784515a26099db45ee8e3e53b4"
     },
     {
       "task_id": "adjusted-profit-from-draft",
       "family": "financial-reporting",
       "seed": 289,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -98,13 +98,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:01af648f3c4e396120e7faa6a647657ee413b9234f04e82dc4fb5f5404b99756"
+      "digest": "sha256:4b3e23f4a7b1d73c0cf1b2646c03d08078479bd028cdef7ccdc703ca39c36af4"
     },
     {
       "task_id": "adjusted-receivable-balance",
       "family": "receivables",
       "seed": 215,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -112,13 +112,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:01c8dd8da3dbc8c0353f9013cb031d60df5f598702507d22d2cf582a57f2fef6"
+      "digest": "sha256:d17840ffbb380522cceb400e9c7ade930088e1b0b9e91e8fc3438cb9f67fad47"
     },
     {
       "task_id": "adjusted-wage-expense",
       "family": "adjustments-corrections",
       "seed": 230,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -126,13 +126,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:57ce19d6a546c0b09c3908e96c3c43720d0fe30fa15bf5e5ed88cd4785d96a9e"
+      "digest": "sha256:6ade05d235cf98eddbb02e61917224c170fccb78b47b1b2265e1a4e06b2f89e3"
     },
     {
       "task_id": "agent-commission-revenue",
       "family": "revenue-recognition",
       "seed": 287,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -143,13 +143,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:a53f0eb9f44e8ccf5794ddf9b59b31c6504530e390dddf3d56afab8a9aea4dfd"
+      "digest": "sha256:55b0cef48eef7fe1d9c92bc31ee400cd4552cb43356c6c219110b2a20ffc6ea6"
     },
     {
       "task_id": "agi-above-line-adjustments",
       "family": "income-taxes",
       "seed": 342,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -157,13 +157,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:53a63a705e797e14200f5f7fc250e98235f1f72f707c8cfdd0d71d22241d98be"
+      "digest": "sha256:7ccead01f18c2d14b1f36a6dfe735fd75396c41d8a35c2fb0cdd52e240e3b77f"
     },
     {
       "task_id": "allowance-estimate-reperformance",
       "family": "audit-evidence",
       "seed": 388,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -171,13 +171,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:284847f519e53bd7f84ca2ded5cb693fd493553a96cbc5723c15dbf2aad7c57c"
+      "digest": "sha256:20adb9154026017b5475c6473e269da651437c9f2d428f81b905d3991414c93b"
     },
     {
       "task_id": "allowance-movement-expense",
       "family": "receivables",
       "seed": 284,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -185,13 +185,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d8f219d9de68f7a5f7075507b52f089cddd3b7a8e8c184b8dd783a9ca294348b"
+      "digest": "sha256:b49cfb6efb76a09d18300c7f226faa393b553cc0a96ba03ac2cac0e2b440912e"
     },
     {
       "task_id": "aro-accretion",
       "family": "provisions-contingencies",
       "seed": 256,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -201,13 +201,13 @@
       "standards": [
         "asc:410"
       ],
-      "digest": "sha256:93ee73b0d0b57968f74902da7751e441b920bf78ab0b3597257b0027dd447e55"
+      "digest": "sha256:eeeefd674b5ea02b851d38f2c069bf853ac35fcddc54a5ae765f1978e385f47a"
     },
     {
       "task_id": "asset-revaluation-surplus",
       "family": "fixed-assets",
       "seed": 212,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -217,13 +217,13 @@
       "standards": [
         "ias:16"
       ],
-      "digest": "sha256:400cdfc03e5dc3a41405c9ef210c3b68fc7a3cbe8a1340f4077f190b79798ad0"
+      "digest": "sha256:0ff8b46336cb3616d539cc741afaf221204852a29e76772a75b139654be77f3a"
     },
     {
       "task_id": "asset-turnover-ratio",
       "family": "financial-analysis",
       "seed": 190,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -231,13 +231,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:abe5d0320e5b520062cfe9145fdd2130d32aaf5464cbdd10fbc36d7b3dbb39b4"
+      "digest": "sha256:2d44b002964a66b61016940a23eca3f3209721d4a2fcb954873829f550b6d4fa"
     },
     {
       "task_id": "audit-data-missing-entries",
       "family": "audit-analytics",
       "seed": 391,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -245,13 +245,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7e0046286eac606ad272518fa850ea9630f7c08c79a7f1a02d101fecff9dfcf5"
+      "digest": "sha256:c0136c99eed9b124146fdf376fdd3c5e67c12a289e006da70f669312db2ee69f"
     },
     {
       "task_id": "bad-debt-percent-of-sales",
       "family": "receivables",
       "seed": 145,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -259,13 +259,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8d7a3dd6a3fd946935b7832314b5bd868519da1f202dfe2edf04cf6d6041ef46"
+      "digest": "sha256:790581698e618ec709a03102b097543aee3c2ee234d0280f0f326fe91638eab8"
     },
     {
       "task_id": "bank-adjusted-balance",
       "family": "bank-reconciliation",
       "seed": 140,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -273,13 +273,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8397c0fd42643b3df54f4733f8280f332b858993aa733574607c65254ecbe481"
+      "digest": "sha256:688c738e637a58929bd29b76c2c161d3b708fe39ff5d94165a45ac9b593eac40"
     },
     {
       "task_id": "bank-recon-missing-fee",
       "family": "bank-reconciliation",
       "seed": 102,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -287,13 +287,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:07915be4353560d1d0183d24c019a9b496fc71330e4b5f87107c48f644919062"
+      "digest": "sha256:3d875b51c58a5a6cca96de41608991f3f805a39329a24258e1597f2226313984"
     },
     {
       "task_id": "basis-adjustment-754-allocation",
       "family": "passthrough-taxation",
       "seed": 365,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -301,13 +301,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:819d585d6bc9e9ebb4652da621dc7f2bf87e2885fa927f4c310882d29c2db811"
+      "digest": "sha256:e7f382af77940db95e62bee3b8b790c21fff3ec1ce825c8f36ac0fc410cca3b4"
     },
     {
       "task_id": "basket-purchase-allocation",
       "family": "fixed-assets",
       "seed": 187,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -315,13 +315,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:792d9ba3c9fda872cbc99f1b222dbc80cd4274f146cb2bfc6714dfa73125da11"
+      "digest": "sha256:9a7b95d902367ccc485d9199e7b6c8ddb144dc4a34ff39ce1c147add960cc7b0"
     },
     {
       "task_id": "below-market-imputed-interest",
       "family": "income-taxes",
       "seed": 352,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -329,13 +329,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:523e45ef334568d83d3d936542321b54eb95b21442729272a948e7010a349b57"
+      "digest": "sha256:1aa3f96b8e1245c9de8e1c951c63e53f2ce5e4eec46aeb908f7e48bd94486bdf"
     },
     {
       "task_id": "benefit-plan-net-assets",
       "family": "employee-benefits",
       "seed": 318,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -345,13 +345,13 @@
       "standards": [
         "asc:962"
       ],
-      "digest": "sha256:e146341727583cb6bf0d540f8be00fc7cac59d32d552224c1729d990524bbc72"
+      "digest": "sha256:ada22fd35838e579149d2bec2313a70c0976f059dc0080086ed57c2e7b6642ed"
     },
     {
       "task_id": "biological-asset-fair-value",
       "family": "agriculture",
       "seed": 274,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -361,13 +361,13 @@
       "standards": [
         "ias:41"
       ],
-      "digest": "sha256:f9a8b9c632dd25c4c31376d8f4ba63d818a107d91716d2a056923989d65fc05a"
+      "digest": "sha256:b82175495f67bb67e3e5dc12cf69acc76d2f37aca04e293e835c3549ee41111f"
     },
     {
       "task_id": "bond-discount-amortization",
       "family": "borrowings",
       "seed": 123,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -378,13 +378,13 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:21ab344725da8340badec41be2550bc0584efb43acd976eb08d00a71563a8426"
+      "digest": "sha256:60fa89404e430e328b4723349449a45c1e9eff8905409c139a009453a08f0415"
     },
     {
       "task_id": "bond-early-retirement",
       "family": "borrowings",
       "seed": 185,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -395,13 +395,13 @@
         "asc:405-20",
         "ifrs:9"
       ],
-      "digest": "sha256:6e8c1c88dac43e2aa8a69de1eed0f95a15b5b4c0c20e1090545b9c125f9e56d2"
+      "digest": "sha256:075121359463929086df118f4d919308d8b9b9d9e5c0245244bcaeb008910a9d"
     },
     {
       "task_id": "bond-issue-price",
       "family": "borrowings",
       "seed": 164,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -412,13 +412,13 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:286b33fcd640a33691e703e8d7d594dbd0fad2e5bde6c13824f6271ecfaffe08"
+      "digest": "sha256:71edba334ce7912e4535bad80858edea9f515e7b9368dd928ef4bced915f155e"
     },
     {
       "task_id": "bond-issued-at-premium",
       "family": "borrowings",
       "seed": 172,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -429,13 +429,13 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:b33397961a4aa34a76143f23306e9889c400da32019a602f87e6e65e7a8e928a"
+      "digest": "sha256:bc40b30451ffffba929d7fe70813ee943f5aa4973b9c06d76f450eec934544f1"
     },
     {
       "task_id": "breakeven-sales-dollars",
       "family": "cost-volume-profit",
       "seed": 191,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -443,13 +443,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e93d25788c3a2a2bebcb5da83281c1138eab409d8e1d32f6b3dc57b51902ece7"
+      "digest": "sha256:aa5b4795422d2341d7050caed768849766289138868fb20945488816e20962fc"
     },
     {
       "task_id": "budget-vs-actual-net-variance",
       "family": "budgeting",
       "seed": 307,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -457,13 +457,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0b0cfd56cb19fb6db6f97e9914da610a30af14c421f94d4a1f06fd0ac3b2aab9"
+      "digest": "sha256:b755382bc4f92e25ab34c30d377d2b4749e1d21f16fc820525f1da9d283b0342"
     },
     {
       "task_id": "builtin-gains-tax-base",
       "family": "corporate-taxation",
       "seed": 369,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -471,13 +471,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a98b119701f3f3a7c19f829c1095fefd6b913794642b4c74f403c64c207a8a07"
+      "digest": "sha256:acf4383c22a0635f1a3086b8a8ff9a69366979e145e3f40a59010cda87570ac7"
     },
     {
       "task_id": "business-combination-acquisition",
       "family": "business-combinations",
       "seed": 208,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -488,13 +488,13 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:146b868fda8880a615f0ab9b7feca22e4876badc8860deabb80cba14600d20d7"
+      "digest": "sha256:fe3a9bcf0af8681334e198ef400ccaf893391ace1764395758386b17f98e6f6d"
     },
     {
       "task_id": "c-corporation-taxable-income",
       "family": "income-taxes",
       "seed": 244,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -502,13 +502,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:28e2918c815eb9d377a43c668a334e2ad4cb7930f7de54f2e1fb4918dac8d7d1"
+      "digest": "sha256:b281514f1af983315d92e4a7064d441a312a4e100bdf9efaa2a4844043f10828"
     },
     {
       "task_id": "capital-loss-carryforward",
       "family": "income-taxes",
       "seed": 334,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -516,13 +516,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d8df89b02e6940ff351e0ee0eeda8d7ab2c881ffa55f64a78d873f52127cd666"
+      "digest": "sha256:910bd5892025ec76301d488716428de87c5239d904542b56d16f49220144f6eb"
     },
     {
       "task_id": "capitalized-cost-bundle",
       "family": "fixed-assets",
       "seed": 141,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -530,13 +530,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c3e0cd175fbff5eb3de88028a35e16bc550d50f41877803f5c5d98ff6cf064c6"
+      "digest": "sha256:cce9ec986eec451b8955f945b3960abdfbf5d6db014424321a8dd133545a6796"
     },
     {
       "task_id": "capm-expected-return",
       "family": "cost-of-capital",
       "seed": 262,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -544,13 +544,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:39bb4a30030be36ced219cbee74c909dea6a7ed50b3aef3f70f55a695abedf30"
+      "digest": "sha256:b04b5128776e5c952aab78f0f1be6734b5d6fd378a3f2d8546993bbff8dc92e3"
     },
     {
       "task_id": "cash-and-equivalents-total",
       "family": "cash-controls",
       "seed": 248,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -558,13 +558,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0d62cf8afccddf60fc3e3f874872724422b763432d1705a24605fac8996008d1"
+      "digest": "sha256:385224d422c7e22bb1e0ab6b371d5c702f945a7e26a3eb8e29feb7531c2bcce0"
     },
     {
       "task_id": "cash-collected-from-customers",
       "family": "cash-flow-statement",
       "seed": 205,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -575,13 +575,13 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:124d191f8fd98c9b166d59bba7afaaf866caf7f5064822363da1121297e7394e"
+      "digest": "sha256:3d1bce1a379435496a46b6d6e516f8bafad088e3727995ad88fa39d97fad4c72"
     },
     {
       "task_id": "cash-collections-budget",
       "family": "budgeting",
       "seed": 149,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -589,13 +589,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9621fe33162ceb03cc2f542dd78b41b42acd60fc2a0b7380a5cc1c774e618b96"
+      "digest": "sha256:f129c5e2a26b39716398285c64cce826c5cd6c78790014bd0db03d22966d1e79"
     },
     {
       "task_id": "cash-discount-receipt",
       "family": "receivables",
       "seed": 146,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -603,13 +603,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:13967388891247d3748248bc29cb040b6a84270b846a3095deec2f21c6563b01"
+      "digest": "sha256:02f68324b76f8efe0c41c4415bd4fc7fb3f8ab74d58e67666fc8a6339b11438e"
     },
     {
       "task_id": "cash-dividend-declaration",
       "family": "equity",
       "seed": 129,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -617,13 +617,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6821b6429f3e89ce4a7fd3af46d06cb7f907b4f64fd0d3f0b26f875ce075dd2c"
+      "digest": "sha256:5091e530af31c1e85bf9eb508e762544cfa82e2de1aa052ec70bc45419c59727"
     },
     {
       "task_id": "cash-flow-hedge-fair-value",
       "family": "derivatives-hedging",
       "seed": 251,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -633,13 +633,13 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:1bb476ba96da9a06bf15286832f81dedd8cc9f36b57132a6eb2c6101f2e0545a"
+      "digest": "sha256:a759a48eb1cc9b99dabb14323467f3606fb4bd3b39f75a027e790cc0d4e49f06"
     },
     {
       "task_id": "cash-to-accrual-profit",
       "family": "financial-reporting",
       "seed": 308,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -647,13 +647,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:3478a847b7922e40618aa54d8f39ec415cb3173b22f640e51cbd93d8a5130002"
+      "digest": "sha256:802a1487ac4ea8f754dae55a677f9f5842dcbe18e2fa00cff7c21e71153f93e0"
     },
     {
       "task_id": "change-control-deviation-count",
       "family": "it-controls",
       "seed": 301,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -661,13 +661,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ad4a7d9d51b20932d02aed6b3dbb03c2eed9dfd6388e5b3a7ad3db4a4d337549"
+      "digest": "sha256:893248cf0e0ac476254f377cd4064f8c2aa527feef26053c319c3110c37fc5cc"
     },
     {
       "task_id": "charitable-noncash-deduction",
       "family": "income-taxes",
       "seed": 355,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -675,13 +675,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6dd74bb9d49260c06e18da44ac012108dd1644943f2e6ed4d234af4c499f2ce2"
+      "digest": "sha256:68c99581dc2d4984122e793ae81fc925e277bcd5b599f78b6ec56fec1acb8803"
     },
     {
       "task_id": "classify-operating-expense",
       "family": "transaction-classification",
       "seed": 101,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -689,13 +689,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d61610d5d37250ca9d5d79dca39123f40934225432d4c6f1696c24edc7aff2d3"
+      "digest": "sha256:fe6a7d744f4671c33f41cbd981e28e3dd56e1d4e38c9f76eeac5745a1d3c55de"
     },
     {
       "task_id": "closing-drawing-account",
       "family": "equity",
       "seed": 173,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -703,13 +703,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:72a6a59bf774e2f846e8bbe042d328e09643556c847ae9a2186d2a2d9c64dcfe"
+      "digest": "sha256:cab50f8e5f3a10667534bca0304330b4a8ea8e1f8a1f02d393e6fcc89a4d3f0c"
     },
     {
       "task_id": "closing-entries-income-summary",
       "family": "ledger-integrity-reporting",
       "seed": 131,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -717,13 +717,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:bdb018567ca1e121d4206a5006ccd3fe6c06e4da91b103365350248aa2a4314d"
+      "digest": "sha256:1f19a2afb7eb638b3dba5b4d3687b8091c9849d2fe3fe5470182e904cd5d9f85"
     },
     {
       "task_id": "compliance-violations-count",
       "family": "audit-planning",
       "seed": 376,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -731,13 +731,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:54d7683528f82e0cf8d7b7e8bdff378042c51650e27cb0e49b603ba891439efe"
+      "digest": "sha256:4a392ecd284237a4242746b5fe830209cf6d90a3bee6ae4b6e76ec35534614ea"
     },
     {
       "task_id": "consignment-sale-recognition",
       "family": "revenue-recognition",
       "seed": 237,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -748,13 +748,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:0e6e770c430fbbc61a7536667b91321371fc13ed6162cd904f3254480a055a8c"
+      "digest": "sha256:2afb3429ea4c307a2c5dda710d470b35cce42c7d535f80cc6c32168708a77e9c"
     },
     {
       "task_id": "consolidation-intercompany-elimination",
       "family": "consolidations",
       "seed": 209,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -765,13 +765,13 @@
         "asc:810",
         "ifrs:10"
       ],
-      "digest": "sha256:a684a3612aee0c67063d5697595f02956007b5c3ab668f0588b8e0e3ce74bf27"
+      "digest": "sha256:a9e3a1102b6c070edddbfa135e4dbbce83d1d91107d50be882496e3f5fe83841"
     },
     {
       "task_id": "constructive-ownership-percent",
       "family": "income-taxes",
       "seed": 363,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -779,13 +779,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5964fbc00a2ab692b4ad2f7d79628d4025e403e6ed75b65fa941f2d414dd5bb2"
+      "digest": "sha256:665e5875192cda9f61e8925198a3fb2e9ccda3c4cb60f28a0dfc07c1190896c1"
     },
     {
       "task_id": "contract-acquisition-cost",
       "family": "revenue-recognition",
       "seed": 255,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -796,13 +796,13 @@
         "asc:340-40",
         "ifrs:15"
       ],
-      "digest": "sha256:f471f8a8ec0b2390c95e24994acd377d6758ba6bae6c0cac3dcdf68afca4262d"
+      "digest": "sha256:0f15988fbc52ddde97f642c096d790be47750a369d763b0d7373a3544b21e826"
     },
     {
       "task_id": "contract-modification-revenue",
       "family": "revenue-recognition",
       "seed": 294,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -813,13 +813,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:5363d862cc080e603f97cdad9c9be20c018627a329f5e169f383d568d86be3ce"
+      "digest": "sha256:8d499a737e82118674883501bc296d067cf451cb6b5bda20f591bf4f5cf67a28"
     },
     {
       "task_id": "control-deviation-rate",
       "family": "audit-planning",
       "seed": 372,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -827,13 +827,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:44d534af051c875bae905ffa05a50fe6c09996548bc7309c725ff9d069cc1a23"
+      "digest": "sha256:8962dbcd9f439f0d906b17161f8644077933ed4718e66cbd4cb2692dccc57593"
     },
     {
       "task_id": "corporate-distribution-dividend",
       "family": "corporate-taxation",
       "seed": 356,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -841,13 +841,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:eb042268421aea59dea4a37c62a75df3ba1a1d510c4e52a209b6782dd5812f3f"
+      "digest": "sha256:9dae25b667b3f598506272fd86094ae60ef752252115a78eea048fda47946e6d"
     },
     {
       "task_id": "corporate-formation-gain",
       "family": "corporate-taxation",
       "seed": 358,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -855,13 +855,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:12522d60f2b45b8c4448888360b3b2024d3d487f89063cba2666d0352a837947"
+      "digest": "sha256:88c79c45b31a4cc980df152c9690f31b634253de2b0f0c736d4ea38a86d5d378"
     },
     {
       "task_id": "correct-misclassification",
       "family": "ledger-integrity-reporting",
       "seed": 104,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -869,13 +869,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5d89ca1ae9e0e0a76663680f931f2fbb9e6ae683709ffbabba7d2f32795723fd"
+      "digest": "sha256:282f0d9b22538a8396045ffee93b230808bef4a30156db6f034cbe31ae7cce84"
     },
     {
       "task_id": "cost-of-goods-manufactured",
       "family": "job-order-costing",
       "seed": 176,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -883,13 +883,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:572630e9f27b7f948a541b964ffaba8abe42204f9180a0a95dd5b35247381905"
+      "digest": "sha256:b9c3bf429dff254dcea69308527690ae0f6d22f71c47fa71b146d3045714fa61"
     },
     {
       "task_id": "credit-card-sale-fee",
       "family": "transaction-classification",
       "seed": 169,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -897,13 +897,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:891cb0678f51125268354773e961bff281dc3a055c6f9e2da1c5615dc5bdc3a7"
+      "digest": "sha256:fdfac7d4f4b5284fb2bdbdd1597278d52ff7cbd1a99a3d3bc2541c4d7e1aba63"
     },
     {
       "task_id": "cumulative-preferred-dividend",
       "family": "equity",
       "seed": 218,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -911,13 +911,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c7e1674e8463a7f5c0d90e9b6b83d20f871d820e73498a7bc4964043bafc244b"
+      "digest": "sha256:37235d714c3ddf724465ddd2f4febecfa77f1fc074480985049a15d8cfb1db32"
     },
     {
       "task_id": "current-income-tax-expense",
       "family": "income-taxes",
       "seed": 161,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -928,13 +928,13 @@
         "asc:740",
         "ias:12"
       ],
-      "digest": "sha256:2f8b92ad2e23af66009a456a3b491ae88fde281cbb4271c8542865b6aed017e5"
+      "digest": "sha256:b9d9fb285a5298fe57307d364c713802ff434867b170aae39551dc1ab5c0d775"
     },
     {
       "task_id": "current-portion-reclass",
       "family": "borrowings",
       "seed": 143,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -942,13 +942,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a0af0f100f270ba1a04501cbd325ff71a798ae8236bf2350a7a562b7bb9fa2cb"
+      "digest": "sha256:c3d839332a5de8da40bf329fce315ce9a5bfddc5e612b2997707d8ecca277fc0"
     },
     {
       "task_id": "current-ratio",
       "family": "financial-analysis",
       "seed": 139,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -956,13 +956,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:09076e515ebfd22b09c18707def3d23d69dfd15471dc1e7611142ab57a75c5db"
+      "digest": "sha256:c70c8702998d62aeaecb2806cb4dd5200de687427a10661d54693c7196ec7f50"
     },
     {
       "task_id": "cvp-target-profit-units",
       "family": "cost-volume-profit",
       "seed": 124,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -970,13 +970,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ab199d2e2d3a950bfdc6af656a36d545c0bc5892df54d38f569d6069bb716247"
+      "digest": "sha256:fcdf324a523de07406027e61e5e3f08774703ccddc803495c4effbca57fc0806"
     },
     {
       "task_id": "debt-covenant-ratio",
       "family": "financial-analysis",
       "seed": 309,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -984,13 +984,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f9a707b38d5bd8fd9061a2fcc6179610ade18373ec66a06b465f1ea984fe50d0"
+      "digest": "sha256:5ec3575b6455657e162edf76b73b833b18dbe4f4c26436f54ebf34894ff71d37"
     },
     {
       "task_id": "debt-modification-percent-change",
       "family": "borrowings",
       "seed": 233,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1001,13 +1001,13 @@
         "asc:470-50",
         "ifrs:9"
       ],
-      "digest": "sha256:8c6992ab9058aa38789e344f833228a1dcf7f3f4090c8ed4ad949c50e3510057"
+      "digest": "sha256:6857ba4377d6e1c03c5e4cbb9b98d4a567afa8bccc85033cba5088395c01bef4"
     },
     {
       "task_id": "debt-security-credit-loss",
       "family": "investments",
       "seed": 227,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -1017,13 +1017,13 @@
       "standards": [
         "asc:326"
       ],
-      "digest": "sha256:86d66063a59858fe2d53bbf9fd2e647ea7873a2f8f00fbf10e1a4ab643570720"
+      "digest": "sha256:6edab1826667b1fd05324987711d07b4cac79a3efa0d50a7f23a0b62c192b1ac"
     },
     {
       "task_id": "deferred-tax-asset-warranty",
       "family": "income-taxes",
       "seed": 236,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1034,13 +1034,13 @@
         "asc:740",
         "ias:12"
       ],
-      "digest": "sha256:8df11e5ac0d89e42b8a7ffe023b526c426b5c2a5cad806179c91a0ee87d4b776"
+      "digest": "sha256:668f42c4cad731c6fd27eb697b7cf9d0c7a0c31e45017aca61e2fbc3c78ab36c"
     },
     {
       "task_id": "depreciation-recapture-ordinary",
       "family": "income-taxes",
       "seed": 348,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1048,13 +1048,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:369b209ee9181320f2405d4e0a4a42261ebeccce1007dc2ff78c74e7032edbc7"
+      "digest": "sha256:b7503ceae7750e385156b89a9a7e8c0b65711d144e7af8f78bb4ff5a986d9cdd"
     },
     {
       "task_id": "development-cost-capitalization",
       "family": "intangible-assets",
       "seed": 197,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1064,13 +1064,13 @@
       "standards": [
         "ias:38"
       ],
-      "digest": "sha256:75d962e6452a28c09fb85d7d79ce042f3b18a6992e8965569f60a43c046b7a22"
+      "digest": "sha256:abc6f593fcfb2e166285d999d28672fc390e5eaee2a37b07b14d77b994ce596d"
     },
     {
       "task_id": "diluted-eps",
       "family": "financial-analysis",
       "seed": 189,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1081,13 +1081,13 @@
         "asc:260",
         "ias:33"
       ],
-      "digest": "sha256:514892d1292b99c9800a4cbda2df668de2e2a83fccf52e350290e52ed7ff27ca"
+      "digest": "sha256:67009fd19414d4e07cc58d8d1cf7b1f4ab446d7c7f074120b49b823a466ad8dc"
     },
     {
       "task_id": "direct-materials-used",
       "family": "job-order-costing",
       "seed": 192,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1095,13 +1095,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:eb8ed523883342030245890603659083e500ac1740a5c67bfa99e441e5e49815"
+      "digest": "sha256:172279fed199b5c7e230011f3d0174873bf054dfaf014784e16cc0eff7815aaf"
     },
     {
       "task_id": "disallowed-loss-amount",
       "family": "income-taxes",
       "seed": 336,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1109,13 +1109,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:dc05e310d48c15e8063895452f4a49cfea5a445a03be622c9e2aa4d30d110c12"
+      "digest": "sha256:d1ad14cbc11431242aafe7ca5377dc970218db729d4f28849b22059568b89187"
     },
     {
       "task_id": "disposal-of-subsidiary-gain",
       "family": "consolidation",
       "seed": 280,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1126,13 +1126,13 @@
         "asc:810",
         "ifrs:10"
       ],
-      "digest": "sha256:bbb5fab2fa17ef64993973e74a0e15d56f698cee7257313b84b12e6a94deddf8"
+      "digest": "sha256:8d5010efb6484dafe04b7b09dd58bb396a7551f9031601823a529dc80534ff63"
     },
     {
       "task_id": "duplicate-payments-total",
       "family": "audit-analytics",
       "seed": 263,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -1140,13 +1140,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:72ecbb7e5873c36f068e20486e18fc998add84274d9677d32c42952d181a43cf"
+      "digest": "sha256:f23b5032f9caf0c09623d0bcff57f6ff9066bdb215b61b9baa29562360075e7a"
     },
     {
       "task_id": "employer-payroll-taxes",
       "family": "payroll",
       "seed": 142,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1154,13 +1154,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b928bee059fcb079c568493cae7d8f04dc470f571005502b58c0ed575b490ebe"
+      "digest": "sha256:01d11a847756d9fb4c52269465c7760107e481b36e4f9843603bb3ca7b753a93"
     },
     {
       "task_id": "ending-retained-earnings",
       "family": "equity",
       "seed": 151,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1168,13 +1168,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7e0fa4f753e99f14e9b1eb14e8e0b0e0e731c833b621e80425d7009b84a8f400"
+      "digest": "sha256:d3471a4787cf23cf14127de97f5757e6b4c8051feb8f312548c2b1877a17b1c4"
     },
     {
       "task_id": "equity-issue-above-par",
       "family": "equity",
       "seed": 128,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1182,13 +1182,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a7dbb0129d9c4bd9655e77155019aa286b8b775680ceab671bc71c1cb203ac2a"
+      "digest": "sha256:0860398e67504bcefbaccfb073116c8d6ed455a3b98b00d5e0d7e76aff741cc6"
     },
     {
       "task_id": "equity-method-carrying-amount",
       "family": "investments",
       "seed": 163,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1199,13 +1199,13 @@
         "asc:323",
         "ias:28"
       ],
-      "digest": "sha256:af722a891c50b73c239312d1c4fe720663c2ea608a0eb7c83a18f1cee129c3f8"
+      "digest": "sha256:e992f5fae7676168ab9a79f902d57488fd7785134909354b4be6edb5cb259756"
     },
     {
       "task_id": "estimated-tax-installment",
       "family": "income-taxes",
       "seed": 349,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1213,13 +1213,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0c02d0ae6fcf94864ec2e29fb01ac4eabc45dea3f8d4bce814114d2cbb9d52c7"
+      "digest": "sha256:1ac7d771c0fe9d06adeaf98feab51d0a1b4a5fa7f8515308ba2bbb85fd7cfcfd"
     },
     {
       "task_id": "exit-obligation-january-amount",
       "family": "provisions-contingencies",
       "seed": 310,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1229,13 +1229,13 @@
       "standards": [
         "asc:420"
       ],
-      "digest": "sha256:8a6d85765ba6ffe0831c64d350a7f54d9f571419e7eb58170dfa1ee38a2822cc"
+      "digest": "sha256:09cfcfa9839d0bf0ddff4789a7cc2f8f7456b7df3b75dd0bfe491b235942272d"
     },
     {
       "task_id": "expected-profit-choice",
       "family": "decision-analysis",
       "seed": 269,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1243,13 +1243,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:20ef2c1aa064806e4ced6fd241c543ad1d987e12254607d0ce39837df68d7dca"
+      "digest": "sha256:76b40aa7b73f78fa1e0f6f919d06a402541a57b62407b042dde1ead3a9a90091"
     },
     {
       "task_id": "factoring-secured-borrowing",
       "family": "receivables",
       "seed": 241,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1260,13 +1260,13 @@
         "asc:860",
         "ifrs:9"
       ],
-      "digest": "sha256:34c4e849fbe0847d06c952afddd3789ec8e8f89a9f51cc18d4fe0feab6429781"
+      "digest": "sha256:a55fd932f2abe4f4555d8872612f5dc959eb8f17a948eecc7c34e1f00f0c47a6"
     },
     {
       "task_id": "fixed-overhead-volume-variance",
       "family": "standard-costing",
       "seed": 217,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1274,13 +1274,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b734cb0a8e31285c19dc2bd23b5d047339fad800460122716d7fab5609194549"
+      "digest": "sha256:8d46805c28050ef5e4374d44df83b95e57dab0ac35c6c2f7244e45dc18847fc6"
     },
     {
       "task_id": "flexible-budget-total-cost",
       "family": "budgeting",
       "seed": 153,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1288,13 +1288,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:33f042c7fc1d1ef760713da01df2818b0704fd0d2b76a7b2f1c1bc942358addb"
+      "digest": "sha256:414bd8a0fc75101e9f28a965020e080764da566968ea6269b8d72f67585a05a5"
     },
     {
       "task_id": "free-cash-flow",
       "family": "cash-flow-statement",
       "seed": 206,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1305,13 +1305,13 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:fdc91824b72a9d72f72721e81e61c0efcb8b0919663dffae69ddab946bdce315"
+      "digest": "sha256:e904738a9edb62691d1c085c061e054d1045b3be4f8fdcfd0d6f4eee5761740c"
     },
     {
       "task_id": "fsa-tax-saving",
       "family": "income-taxes",
       "seed": 368,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1319,13 +1319,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fb9708f64b3e6436bb96c7a6ca069c355c8cea661c1b9a63c658e5de96eb48ee"
+      "digest": "sha256:6f5cbb70d844a368099efd500e34a1d990e6f0d2a16920365c9015449f2dc6dc"
     },
     {
       "task_id": "fvoci-fair-value-adjustment",
       "family": "investments",
       "seed": 186,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1335,13 +1335,13 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:f0cc1e44c43be7365a81cb8b27bf1d0557c754a147e3be0ea06a771373fd544e"
+      "digest": "sha256:c37ed6b4daf18dd3d322c871af838cfc5c6be9e6397320162f9a0172fd771135"
     },
     {
       "task_id": "fx-payable-remeasurement",
       "family": "foreign-currency",
       "seed": 196,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1352,13 +1352,13 @@
         "asc:830",
         "ias:21"
       ],
-      "digest": "sha256:b0a4dce5663b8a48effcf4e157487b24c0468f93f24176ddaf79e685309fb120"
+      "digest": "sha256:30b1a9a5814c3118d329f8b337221a68b32fbc76c6a23c88ec752fff503b121d"
     },
     {
       "task_id": "fx-translation-adjustment",
       "family": "foreign-currency",
       "seed": 225,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1369,13 +1369,13 @@
         "asc:830",
         "ias:21"
       ],
-      "digest": "sha256:a281dc59cb347874d9ceee1ed1625decef6498dff63082ecc8cff4f793bdc2c5"
+      "digest": "sha256:56391bc11b0e3e7180bed02fee87d3642fc78b3349e04a0e7bc4a2e731da1af1"
     },
     {
       "task_id": "gift-card-breakage-revenue",
       "family": "revenue-recognition",
       "seed": 288,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1386,13 +1386,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:72557f6a33669ad0cce1f42b57bebf4022147a822679d6f463d4dadfb57250c0"
+      "digest": "sha256:21f7c1af2418bcec1a6b4aeb954da4848eac284ce4f65537c66ebbe516868919"
     },
     {
       "task_id": "goodwill-impairment",
       "family": "business-combinations",
       "seed": 224,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1402,13 +1402,13 @@
       "standards": [
         "ias:36"
       ],
-      "digest": "sha256:250139ba2eefe3494be12cdc025425d0f7926886dc5ce5fa7685b6fc767f9fab"
+      "digest": "sha256:869a9e503f7894b6d8f90701472cf160d1f23ff9798cfbb71e8802f3f2bde37a"
     },
     {
       "task_id": "government-grant-release",
       "family": "government-grants",
       "seed": 222,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1418,13 +1418,13 @@
       "standards": [
         "ias:20"
       ],
-      "digest": "sha256:9fc41334df04b7be124347d5e0b7f60bc7035d2d657477b13284d1315b13d3c4"
+      "digest": "sha256:9112ac4a7c4646d5dbc219df69cf6f06e249cbc159ec3baa2ab12b1141cba56d"
     },
     {
       "task_id": "governmental-encumbrance-entry",
       "family": "governmental-accounting",
       "seed": 254,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -1432,13 +1432,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:832628bf4fafc42f13206df91609ecceb218f09d450ac3cb1286bebd487e6657"
+      "digest": "sha256:bfb49eb906dec9812cf1f28466efb89c64ce9f2bc81590f52a8893a4924c874f"
     },
     {
       "task_id": "govt-capitalized-costs-total",
       "family": "governmental-accounting",
       "seed": 322,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1446,13 +1446,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2607dc38dc3143bb2a68a8aa23130d2088d24c0ad83c3c39f9bc4ed797700e06"
+      "digest": "sha256:0ac9dcc30602bf64818097bfe854ffa01615e8b7297b6d356d3f415f33cf7e34"
     },
     {
       "task_id": "govt-conversion-net-position",
       "family": "governmental-accounting",
       "seed": 321,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1460,13 +1460,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8196cb1e8e6e935311404683c94c4b2489c257d92b4e8df2f4914313639ba2da"
+      "digest": "sha256:32d725550743ca64dcbceb0bd9ac041309c5afd9bdbe88a7d8dbc8d8540071b8"
     },
     {
       "task_id": "govt-expenditures-december",
       "family": "governmental-accounting",
       "seed": 323,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1474,13 +1474,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ee6db9b37cd5316cc03c8b500f630bbe23011d0f04162e7947f0272e487e29a7"
+      "digest": "sha256:9d5fd14195312fe8d994858ee1787eb9c4c77fceb447df11d2f94f55fc901e96"
     },
     {
       "task_id": "govt-long-term-debt-total",
       "family": "governmental-accounting",
       "seed": 324,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1488,13 +1488,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9e13161292f829a8fa83825f7736ef64557d587dff59eea1843543f0f3ed2a59"
+      "digest": "sha256:71c06fc572daf6fc45d7c50a6c0b3689fb07f8909e60b6aa1d5a0251cecce304"
     },
     {
       "task_id": "govt-net-investment-capital",
       "family": "governmental-accounting",
       "seed": 325,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1502,13 +1502,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e68a31c3d9387084be446cee61ff7a9eb4203757e1c5d7ef983191bfe753a7cb"
+      "digest": "sha256:9242c8fbbee2b4d96cb7761fbd7fc240977b97d765a3ef4c33629de6d4704965"
     },
     {
       "task_id": "gross-profit-from-trial-balance",
       "family": "financial-reporting",
       "seed": 150,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1516,13 +1516,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f584a26f0c8bef36f2e95ffe781a797c8c0edbd60a1573d205b252e2533586e3"
+      "digest": "sha256:82a4a0eb859d8c664531cb3e5f65e3996b9346a2b0119df8bf4f9f84553b03d9"
     },
     {
       "task_id": "held-for-sale-measurement",
       "family": "fixed-assets",
       "seed": 210,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1532,13 +1532,13 @@
       "standards": [
         "ifrs:5"
       ],
-      "digest": "sha256:a941545bf41c0250a0cc44b8a1ace02e5ade34e8a49a604ab1a04298f924895b"
+      "digest": "sha256:c60792acb2c212af8115a40b257c2e8f677393b7914da5131a02c4c0c8f18e6d"
     },
     {
       "task_id": "high-low-variable-cost",
       "family": "cost-behavior",
       "seed": 148,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1546,13 +1546,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b274489d6af335cbeb0268eb6ae88ac8d16302b3e3fff03146b2db52e237cd58"
+      "digest": "sha256:c28af55bb23c737c2d2fbcd6c0ee4a940b37e48d89e830c586bf0c6fcc7563ff"
     },
     {
       "task_id": "htm-premium-amortization",
       "family": "investments",
       "seed": 312,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -1562,13 +1562,13 @@
       "standards": [
         "asc:320"
       ],
-      "digest": "sha256:d6de94174e3829ea09ee81860d9926d1ffeb179a7bc97465b588478386f2b1ce"
+      "digest": "sha256:dd88139a48f54eb78c9aea2eb1d2edc9339e5d499b43990fe180bf5188649467"
     },
     {
       "task_id": "ifrs-capitalize-borrowing-costs",
       "family": "adjustments-corrections",
       "seed": 107,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1578,13 +1578,13 @@
       "standards": [
         "ias:23"
       ],
-      "digest": "sha256:3ee428e38f193b3e44a3bac6d478463fb416ffd05c531e5a9024019c49715ee1"
+      "digest": "sha256:4ddfe2977d6d10087821e879106cacbc86b5a45d933a0aecb9c303b683afa8a7"
     },
     {
       "task_id": "incident-response-deviation-count",
       "family": "it-controls",
       "seed": 303,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -1592,13 +1592,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f5b594361368b4548879af92b5a4aeec37a236159044be2f56f288c0a749ac08"
+      "digest": "sha256:1b955da1843dc265aa643bf4bbf3b3f22759c58892ec5023aa97e7a318c88b86"
     },
     {
       "task_id": "income-shifting-pv-saving",
       "family": "income-taxes",
       "seed": 366,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1606,13 +1606,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:074fdfa6da38eb0271653b760b4e77b5dda313b4005255362f06b8cc630a5c63"
+      "digest": "sha256:3d81b5be0deb72748a97ff4883f13505f66c5d35b9219ec4471ad6cd71413757"
     },
     {
       "task_id": "individual-gross-income-total",
       "family": "income-taxes",
       "seed": 341,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1620,13 +1620,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e5126b5995d762eb4f2019011b7ac62f0f10686286fb2c9368bc7b784dd6227f"
+      "digest": "sha256:2d4f84bb36005f0becc8538b99cea1245ca40bd8e135ee0822c0ed990a8c2d14"
     },
     {
       "task_id": "individual-tax-with-niit",
       "family": "income-taxes",
       "seed": 338,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1634,13 +1634,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:98d8c0b92223741b28b97f2b419c933cc4da42898503b50b6caa25fc325b5cdf"
+      "digest": "sha256:ac22dc88daac9167291d38b50247627c365a2312b85a73fa072bce6a365fac5d"
     },
     {
       "task_id": "installment-sale-gain-year",
       "family": "income-taxes",
       "seed": 350,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1648,13 +1648,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:8e1b3f34703162517e6687516124e22f48a501d35dc33182579f631d0aebf151"
+      "digest": "sha256:61d1c54b9e61f3d310ab93709f258f0f78fd4ef2d189fce2e712d754d02728bc"
     },
     {
       "task_id": "interim-income-tax-expense",
       "family": "income-taxes",
       "seed": 202,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -1665,13 +1665,13 @@
         "asc:740",
         "ias:34"
       ],
-      "digest": "sha256:e351b24c64178e414a09f749b08a5f53652595e25b66326a57402dbfc2f17b40"
+      "digest": "sha256:4e7f9e100d37cafe3dea955984f1d4e28180bcd8707051806c445f048dd0211a"
     },
     {
       "task_id": "internal-use-software-costs",
       "family": "intangible-assets",
       "seed": 239,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -1681,13 +1681,13 @@
       "standards": [
         "asc:350-40"
       ],
-      "digest": "sha256:6909f8bbfe27924d48dc1464a8c9a7579647dfa6a933d8d10abb15fa780993fa"
+      "digest": "sha256:73b978d65c719a35c34e0333a496983a44954414a9ce7de2d58c66440bd90232"
     },
     {
       "task_id": "inventory-cost-inclusions",
       "family": "inventory",
       "seed": 279,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1698,13 +1698,13 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:ed1de2d6b7d28d7b04df5e7d15f81b15d5bebf306e1759d3f28f0f53dc7e5b48"
+      "digest": "sha256:bd63cbcc4dcbb3639a99eee62585883851346337d993695c3ab6bd0893875227"
     },
     {
       "task_id": "inventory-costing-nrv",
       "family": "inventory",
       "seed": 112,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1712,13 +1712,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f6ae65e3785fedd236818ce4988ca4b600db8b470382990e54f549871472fe84"
+      "digest": "sha256:ee96ed8d227bd6e2d0521874db39391b99a47f99b0949bdb904d4eede8828a58"
     },
     {
       "task_id": "inventory-count-adjusted-balance",
       "family": "audit-evidence",
       "seed": 377,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -1726,13 +1726,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:01994073682bfe2fb8aede824f2094f11e6349815dce3535b6308de4276e7acb"
+      "digest": "sha256:65660da3ccb677d45c450a2987a8d11513eff6268b31088b44b8fd12e8388d39"
     },
     {
       "task_id": "inventory-days-on-hand",
       "family": "financial-analysis",
       "seed": 127,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1740,13 +1740,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ef71e6c968b87f7dc6cd25f2bd1c23ec41ed849dd50ca87baa771547172f2f7c"
+      "digest": "sha256:f3206f04a41d00880ee2cf2c64bb409f61b657fa26741be2c14894a6041f375e"
     },
     {
       "task_id": "inventory-error-correction",
       "family": "accounting-changes-errors",
       "seed": 198,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1757,13 +1757,13 @@
         "asc:250",
         "ias:8"
       ],
-      "digest": "sha256:17d809389773d2eb0f802b03dd7ea251e57fd481d9f34185b97338958177dffd"
+      "digest": "sha256:e139338c07746b707078a3c3176afa549f40e622a4423115b251e8d2b28311e2"
     },
     {
       "task_id": "inventory-error-income-effect",
       "family": "inventory",
       "seed": 266,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1774,13 +1774,13 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:bc9a70cfdb85bad4bcc976824f490ccf843e68930239f0b2166b38890b617162"
+      "digest": "sha256:42930766ba66e9c4e06884a95b3e5abb5d39b29234f0462632f0b1b64ff608d9"
     },
     {
       "task_id": "inventory-lcm-value",
       "family": "inventory",
       "seed": 267,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1790,13 +1790,13 @@
       "standards": [
         "asc:330"
       ],
-      "digest": "sha256:aaa104cb3c7eb39f7308c70b9af86cc1d7ef4f1e4447a2f3f52e3cc16c0c5e81"
+      "digest": "sha256:8d8e27e310a0e69e20c0336140ea7ff2823474a8b73f66813875ccc94bf2d6e9"
     },
     {
       "task_id": "inventory-method-profit-difference",
       "family": "inventory",
       "seed": 231,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1804,13 +1804,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c5bf91b906f3600d2ba471a8494a64b49dc058f41b0542f121bdc0bc851d542e"
+      "digest": "sha256:8c8066c70ad5e223e4d094755db6aabdc941f5b7641aac446a054148d636f1c4"
     },
     {
       "task_id": "inventory-shrinkage-adjustment",
       "family": "inventory",
       "seed": 181,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1818,13 +1818,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:37e88983df4d311464d97af26839b39c94cb3e38ab00c5592bcd2a9756c49b55"
+      "digest": "sha256:f65f9a7a7791a34563459a0fa76003c2d61ef93bc9b1ad6efb1f921ae8fc2c89"
     },
     {
       "task_id": "investment-property-fair-value",
       "family": "investment-property",
       "seed": 223,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -1834,13 +1834,13 @@
       "standards": [
         "ias:40"
       ],
-      "digest": "sha256:90ae79ac82c234a42814bbc81222fa463e19a359cb13da8977e244a0fdbea1a7"
+      "digest": "sha256:bc3672edbf0d0d7b35a1e6d93523c008f3c0d43d508a7ba95ff3a45ba60724bc"
     },
     {
       "task_id": "irr-from-annuity-factor",
       "family": "capital-budgeting",
       "seed": 243,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1848,13 +1848,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fe29dc84cd7acdc1d893ac3cee76ff3af008ef61a089413d971164ecd7acf689"
+      "digest": "sha256:16e7fc3dee5879be83a97840863806a9a8f843b92ab2e93e115970e9d0363557"
     },
     {
       "task_id": "job-overhead-applied",
       "family": "job-order-costing",
       "seed": 132,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1862,13 +1862,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:11f9aafff39bfe0d80db5ecceb3568aee9e775cf92c84d45f20b84923b3211c0"
+      "digest": "sha256:f93c130c5d6af5051e118c43347e877bbe229df3cef9734285dda72cdaa965ef"
     },
     {
       "task_id": "known-misstatement-from-sample",
       "family": "audit-evidence",
       "seed": 390,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -1876,13 +1876,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:155a66aac2be3566898880a21b16c034770c5b804aeffdddc4542ee9e849895e"
+      "digest": "sha256:eee0e9240ebb2d8bc2964d2418434547ad7750831e1c96323238ecc6f38cd0bc"
     },
     {
       "task_id": "labor-efficiency-variance",
       "family": "standard-costing",
       "seed": 188,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -1890,13 +1890,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:da9b448a80831874d4377ce09aa8dfff87b400b07bc2bf266c25d65f764df28a"
+      "digest": "sha256:5e86216507a159a856bf6c253d8d038067e30cc6bb37a47d8c93eb0684bce80e"
     },
     {
       "task_id": "lease-component-allocation",
       "family": "leases",
       "seed": 296,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1907,13 +1907,13 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:adc88837d8bd0c4fdfd52deada972dc9a772640ae0fa77eac9e9e83853b76d7a"
+      "digest": "sha256:dbf9d69f84a259b0bd2425417f471f85cf7fce3e41be05846047967b7fbcad13"
     },
     {
       "task_id": "lease-initial-recognition",
       "family": "leases",
       "seed": 195,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1924,13 +1924,13 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:1e0498610e1d87fae22a5bf1790ba7d0de6d3535c9c8c5703040a00c68e2c066"
+      "digest": "sha256:539ee822eb3847088c1f9bd1ecafa627a0fe3c75672ef244d2533119dbd4a67d"
     },
     {
       "task_id": "lease-liability-present-value",
       "family": "leases",
       "seed": 162,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1941,13 +1941,13 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:dc738f55ee59c6cf328175292b07041c90893b8e561dc44ea62a65d416a0ecfe"
+      "digest": "sha256:fabedcf56809a1e1bd057c5f80f538e4bd12fbf0f754864ccd903d21f20ea8e0"
     },
     {
       "task_id": "ledger-account-balance-carried-down",
       "family": "ledger-integrity-reporting",
       "seed": 283,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1955,13 +1955,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b6bf61feeb1e1dbc507aa3eacb313fef369f899afebb229985f4f9877e662a76"
+      "digest": "sha256:d5ce699e27ef98fe6705228eb6050c3c1b21d5022183e0d24af4d15e2c4a81c9"
     },
     {
       "task_id": "lessor-sales-type-lease",
       "family": "leases",
       "seed": 240,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1972,13 +1972,13 @@
         "asc:842",
         "ifrs:16"
       ],
-      "digest": "sha256:533422be57bcb4af8d408524d637655ed49b7ec6955a99cd4a74d9b0d5f19fc4"
+      "digest": "sha256:0e08b9755ad97be68df970570bfa9b44fec3c99ab89054c110e9f7f69835dd8f"
     },
     {
       "task_id": "lifo-ending-inventory",
       "family": "inventory",
       "seed": 134,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -1986,13 +1986,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fb9231c230bb0219b76541306ef0c887bd518a494926bf705014e67b7826d922"
+      "digest": "sha256:d1d782ae9398d85e63cad4b7849c7aacb224d2f94483a03873a390c0798ebf0c"
     },
     {
       "task_id": "likekind-exchange-gain",
       "family": "income-taxes",
       "seed": 351,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2000,13 +2000,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:88136f5b5921c0d9c7b1d3b415c1e11157d4e259cdb6636e0f39e50f0577cc6c"
+      "digest": "sha256:f1ac1599ec3e885f91edd9270e29114bee65791033fd6b6398e52e059a6b525d"
     },
     {
       "task_id": "liquidation-shareholder-gain",
       "family": "corporate-taxation",
       "seed": 357,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2014,13 +2014,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:746a35b2c506786301ef2d8e4d0c146a25c5302344d1027d89e3acfea1f817a6"
+      "digest": "sha256:be6c57f6bb3c1444e2c1065ee40b73e5805c28c64b7d998c31d1c3af1915f70c"
     },
     {
       "task_id": "loan-effective-interest",
       "family": "borrowings",
       "seed": 115,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2031,13 +2031,13 @@
         "asc:835-30",
         "ifrs:9"
       ],
-      "digest": "sha256:9c5a87999fafd50609f30d44d42a92147c1729a353c25b90d87aa0ee3e0da3e9"
+      "digest": "sha256:3661dc8757cd35d96e5b7d730ae51733148d971c4a161504d47eac38ba17eb43"
     },
     {
       "task_id": "long-lived-asset-impairment",
       "family": "fixed-assets",
       "seed": 199,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -2047,13 +2047,13 @@
       "standards": [
         "ias:36"
       ],
-      "digest": "sha256:fcaecfd3d274f7223a010a8bbb2f4484df76b6a95b5137753db58af8e5423e28"
+      "digest": "sha256:3dfc13e8acbf9cf86e5f5bee3aa846614c874678bf8622eb13a42371038692e8"
     },
     {
       "task_id": "loss-contingency-accrual",
       "family": "provisions-contingencies",
       "seed": 171,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2064,13 +2064,13 @@
         "asc:450",
         "ias:37"
       ],
-      "digest": "sha256:08783d664914ea68d4d30f833d642ebc579722ad633823891e42df36a0820311"
+      "digest": "sha256:e2a4117e2f52166b31d6201a90bedadfd71a520828906fcd48853a45806fd137"
     },
     {
       "task_id": "make-or-buy-advantage",
       "family": "relevant-costing",
       "seed": 137,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2078,13 +2078,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:62d7ddbf580cea56449b7d63a3f64f94a248c688f877540e8ca9aca8b9f81369"
+      "digest": "sha256:48a4a2c36c5ee4014561cca99ea5180e936cbc111bb953045efaae9bc30e4962"
     },
     {
       "task_id": "materials-price-variance",
       "family": "standard-costing",
       "seed": 135,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2092,13 +2092,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a4389f05d104f3b4107760725fd074b045a4d2ddda4f2304519c12e1a6edab31"
+      "digest": "sha256:61184f0bcab261aea3f6053dc37c6b1804d6a9e8bbbed2f4b2684673c1f69ebb"
     },
     {
       "task_id": "materials-quantity-variance",
       "family": "standard-costing",
       "seed": 175,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2106,13 +2106,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:faababd2cf005b7f84c8775222cb0927571060226b5098e6d8f8ddc8b1a74209"
+      "digest": "sha256:7ed0701114265cc14bb82c52fc23a9ca0943d0f6ceb3edfca6ddf230c9cff7a3"
     },
     {
       "task_id": "mc-capitalization-treatment",
       "family": "transaction-classification",
       "seed": 105,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2120,13 +2120,13 @@
       "format": "multiple-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:41d95df5cd312464a5e8836293d9e4dba48cd330b1b20a2b4933db8c761f890b"
+      "digest": "sha256:2e9154d79d67ee5f0db518729ec08a3bc94d9a5bd2dd7862157c78c227f40d32"
     },
     {
       "task_id": "mc-normal-balances",
       "family": "transaction-classification",
       "seed": 166,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2134,13 +2134,13 @@
       "format": "multiple-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:2b830d1528c84a92f042c33a3d3ca497cb6c44515716d165def2a5fe7523aa90"
+      "digest": "sha256:53a1824e6d67abc1a856c117b09a4e689f3d816e68378e88feb9bfb65aaf9f17"
     },
     {
       "task_id": "mc-reportable-segments",
       "family": "segment-reporting",
       "seed": 250,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2151,13 +2151,13 @@
         "asc:280",
         "ifrs:8"
       ],
-      "digest": "sha256:b3b6e871d7f6b1113e5fa7ca4bb694db386ee2fea297f90be7cfab766ef0eb60"
+      "digest": "sha256:81f63d155f378cd7b8ae4b1ba0069223ca403810727b77380cc05edeca7a2000"
     },
     {
       "task_id": "mc-temporary-accounts",
       "family": "ledger-integrity-reporting",
       "seed": 234,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2165,13 +2165,13 @@
       "format": "multiple-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:323f5c231ad1e8958c9879050a15e2dd58f97d8404b9ab39882f2ea6b2749540"
+      "digest": "sha256:f1e94610243dd3305d5aaf5f5a44dffac12cba91704831363bf66ab0653f0682"
     },
     {
       "task_id": "mgmt-break-even-units",
       "family": "cost-volume-profit",
       "seed": 106,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2179,13 +2179,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ab4794408ff66798dc2963b4d842a428856ee2315077dc324e870d5e1c746eb5"
+      "digest": "sha256:7cacb9f7049b9657ce493a49c4160dcb3a4c83ddb5d2c3b86f519153285f23d7"
     },
     {
       "task_id": "minimum-transfer-price",
       "family": "responsibility-accounting",
       "seed": 232,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2193,13 +2193,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:28ef14114d58feb204bd21be2f86a111f341a78f909752be719c3af6eb5a8ad6"
+      "digest": "sha256:038659cdab3200f6d9898e129a8336afbfb8ed6dec0cc64a4f44aa7906231c01"
     },
     {
       "task_id": "multiproduct-breakeven-units",
       "family": "cost-volume-profit",
       "seed": 178,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2207,13 +2207,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:6883045d9b2a3de2f4fcee46bfa5aff197a02e1760340d89635eb2c8fb3b399f"
+      "digest": "sha256:0fa8abef166b5cc50d2fc58c8a070eea3dc91a7784761f488944c65d35eda7a9"
     },
     {
       "task_id": "narrative-multi-transactions",
       "family": "transaction-classification",
       "seed": 154,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2221,13 +2221,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7d83626691e57904d939024148aa9722eff352c477381ffb7d06acfd871b6491"
+      "digest": "sha256:b252690992db0bb63ec306f7bd861c9dd4bfe7668faf5367d8bd503550c703bb"
     },
     {
       "task_id": "natural-resource-depletion",
       "family": "fixed-assets",
       "seed": 238,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2235,13 +2235,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:91eb7d6784decc5fb06d4feb97b626735e03b63a62d364592e28024a773f6bdc"
+      "digest": "sha256:7ca19ce266c34ee236b7d21f12597f0e3aa940df44d42b0f8386256203b2829b"
     },
     {
       "task_id": "nfp-conditional-vs-unconditional",
       "family": "not-for-profit",
       "seed": 214,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -2251,13 +2251,13 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:b033a471b67c75de6ed2144f4e8e790929bb5f72b8cb03b3147553f315971d18"
+      "digest": "sha256:e5334c95bf8aafaf2ddc9f8cc4353d312c54cbe956c9d8530de3ace6639fb069"
     },
     {
       "task_id": "nfp-operating-cash-flow",
       "family": "not-for-profit",
       "seed": 314,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2268,13 +2268,13 @@
         "asc:230",
         "asc:958"
       ],
-      "digest": "sha256:da23040262576ad893f37d90f254dd60f0b08295b390a4e3d48645750640f976"
+      "digest": "sha256:71a9d9da52234fdd91731a384a39211b9252b0716a7f63db29112df90e61d07d"
     },
     {
       "task_id": "nfp-program-expense-allocation",
       "family": "not-for-profit",
       "seed": 313,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2284,13 +2284,13 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:f28a94e6694e225880cc4e02cfb2415121ab64d0b468602d4d43b0d8e5757034"
+      "digest": "sha256:3f0ae3aec281994fe7ecf31eebabae77e6740692dcb6e4db804eef140f1224f7"
     },
     {
       "task_id": "nfp-restricted-net-assets",
       "family": "not-for-profit",
       "seed": 315,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2300,13 +2300,13 @@
       "standards": [
         "asc:958"
       ],
-      "digest": "sha256:dffe1e061a44df8f60e6d6e90e89e2e859f16862532b8ee2c62918f35702f3a3"
+      "digest": "sha256:c1b6cf44d6da7541e6679cd757b29c44df882c882e01f8dbf5c45dc7c883d562"
     },
     {
       "task_id": "nonexchange-revenue-recognized",
       "family": "governmental-accounting",
       "seed": 327,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2314,13 +2314,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:31f3075603e9ef5af150e3e6911e7c170bc69967cd4bd7b7b2c947e7ff17cfa0"
+      "digest": "sha256:45bd8040e5c9844cf41103c8cc871e4063431133b037d9fc6b14cbfea4971453"
     },
     {
       "task_id": "note-dishonored",
       "family": "receivables",
       "seed": 133,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2328,13 +2328,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fae8360a01814ecdcc22edc6f1da885c6519159a444505630df3b8c90615c83c"
+      "digest": "sha256:08087054fd9fe4a9199f4cd4a366f7d6bdba5e37e176c852467173e1acff8ec2"
     },
     {
       "task_id": "note-interest-accrual",
       "family": "receivables",
       "seed": 121,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2342,13 +2342,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:03255797befa4d4f88904a7ce6929b9d3ca1299d489155399df4fd1dd595be8d"
+      "digest": "sha256:ef0ffcddb83668aafd56580600da67a1f19c20db97b635b3e06e94f720b617e2"
     },
     {
       "task_id": "notes-figures-difference",
       "family": "financial-reporting",
       "seed": 316,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2356,13 +2356,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4421a0618bc1e625e34430f4c3fc09faa75dc400a8c8c6f7bf7ed51aa6a1938c"
+      "digest": "sha256:64c3b26554e52a864a26bf5721cec544b18388be74c414f70c6cbd4f6bbd7d41"
     },
     {
       "task_id": "npv-project-evaluation",
       "family": "capital-budgeting",
       "seed": 136,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2370,13 +2370,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:452006570fad6984d048806ba125536ba93205cc6700853ea30ec6074b4e7aa0"
+      "digest": "sha256:3662bae58f3e5dc6ce9ce12dd27c6f8b4a32dc19d6997a90085a0ba73d1a6d5a"
     },
     {
       "task_id": "operating-cash-flow-indirect",
       "family": "cash-flow-statement",
       "seed": 126,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2387,13 +2387,13 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:ce48488efca58be244636695123542dd5253c6247c684f7f2d20cf5fbb4ca936"
+      "digest": "sha256:6e2bbcfb85e0362afaf34f3c576e0fea66f23043f02ced7135495bb2b9bb29fb"
     },
     {
       "task_id": "overhead-variance-disposition",
       "family": "job-order-costing",
       "seed": 183,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2401,13 +2401,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4407ad879ca7a66621c7787c02a1be6b5656f83081a46542b239f9dee21e5eef"
+      "digest": "sha256:431a89a8aa0acf40de6559a2193814765cd393a50da70eb9a28e15c8fb7f562d"
     },
     {
       "task_id": "owner-ordinary-from-k1",
       "family": "passthrough-taxation",
       "seed": 346,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2415,13 +2415,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c0408d513d49c90075985685a58e033decd5d6fdaa117428305b40f17df0f3ae"
+      "digest": "sha256:80a663b24be8e4dafeb58e352f593dd4da04e7c40fdfea4315f3c5478e8640c0"
     },
     {
       "task_id": "partnership-admission-bonus",
       "family": "partnerships",
       "seed": 253,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2429,13 +2429,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:86ca63de0fbc6a50928b61a9bba48cee6b9894ae4059df80b9b7518443613f5e"
+      "digest": "sha256:d1c50ca56cba8943fd25e7abe9b52c15b400d94e3186273d2af5295420a5f1b9"
     },
     {
       "task_id": "partnership-contribution-gain",
       "family": "passthrough-taxation",
       "seed": 359,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2443,13 +2443,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e5fff730fca2eafb51ffbd65b47d0e8ac271cfbd556212ee9c365174cec2578e"
+      "digest": "sha256:305d6f7abbc154c908c1e460c5351b35895334ed04307f052687ea2b04ec523e"
     },
     {
       "task_id": "partnership-distribution-gain",
       "family": "passthrough-taxation",
       "seed": 260,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2457,13 +2457,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:29d5b3afd254518a72797e9aafd7c31ea84d32230b255ccd76b8828a80dd4f42"
+      "digest": "sha256:5908818690a7c38eebfcf004a97b8c73df77c54e50175d89a475405a97047c2c"
     },
     {
       "task_id": "partnership-formation-capital",
       "family": "partnerships",
       "seed": 271,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2471,13 +2471,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a6c3a8f2aeb276167c28d29084385316155de16b7d4b8d6fd40e6a050ed6394d"
+      "digest": "sha256:27ad2b02b1c4ecd361754c1fe60c014dafa5c7b1bf0d29183fc4ba17cf0c2a87"
     },
     {
       "task_id": "partnership-income-allocation",
       "family": "partnerships",
       "seed": 165,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2485,13 +2485,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ef26ca48119c641ae5acc662583d3158613bf0d82d54e3caa4d72d7fd84363be"
+      "digest": "sha256:faa37c2d314832e3dea556d7148482ca1a8b82f95b7d8322eb154249e998b210"
     },
     {
       "task_id": "partnership-liquidation-distribution",
       "family": "partnerships",
       "seed": 272,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2499,13 +2499,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f9e7fccd802e25d04a73b88f7fc2b5eed6119b33700e96d0f7d4012f99d81631"
+      "digest": "sha256:8bf7385e999b25ccf8c4da1efc8d248de479dc173f76d7e9769dc33094c52602"
     },
     {
       "task_id": "partnership-outside-basis",
       "family": "passthrough-taxation",
       "seed": 246,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2513,13 +2513,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7328adfcd2a3826ca2ee8c950c333eaa90f206a36f1063ce9e186a710280ec48"
+      "digest": "sha256:028b7866c4818cf43d7e4105a70c418dd1a2acf85aa620ce2cff80ffcc69c7c4"
     },
     {
       "task_id": "partnership-retirement-settlement",
       "family": "partnerships",
       "seed": 273,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2527,13 +2527,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e7c870cee6f32132f282d2bc82f9db19a9728f63b9e4fccf46fc55d05639e5bd"
+      "digest": "sha256:e455e17d6f3e0be4b66f20a0fcaad25f3fae5fbc84d67e213c3eaa14a8b9a037"
     },
     {
       "task_id": "passthrough-loss-limitation",
       "family": "passthrough-taxation",
       "seed": 259,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2541,13 +2541,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ce38658d657dca2e12e87669b05427153a85b1b27bd1e9a3a057c48f7afbbe8b"
+      "digest": "sha256:cc60aabf7763112ee6e9be00ad26603b5fda207cc460f43dc3b160b8c1961de6"
     },
     {
       "task_id": "passthrough-ordinary-income",
       "family": "passthrough-taxation",
       "seed": 345,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2555,13 +2555,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:ed223e33ff10ab7f6aae55a34d25226a84405424c342363fd5ff80c475f9ec12"
+      "digest": "sha256:5f691142e2cae6b64f6ff0391e633cabee3359baa3f781db6605b45edaa42eb9"
     },
     {
       "task_id": "patent-amortization",
       "family": "intangible-assets",
       "seed": 170,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2572,13 +2572,13 @@
         "asc:350",
         "ias:38"
       ],
-      "digest": "sha256:3e80c2759cc1e28a5cf05d3b4138d3ffe0571fcff11b0c677280387610f58f85"
+      "digest": "sha256:7cebb9845fafefd24a4f332a006f80974c8ff9307085d0747f347eb7c44f9a42"
     },
     {
       "task_id": "payables-control-balance",
       "family": "payables",
       "seed": 290,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2586,13 +2586,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2100fdb513ac7ff100f47324ab825648f2c4aab8577f5854fef545ae6344a4a5"
+      "digest": "sha256:e8f967989112ce4dc93e5c64a8013f048988bf0ded695f8f9d03404ecf9fb886"
     },
     {
       "task_id": "payables-statement-recon",
       "family": "payables-reconciliation",
       "seed": 110,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2600,13 +2600,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:c9f3f0b68177afd9a44fa78450602367b4d1a710168c1ed5556de731210c8367"
+      "digest": "sha256:510520f315431ca28f219b801aa3cdca28ee047fd8aeae1395ddb4d68aa4d60b"
     },
     {
       "task_id": "payback-period-years",
       "family": "capital-budgeting",
       "seed": 177,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2614,13 +2614,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4c60ab15a49eeac059ef3584452b0f1b3381f0bf196b5e5fab803b713f9757f1"
+      "digest": "sha256:70612987d6dbe47f656c001633f51b12692422eae06a05dff3850edcddb7b082"
     },
     {
       "task_id": "payroll-withholdings",
       "family": "payroll",
       "seed": 122,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2628,13 +2628,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d1811e6345672b99d589086d9be831940b712a6e3fcfe69a6521061d96866687"
+      "digest": "sha256:ed3cddff879597eb0d090c0aa34c0b3728900f4a24c52c24c48fd4220060a246"
     },
     {
       "task_id": "pension-expense-and-contribution",
       "family": "employee-benefits",
       "seed": 242,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -2644,13 +2644,13 @@
       "standards": [
         "asc:715"
       ],
-      "digest": "sha256:bcea1425a9ae75ccdd745dce26d239fa38155a9a973852ae2d78268720cd3f65"
+      "digest": "sha256:46c005f1548688b197e7f81ecea9d553def5e3b54731523a2444bc633ff2d6b3"
     },
     {
       "task_id": "percent-of-sales-afn",
       "family": "budgeting",
       "seed": 330,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2658,13 +2658,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:95acffc94075613f6d1a3edda68455740bafc2b1883254cd1b361839cc882319"
+      "digest": "sha256:254835d458633313b34424a5f2bdadccdd04b182c53504de18d057bfd4a29f9e"
     },
     {
       "task_id": "performance-materiality",
       "family": "audit-planning",
       "seed": 247,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -2672,13 +2672,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:30e85939762718c8bf4ffb4868ef49d0d36c06464059c8f06395cf00d6680763"
+      "digest": "sha256:a34a8aa7cf7a7ef77068d06776c9fdae88061240f3b4fe913e38451ee2a63eca"
     },
     {
       "task_id": "periodic-purchase-with-freight",
       "family": "inventory",
       "seed": 144,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2686,13 +2686,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:aba2010cf25dca9e56f89b552f65836c3d8714ef51fcb8f16bdf670a2e47aeac"
+      "digest": "sha256:0995ba973b13291a7f56a014d3fc893160b7bb884df4931ab34a95c0b19670b4"
     },
     {
       "task_id": "perpetual-sale-with-cost",
       "family": "inventory",
       "seed": 116,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2700,13 +2700,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e16935d3fe0c3e5c40e8709069cc91537c214b7df195bd037b75cae065c58955"
+      "digest": "sha256:48f985c1c6327ff98a96480b6ca01d7a891b55f1ca2982a7c7b989030ee9d8fc"
     },
     {
       "task_id": "petty-cash-replenishment",
       "family": "cash-controls",
       "seed": 158,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2714,13 +2714,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5e8d9dddfe058b8e122a3849c515d59970963271623653539fa8ba4c7f7e8e10"
+      "digest": "sha256:b82c53cd0366d04ed61ec5d86b2a81fa9f70ab62656416e292739c2363a5d17f"
     },
     {
       "task_id": "post-closing-debit-total",
       "family": "ledger-integrity-reporting",
       "seed": 229,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2728,13 +2728,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b5cf341aee13aa006bf89bc6619681965ff0ae57ee3fc798cdbf6cd8e46bae13"
+      "digest": "sha256:3467a3c0ebdaee83f0f72e686d1fd09b0b54df0aa20937c7031714c785447909"
     },
     {
       "task_id": "ppe-additions-inferred",
       "family": "fixed-assets",
       "seed": 216,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2742,13 +2742,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b19fb46e5655eac2583c7f1b05127e2fd35b2a827f372ca1c85bcd74aecfec60"
+      "digest": "sha256:84f167c84399b538f753e20efb8fc2c308671b203ff415d77614c68d6c7ba9c8"
     },
     {
       "task_id": "ppe-disposal",
       "family": "fixed-assets",
       "seed": 111,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2756,13 +2756,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:3e90c8f41e7e6b872204f02a2a439cd30c8b26679aa74996a12201f4062eb105"
+      "digest": "sha256:4998149510bdce4e37bf05730324486f3187abd693057461cee48f62c87aaee9"
     },
     {
       "task_id": "predetermined-overhead-applied",
       "family": "job-order-costing",
       "seed": 201,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2770,13 +2770,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d5dca43e93a770e7e4ab40c9f52b2fbcb94a4545366d10473292f1a7401b6dbb"
+      "digest": "sha256:7418e1f456bc7b8f3628f052b23f20793435f342f7c3fe42b704cf121e2baab4"
     },
     {
       "task_id": "prepaid-insurance-adjustment",
       "family": "adjustments-corrections",
       "seed": 103,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2784,13 +2784,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f6dc8bd9e38b68273d0e8eb0080d117daca8ef91fba71579af7d594d5934c814"
+      "digest": "sha256:cb142e3c280b09d976a5857408423037c98d7bc1585dd59ff80adce2f345925f"
     },
     {
       "task_id": "present-value-lump-sum",
       "family": "time-value-of-money",
       "seed": 152,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2798,13 +2798,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:0041c66c67ab935bd9e903642b055a63339eac8656878ef56cfe459ed34baaf2"
+      "digest": "sha256:7a9983ade4cd68d9f13f4afecf6a9302f1b8575bda047e3211347e8f87da1c48"
     },
     {
       "task_id": "process-costing-equivalent-units",
       "family": "process-costing",
       "seed": 125,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2812,13 +2812,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f43c2dbaf1cfc0801ad2ac6854bdec23396761cc1101ba0fe6bbdc9b2eb0824c"
+      "digest": "sha256:b2982fda738c867ecfce58427a113738031b2b34431d4b65e05163ca235daa6a"
     },
     {
       "task_id": "production-budget-units",
       "family": "budgeting",
       "seed": 200,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2826,13 +2826,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4705d12de6912c2d0d662a94733f8839e97882221d41982cd2f8cebc58c7f78d"
+      "digest": "sha256:0027ab7d49735d0d171f2d8eb8bb42431e537493b686b83d424a5af8a6c7d7ac"
     },
     {
       "task_id": "profit-from-capital-movements",
       "family": "ledger-integrity-reporting",
       "seed": 277,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2840,13 +2840,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f40057d94e1b27b993d240b41a4208132257bb12c955eca5423dc49ca5198a9d"
+      "digest": "sha256:9c419a2f1b7a1f6a428a995a4a6ff95fe11f4e6eb1b02d8c3837f87c48c1f608"
     },
     {
       "task_id": "provision-rollforward-topup",
       "family": "provisions-contingencies",
       "seed": 252,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2857,13 +2857,13 @@
         "asc:420",
         "ias:37"
       ],
-      "digest": "sha256:5d316e7176348315c9de36a011c582e5c2b96bbc42a2e66c126fd85efd998301"
+      "digest": "sha256:fc74d96b3b52f5de84f6fa9ea9c771cdc8b314ac227760974dc0854595ec5805"
     },
     {
       "task_id": "purchase-return-perpetual",
       "family": "inventory",
       "seed": 182,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2871,13 +2871,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4c32cd5cd2e5999edbeec4453d27e0cdee1cfd5f5b4c80f30d54eb7ae22530c3"
+      "digest": "sha256:db6d0c5972ed46e9d11237988bebdf85f0a791b95c7dbf346333e38716509fc1"
     },
     {
       "task_id": "qbi-deduction-amount",
       "family": "income-taxes",
       "seed": 344,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2885,13 +2885,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fed9b80a40c3f7db808dc39eed1535f7c8cdbeaf57fbcbefa875ce1c1d4598a3"
+      "digest": "sha256:9be1c0d9a174d8202a99464720ef0808d6ce6298fd56ac491a5d402654056618"
     },
     {
       "task_id": "receivable-allowance-trueup",
       "family": "receivables",
       "seed": 108,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2899,13 +2899,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:3d2d6f0cb6a6ec8c3d2052f3fe6246780ffe000429c6367ae55a0573fa609a40"
+      "digest": "sha256:76fac374fc764f5a925ec05b2f9a5816dcedef3d7a8f4087dce4c483ae64b40c"
     },
     {
       "task_id": "receivables-control-balance",
       "family": "receivables",
       "seed": 270,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2913,13 +2913,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b3a251db7d2f2c777b260fcefeee33f81fff2101dabb9ef9fc0fa249816f618f"
+      "digest": "sha256:d638e202f330b65afad3f1ea7136e4bae0e4a3740435fe0a9ba15c210c8b48e9"
     },
     {
       "task_id": "receivables-payables-contra",
       "family": "receivables",
       "seed": 285,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2927,13 +2927,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9eac2f0beff31e5088b5748f2b65e7a70a2c5c934462378e18f0a9609444b66a"
+      "digest": "sha256:9542de59edc99dd747876abb5218c0a4ddad4250a70f1ab70276f17d20768593"
     },
     {
       "task_id": "related-party-resale-gain",
       "family": "income-taxes",
       "seed": 364,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -2941,13 +2941,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7fd7dee19b030e829888c5cf383a2c0a95449d2f9d7eba45a99224dea22b3c6a"
+      "digest": "sha256:313449be8e34befcbcac8e97a389da5f325cc966395ff43ccd5f6f08bdad69fe"
     },
     {
       "task_id": "residual-income",
       "family": "responsibility-accounting",
       "seed": 204,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -2955,13 +2955,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c0b0dbaa82e4f3493197548c0aed5e3e23275cf9859d3732630f7dbe7a888ab7"
+      "digest": "sha256:909e14ab195d79ba9deea3dfc1a2bc15385246cce1336a3bbd14663ea47fc6d7"
     },
     {
       "task_id": "restructuring-provision-amount",
       "family": "provisions-contingencies",
       "seed": 291,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2972,13 +2972,13 @@
         "asc:420",
         "ias:37"
       ],
-      "digest": "sha256:eb77f3dba31900037048795236f3de515562f2cee24297eaf3de14ac950d9c5c"
+      "digest": "sha256:89998d4cc1b72039d0ae69c9076289206267afcf7fe2414c7e2eb5520d158c50"
     },
     {
       "task_id": "revenue-bundle-allocation",
       "family": "revenue-recognition",
       "seed": 113,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -2989,13 +2989,13 @@
         "asc:606",
         "ifrs:15"
       ],
-      "digest": "sha256:d5e90b707bd022f5563388ed5e84a598425e826b96e9f0c01c07160fc9763761"
+      "digest": "sha256:95db1fbc6beb22f398394998ea6e0e2edc73be860ccd91652fcb85207112f679"
     },
     {
       "task_id": "s-corporation-aaa-ending",
       "family": "passthrough-taxation",
       "seed": 245,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3003,13 +3003,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:86d3a5c75bb640882adc368293718d5c1e6d09ca8dfac402e17b8992d9891e2a"
+      "digest": "sha256:2293f7f4d2913fbb2f2c67fe5c53823fece09350088d47599e8829138449ec2c"
     },
     {
       "task_id": "sale-and-leaseback-entry",
       "family": "leases",
       "seed": 226,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3019,13 +3019,13 @@
       "standards": [
         "asc:842"
       ],
-      "digest": "sha256:a23198eb159f6fcd2a823b286eb0a36a0f0841b1cf4976744f95529f44df2b5f"
+      "digest": "sha256:28e6d3e6993440749b63c5afcd33315abe585d98b5ec6acbafa7f38a1f2e33e4"
     },
     {
       "task_id": "sales-from-markup-reconstruction",
       "family": "ledger-integrity-reporting",
       "seed": 278,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3033,13 +3033,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9591c9bd229921ffcff153ddf4ae1d0898ce8d8f7e24240b28840ce1d444c3fc"
+      "digest": "sha256:1a895d4ce48d7c0ab244361e1547591e18f8478612766734477706e6ec547b51"
     },
     {
       "task_id": "sales-mix-variance",
       "family": "standard-costing",
       "seed": 331,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -3047,13 +3047,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c21875dca7fd9011fa2b971188986a549e6da3eef7de79871945aadbea4095af"
+      "digest": "sha256:89f6c696814e6cd3eee85c959c2bbebf63c1d577547f0397d0bd0dafb6dc1e51"
     },
     {
       "task_id": "sales-return-restock",
       "family": "inventory",
       "seed": 117,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3061,13 +3061,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f0f67d21dee513bfc1e4f6b4849586587d554b94f5fc296409645933c071c216"
+      "digest": "sha256:c7b0cf4049fff131e8db42ca85a14585560eb47edd275edd5765431df0c5ffab"
     },
     {
       "task_id": "sales-tax-collection",
       "family": "transaction-classification",
       "seed": 157,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3075,13 +3075,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c9f7ef23621e03d799df9e721a29cb7536e7e24f49d8574be13e17b9c10cb84a"
+      "digest": "sha256:ce5b9a09ae9560f61fcc68915e9cd7d8cd3a86c17b7b44310f71693a201cc0d6"
     },
     {
       "task_id": "sample-misstatement-projection",
       "family": "audit-sampling",
       "seed": 261,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3089,13 +3089,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:13a8c381cbb0f2a025dd0a9dd8887898b97362518d9524eff3e96c90735d5be7"
+      "digest": "sha256:6c5be29d8a540d74113828cb7c33781ef3b76bbaf5e4516302affe8460b96ff5"
     },
     {
       "task_id": "sc-audit-opinion-type",
       "family": "audit-planning",
       "seed": 371,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3103,13 +3103,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2b43722b42727fa3672f081ed97e680d0d6ccda07cda9d122be259da169a46fa"
+      "digest": "sha256:17ccfa83d8ddf53c34529232ee4d6143ec12a878b01ca63e34516fe1dea1e60c"
     },
     {
       "task_id": "sc-audit-procedure-selection",
       "family": "audit-evidence",
       "seed": 264,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3117,13 +3117,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:cb0c586898ddd5764ecb05faea3a4616083b30d79a6afca04703c3c667a0f6b4"
+      "digest": "sha256:a37408f459a0825620276e5fa284b51bd094a7d3169839ebea8a426467ca263d"
     },
     {
       "task_id": "sc-backup-recovery-selection",
       "family": "it-controls",
       "seed": 300,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3131,13 +3131,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1b3a5a4c10cb86b79bf412cdb07b913e394855ce48fcf791e17ce1a2e057a697"
+      "digest": "sha256:e064c0a360a1a02c983b9ed7c016584d5fb61810ed4acd15df57bc59e81bf380"
     },
     {
       "task_id": "sc-business-vs-asset-acquisition",
       "family": "business-combinations",
       "seed": 293,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3148,13 +3148,13 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:1acac15ada4d5b818140540062393cace2649a395d702c328e9d38b9c487c3eb"
+      "digest": "sha256:369ee5a27726455026a2e66463cc19e81acc7077d240e786af7125356e264b03"
     },
     {
       "task_id": "sc-capital-gain-classification",
       "family": "income-taxes",
       "seed": 335,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3162,13 +3162,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:61e7af207b37e92ec43d32b74acd2ce2a75e22de6d62aadb7868c02d2e7d16b3"
+      "digest": "sha256:11c21001b9b0978942f3615b5f8cf822f17d385a1c1e4a023f28759e58379aea"
     },
     {
       "task_id": "sc-cash-flow-classification",
       "family": "cash-flow-statement",
       "seed": 180,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3179,13 +3179,13 @@
         "asc:230",
         "ias:7"
       ],
-      "digest": "sha256:448cb15f8cf662c0b0e5aa50671a227a5ca6b88fcad94237a9e45a32474001c5"
+      "digest": "sha256:388dafe838f387f3637338460bad8453cc372e33e0bc0b0ca23a4fda03eb17d5"
     },
     {
       "task_id": "sc-component-unit-presentation",
       "family": "governmental-accounting",
       "seed": 319,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3193,13 +3193,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b860b38dfc73e024b69b89401fbdffae05b5a15f10649f7d2ede08bc95e22d16"
+      "digest": "sha256:216276084d384ced9f5c534202adedee2984e03b820ea9507d759d75d84bf748"
     },
     {
       "task_id": "sc-confirmation-response-classification",
       "family": "audit-evidence",
       "seed": 375,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3207,13 +3207,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e6ea00ea342f75a500f5b7b63208997cde48769b9d857fb898677fae1f9b5163"
+      "digest": "sha256:672869931f4e9b890b15ec0921eb260a83b4f50b44601bd2ca3b09b257b01a85"
     },
     {
       "task_id": "sc-control-assessment",
       "family": "consolidation",
       "seed": 276,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3223,13 +3223,13 @@
       "standards": [
         "ifrs:10"
       ],
-      "digest": "sha256:572d931cc0187d08d29b517a6f4bf31b9503bb8101c05a8cffe99db82b761d35"
+      "digest": "sha256:34ce73ba08de9f812338483b2b86be088e1399d1828b4ae993a799f1996303a3"
     },
     {
       "task_id": "sc-control-deficiency-severity",
       "family": "internal-control",
       "seed": 374,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3237,13 +3237,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9e77abba6a28865f12fa09848fa9e1d574905fb98f04a5650a43e9ffbc2ff207"
+      "digest": "sha256:d5b9c273b26f20af811a1696fa3d0e50499229a4e9f41a403ec68a661839df07"
     },
     {
       "task_id": "sc-control-design-gap",
       "family": "internal-control",
       "seed": 265,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3251,13 +3251,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:37d1b30fcae674d1e2baa6511ffb9d9d4f1516984530c8240321b2d12735adbf"
+      "digest": "sha256:f710653eb99f5574c1a8e3adffa0a294782cf89a8a64caaf07246233807b75b4"
     },
     {
       "task_id": "sc-database-integrity-gap",
       "family": "it-controls",
       "seed": 302,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3265,13 +3265,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:33a6349b70d41f4be9c37863103c3db4b5ab7020d19e47a67792e1e1e935996c"
+      "digest": "sha256:79068b4cf2626febc9edeb331cbccbbf811a9e586cc807ea68c557fc8309cb34"
     },
     {
       "task_id": "sc-debt-equity-classification",
       "family": "financial-instruments",
       "seed": 275,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3281,13 +3281,13 @@
       "standards": [
         "ias:32"
       ],
-      "digest": "sha256:2ea65463f12d1fc37acb188a8bf4817c4afb38bc536bf1d6544ddd486d96d377"
+      "digest": "sha256:89aa7d5305e8a0171e8dac611c6af9fa1fb60cc3418e1eb920d84d570d037bc7"
     },
     {
       "task_id": "sc-derecognition-assessment",
       "family": "financial-instruments",
       "seed": 295,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3297,13 +3297,13 @@
       "standards": [
         "ifrs:9"
       ],
-      "digest": "sha256:725ba731e35a4a5c14e5b664d4e9f0335ce8c636ab203b4aa4a9cd80301dfb8f"
+      "digest": "sha256:b67115cb84e13b46b9b852dd9b5e6b31cf4e7db0cdf21e9a189109a865ea3e7a"
     },
     {
       "task_id": "sc-engagement-acceptance",
       "family": "audit-planning",
       "seed": 383,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3311,13 +3311,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:94acd01181d8e167a7dc253bbd42edb9d7546e5ada64fcf8f3ef98f3782e5326"
+      "digest": "sha256:b556a37643c7a494db43a3d08c2d8ae0430ffea30942b6ba5798c48ec1994881"
     },
     {
       "task_id": "sc-ethics-threat-classification",
       "family": "audit-planning",
       "seed": 381,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3325,13 +3325,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4ae7001012e6d8915db72cdfeaf4d4ede058f1ef660248e6953386c1166a0916"
+      "digest": "sha256:1744381d0d2de9e7a7b34ac191a3142bac24c6fe40cf94942dc6e3a63e81b42a"
     },
     {
       "task_id": "sc-evidence-reliability-choice",
       "family": "audit-evidence",
       "seed": 378,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3339,13 +3339,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:00f7e64b16dc6e682a5fc66879d18957310974d4ab77caedb00d97f57fb1ffc3"
+      "digest": "sha256:efbe061cea5f50792b5e22ce75a02d3a1b79f6ded2905ceeb5e0b548ee6f317f"
     },
     {
       "task_id": "sc-fair-value-hierarchy",
       "family": "fair-value-measurement",
       "seed": 235,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3356,13 +3356,13 @@
         "asc:820",
         "ifrs:13"
       ],
-      "digest": "sha256:ba7b2add0ce93f06fa65adf8ad5bc5bc7ba730f04a2bda6c3ff5823966f2fcd2"
+      "digest": "sha256:0e5ce1aadf1e55388fba281b9e5476d3e0b3ccc589ff7147893bb0464274aa08"
     },
     {
       "task_id": "sc-filing-status",
       "family": "income-taxes",
       "seed": 340,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3370,13 +3370,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:7ad5bb357858c7bf1c3cc0a33ee3e4420558ba2920584013ed11221881b0f657"
+      "digest": "sha256:0cae0ff6ce57288192099cf16096ab523bf62b672356632881f5b3c06a0eb076"
     },
     {
       "task_id": "sc-fraud-triangle-classification",
       "family": "audit-planning",
       "seed": 268,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3384,13 +3384,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:54b3ba8f235b35997f271e064dab79830c467e28fa14bebad247c601a807975e"
+      "digest": "sha256:2faae75869e62595e0df65aae2b9bc1290e55eb692a6d442ed8e3d6c315a9f39"
     },
     {
       "task_id": "sc-fund-balance-classification",
       "family": "governmental-accounting",
       "seed": 320,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3398,13 +3398,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:04130bb881cba715df1c69b1c6da0fe27ac325d5297752bf880ef0ded4f74f91"
+      "digest": "sha256:80ec782261b92064b3f57f8bf28d557d326dcbd5887ec6ca878a76352c1bdf28"
     },
     {
       "task_id": "sc-governmental-fund-assignment",
       "family": "governmental-accounting",
       "seed": 311,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3412,13 +3412,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c845fd9e4c2e3cb38f72087e885744773310e291ff1d00a0b52568c318533858"
+      "digest": "sha256:7c54ffa0b8a173d1ed9bc83ebe0494f84b01307f7b3983d40cabb7558daed900"
     },
     {
       "task_id": "sc-income-sourcing",
       "family": "income-taxes",
       "seed": 367,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3426,13 +3426,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:17d92dd418974833d6d49fcbcfe70682cc0a187fbcddc1ee516f5aecc98cac75"
+      "digest": "sha256:b8f2270d54e166cf87c6e31ebf45e5bb5aafdab1d50ef43798e51795bfff0158"
     },
     {
       "task_id": "sc-independence-prohibited-service",
       "family": "audit-planning",
       "seed": 382,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3440,13 +3440,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2e16c63bfa2c18e38f1c66a684c15c7ecc00401ece980444f6070d01a77c4817"
+      "digest": "sha256:2b54b4737602c81ccfbdbe2032a06d1af58ee3c5c5f9b53645a1abba2c8476cd"
     },
     {
       "task_id": "sc-interfund-activity-type",
       "family": "governmental-accounting",
       "seed": 326,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3454,13 +3454,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2e9597bc6925ee835a9941e75bdc022764a6e88bdb85e32f1e6e102e81e988f5"
+      "digest": "sha256:796d23dcc5a2e058d526040b80a71c4e96025a630dffea91ef92c332d2bd27b6"
     },
     {
       "task_id": "sc-investment-classification",
       "family": "investments",
       "seed": 249,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "us-gaap",
@@ -3470,13 +3470,13 @@
       "standards": [
         "asc:320"
       ],
-      "digest": "sha256:3068eb5a86b10fce7dbc36a16df24478af26f7d96bb8793e387e59220ddc649b"
+      "digest": "sha256:e44a147f362cc0eaeb2a410d50a1824a110f34186b16c7326d420854afa41fac"
     },
     {
       "task_id": "sc-job-vs-process-costing",
       "family": "product-costing",
       "seed": 221,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -3484,13 +3484,13 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:5c620686c75084984e4901dfe61c251125eef4799b89ed189495cd5245a89740"
+      "digest": "sha256:92edeae0af54fb53d642ec7ebd422885017e979202929a433521661e503975d0"
     },
     {
       "task_id": "sc-measurement-basis",
       "family": "financial-reporting",
       "seed": 286,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3498,13 +3498,13 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:8d403f219dde8542c6aa5c7c57cabacd58945f4c079d19aa1e7618176f521024"
+      "digest": "sha256:5253a1f4a2c8858887a92862bcec7d09fbd16e7f9dfa5b85ca47f8cfb2e32946"
     },
     {
       "task_id": "sc-offsetting-assessment",
       "family": "financial-instruments",
       "seed": 297,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3514,13 +3514,13 @@
       "standards": [
         "ias:32"
       ],
-      "digest": "sha256:91b7da2ec40897d8aec3861946eb33eb2929e30c766a62445fc8fb01e17506fb"
+      "digest": "sha256:3f603420c085d0338f2651aff8963f14dc7c01e6eb8052a7a08dd838d6c428be"
     },
     {
       "task_id": "sc-option-value-sensitivity",
       "family": "financial-analysis",
       "seed": 329,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -3528,13 +3528,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:90008fc0adfc58b6e15ac2049dcc120ae6f27ba6ec3e5b0f19705dfeb54e184d"
+      "digest": "sha256:ae17876b0876c2cd90f58ec1712989fb9ccd156ee2514d035cc5039700d0413e"
     },
     {
       "task_id": "sc-professional-conduct",
       "family": "audit-planning",
       "seed": 385,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3542,13 +3542,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:d0deab1ddbc28f96b0c7dcce87d0a5f56dbbb92a74e25057dbc108faa8dbfd49"
+      "digest": "sha256:df5ef1cb355d870555ce5a3e26c674d5af158b183699244a8904f9e5a6d2f78b"
     },
     {
       "task_id": "sc-related-party-identification",
       "family": "financial-reporting",
       "seed": 298,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "ifrs",
@@ -3558,13 +3558,13 @@
       "standards": [
         "ias:24"
       ],
-      "digest": "sha256:61feb2e4f485673e4f52385845752b32c2f342fa587b9f47c8eaed78170160ca"
+      "digest": "sha256:ab2c2303239052069eb3e5096c7b099c606fd9aba91ba09afd38ada40d726cec"
     },
     {
       "task_id": "sc-s-corp-eligibility",
       "family": "income-taxes",
       "seed": 337,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3572,13 +3572,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:33310ad8cefa46f41b34b860326be0048f81afcf995c951259eb4d99e2d690c4"
+      "digest": "sha256:62cb118af2e4db146a3fe2a35055ba91776ea168238fda07fc2b7d6e7e596b47"
     },
     {
       "task_id": "sc-service-organization-reliance",
       "family": "audit-planning",
       "seed": 384,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3586,13 +3586,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e39f367e15ad036aec552606688f5010bd8679f28757cb7c800d96c9a1e52891"
+      "digest": "sha256:26a62f04a19ff66df88fe7a84c9d6efba175192f1322011ac58e17afe706aa32"
     },
     {
       "task_id": "sc-soc-opinion-modification",
       "family": "audit-planning",
       "seed": 304,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3600,13 +3600,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:773f50de72ce004e9913f7d9b28e6cb1cdbbabe3e4afc4fd521a093e6e2e7c38"
+      "digest": "sha256:d88b5195114c50fbec02c9f29f2f2b8c2555c0f3f0d9215339ff5ddd57ad25fb"
     },
     {
       "task_id": "sc-special-journal-routing",
       "family": "ledger-integrity-reporting",
       "seed": 167,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3614,13 +3614,13 @@
       "format": "single-choice",
       "skill": "remembering-understanding",
       "standards": [],
-      "digest": "sha256:b231249272f1659430275d39385cf6c37980142deae8a256c92933be3c803008"
+      "digest": "sha256:78754ef8cbe91c570484c179bbda23ee5a43f47304d12cd78893af1038d4f603"
     },
     {
       "task_id": "sc-subsequent-event-classification",
       "family": "financial-reporting",
       "seed": 193,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3631,13 +3631,13 @@
         "asc:855",
         "ias:10"
       ],
-      "digest": "sha256:93b7dfcc7baacfd0063d1b11071cffa6dabd476ac98c83d3ff3d74163b6af83d"
+      "digest": "sha256:6273f0e6bdcd52a91782c54d4af57847f54ba92dc95668f33a462c879ef432b3"
     },
     {
       "task_id": "sc-suspense-account-cause",
       "family": "ledger-integrity-reporting",
       "seed": 292,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3645,13 +3645,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b64fc9446a57a55fcb81ee85c1c836b6bd1bb2108574cf2dfa45d1c7ea039ba2"
+      "digest": "sha256:78e4cc308bade387e5da205333de32677a5a048d6df96894d3c355b60a2b089f"
     },
     {
       "task_id": "sc-system-description-gap",
       "family": "audit-planning",
       "seed": 306,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3659,13 +3659,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:13048d5494944fbb08819cb4442cd526842d8f4677e676d2e91034c1a9cfa3cc"
+      "digest": "sha256:ad3e5d21fa132ca86c61faf2814bce58c386f9d7ee445b2d19512aef529b866f"
     },
     {
       "task_id": "sc-tax-authority-disclosure",
       "family": "income-taxes",
       "seed": 339,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3673,13 +3673,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:087d759daa55d04ada58aac4d2f301fda3fb96aad875540de7f01b77c20c5b73"
+      "digest": "sha256:4f9cde3343549f7ca0b300451dedefc260fb7b3cd5792feca1d641c8071872b0"
     },
     {
       "task_id": "sc-tax-practice-ethics",
       "family": "income-taxes",
       "seed": 343,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3687,13 +3687,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2e2fcf7b7c3b002c1a62b2ba9df15ceb7e1b04630b11941c47394ee4014aeaa7"
+      "digest": "sha256:80d5a8720f3796e4c4f2a2946599e2aa783ed4bcdeb99699320614e1922fdcb7"
     },
     {
       "task_id": "sc-transaction-statement-impact",
       "family": "transaction-classification",
       "seed": 207,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3701,13 +3701,13 @@
       "format": "single-choice",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:525ae203791461b02852e5423eb42ff145360b0a564561cea469dad333582806"
+      "digest": "sha256:01df402cb5112e8603c885cc23239590ec2d69a6bd48efeb5cd21f7db8f14382"
     },
     {
       "task_id": "schedule-recalculation-difference",
       "family": "audit-evidence",
       "seed": 380,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3715,13 +3715,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:9d6f9abacca25a5bff7c6cdb0f5e86ace275e0851aaba74c1f85aeade51f8760"
+      "digest": "sha256:89816cfbad3f2de50e5dc1e7f09be0a302c3622b3327b967238f6d9d4912d297"
     },
     {
       "task_id": "section1231-capital-amount",
       "family": "income-taxes",
       "seed": 347,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3729,13 +3729,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c55c23bb7508ba6a9d97337212ae98af9338ff489c751e4e0b54b5741abcf3f5"
+      "digest": "sha256:b189e1a0e8da2087a795f7150f57d06d199d556545d6d57039edaab3550706da"
     },
     {
       "task_id": "section704c-contributor-gain",
       "family": "passthrough-taxation",
       "seed": 362,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3743,13 +3743,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e454a5266d75c81eb214a3f45ba5981a0b72f81e6695caba1785e968d270292b"
+      "digest": "sha256:d11a8cb2196078d7daf42f1746250803ac26fa12324e5b8a30bacd2821c238c3"
     },
     {
       "task_id": "securities-revaluation-misstatement",
       "family": "audit-evidence",
       "seed": 387,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3757,13 +3757,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:91948b837ef6809d344dd704e4fba8175d14ed48a51c6cc6d96e151ab774d6ab"
+      "digest": "sha256:8edf881769a102b83e999aed4408bf27bf1b5ccc819c1aa0ac98d17804dc8a3e"
     },
     {
       "task_id": "segment-margin",
       "family": "responsibility-accounting",
       "seed": 203,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -3771,13 +3771,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:5f6b90eccfd4c2fade83cc123da9439c574748034f4fe3e59b63aec65952db18"
+      "digest": "sha256:e381e141b7c09078c930056adb158fe19636dfd4dbb3f275813fe07981795352"
     },
     {
       "task_id": "separate-statements-investment",
       "family": "financial-reporting",
       "seed": 299,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3787,13 +3787,13 @@
       "standards": [
         "ias:27"
       ],
-      "digest": "sha256:c316b61eea79bbfa25ee1688c69ea2545ff9bf5ab626f2c94dbd03a42587e98a"
+      "digest": "sha256:13ed80762e5262ee35cfb1f3c1c959c59b2ca064264d49e95ef9eb0e7619c2f9"
     },
     {
       "task_id": "share-based-compensation-monthly",
       "family": "share-based-payment",
       "seed": 211,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3804,13 +3804,13 @@
         "asc:718",
         "ifrs:2"
       ],
-      "digest": "sha256:b3dbc4734ba2aafee9250179e0c6545cc2abf05fe8c1c5cd94312e051831003c"
+      "digest": "sha256:6abdb7a9d4f6f025c677229df03c4b6cf23e76bafbdc8bbfc6b50fde7350b152"
     },
     {
       "task_id": "short-term-note-payment",
       "family": "borrowings",
       "seed": 168,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3818,13 +3818,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:03c1b1ef1b42b573163103f59177a35c956e85e22ee849d138e50624e163b0ee"
+      "digest": "sha256:7626127491fa25b5f0f8651cacab60be49589d2fe881cbbf693c6f03d457ae8e"
     },
     {
       "task_id": "single-audit-type-a-count",
       "family": "audit-planning",
       "seed": 389,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3832,13 +3832,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:f7a6ce90c152e903718f68e28d669ef99a312b540ab58563caeca639db96c3e1"
+      "digest": "sha256:9ed004cf73f15d17d4dfb0aafcea0ad6779dad8b43011684b4aa9b5f06962899"
     },
     {
       "task_id": "small-stock-dividend",
       "family": "equity",
       "seed": 159,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3846,13 +3846,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c383155c957907ce75dc0233ffbe2c9700cab9dea3f9401901c73b5deedcd668"
+      "digest": "sha256:34147b81b2fe7bd9189ff78b30dbf9f4c41b1817782f3321d81f1442005e4450"
     },
     {
       "task_id": "sql-join-excluded-count",
       "family": "audit-analytics",
       "seed": 305,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3860,13 +3860,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b89f83956330bf64d977ff7bacd3ee8b034d02ead2317ddd3865e47bc4168155"
+      "digest": "sha256:8b01bec3108ea2a0274509fe26ea855c6b085cbca48e1b5a14237a6a76cda27f"
     },
     {
       "task_id": "standard-cost-per-unit",
       "family": "standard-costing",
       "seed": 220,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -3874,13 +3874,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:05b545d416e7c07b856d3fe8ed4d6d6782e7ffea541daea836fed387bc2544b1"
+      "digest": "sha256:61815d8ad07bbe42a199386316c815c51bbefb70d72610f9a427217c2af761b9"
     },
     {
       "task_id": "state-apportionment-income",
       "family": "income-taxes",
       "seed": 332,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3888,13 +3888,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:afb0de0bc80807988ba9c1e26289307f5129a0e553881adb172f149148a665ac"
+      "digest": "sha256:5a7cdf82e0d67141c4df3b69d9091d0fefd07be4e62be4b3fb839f56cd30bfbd"
     },
     {
       "task_id": "step-acquisition-remeasurement-gain",
       "family": "business-combinations",
       "seed": 281,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3905,13 +3905,13 @@
         "asc:805",
         "ifrs:3"
       ],
-      "digest": "sha256:6636e2990f532265f4d93b154ff8aed344217a293507ddb2db258891adc85edb"
+      "digest": "sha256:0b4987c5cc9722cd7c374c576c06b400b8806626ba2eddb579425ecde061474f"
     },
     {
       "task_id": "straight-line-depreciation",
       "family": "fixed-assets",
       "seed": 120,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3919,13 +3919,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4a8770a7efd54c24dbbf2a9a5659cf1c57127ee680d9dc6f0752a3e25c61ee6a"
+      "digest": "sha256:8d9230e6aea0263aa214b0f1c51b9027da1123760c0bfdbb4053b9a80b06cab1"
     },
     {
       "task_id": "substantive-analytic-difference",
       "family": "audit-evidence",
       "seed": 386,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -3933,13 +3933,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:56a3f770b5fd28c049b01d29b226f64a416f5870ef01203a560f3d52e97fdf42"
+      "digest": "sha256:bb41d9aad3da1eb3e5b70f532c62be21c7d57d265af212394540bf2ab592fe44"
     },
     {
       "task_id": "supplies-adjustment",
       "family": "adjustments-corrections",
       "seed": 118,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3947,13 +3947,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b999b17d48477a0cbcbe0998c2b9bbdbd95fc2aa3ad582ec6b045295458d6da3"
+      "digest": "sha256:3861d239d2b9f49e4215bf5395b43b3453b1b0a20142243ca19e896bf0924fd6"
     },
     {
       "task_id": "suspense-clearance",
       "family": "ledger-integrity-reporting",
       "seed": 114,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -3961,13 +3961,13 @@
       "format": "journal-entry",
       "skill": "analysis",
       "standards": [],
-      "digest": "sha256:925ab922e64ee4cdcd6b37b47987b9fc5fd5812f92b4f1a5981f5b12f6fbd99b"
+      "digest": "sha256:83b24a6b0ff1ff248b8ccd0ce8cdcc67b2169db30ecfb577add56d1e2adcd493"
     },
     {
       "task_id": "tax-basis-net-income",
       "family": "income-taxes",
       "seed": 317,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3975,13 +3975,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:031b916c50cb8059b3fa3624c386866dec525bae40ce5a2c9cc9e3061f8029c6"
+      "digest": "sha256:ff379db048559796f8274f487febce88e0eafbc084b7de45b2edf7671669004a"
     },
     {
       "task_id": "tax-cost-recovery-deduction",
       "family": "income-taxes",
       "seed": 258,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -3989,13 +3989,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b5ecf2b022824b6552459348c59011d9d3e88c95068454cdb4d4495de6bd567f"
+      "digest": "sha256:6a41b66514eb1a59583a7050ad4ac63f780781dc0d2d4349e014824e3d6e8d18"
     },
     {
       "task_id": "tax-equivalent-yield",
       "family": "income-taxes",
       "seed": 353,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4003,13 +4003,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:87a0f5ae8ed3f3360d01ce9d4694ba40f58b238a90c2444461c6dac247c4ecaa"
+      "digest": "sha256:10cc6447335b948ef6b98ddc34d099c34069307d66937c061d53403889f23811"
     },
     {
       "task_id": "tax-penalty-combined",
       "family": "income-taxes",
       "seed": 333,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4017,13 +4017,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:a05f7981922dfa89845f25b6b00a48a6d8dd9256cef03e2140c8deafb903411d"
+      "digest": "sha256:add53b48ab70f1330db29d0b24a01a1ae98fae2ad94118b8c289af41d4a9f5cd"
     },
     {
       "task_id": "tax-return-crossfoot-difference",
       "family": "income-taxes",
       "seed": 257,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4031,13 +4031,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e41eebfc1d2182d00166d5ba5c7cf55f54c6ec6ab4865f035998063ca3cc7618"
+      "digest": "sha256:30609f6ec2ee75f284a583a91e7670416cdde9ef7703d53bfd982e66ec2f02ed"
     },
     {
       "task_id": "taxable-gifts-total",
       "family": "income-taxes",
       "seed": 354,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4045,13 +4045,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4c1095210092274d47f43611b73eccaf5a15e0754f094945205bd2cce6dc5732"
+      "digest": "sha256:44985f8357be2845950c4d062e8f43fb0ac15267208d19f549387daf3835f8f1"
     },
     {
       "task_id": "three-way-match-exceptions",
       "family": "audit-evidence",
       "seed": 379,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -4059,13 +4059,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:79a358fde5e188c72a22a3cd9d30e74baf5e72726e0f84b2bd1b0a6adaacd180"
+      "digest": "sha256:7f2fa92ba1476b539f0838f12a0bff1a22a5cc103d60d9743a690f82e84790fb"
     },
     {
       "task_id": "total-current-liabilities",
       "family": "financial-reporting",
       "seed": 179,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4073,13 +4073,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:1ea4ce9302edae09820ae37545b28e4123665e299f7293cc02ccb544ca8d7701"
+      "digest": "sha256:24efc1a81a0e17bdde93415672b26944960743a037eba7e52d0d3662d14014c6"
     },
     {
       "task_id": "trading-securities-fair-value",
       "family": "investments",
       "seed": 174,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4090,13 +4090,13 @@
         "asc:321",
         "ifrs:9"
       ],
-      "digest": "sha256:6a563b198c94b14e701b079217cb3f3695cc3e5813a71a1821e4b230b32430dd"
+      "digest": "sha256:0eaf04338e38f4ec48bfd3652e397a0a2a68de8ac219bfc7ce8f5b005d54ee82"
     },
     {
       "task_id": "treasury-stock-reissuance",
       "family": "equity",
       "seed": 194,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4104,13 +4104,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:54d46b4e175172bcac6d2804768039bb9012630360b794335629983b4ec09a28"
+      "digest": "sha256:592d7b111943d6adc294d03ba200d17a2addafa1d08df033a7ca8b1c54936b7a"
     },
     {
       "task_id": "treasury-stock-repurchase",
       "family": "equity",
       "seed": 130,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4118,13 +4118,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:129d66d92425c19aceca4b3d50f09ce77a6a72d5659a6627175eeea91ab4d60c"
+      "digest": "sha256:3315080adb5d190c162dbdeae14975527762c3720f775cb64010e447d7edabb4"
     },
     {
       "task_id": "trial-balance-debit-total",
       "family": "ledger-integrity-reporting",
       "seed": 228,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4132,13 +4132,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:68c9f7e18faa92f9f5c984ded497d060723080887014c1c0ad8b7fba94d4d17e"
+      "digest": "sha256:331c01ed9922c7647950c152f3dcd24d66a02fcbe81f2cb08890337b2110277b"
     },
     {
       "task_id": "trust-accounting-income",
       "family": "income-taxes",
       "seed": 360,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4146,13 +4146,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:2fb2b5bb137d72b420b325e3b84b2b97db338a11aea7c35c9a92261f23b60883"
+      "digest": "sha256:0cbd4d3fecf26beb992466bd5092d520ff9b9f8ab566230525695f814a38e141"
     },
     {
       "task_id": "trust-dni-computation",
       "family": "income-taxes",
       "seed": 361,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4160,13 +4160,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:4fc85acd80b569d02d664cc29b84285786142a8d49666934f5d4723429babd83"
+      "digest": "sha256:0c092a8710c33ea62021d281a5e2840b0125903c91f06c7c16053219bca0df6c"
     },
     {
       "task_id": "uncorrected-misstatement-total",
       "family": "audit-planning",
       "seed": 373,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "audit-assurance",
       "framework": "core",
@@ -4174,13 +4174,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:b2fe9e23fa649c32a0447fa551c9c74637ab78e137a3962fba795ec131b47c7b"
+      "digest": "sha256:d0edbd750b7a17e17b19249373587e9342e87c8028cbee8e794d78047d4bba98"
     },
     {
       "task_id": "unearned-revenue-release",
       "family": "accruals-deferrals",
       "seed": 184,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4188,13 +4188,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:fc1efc8b7c6cbdb981ec3ae2ad590064ea6bb763b52bf317d85b9f20c3c5d054"
+      "digest": "sha256:9c9e22490f21c06dacd1ad7436c2d2f0db352acbde829c2499d2ac29c8e46da8"
     },
     {
       "task_id": "units-of-production-depreciation",
       "family": "fixed-assets",
       "seed": 155,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4202,13 +4202,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:20d0ed8d4f5750b2f91b24e81e874dae904aba4945a9bbed391e8be03b0e7880"
+      "digest": "sha256:2af455f9babc19d71a39ccdb2d08d49e3007cee6ad12d4b89a0855b34cc4796a"
     },
     {
       "task_id": "varying-interest-allocation",
       "family": "passthrough-taxation",
       "seed": 370,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "tax",
       "framework": "core",
@@ -4216,13 +4216,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e7ad7cdf01b8c09e0f6104b5ae1e0c8405f23d2004f2be1ec48d5f6ce8995143"
+      "digest": "sha256:61fbbb0671b4ef65644c6efd6d5389311d9777fc3a9f02bbd50ed03adf6bdb7f"
     },
     {
       "task_id": "warranty-provision-and-claims",
       "family": "provisions-contingencies",
       "seed": 156,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4230,13 +4230,13 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:13f8144b1cafd6a32159967b31085551b791f24b3c475dded4a3d71eb538d40a"
+      "digest": "sha256:1f71c8f98447b60f49fb4622544262d12f6c4390087175406afae07b5370ba74"
     },
     {
       "task_id": "weighted-average-cost-of-capital",
       "family": "cost-of-capital",
       "seed": 219,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "management-accounting",
       "framework": "core",
@@ -4244,13 +4244,13 @@
       "format": "numeric",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:c9fed4bf9480d211608637c816e92a2d9834c91f9d324ac614be5efb84b94ec7"
+      "digest": "sha256:f75adaf0e55d23856a9affe58b4ff747859795af0b434c70a0e1c09dbb4eb775"
     },
     {
       "task_id": "weighted-average-ending-inventory",
       "family": "inventory",
       "seed": 282,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4261,13 +4261,13 @@
         "asc:330",
         "ias:2"
       ],
-      "digest": "sha256:966d8c4a839eb8104d44f0fe4a9a98e0c4eaf7adb32a2120d9629a60a7973d27"
+      "digest": "sha256:ffd3842c26b5e8006c0314cf278ac43120afb2f788d8cc1d74dc6f14a58923b7"
     },
     {
       "task_id": "written-off-receivable-recovery",
       "family": "receivables",
       "seed": 213,
-      "generator_version": "0.9.0",
+      "generator_version": "0.10.0",
       "track": "stable",
       "category": "financial-accounting",
       "framework": "core",
@@ -4275,7 +4275,7 @@
       "format": "journal-entry",
       "skill": "application",
       "standards": [],
-      "digest": "sha256:e9d5ce0801a4b71099ad946eff5beab758d6ea883a186ce968f482cbb08a8a31"
+      "digest": "sha256:950452f2def78e802ecbecfffb3f2101907368020c0d8767d5484d07103fc901"
     }
   ]
 }

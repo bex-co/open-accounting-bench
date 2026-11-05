@@ -92,15 +92,21 @@ constraints), `balance`, and `*`/`!`/`txn` transactions with
 any number of decimals; exactly one posting per transaction may elide
 its amount. Comments, tags, links, and `key: value` metadata lines on
 entries and postings are accepted and ignored. A posting in a currency
-its account was not opened for is a structural error, as in Beancount.
+its account was not opened for is a structural error, as in Beancount;
+constraints declared in the initial ledger keep binding even if the
+`open` line is rewritten.
 Anything else is a structural error. This subset is valid Beancount
 syntax; generated ledgers stay inside it. Full Beancount features (cost
 basis, prices, plugins) are out of scope for v0.1 verifiers — tasks
 must be gradable without them.
 
 Append-only integrity compares each initial transaction's date, flag,
-description, and postings, so rewording or re-flagging an existing
-entry fails `operational_integrity` just as changing its amounts does.
+description, and postings, and each initial `open` directive's date and
+currency constraint, so rewording or re-flagging an existing entry, or
+deleting or loosening an existing `open`, fails `operational_integrity`
+just as changing its amounts does. Any movement outside the expected
+reporting-currency deltas, in any currency, is unauthorized unless the
+account is in `allowed_extra_accounts`.
 
 ## Answer-file formats
 
@@ -128,8 +134,8 @@ scores each one:
   re-amounting, rewording, or re-flagging an existing entry; omitting,
   duplicating, re-scaling, or misclassifying a required entry; an
   unrelated in-period entry; foreign-currency side postings; dating
-  entries after the period; opening an unauthorized account; an
-  unbalanced entry. For answer files: missing, out-of-tolerance, trap
+  entries after the period; opening an unauthorized account; deleting
+  or loosening an existing `open` directive; an unbalanced entry. For answer files: missing, out-of-tolerance, trap
   value, NaN, boolean, list-wrapped, wrong option, superset, subset.
 - **False-reject probes** are equivalent correct answers that must score
   1: elided, reordered, split, or merged entries (when the
@@ -139,19 +145,22 @@ scores each one:
   answer files: numbers as strings, trailing zeros, the exact tolerance
   edge, extra keys, reordered multiple-choice options.
 
-Results on 2026-11-05, `GENERATOR_VERSION` 0.9.0, all 291 Stable tasks:
+Results on 2026-11-05, all 291 Stable tasks:
 
-| Probe kind | Probes | Misjudged before 0.9.0 | Misjudged at 0.9.0 |
-|---|---:|---:|---:|
-| False accept (wrong answer passed) | 2,327 | 270 | 0 |
-| False reject (equivalent answer failed) | 1,648 | 281 | 0 |
+| Probe kind | Probes | Misjudged at 0.8.0 | at 0.9.0 | at 0.10.0 |
+|---|---:|---:|---:|---:|
+| False accept (wrong answer passed) | 2,507 | 450 | 180 | 0 |
+| False reject (equivalent answer failed) | 1,648 | 281 | 0 | 0 |
 
 Every false-accept probe also fails the layer it declares. The 0.9.0
 fixes: append-only integrity now covers an existing entry's flag and
 description (rewording or re-flagging had passed), `open` currency
 constraints are enforced (foreign-currency side postings had passed),
 and metadata lines, the `txn` keyword, and amounts with other than two
-decimals are accepted (each had failed as a structural error).
+decimals are accepted (each had failed as a structural error). The
+0.10.0 fix: initial `open` directives are part of the append-only
+check, and their currency constraints bind even if the line is
+rewritten (deleting an unused `open` had passed).
 
 Known limits: the audit covers the journal-entry and answer-file
 formats; workflow tasks (Dynamic only) are not yet probed. Probes test
