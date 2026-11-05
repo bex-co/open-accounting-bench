@@ -40,13 +40,13 @@ def _trial(
     reward: dict,
     answer=None,
     cost=None,
-    workflow_report: dict | None = None,
+    verifier_report: dict | None = None,
 ):
     trial = job / name
     (trial / "verifier").mkdir(parents=True)
     (trial / "verifier" / "reward.json").write_text(json.dumps(reward))
-    if workflow_report is not None:
-        (trial / "verifier" / "report.json").write_text(json.dumps(workflow_report))
+    if verifier_report is not None:
+        (trial / "verifier" / "report.json").write_text(json.dumps(verifier_report))
     agent_result = {"n_input_tokens": 1000, "n_output_tokens": 500, "cost_usd": cost}
     (trial / "result.json").write_text(
         json.dumps(
@@ -67,10 +67,15 @@ def _trial(
     return trial
 
 
-def make_job(tmp_path: Path) -> Path:
+def _job(tmp_path: Path) -> Path:
     job = tmp_path / "job"
     job.mkdir()
     (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    return job
+
+
+def make_job(tmp_path: Path) -> Path:
+    job = _job(tmp_path)
     _trial(job, "mc-x__a", "mc-x", {"reward": 1, "confidence": 95}, {"final_answer": ["A"]})
     _trial(job, "mc-x__b", "mc-x", {"reward": 1, "confidence": 90}, {"final_answer": ["A"]})
     _trial(job, "mc-x__c", "mc-x", {"reward": 0, "confidence": 40}, {"final_answer": ["B"]})
@@ -133,7 +138,7 @@ def test_write_report_outputs(tmp_path: Path):
     assert "## Confidence calibration" in board
 
 
-def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path):
+def test_verifier_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path):
     manifest = {
         "tasks": [
             {
@@ -149,9 +154,7 @@ def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path
             }
         ]
     }
-    job = tmp_path / "job"
-    job.mkdir()
-    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    job = _job(tmp_path)
     reward = {
         "reward": 0,
         "rubric_completion": 0.5,
@@ -159,7 +162,7 @@ def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path
         "parse_failure": 0.0,
     }
 
-    def workflow_report(*, revenue: bool, cluster_score: float) -> dict:
+    def verifier_report(*, revenue: bool, cluster_score: float) -> dict:
         return {
             "details": {
                 "workflow": {
@@ -182,14 +185,14 @@ def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path
         "wf-z__a",
         "wf-z",
         reward,
-        workflow_report=workflow_report(revenue=True, cluster_score=1.0),
+        verifier_report=verifier_report(revenue=True, cluster_score=1.0),
     )
     _trial(
         job,
         "wf-z__b",
         "wf-z",
         {**reward, "rubric_completion": 0.25, "workflow_check_completion": 0.25},
-        workflow_report=workflow_report(revenue=False, cluster_score=0.0),
+        verifier_report=verifier_report(revenue=False, cluster_score=0.0),
     )
     err = job / "wf-z__err"
     err.mkdir()
@@ -239,9 +242,7 @@ def test_workflow_report_aggregates_clusters_checks_and_wall_time(tmp_path: Path
 
 
 def test_over_action_rate_from_no_action_trials(tmp_path: Path):
-    job = tmp_path / "job"
-    job.mkdir()
-    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    job = _job(tmp_path)
     _trial(job, "close__a", "month-end-close-workflow", {"reward": 1, "over_action": 0.0})
     _trial(job, "close__b", "month-end-close-workflow", {"reward": 0, "over_action": 1.0})
     _trial(job, "close__c", "month-end-close-workflow", {"reward": 1, "over_action": 0.0})
@@ -275,9 +276,7 @@ def test_pass_at_k_and_pass_hat_k_estimators():
 
 
 def test_reliability_columns_in_leaderboard(tmp_path: Path):
-    job = tmp_path / "job"
-    job.mkdir()
-    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    job = _job(tmp_path)
     for suffix, reward in zip("abc", (1, 1, 0), strict=True):
         _trial(job, f"je-y__{suffix}", "je-y", {"reward": reward})
     for suffix in "abc":
@@ -340,9 +339,7 @@ def test_reliability_ignores_errored_trials_and_groups_by_family(tmp_path: Path)
 
 
 def test_account_amount_diagnostics_by_family(tmp_path: Path):
-    job = tmp_path / "job"
-    job.mkdir()
-    (job / "result.json").write_text(json.dumps({"started_at": "2026-01-01T00:00:00"}))
+    job = _job(tmp_path)
 
     def report(expected: dict, extra: list) -> dict:
         return {"layers": {}, "details": {"diagnostics": {"expected": expected, "extra": extra}}}
@@ -352,14 +349,14 @@ def test_account_amount_diagnostics_by_family(tmp_path: Path):
         "je-y__a",
         "je-y",
         {"reward": 1},
-        workflow_report=report({"Expenses:A": "correct", "Assets:Bank": "correct"}, []),
+        verifier_report=report({"Expenses:A": "correct", "Assets:Bank": "correct"}, []),
     )
     _trial(
         job,
         "je-y__b",
         "je-y",
         {"reward": 0},
-        workflow_report=report({"Expenses:A": "wrong-account", "Assets:Bank": "correct"}, []),
+        verifier_report=report({"Expenses:A": "wrong-account", "Assets:Bank": "correct"}, []),
     )
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps(MANIFEST))

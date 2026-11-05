@@ -23,6 +23,7 @@ from pathlib import Path
 AXES = ("category", "framework", "level", "format", "skill")
 GROUP_AXES = (*AXES, "family")
 DIAGNOSTIC_CLASSES = ("correct", "wrong-account", "wrong-amount", "missing")
+DIAGNOSTIC_KEYS = (*DIAGNOSTIC_CLASSES, "extra")
 CHOICE_FORMATS = ("single-choice", "multiple-choice")
 BANDS = [
     (90, "Excellent (near-expert)"),
@@ -127,10 +128,9 @@ def _diagnostic_counts(report: dict) -> dict[str, int] | None:
     diagnostics = details.get("diagnostics") if isinstance(details, dict) else None
     if not isinstance(diagnostics, dict):
         return None
-    classes = list((diagnostics.get("expected") or {}).values())
-    counts = {name: classes.count(name) for name in DIAGNOSTIC_CLASSES}
-    counts["extra"] = len(diagnostics.get("extra") or [])
-    return counts
+    classes = Counter((diagnostics.get("expected") or {}).values())
+    classes["extra"] = len(diagnostics.get("extra") or [])
+    return {name: classes[name] for name in DIAGNOSTIC_KEYS}
 
 
 def _task_id_of(trial_result: dict, trial_dir: Path) -> str:
@@ -350,6 +350,36 @@ def _confidence_bins(rows: list[dict]) -> list[tuple[str, int, float]]:
     return out
 
 
+def _diagnostics_by_family(rows: list[dict]) -> list[str]:
+    """Leaderboard section: diagnostic class shares per family."""
+    by_family: dict[str, list[dict]] = {}
+    for row in rows:
+        if row.get("graded", True) and row.get("diagnostics"):
+            by_family.setdefault(str(row.get("family")), []).append(row["diagnostics"])
+    if not by_family:
+        return []
+    lines = [
+        "",
+        "## Account-vs-amount diagnostics",
+        "",
+        "Shares of expected account changes per family (informational; never reward): "
+        "correct, right amount in the wrong account, right account with the wrong "
+        "amount, or missing. Extra = unexplained movements in other accounts.",
+        "",
+        "| family | Trials | Expected changes | Correct | Wrong account | Wrong amount "
+        "| Missing | Extra |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for family, counts in sorted(by_family.items()):
+        totals = {name: sum(c[name] for c in counts) for name in DIAGNOSTIC_KEYS}
+        changes = sum(totals[name] for name in DIAGNOSTIC_CLASSES)
+        shares = " | ".join(
+            _pct(totals[name] / changes if changes else None) for name in DIAGNOSTIC_CLASSES
+        )
+        lines.append(f"| {family} | {len(counts)} | {changes} | {shares} | {totals['extra']} |")
+    return lines
+
+
 def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | None) -> str:
     k = next((task["k"] for task in tasks.values()), None)
     graded_tasks = [t for t in tasks.values() if t["score"] is not None]
@@ -495,30 +525,7 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
                 f"| {group} | {count} | {_pct(mean)} "
                 f"| {_pct(at.get(group, (0, None))[1])} | {_pct(hat.get(group, (0, None))[1])} |"
             )
-    diagnosed = [r for r in rows if r.get("graded", True) and r.get("diagnostics")]
-    if diagnosed:
-        lines += [
-            "",
-            "## Account-vs-amount diagnostics",
-            "",
-            "Shares of expected account changes per family (informational; never reward): "
-            "correct, right amount in the wrong account, right account with the wrong "
-            "amount, or missing. Extra = unexplained movements in other accounts.",
-            "",
-            "| family | Trials | Expected changes | Correct | Wrong account | Wrong amount "
-            "| Missing | Extra |",
-            "|---|---:|---:|---:|---:|---:|---:|---:|",
-        ]
-        by_family: dict[str, list[dict]] = {}
-        for row in diagnosed:
-            by_family.setdefault(str(row.get("family")), []).append(row["diagnostics"])
-        for family, counts in sorted(by_family.items()):
-            totals = {name: sum(c[name] for c in counts) for name in (*DIAGNOSTIC_CLASSES, "extra")}
-            changes = sum(totals[name] for name in DIAGNOSTIC_CLASSES)
-            shares = " | ".join(
-                _pct(totals[name] / changes if changes else None) for name in DIAGNOSTIC_CLASSES
-            )
-            lines.append(f"| {family} | {len(counts)} | {changes} | {shares} | {totals['extra']} |")
+    lines += _diagnostics_by_family(rows)
     bins = _confidence_bins(rows)
     if bins:
         lines += [

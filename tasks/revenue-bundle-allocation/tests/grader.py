@@ -402,6 +402,7 @@ def _verify_ledgers(
             integrity_failures.append(f"initial open directive altered or removed: {account}")
     # Expected deltas are stated in the reporting currency; any other
     # movement, in any currency, is unauthorized unless explicitly allowed.
+    unauthorized: dict[tuple[str, str], Decimal] = {}
     for account, cur in sorted(set(initial_balances) | set(final_balances)):
         if account in allowed_extra or (cur == currency and account in expected_deltas):
             continue
@@ -409,6 +410,7 @@ def _verify_ledgers(
             (account, cur), ZERO
         )
         if not _close(delta, ZERO, tolerance):
+            unauthorized[(account, cur)] = delta
             integrity_failures.append(f"unauthorized change to {account}: delta {delta} {cur}")
     if expected.get("forbid_new_accounts", True):
         for account in sorted(set(final.opens) - set(initial.opens)):
@@ -428,14 +430,17 @@ def _verify_ledgers(
             "operational_integrity": integrity,
         },
         extras=extras,
-        details={"diagnostics": _diagnose(deltas, expected_deltas, allowed_extra, tolerance)},
+        details={
+            "diagnostics": _diagnose(deltas, expected_deltas, unauthorized, currency, tolerance)
+        },
     )
 
 
 def _diagnose(
     deltas: dict[str, Decimal],
     expected_deltas: dict[str, Decimal],
-    allowed_extra: set[str],
+    unauthorized: dict[tuple[str, str], Decimal],
+    currency: str,
     tolerance: Decimal,
 ) -> dict:
     """Classify each expected change; informational only, never reward.
@@ -445,16 +450,11 @@ def _diagnose(
     wrong-account  the account did not move, but an unexpected account
                    moved by exactly the expected amount (misposting)
     missing        the account did not move and nothing explains it
-    ``extra`` lists unexpected accounts that moved and were not matched
-    as the destination of a misposting.
+    ``extra`` lists the remaining unauthorized movements (the integrity
+    layer's, in any currency) not matched as the destination of a
+    misposting.
     """
-    unexpected = {
-        account: delta
-        for account, delta in deltas.items()
-        if account not in expected_deltas
-        and account not in allowed_extra
-        and not _close(delta, ZERO, tolerance)
-    }
+    unexpected = dict(unauthorized)
     classes: dict[str, str] = {}
     for account, want in expected_deltas.items():
         got = deltas.get(account, ZERO)
@@ -464,12 +464,16 @@ def _diagnose(
             classes[account] = "wrong-amount"
         else:
             match = next(
-                (other for other, delta in unexpected.items() if _close(delta, want, tolerance)),
+                (
+                    key
+                    for key, delta in unexpected.items()
+                    if key[1] == currency and _close(delta, want, tolerance)
+                ),
                 None,
             )
             classes[account] = "missing" if match is None else "wrong-account"
             unexpected.pop(match, None)
-    return {"expected": classes, "extra": sorted(unexpected)}
+    return {"expected": classes, "extra": sorted({account for account, _cur in unexpected})}
 
 
 def _added_transactions(initial: Ledger, final: Ledger) -> list[Transaction]:

@@ -2000,15 +2000,14 @@ def test_metadata_line_detached_by_a_blank_line_is_a_structural_error():
 # --- Account-vs-amount diagnostics (w2/m4): informational, never reward ---
 
 
-def _diagnostics(final: str) -> dict:
-    instance = _reference()
+def _diagnostics(instance, final: str) -> dict:
     report = verify(instance.initial_ledger, final, instance.expected)
     return report.to_report_json()["details"]["diagnostics"]
 
 
 def test_diagnostics_correct_entry():
     instance = _reference()
-    diag = _diagnostics(instance.solution_ledger)
+    diag = _diagnostics(instance, instance.solution_ledger)
     assert diag["expected"] == {
         "Assets:Bank:Checking": "correct",
         "Expenses:OfficeSupplies": "correct",
@@ -2019,7 +2018,7 @@ def test_diagnostics_correct_entry():
 def test_diagnostics_right_amount_wrong_account():
     instance = _reference()
     wrong = instance.solution_ledger.replace("  Expenses:OfficeSupplies", "  Assets:Equipment")
-    diag = _diagnostics(wrong)
+    diag = _diagnostics(instance, wrong)
     assert diag["expected"]["Expenses:OfficeSupplies"] == "wrong-account"
     assert diag["expected"]["Assets:Bank:Checking"] == "correct"
     assert diag["extra"] == []  # Equipment is explained as the misposted account
@@ -2028,19 +2027,19 @@ def test_diagnostics_right_amount_wrong_account():
 def test_diagnostics_right_account_wrong_amount():
     instance = _reference()
     wrong = instance.solution_ledger.replace("775.00 USD", "700.00 USD")
-    diag = _diagnostics(wrong)
+    diag = _diagnostics(instance, wrong)
     assert set(diag["expected"].values()) == {"wrong-amount"}
 
 
 def test_diagnostics_missing_and_extra():
     instance = _reference()
-    assert set(_diagnostics(instance.initial_ledger)["expected"].values()) == {"missing"}
+    assert set(_diagnostics(instance, instance.initial_ledger)["expected"].values()) == {"missing"}
     extra = instance.solution_ledger + (
         '\n2026-01-31 * "Probe" "Unrelated reclass"\n'
         "  Expenses:Rent  100.00 USD\n"
         "  Expenses:Utilities  -100.00 USD\n"
     )
-    diag = _diagnostics(extra)
+    diag = _diagnostics(instance, extra)
     assert set(diag["expected"].values()) == {"correct"}
     assert diag["extra"] == ["Expenses:Rent", "Expenses:Utilities"]
 
