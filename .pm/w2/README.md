@@ -4,7 +4,7 @@
 
 ## Milestones
 
-- [ ] **m1** — [Verifier false-accept/reject audit and adversarial suite](./m1/README.md) (11 tasks) ← from brainstorm 2026-11-04
+- [x] **m1** — [Verifier false-accept/reject audit and adversarial suite](./done/m1/README.md) (11 tasks) ← from brainstorm 2026-11-04
 - [ ] **m2** — [Clean-month negative controls](./m2/README.md) (9 tasks) ← from brainstorm 2026-11-04
 - [ ] **m3** — [pass^k and pass@k reliability metrics](./m3/README.md) (8 tasks) ← from brainstorm 2026-11-04
 - [ ] **m4** — [Account-vs-amount failure diagnostics](./m4/README.md) (8 tasks) ← from brainstorm 2026-11-04

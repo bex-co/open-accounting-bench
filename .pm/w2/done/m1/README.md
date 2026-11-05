@@ -1,6 +1,6 @@
 # w2 · m1 — Verifier false-accept/reject audit and adversarial suite
 
-**Worker:** worker2 **Goal:** Every Stable task carries a measured false-accept and false-reject count from a reproducible mutation audit, and CI guards against regressions. **Status:** todo (t001–t009, t011 done)
+**Worker:** worker2 **Goal:** Every Stable task carries a measured false-accept and false-reject count from a reproducible mutation audit, and CI guards against regressions. **Status:** done
 
 ## Tasks (in order)
 
@@ -16,7 +16,7 @@
 | t007 | Simplify — **DONE** | 15m | t006 |
 | t008 | Test coverage — **DONE** | 20m | t006, t011 |
 | t009 | Accounting review — **DONE** | 15m | t008 |
-| t010 | Closeout | 10m | t009 |
+| t010 | Closeout — **DONE** | 10m | t009 |
 
 ## Definition of done
 
