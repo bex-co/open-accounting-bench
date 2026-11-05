@@ -1,6 +1,6 @@
 # w2 · m2 — Clean-month negative controls
 
-**Worker:** worker2 **Goal:** The month-end close workflow can generate a month with nothing to fix, where the correct answer is to leave the ledger unchanged, and reports an over-action rate. **Status:** todo (t001–t008 done)
+**Worker:** worker2 **Goal:** The month-end close workflow can generate a month with nothing to fix, where the correct answer is to leave the ledger unchanged, and reports an over-action rate. **Status:** done
 
 ## Tasks (in order)
 
@@ -14,7 +14,7 @@
 | t006 | Simplify — **DONE** | 15m | t005 |
 | t007 | Test coverage — **DONE** | 20m | t005 |
 | t008 | Accounting review — **DONE** | 15m | t007 |
-| t009 | Closeout | 10m | t008 |
+| t009 | Closeout — **DONE** | 10m | t008 |
 
 ## Definition of done
 
