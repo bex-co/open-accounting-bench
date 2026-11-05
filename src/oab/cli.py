@@ -299,6 +299,7 @@ def _cmd_report(args) -> int:
             prices=prices,
             out_dir=Path(args.out) if args.out else None,
             k=args.k,
+            reviewed_only=args.reviewed_only,
         )
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -388,6 +389,11 @@ def main(argv: list[str] | None = None) -> int:
     rep.add_argument("--manifest", default="tasks/manifest.json")
     rep.add_argument("--prices", help="JSON price table (see prices.example.json)")
     rep.add_argument("--out", help="output directory (default: the job directory)")
+    rep.add_argument(
+        "--reviewed-only",
+        action="store_true",
+        help="score only tasks whose accounting review is on record (reviews.toml)",
+    )
     rep.add_argument(
         "--k",
         type=int,

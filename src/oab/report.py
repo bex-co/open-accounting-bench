@@ -207,7 +207,7 @@ def load_runs(job_dir: Path, manifest: dict, prices: dict | None = None) -> list
             "exception": exception,
             "graded": exception is None and bool(reward),
         }
-        for axis in (*AXES, "family", "seed", "generator_version", "track"):
+        for axis in (*AXES, "family", "seed", "generator_version", "track", "review"):
             row[axis] = entry.get(axis)
         rows.append(row)
     return rows
@@ -299,6 +299,7 @@ def aggregate_tasks(rows: list[dict], k: int | None = None) -> dict[str, dict]:
             "mean_wall_seconds": _mean_numeric(trials, "wall_seconds"),
             "mean_cost_usd": _mean_numeric(trials, "cost_usd"),
             **{axis: all_trials[0].get(axis) for axis in GROUP_AXES},
+            "review": all_trials[0].get("review"),
         }
     # Reliability over repeated attempts, at one k for every task.
     k = k if k is not None else default_k(tasks)
@@ -380,7 +381,9 @@ def _diagnostics_by_family(rows: list[dict]) -> list[str]:
     return lines
 
 
-def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | None) -> str:
+def render_leaderboard(
+    rows: list[dict], tasks: dict[str, dict], prices: dict | None, reviewed_only: bool = False
+) -> str:
     k = next((task["k"] for task in tasks.values()), None)
     graded_tasks = [t for t in tasks.values() if t["score"] is not None]
     overall = sum(t["score"] for t in graded_tasks) / len(graded_tasks) if graded_tasks else 0.0
@@ -396,6 +399,20 @@ def render_leaderboard(rows: list[dict], tasks: dict[str, dict], prices: dict | 
         f"{n_graded} graded trial(s).",
         "",
     ]
+    if reviewed_only:
+        lines += [
+            "Scores are restricted to reviewed tasks (--reviewed-only): tasks whose "
+            "accounting review is on record and still matches their content.",
+            "",
+        ]
+    else:
+        reviewed = sum(1 for t in graded_tasks if t.get("review") == "reviewed")
+        lines += [
+            f"Accounting review: {reviewed} of {len(graded_tasks)} graded task(s) "
+            f"({_pct(reviewed / len(graded_tasks) if graded_tasks else None)}) reviewed; "
+            "pass --reviewed-only to score only those.",
+            "",
+        ]
     reliable = [task for task in tasks.values() if task["pass_at_k"] is not None]
     if reliable:
         at = _mean([task["pass_at_k"] for task in reliable])
@@ -547,11 +564,16 @@ def write_report(
     prices: dict | None = None,
     out_dir: Path | None = None,
     k: int | None = None,
+    reviewed_only: bool = False,
 ) -> tuple[Path, Path]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     rows = load_runs(job_dir, manifest, prices=prices)
     if not rows:
         raise ValueError(f"no trial results found under {job_dir}")
+    if reviewed_only:
+        rows = [row for row in rows if row.get("review") == "reviewed"]
+        if not rows:
+            raise ValueError("no trials on reviewed tasks; see reviews.toml")
     tasks = aggregate_tasks(rows, k=k)
     out = out_dir or job_dir
     out.mkdir(parents=True, exist_ok=True)
@@ -560,5 +582,7 @@ def write_report(
         "".join(json.dumps(row, default=str) + "\n" for row in rows), encoding="utf-8"
     )
     board_path = out / "leaderboard.md"
-    board_path.write_text(render_leaderboard(rows, tasks, prices), encoding="utf-8")
+    board_path.write_text(
+        render_leaderboard(rows, tasks, prices, reviewed_only=reviewed_only), encoding="utf-8"
+    )
     return runs_path, board_path

@@ -375,3 +375,24 @@ def test_account_amount_diagnostics_by_family(tmp_path: Path):
     board = board_path.read_text()
     assert "## Account-vs-amount diagnostics" in board
     assert "| f | 2 | 4 | 75.0% | 25.0% | 0.0% | 0.0% | 0 |" in board
+
+
+def test_reviewed_share_and_reviewed_only(tmp_path: Path):
+    manifest_data = json.loads(json.dumps(MANIFEST))
+    manifest_data["tasks"][0]["review"] = "reviewed"  # mc-x
+    manifest_data["tasks"][1]["review"] = "lapsed"  # je-y
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(manifest_data))
+    job = make_job(tmp_path)
+
+    runs_path, board_path = write_report(job, manifest, out_dir=tmp_path / "all")
+    board = board_path.read_text()
+    assert "Accounting review: 1 of 2 graded task(s) (50.0%) reviewed" in board
+    rows = [json.loads(line) for line in runs_path.read_text().splitlines()]
+    assert {r["task_id"]: r["review"] for r in rows} == {"mc-x": "reviewed", "je-y": "lapsed"}
+
+    _runs, board_path = write_report(job, manifest, out_dir=tmp_path / "rev", reviewed_only=True)
+    board = board_path.read_text()
+    assert "| mc-x |" in board
+    assert "| je-y |" not in board
+    assert "restricted to reviewed tasks (--reviewed-only)" in board
