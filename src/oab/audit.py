@@ -25,22 +25,21 @@ import re
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import date, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
+from oab._verifier_core import _ACCOUNT, _DATE, _NUMBER
 from oab.verify import grade_answer, parse_ledger, resolve_transactions, verify
 
 FALSE_ACCEPT = "false-accept"
 FALSE_REJECT = "false-reject"
 CENT = Decimal("0.01")
 
-_DATE = r"\d{4}-\d{2}-\d{2}"
+# Built from the grader's own grammar so probes stay inside what it parses;
+# the extra groups keep indentation and comments for byte-faithful rewrites.
 _RE_HEADER = re.compile(rf"^({_DATE})\s+(\*|!|txn)(\s.*)?$")
-_RE_POSTING = re.compile(
-    r"^(\s+)([A-Z][A-Za-z0-9-]*(?::[A-Z0-9][A-Za-z0-9-]*)+)"
-    r"(?:\s+(-?[\d,]+(?:\.\d+)?)\s+([A-Z]{3}))?\s*(;.*)?$"
-)
-_RE_OPEN = re.compile(rf"^({_DATE})\s+open\s+(\S+)(.*)$")
+_RE_POSTING = re.compile(rf"^(\s+)({_ACCOUNT})(?:\s+({_NUMBER})\s+([A-Z]{{3}}))?\s*(;.*)?$")
 
 
 @dataclass(frozen=True)
@@ -52,10 +51,6 @@ class Probe:
     layer: str | None  # layer expected to fail, for false-accept probes
     artifact: str
     note: str
-
-    @property
-    def expect_reward(self) -> int:
-        return 0 if self.kind == FALSE_ACCEPT else 1
 
 
 @dataclass(frozen=True)
@@ -158,14 +153,21 @@ def _signature(block: list[str]) -> str | None:
     return ledger.transactions[0].signature()
 
 
+def _transaction_signatures(text: str) -> Counter:
+    ledger = parse_ledger(text)
+    resolve_transactions(ledger)
+    return Counter(txn.signature() for txn in ledger.transactions)
+
+
 @dataclass
 class _LedgerView:
     """Oracle ledger split into initial blocks and the oracle's added txns."""
 
     blocks: list[list[str]]
     added: list[int]  # indices of added transaction blocks
-    initial_txns: list[int]  # indices of transaction blocks carried from the initial ledger
-    opens: dict[str, str]  # account -> open-line remainder (currency constraint text)
+    last_initial: int | None  # index of the last transaction carried from the initial ledger
+    opens: dict[str, str]  # account -> open date, as the grader parses it
+    open_currencies: dict[str, set[str]]  # account -> currency constraint
 
     def txn(self, index: int) -> _Txn:
         txn = _parse_txn(self.blocks[index])
@@ -174,27 +176,26 @@ class _LedgerView:
 
 
 def _view(case: AuditCase) -> _LedgerView:
-    initial_sigs = Counter(
-        sig for block in _blocks(case.initial or "") if (sig := _signature(block)) is not None
-    )
+    """Split the oracle into carried and added transactions.
+
+    Mirrors the grader's ``_added_transactions`` multiset matching, but
+    keeps block indices so operators can rewrite exact lines.
+    """
+    initial_sigs = _transaction_signatures(case.initial or "")
+    oracle = parse_ledger(case.oracle)
     blocks = _blocks(case.oracle)
     added: list[int] = []
-    initial_txns: list[int] = []
-    opens: dict[str, str] = {}
+    last_initial: int | None = None
     for index, block in enumerate(blocks):
-        om = _RE_OPEN.match(block[0])
-        if om:
-            opens[om.group(2)] = om.group(3)
-            continue
         if not _RE_HEADER.match(block[0]):
             continue
         sig = _signature(block)
         if sig is not None and initial_sigs.get(sig, 0) > 0:
             initial_sigs[sig] -= 1
-            initial_txns.append(index)
+            last_initial = index
         else:
             added.append(index)
-    return _LedgerView(blocks, added, initial_txns, opens)
+    return _LedgerView(blocks, added, last_initial, oracle.opens, oracle.open_currencies)
 
 
 def _explicit(txn: _Txn) -> _Txn | None:
@@ -211,16 +212,13 @@ def _explicit(txn: _Txn) -> _Txn | None:
     return out
 
 
-def _count_range(expected: dict) -> tuple[int, int] | None:
+def _count_allows(expected: dict, count: int) -> bool:
+    """Whether the grader's ``expected_new_transactions`` admits ``count``."""
     want = expected.get("expected_new_transactions")
     if want is None:
-        return None
-    return (want, want) if isinstance(want, int) else (int(want[0]), int(want[1]))
-
-
-def _count_allows(expected: dict, count: int) -> bool:
-    bounds = _count_range(expected)
-    return bounds is None or bounds[0] <= count <= bounds[1]
+        return True
+    low, high = (want, want) if isinstance(want, int) else want
+    return low <= count <= high
 
 
 def _unrelated_accounts(case: AuditCase, view: _LedgerView) -> list[str]:
@@ -242,11 +240,8 @@ def _period_date(case: AuditCase, view: _LedgerView) -> str:
     return view.txn(view.added[0]).date if view.added else "2026-01-31"
 
 
-def _next_day(date: str) -> str:
-    from datetime import date as _date
-    from datetime import timedelta
-
-    return (_date.fromisoformat(date) + timedelta(days=1)).isoformat()
+def _next_day(day: str) -> str:
+    return (date.fromisoformat(day) + timedelta(days=1)).isoformat()
 
 
 def _replace(view: _LedgerView, index: int, lines: list[str]) -> str:
@@ -255,13 +250,23 @@ def _replace(view: _LedgerView, index: int, lines: list[str]) -> str:
     return _render(blocks)
 
 
-def _ledger_probe(
-    operator: str, kind: str, layer: str | None, note: str
-) -> Callable[[Callable[[AuditCase, _LedgerView], str | None]], Callable]:
-    def wrap(fn: Callable[[AuditCase, _LedgerView], str | None]) -> Callable:
-        def run(case: AuditCase) -> Probe | None:
-            view = _view(case)
-            artifact = fn(case, view)
+def _edit_last_initial(view: _LedgerView, mutate: Callable[[_Txn], None]) -> str | None:
+    if view.last_initial is None:
+        return None
+    txn = view.txn(view.last_initial)
+    mutate(txn)
+    return _replace(view, view.last_initial, txn.render())
+
+
+def _probe(operator: str, kind: str, layer: str | None, note: str, prepare: Callable):
+    """Register an operator: ``prepare(case, view)`` builds its input, the
+    decorated function returns the probe artifact or ``None`` (not applicable).
+    """
+
+    def wrap(fn: Callable) -> Callable:
+        def run(case: AuditCase, view: _LedgerView | None = None) -> Probe | None:
+            subject = prepare(case, view)
+            artifact = None if subject is None else fn(case, subject)
             if artifact is None or artifact == case.oracle:
                 return None
             return Probe(operator, kind, layer, artifact, note)
@@ -271,6 +276,15 @@ def _ledger_probe(
         return run
 
     return wrap
+
+
+def _ledger_probe(operator: str, kind: str, layer: str | None, note: str):
+    def prepare(case: AuditCase, view: _LedgerView | None) -> _LedgerView | None:
+        if case.fmt != "journal-entry":
+            return None
+        return view or _view(case)
+
+    return _probe(operator, kind, layer, note, prepare)
 
 
 # ---------------------------------------------------------------------------
@@ -289,10 +303,9 @@ def _nop(case: AuditCase, view: _LedgerView) -> str | None:
     "removes an existing transaction from the append-only ledger",
 )
 def _delete_initial(case: AuditCase, view: _LedgerView) -> str | None:
-    if not view.initial_txns:
+    if view.last_initial is None:
         return None
-    blocks = [b for i, b in enumerate(view.blocks) if i != view.initial_txns[-1]]
-    return _render(blocks)
+    return _render([b for i, b in enumerate(view.blocks) if i != view.last_initial])
 
 
 @_ledger_probe(
@@ -302,14 +315,12 @@ def _delete_initial(case: AuditCase, view: _LedgerView) -> str | None:
     "doubles every amount of an existing transaction (still balanced)",
 )
 def _edit_initial_amount(case: AuditCase, view: _LedgerView) -> str | None:
-    if not view.initial_txns:
-        return None
-    index = view.initial_txns[-1]
-    txn = view.txn(index)
-    for posting in txn.postings:
-        if posting.amount is not None:
-            posting.amount *= 2
-    return _replace(view, index, txn.render())
+    def double(txn: _Txn) -> None:
+        for posting in txn.postings:
+            if posting.amount is not None:
+                posting.amount *= 2
+
+    return _edit_last_initial(view, double)
 
 
 @_ledger_probe(
@@ -319,16 +330,14 @@ def _edit_initial_amount(case: AuditCase, view: _LedgerView) -> str | None:
     "rewrites the narration of an existing transaction",
 )
 def _edit_initial_narration(case: AuditCase, view: _LedgerView) -> str | None:
-    if not view.initial_txns:
-        return None
-    index = view.initial_txns[-1]
-    txn = view.txn(index)
-    if '"' in txn.rest:
-        head, _, tail = txn.rest.rpartition('"')
-        txn.rest = f'{head} (amended)"{tail}'
-    else:
-        txn.rest = f'{txn.rest} "amended"'
-    return _replace(view, index, txn.render())
+    def amend(txn: _Txn) -> None:
+        if '"' in txn.rest:
+            head, _, tail = txn.rest.rpartition('"')
+            txn.rest = f'{head} (amended)"{tail}'
+        else:
+            txn.rest = f'{txn.rest} "amended"'
+
+    return _edit_last_initial(view, amend)
 
 
 @_ledger_probe(
@@ -338,12 +347,10 @@ def _edit_initial_narration(case: AuditCase, view: _LedgerView) -> str | None:
     "changes an existing transaction's flag",
 )
 def _edit_initial_flag(case: AuditCase, view: _LedgerView) -> str | None:
-    if not view.initial_txns:
-        return None
-    index = view.initial_txns[-1]
-    txn = view.txn(index)
-    txn.flag = "!" if txn.flag in {"*", "txn"} else "*"
-    return _replace(view, index, txn.render())
+    def reflag(txn: _Txn) -> None:
+        txn.flag = "!" if txn.flag in {"*", "txn"} else "*"
+
+    return _edit_last_initial(view, reflag)
 
 
 @_ledger_probe(
@@ -427,7 +434,7 @@ def _extra_unrelated(case: AuditCase, view: _LedgerView) -> str | None:
 def _foreign_currency(case: AuditCase, view: _LedgerView) -> str | None:
     accounts = _unrelated_accounts(case, view)
     currency = case.expected.get("currency", "USD")
-    constrained = [a for a in accounts if currency in view.opens.get(a, "").split()]
+    constrained = [a for a in accounts if currency in view.open_currencies.get(a, set())]
     if len(constrained) < 2 or not view.added:
         return None
     index = view.added[0]
@@ -489,7 +496,7 @@ def _open_new_account(case: AuditCase, view: _LedgerView) -> str | None:
             break
     else:
         return None
-    first_open = min(m.group(1) for b in view.blocks if (m := _RE_OPEN.match(b[0])))
+    first_open = min(view.opens.values())
     blocks = list(view.blocks)
     blocks[index] = txn.render()
     currency = case.expected.get("currency", "USD")
@@ -730,11 +737,10 @@ def _merge(case: AuditCase, view: _LedgerView) -> str | None:
     merged.extra = []
     for other in txns[1:]:
         merged.postings += other.postings
-    blocks = list(view.blocks)
+    dropped = set(group[1:])
+    blocks = [b for i, b in enumerate(view.blocks) if i not in dropped]
     blocks[group[0]] = merged.render()
-    for index in reversed(group[1:]):
-        blocks[index] = []
-    return _render([b for b in blocks if b != []])
+    return _render(blocks)
 
 
 @_ledger_probe(
@@ -827,20 +833,18 @@ def _dump(value: dict) -> str:
 
 
 def _answer_probe(operator: str, kind: str, formats: set[str], note: str):
-    def wrap(fn: Callable[[AuditCase, dict], dict | str | None]) -> Callable:
-        def run(case: AuditCase) -> Probe | None:
-            if case.fmt not in formats:
-                return None
-            value = fn(case, _answer(case))
-            if value is None:
-                return None
-            artifact = value if isinstance(value, str) else _dump(value)
-            layer = "answer_accuracy" if kind == FALSE_ACCEPT else None
-            return Probe(operator, kind, layer, artifact, note)
+    layer = "answer_accuracy" if kind == FALSE_ACCEPT else None
 
-        run.__name__ = fn.__name__
-        run.operator = operator  # type: ignore[attr-defined]
-        return run
+    def prepare(case: AuditCase, _view: _LedgerView | None) -> dict | None:
+        return _answer(case) if case.fmt in formats else None
+
+    def wrap(fn: Callable[[AuditCase, dict], dict | str | None]) -> Callable:
+        def artifact(case: AuditCase, answer: dict) -> str | None:
+            value = fn(case, answer)
+            return value if value is None or isinstance(value, str) else _dump(value)
+
+        artifact.__name__ = fn.__name__
+        return _probe(operator, kind, layer, note, prepare)(artifact)
 
     return wrap
 
@@ -967,12 +971,10 @@ ANSWER_OPERATORS = [
 
 def probes(case: AuditCase) -> list[Probe]:
     """Every applicable probe for one task, in operator order."""
-    operators = LEDGER_OPERATORS if case.fmt == "journal-entry" else ANSWER_OPERATORS
-    return [probe for op in operators if (probe := op(case)) is not None]
-
-
-def operator_names() -> list[str]:
-    return [op.operator for op in LEDGER_OPERATORS + ANSWER_OPERATORS]
+    if case.fmt == "journal-entry":
+        view = _view(case)
+        return [probe for op in LEDGER_OPERATORS if (probe := op(case, view)) is not None]
+    return [probe for op in ANSWER_OPERATORS if (probe := op(case)) is not None]
 
 
 def load_case(task_dir: Path) -> AuditCase | None:
@@ -1009,20 +1011,26 @@ class Outcome:
     task_id: str
     operator: str
     kind: str
-    expected_reward: int
     reward: int
     declared_layer: str | None
     failed_layers: tuple[str, ...]
 
     @property
     def misjudged(self) -> bool:
-        return self.reward != self.expected_reward
+        return self.reward != (0 if self.kind == FALSE_ACCEPT else 1)
 
     @property
     def verdict(self) -> str:
-        if not self.misjudged:
-            return "ok"
-        return "false-accept" if self.kind == FALSE_ACCEPT else "false-reject"
+        return self.kind if self.misjudged else "ok"
+
+    @property
+    def layer_mismatch(self) -> bool:
+        """A wrong answer rejected, but not by the layer that should catch it."""
+        return (
+            self.kind == FALSE_ACCEPT
+            and not self.misjudged
+            and self.declared_layer not in self.failed_layers
+        )
 
 
 def audit_case(case: AuditCase) -> list[Outcome]:
@@ -1035,7 +1043,6 @@ def audit_case(case: AuditCase) -> list[Outcome]:
                 case.task_id,
                 probe.operator,
                 probe.kind,
-                probe.expect_reward,
                 report.reward,
                 probe.layer,
                 failed,
@@ -1100,6 +1107,9 @@ def summarize(outcomes: list[Outcome], skipped: list[str]) -> dict:
         "false_accepts": sum(o.misjudged for o in fa_probes),
         "false_reject_probes": len(fr_probes),
         "false_rejects": sum(o.misjudged for o in fr_probes),
+        "layer_mismatches": sorted(
+            f"{o.task_id}:{o.operator}" for o in outcomes if o.layer_mismatch
+        ),
         "operators": dict(sorted(operators.items())),
         "tasks": dict(sorted(tasks.items())),
     }
@@ -1121,6 +1131,8 @@ def render_markdown(summary: dict) -> str:
         + rate(summary["false_accepts"], summary["false_accept_probes"]),
         "- False rejects (equivalent answer failed): "
         + rate(summary["false_rejects"], summary["false_reject_probes"]),
+        "- Wrong answers caught by a different layer than declared: "
+        + str(len(summary["layer_mismatches"])),
         "",
         "| Operator | Probe | Applied | Misjudged | Example tasks |",
         "|---|---|---:|---:|---|",

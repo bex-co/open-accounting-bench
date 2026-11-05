@@ -18,6 +18,7 @@ import sys
 import tomllib
 from pathlib import Path
 
+from oab.audit import task_dirs as audit_task_dirs
 from oab.families import FAMILIES, STABLE_SEEDS, STANDARD_REF, TAXONOMY
 from oab.generate import write_dataset_files, write_task
 from oab.verify import grade_answer, grade_workflow, load_workflow_artifacts, verify
@@ -190,7 +191,7 @@ def validate_tasks(tasks_root: Path) -> list[str]:
     """Return a list of validation failures (empty = all tasks healthy)."""
     failures: list[str] = []
     core = (Path(__file__).with_name("_verifier_core.py")).read_text()
-    task_dirs = sorted(p for p in tasks_root.iterdir() if p.is_dir() and (p / "task.toml").exists())
+    task_dirs = audit_task_dirs(tasks_root)
     if not task_dirs:
         return [f"no tasks found under {tasks_root}"]
     for task_dir in task_dirs:

@@ -12,14 +12,11 @@ from oab.audit import (
     LEDGER_OPERATORS,
     load_case,
     probes,
+    task_dirs,
 )
 
 TASKS = Path(__file__).resolve().parents[1] / "tasks"
-CASES = [
-    case
-    for d in sorted(TASKS.iterdir())
-    if (d / "task.toml").exists() and (case := load_case(d)) is not None
-]
+CASES = [case for d in task_dirs(TASKS) if (case := load_case(d)) is not None]
 
 
 def test_every_probe_declares_kind_and_layer():
@@ -56,14 +53,16 @@ def test_summary_counts_misjudgements_by_kind():
     from oab.audit import Outcome, summarize
 
     outcomes = [
-        Outcome("t", "a", FALSE_ACCEPT, 0, 1, "semantic_accuracy", ()),
-        Outcome("t", "b", FALSE_ACCEPT, 0, 0, "semantic_accuracy", ("semantic_accuracy",)),
-        Outcome("t", "c", FALSE_REJECT, 1, 0, None, ("structural_validity",)),
+        Outcome("t", "a", FALSE_ACCEPT, 1, "semantic_accuracy", ()),
+        Outcome("t", "b", FALSE_ACCEPT, 0, "semantic_accuracy", ("semantic_accuracy",)),
+        Outcome("t", "c", FALSE_REJECT, 0, None, ("structural_validity",)),
+        Outcome("t", "d", FALSE_ACCEPT, 0, "semantic_accuracy", ("operational_integrity",)),
     ]
     summary = summarize(outcomes, [])
-    assert (summary["false_accepts"], summary["false_accept_probes"]) == (1, 2)
+    assert (summary["false_accepts"], summary["false_accept_probes"]) == (1, 3)
     assert (summary["false_rejects"], summary["false_reject_probes"]) == (1, 1)
-    assert summary["tasks"]["t"] == {"probes": 3, "false_accepts": 1, "false_rejects": 1}
+    assert summary["tasks"]["t"] == {"probes": 4, "false_accepts": 1, "false_rejects": 1}
+    assert summary["layer_mismatches"] == ["t:d"]
 
 
 def test_audit_fails_when_the_grader_regresses(monkeypatch, tmp_path):
