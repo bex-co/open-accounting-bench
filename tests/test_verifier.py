@@ -1976,3 +1976,22 @@ def test_unauthorized_change_in_another_currency_fails_integrity():
     report = verify(initial, final, expected)
     assert report.layers["structural_validity"].passed
     assert not report.layers["operational_integrity"].passed
+
+
+def test_metadata_on_open_and_balance_directives_is_accepted():
+    instance = _reference()
+    final = instance.solution_ledger.replace(
+        "2026-01-01 open Expenses:Rent USD\n",
+        '2026-01-01 open Expenses:Rent USD\n  description: "Office lease"\n',
+    )
+    final += "\n2026-01-31 balance Assets:Bank:Checking  9225.00 USD\n  source: statement\n"
+    report = verify(instance.initial_ledger, final, instance.expected)
+    assert report.reward == 1, report.to_report_json()
+
+
+def test_metadata_line_detached_by_a_blank_line_is_a_structural_error():
+    """As in Beancount, metadata must directly follow its directive."""
+    instance = _reference()
+    final = instance.solution_ledger + '\n  source: "orphaned"\n'
+    report = verify(instance.initial_ledger, final, instance.expected)
+    assert not report.layers["structural_validity"].passed

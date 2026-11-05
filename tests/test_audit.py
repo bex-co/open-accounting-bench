@@ -79,3 +79,13 @@ def test_audit_fails_when_the_grader_regresses(monkeypatch, tmp_path):
     assert main(["audit", "--tasks", str(TASKS), "--sample", "40", "--out", str(tmp_path)]) == 1
     summary = json.loads((tmp_path / "audit.json").read_text())
     assert summary["false_accepts"] > 0
+
+
+def test_full_audit_has_no_misjudgements_or_layer_mismatches():
+    from oab.audit import run_audit, summarize
+
+    summary = summarize(*run_audit(TASKS))
+    assert summary["false_accepts"] == 0, summary["operators"]
+    assert summary["false_rejects"] == 0, summary["operators"]
+    assert summary["layer_mismatches"] == []
+    assert summary["tasks_skipped"] == []
