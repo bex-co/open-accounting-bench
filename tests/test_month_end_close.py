@@ -108,6 +108,8 @@ def test_close_contract_discloses_codes_and_keeps_all_clusters_in_scope():
 def test_close_tuned_contract_links_nsf_and_false_alarms():
     for seed in range(8):
         instance = _instance(seed)
+        if _is_clean(instance):
+            continue
         policy = " ".join(instance.app_files["policy.md"].split())
         assert "each aging row's `loss_rate`" in policy
         assert "annual rate / 12" in policy
@@ -172,8 +174,12 @@ def test_close_oracle_noop_and_seed_sweep():
         assert oracle.reward == 1, (seed, oracle.to_report_json())
         assert oracle.to_reward_json()["rubric_completion"] == 1.0
         nop = _grade(instance, ledger=instance.initial_ledger)
-        assert nop.reward == 0
-        assert nop.to_reward_json()["rubric_completion"] < 0.5
+        if _is_clean(instance):
+            # Nothing to adjust: leaving the ledger alone is the oracle.
+            assert nop.reward == 1, seed
+        else:
+            assert nop.reward == 0
+            assert nop.to_reward_json()["rubric_completion"] < 0.5
         workflow = json.loads(instance.solution_files["workflow.json"])
         assert Decimal(workflow["trial_balance"]["bank"]) > 0
         assert Decimal(workflow["trial_balance"]["inventory"]) >= 0
@@ -182,7 +188,8 @@ def test_close_oracle_noop_and_seed_sweep():
 
 
 def test_close_issue_omission_mutants_lose_their_clusters():
-    instance = _instance(7)
+    instance = _instance(8)
+    assert not _is_clean(instance)
     blocks = _blocks(instance)
     assert len(blocks) >= 15
     details = _workflow_details(_grade(instance))
@@ -214,6 +221,7 @@ def test_close_issue_omission_mutants_lose_their_clusters():
 
 def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
     instance = _instance(11)
+    assert not _is_clean(instance)
     blocks = _blocks(instance)
 
     duplicate = instance.solution_ledger + "\n" + blocks[0] + "\n"
@@ -241,6 +249,7 @@ def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
 
 def test_close_partial_attempt_has_interpretable_cluster_scores():
     instance = _instance(3)
+    assert not _is_clean(instance)
     blocks = _blocks(instance)
     partial = instance.initial_ledger + blocks[0] + "\n"
     report = _grade(instance, ledger=partial)
@@ -253,6 +262,7 @@ def test_close_partial_attempt_has_interpretable_cluster_scores():
 
 def test_close_combined_entry_is_equivalent():
     instance = _instance(19)
+    assert not _is_clean(instance)
     blocks = _blocks(instance)
     first, second, *rest = blocks
     postings = []
@@ -272,3 +282,46 @@ def test_generated_close_task_validates(tmp_path: Path):
     assert 'format = "workflow"' in task_toml
     assert 'level = "professional"' in task_toml
     assert 'track = "dynamic"' in task_toml
+
+
+# --- Clean-month negative control (w2/m2) -------------------------------
+
+
+def _is_clean(instance) -> bool:
+    return "clean-month" in instance.keywords
+
+
+def _clean_seeds(limit: int = 40) -> list[int]:
+    return [seed for seed in range(limit) if _is_clean(_instance(seed))]
+
+
+def test_some_seeds_draw_a_clean_month_and_most_do_not():
+    clean = _clean_seeds()
+    assert 3 <= len(clean) <= 16, clean
+
+
+def test_clean_month_noop_is_the_oracle():
+    for seed in _clean_seeds():
+        instance = _instance(seed)
+        assert instance.solution_ledger == instance.initial_ledger
+        assert instance.expected["expected_deltas"] == {}
+        assert instance.expected["expected_new_transactions"] == 0
+        report = _grade(instance)
+        assert report.reward == 1, (seed, report.to_report_json())
+        workflow = json.loads(instance.solution_files["workflow.json"])
+        for determination_id in ISSUE_DETERMINATIONS:
+            assert workflow["evidence"][determination_id] == "already-recorded"
+        # The close is already complete: the adjustments sit in the ledger.
+        assert "Record credit-loss allowance" in instance.initial_ledger
+
+
+def test_clean_month_contract_discloses_already_recorded():
+    for seed in _clean_seeds()[:3]:
+        policy = " ".join(_instance(seed).app_files["policy.md"].split())
+        assert "`already-recorded`" in policy
+
+
+def test_generated_clean_month_task_validates(tmp_path: Path):
+    instance = _instance(_clean_seeds()[0])
+    write_task(instance, tmp_path, track="dynamic")
+    assert validate_tasks(tmp_path) == []

@@ -122,7 +122,9 @@ def _expected_shape_failures(name: str, fmt: str, expected: dict) -> list[str]:
         except (InvalidOperation, ValueError, TypeError):
             failures.append(f"{name}: numeric gold must be a number")
     elif fmt == WORKFLOW_FORMAT:
-        if not expected.get("expected_deltas"):
+        # A clean-month control declares zero new transactions: the correct
+        # close changes nothing, so its deltas are legitimately empty.
+        if not expected.get("expected_deltas") and expected.get("expected_new_transactions") != 0:
             failures.append(f"{name}: workflow expected_deltas must be non-empty")
         failures.extend(
             f"{name}: {failure}" for failure in validate_workflow_spec(expected.get("workflow"))
@@ -249,7 +251,11 @@ def validate_tasks(tasks_root: Path) -> list[str]:
             initial = (task_dir / "environment" / "app" / "ledger.beancount").read_text()
             if initial != (task_dir / "tests" / "initial.beancount").read_text():
                 failures.append(f"{name}: tests/initial.beancount != environment ledger")
-            if initial == (task_dir / "solution" / "ledger.beancount").read_text():
+            no_action = fmt == WORKFLOW_FORMAT and expected.get("expected_new_transactions") == 0
+            if (
+                not no_action
+                and initial == (task_dir / "solution" / "ledger.beancount").read_text()
+            ):
                 failures.append(f"{name}: solution ledger must differ from initial")
             if fmt == WORKFLOW_FORMAT:
                 oracle = _grade(

@@ -728,6 +728,9 @@ CLOSE_POLICY = """# Month-end close policy
   receivable and reduces cash in the period the bank returns it.
   Revised bank-advice fees not yet in the ledger are accrued in the
   statement period.
+- An evidence item whose correct close entry is already in the ledger
+  needs no further entry; record it as `already-recorded`. Never
+  re-post an adjustment the ledger already contains.
 - In `/app/workflow.json`, each `evidence` value must be exactly one of
   these disposition codes, with no prose: `reverse-premature-sale`,
   `reverse-premature-cost`, `defer-unearned-milestone`,
@@ -737,7 +740,7 @@ CLOSE_POLICY = """# Month-end close policy
   `recognize-impairment-loss`, `accrue-interest`,
   `reclassify-current-portion`, `record-nsf`, `record-bank-fee`,
   `exclude-next-period`, `ignore-duplicate-copy`, `keep-capitalized`,
-  `already-recognized`, and `use-revised-schedule`.
+  `already-recognized`, `use-revised-schedule`, and `already-recorded`.
 """
 
 
@@ -751,6 +754,10 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
 
     pack = generate_company_history(seed, anomalies=())
     rng = random.Random(seed ^ 0xC105E)
+    # Clean-month negative control (about one seed in five): every close
+    # entry is already in the ledger, so the correct close appends
+    # nothing. Drawn from its own stream so other seeds are unchanged.
+    clean = random.Random(seed ^ 0xC1EA4).random() < 0.2
     current = pack.periods[-1]
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
@@ -1220,9 +1227,13 @@ the same files as actionable items.
     initial_ledger = "\n".join([ledger_lines[0], *opens, *ledger_lines[1:]]) + "\n"
     for entry_date, payee, narration, postings in draft_entries:
         initial_ledger += _txn(entry_date, payee, narration, postings)
+    if clean:
+        for entry_date, payee, narration, postings in oracle_entries:
+            initial_ledger += _txn(entry_date, payee, narration, postings)
     solution_ledger = initial_ledger
-    for entry_date, payee, narration, postings in oracle_entries:
-        solution_ledger += _txn(entry_date, payee, narration, postings)
+    if not clean:
+        for entry_date, payee, narration, postings in oracle_entries:
+            solution_ledger += _txn(entry_date, payee, narration, postings)
 
     dispositions = {
         "revenue-cutoff": "reverse-premature-sale",
@@ -1241,6 +1252,8 @@ the same files as actionable items.
         "bank-reconciliation": "record-nsf",
         "bank-fee-reconciliation": "record-bank-fee",
     }
+    if clean:
+        dispositions = dict.fromkeys(dispositions, "already-recorded")
     trial_fields = {
         "bank": BANK,
         "accounts_receivable": AR,
@@ -1343,7 +1356,7 @@ the same files as actionable items.
                         f"{current.label}-29",
                         "2026-02-03",
                         money(supplier_amount),
-                        "original-unrecorded",
+                        "accrued-in-ledger" if clean else "original-unrecorded",
                         "",
                         "unrecorded-payables",
                     ],
@@ -1394,7 +1407,11 @@ the same files as actionable items.
                         money(prepaid_total),
                         f"{current.label}-16",
                         "6",
-                        "full-payment-expensed",
+                        (
+                            "expensed-then-unexpired-portion-deferred"
+                            if clean
+                            else "full-payment-expensed"
+                        ),
                         "prepayment-cutoff",
                     ],
                 ]
@@ -1416,7 +1433,7 @@ the same files as actionable items.
                         f"{current.label}-12",
                         "Routine tune-up and replacement of worn belts",
                         money(repair_amount),
-                        "capitalized",
+                        "capitalized-then-reclassified-to-repairs" if clean else "capitalized",
                         "none",
                         money(repair_depreciation),
                         "fixed-asset-treatment",
@@ -1500,7 +1517,11 @@ the same files as actionable items.
                         money(bank_fee_amount),
                         current.end,
                         "",
-                        "revised-bank-fee-not-in-draft-ledger",
+                        (
+                            "revised-bank-fee-recorded"
+                            if clean
+                            else "revised-bank-fee-not-in-draft-ledger"
+                        ),
                         "bank-fee-reconciliation",
                     ],
                 ]
@@ -1531,7 +1552,7 @@ the same files as actionable items.
                         service_customer.id,
                         money(service_milestone_amount),
                         "2026-02-15",
-                        "draft-released-early",
+                        "released-early-then-deferred" if clean else "draft-released-early",
                         "service-revenue-milestone",
                     ],
                 ]
@@ -1581,7 +1602,7 @@ the same files as actionable items.
                         f"{current.label}-30",
                         "FOB shipping point",
                         "2026-02-02",
-                        "in-transit-not-in-draft-ledger",
+                        "in-transit-recorded" if clean else "in-transit-not-in-draft-ledger",
                         "inventory-goods-in-transit",
                     ],
                 ]
@@ -1803,7 +1824,7 @@ the same files as actionable items.
                     "account_delta",
                     determination_id,
                     account=primary_account,
-                    expected=money(primary_amount),
+                    expected=money(ZERO if clean else primary_amount),
                 )
             )
         issue_checks.extend(
@@ -1941,8 +1962,12 @@ the same files as actionable items.
             "month-end-close",
             seed,
             format=WORKFLOW_FORMAT,
-            expected_deltas={account: money(amount) for account, amount in expected_deltas.items()},
-            expected_new_transactions=[1, 40],
+            expected_deltas=(
+                {}
+                if clean
+                else {account: money(amount) for account, amount in expected_deltas.items()}
+            ),
+            expected_new_transactions=0 if clean else [1, 40],
             expected_period=current_period,
             required_final_balances=required_final,
             workflow=workflow_spec(determinations, checks),
@@ -1950,7 +1975,14 @@ the same files as actionable items.
         solution_ledger=solution_ledger,
         solution_files={"workflow.json": json.dumps(solution_workflow, indent=2) + "\n"},
         difficulty="hard",
-        keywords=["month-end-close", "workflow", "cutoff", "accruals", "professional"],
+        keywords=[
+            "month-end-close",
+            "workflow",
+            "cutoff",
+            "accruals",
+            "professional",
+            *(["clean-month"] if clean else []),
+        ],
         level="professional",
         format=WORKFLOW_FORMAT,
         skill="evaluation",
