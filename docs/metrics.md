@@ -29,6 +29,28 @@ over multiple seeds of the same family; report per family, not only
 in aggregate. Model-only and tool-using-agent results are reported
 separately.
 
+### Reliability: pass@k and pass^k
+
+With `n` graded attempts of a task and `c` of them verified
+(`reward = 1`), `oab report` computes, for a chosen `k <= n`:
+
+| Metric | Formula | Question |
+|---|---|---|
+| pass@k | 1 − C(n−c, k) / C(n, k) | Is at least one of k attempts right? (best case) |
+| pass^k | C(c, k) / C(n, k) | Are all k attempts right? (every time) |
+
+Both are unbiased estimates over draws of k attempts without
+replacement; with `k = 1` both equal the mean reward. Cite **pass^k**
+for deployment and reliability claims — an accounting agent that is
+right on average but not every time still needs a reviewer on every
+run — and report mean reward and pass@k as diagnostics beside it.
+Always state `k` and `n`. Tasks with fewer than `k` graded attempts
+are reported as n/a and excluded, never counted as 0; infrastructure
+failures stay out of `n` as everywhere else. These metrics exist only
+in `oab report`: Harbor's dataset metric receives anonymous per-trial
+rewards with no task identity, so `tasks/metric.py` cannot group
+attempts by task.
+
 ## Job aggregation (`oab report`)
 
 `oab report --job <harbor-job-dir>` joins trial results with
@@ -54,7 +76,9 @@ separately.
   (>=90% Excellent, 75-90% Strong, 60-75% Moderate, 50-60% Weak,
   <50% Poor), per-task scores (majority vote across attempts for
   choice formats, mean reward otherwise; run Harbor with `-k 3`),
-  per-taxonomy-axis group means, mean cost per trial and per
+  per-taxonomy-axis and per-family group means, pass@k and pass^k
+  (headline, per task, per group; `--k`, default the fewest graded
+  attempts on any task), mean cost per trial and per
   verified trial, parse-failure rate, workflow rubric/check means
   and rubric range, issue-cluster means, per-check pass counts,
   mean wall time and mean cost when workflow reports are present, and
