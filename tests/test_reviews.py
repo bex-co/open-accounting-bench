@@ -78,3 +78,30 @@ def test_reviews_cli_fails_on_drift(tmp_path: Path):
     registry = tmp_path / "reviews.toml"
     registry.write_text('[[family]]\nid = "classify-operating-expense"\nstatus = "pending"\n')
     assert main(["reviews", "--registry", str(registry)]) == 1
+
+
+def test_manifest_carries_effective_review_status():
+    manifest = json.loads((TASKS / "manifest.json").read_text())
+    by_id = {row["id"]: row for row in load_registry(ROOT / "reviews.toml")}
+    for entry in manifest["tasks"]:
+        assert entry["review"] == effective_status(by_id[entry["task_id"]], TASKS), entry
+    schema = json.loads((TASKS / "manifest.schema.json").read_text())
+    item = schema["properties"]["tasks"]["items"]
+    assert "review" in item["required"]
+    assert item["properties"]["review"]["enum"] == ["pending", "reviewed", "lapsed"]
+
+
+def test_generated_manifest_marks_changed_reviewed_task_lapsed(tmp_path: Path):
+    from oab.generate import write_dataset_files
+
+    tasks_root = tmp_path / "tasks"
+    task = shutil.copytree(
+        TASKS / "classify-operating-expense", tasks_root / "classify-operating-expense"
+    )
+    (tmp_path / "reviews.toml").write_text(
+        f'[[family]]\nid = "{task.name}"\nstatus = "reviewed"\nreviewer = "R"\n'
+        f'date = "2026-01-01"\nfingerprint = "{fingerprint(task)}"\n'
+    )
+    assert write_dataset_files(tasks_root, [task])["tasks"][0]["review"] == "reviewed"
+    (task / "instruction.md").write_text("Changed instruction.\n")
+    assert write_dataset_files(tasks_root, [task])["tasks"][0]["review"] == "lapsed"
