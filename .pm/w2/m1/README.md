@@ -11,9 +11,10 @@
 | t003 | Run the full audit and resolve every finding — **DONE** | 90m | t002 |
 | t004 | Add a sampled audit to CI — **DONE** | 30m | t002 |
 | t005 | Publish audit results — **DONE** | 30m | t003 |
+| t011 | Close the edited-open bypass and unify integrity currency checks | 45m | t003 |
 | t006 | Adoption surface — **DONE** | 20m | t004, t005 |
 | t007 | Simplify — **DONE** | 15m | t006 |
-| t008 | Test coverage | 20m | t006 |
+| t008 | Test coverage | 20m | t006, t011 |
 | t009 | Accounting review | 15m | t008 |
 | t010 | Closeout | 10m | t009 |
 
