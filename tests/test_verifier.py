@@ -1859,3 +1859,75 @@ def test_pension_amortization_through_liability_fails():
         ],
     )
     _assert_semantic_trap(instance, wrong)
+
+
+# --- Mutation-audit findings (w2/m1/t003): wrong answers that passed and
+# valid Beancount spellings that failed before the fix.
+
+
+def _reference():
+    return FAMILIES["classify-operating-expense"](101)
+
+
+def test_editing_an_existing_narration_fails_integrity():
+    instance = _reference()
+    edited = instance.solution_ledger.replace(
+        '"Opening bank balance"', '"Opening bank balance (amended)"'
+    )
+    report = verify(instance.initial_ledger, edited, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["operational_integrity"].passed
+
+
+def test_editing_an_existing_flag_fails_integrity():
+    instance = _reference()
+    edited = instance.solution_ledger.replace('2026-01-01 * "Opening"', '2026-01-01 ! "Opening"')
+    report = verify(instance.initial_ledger, edited, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["operational_integrity"].passed
+
+
+def test_foreign_currency_postings_to_usd_only_accounts_fail_structure():
+    instance = _reference()
+    edited = instance.solution_ledger.replace(
+        "  Assets:Bank:Checking  -775.00 USD\n",
+        "  Assets:Bank:Checking  -775.00 USD\n"
+        "  Expenses:Rent  100.00 EUR\n"
+        "  Expenses:Utilities  -100.00 EUR\n",
+    )
+    report = verify(instance.initial_ledger, edited, instance.expected)
+    assert report.reward == 0
+    assert not report.layers["structural_validity"].passed
+
+
+@pytest.mark.parametrize(
+    "spelling",
+    [
+        # transaction and posting metadata
+        '2026-01-22 * "Staples" "Office supplies (consumables)"\n'
+        '  source: "invoice-1042"\n'
+        "  Expenses:OfficeSupplies  775.00 USD\n"
+        '    document: "receipt.pdf"\n'
+        "  Assets:Bank:Checking  -775.00 USD\n",
+        # the txn keyword for a completed transaction
+        '2026-01-22 txn "Staples" "Office supplies (consumables)"\n'
+        "  Expenses:OfficeSupplies  775.00 USD\n"
+        "  Assets:Bank:Checking  -775.00 USD\n",
+        # amounts with fewer or more than two decimals
+        '2026-01-22 * "Staples" "Office supplies (consumables)"\n'
+        "  Expenses:OfficeSupplies  775.0 USD\n"
+        "  Assets:Bank:Checking  -775.000 USD\n",
+    ],
+    ids=["metadata", "txn-keyword", "decimal-places"],
+)
+def test_valid_beancount_spellings_pass(spelling):
+    instance = _reference()
+    oracle_entry = (
+        '2026-01-22 * "Staples" "Office supplies (consumables)"\n'
+        "  Expenses:OfficeSupplies  775.00 USD\n"
+        "  Assets:Bank:Checking  -775.00 USD\n"
+    )
+    assert oracle_entry in instance.solution_ledger
+    final = instance.solution_ledger.replace(oracle_entry, spelling)
+    report = verify(instance.initial_ledger, final, instance.expected)
+    assert report.reward == 1, report.to_report_json()

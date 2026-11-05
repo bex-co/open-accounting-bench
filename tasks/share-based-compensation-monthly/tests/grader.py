@@ -38,14 +38,14 @@ _WORKFLOW_FORMAT = "workflow"
 _DEFAULT_WORKFLOW_ARTIFACT = "/app/workflow.json"
 _DATE = r"\d{4}-\d{2}-\d{2}"
 _ACCOUNT = r"[A-Z][A-Za-z0-9-]*(?::[A-Z0-9][A-Za-z0-9-]*)+"
-_RE_OPEN = re.compile(rf"^({_DATE})\s+open\s+({_ACCOUNT})\b")
-_RE_BALANCE = re.compile(
-    rf"^({_DATE})\s+balance\s+({_ACCOUNT})\s+(-?[\d,]+\.\d{{2}}|-?\d+)\s+([A-Z]{{3}})\s*$"
+_NUMBER = r"-?[\d,]+(?:\.\d+)?"
+_RE_OPEN = re.compile(
+    rf"^({_DATE})\s+open\s+({_ACCOUNT})(?:\s+([A-Z]{{3}}(?:\s*,\s*[A-Z]{{3}})*))?\b"
 )
-_RE_TXN = re.compile(rf"^({_DATE})\s+([*!])\s+(\".*\"|\S.*?)\s*$")
-_RE_POSTING = re.compile(
-    rf"^\s+({_ACCOUNT})(?:\s+(-?[\d,]+\.\d{{2}}|-?\d+)\s+([A-Z]{{3}}))?\s*(?:;.*)?$"
-)
+_RE_BALANCE = re.compile(rf"^({_DATE})\s+balance\s+({_ACCOUNT})\s+({_NUMBER})\s+([A-Z]{{3}})\s*$")
+_RE_TXN = re.compile(rf"^({_DATE})\s+(\*|!|txn)(?:\s+(.*?))?\s*$")
+_RE_POSTING = re.compile(rf"^\s+({_ACCOUNT})(?:\s+({_NUMBER})\s+([A-Z]{{3}}))?\s*(?:;.*)?$")
+_RE_METADATA = re.compile(r"^\s+[a-z][A-Za-z0-9_-]*:(?:\s.*)?$")
 _RE_OPTION = re.compile(r'^option\s+"[^"]*"\s+"[^"]*"\s*$')
 
 
@@ -67,10 +67,15 @@ class Transaction:
         parts = sorted(f"{p.account}={p.amount}:{p.currency}" for p in self.postings)
         return f"{self.date}|{';'.join(parts)}"
 
+    def identity(self) -> str:
+        """Signature plus flag and description: what append-only preserves."""
+        return f"{self.flag}|{' '.join(self.header.split())}|{self.signature()}"
+
 
 @dataclass
 class Ledger:
     opens: dict[str, str] = field(default_factory=dict)
+    open_currencies: dict[str, set[str]] = field(default_factory=dict)
     transactions: list[Transaction] = field(default_factory=list)
     balances_assertions: list[tuple[str, str, Decimal, str]] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
@@ -83,20 +88,23 @@ def _amount(text: str) -> Decimal:
 def parse_ledger(text: str) -> Ledger:
     ledger = Ledger()
     current: Transaction | None = None
+    in_entry = False  # metadata lines may follow open/balance/txn directives
     for lineno, raw in enumerate(text.splitlines(), start=1):
         line = raw.rstrip()
         stripped = line.strip()
         if not stripped or stripped.startswith(";"):
-            if not line.startswith((" ", "\t")):
-                current = None if not stripped else current
+            if not line.startswith((" ", "\t")) and not stripped:
+                current, in_entry = None, False
             continue
         if _RE_OPTION.match(stripped):
-            current = None
+            current, in_entry = None, False
             continue
         m = _RE_OPEN.match(stripped)
         if m:
             ledger.opens[m.group(2)] = m.group(1)
-            current = None
+            if m.group(3):
+                ledger.open_currencies[m.group(2)] = {c.strip() for c in m.group(3).split(",")}
+            current, in_entry = None, True
             continue
         m = _RE_BALANCE.match(stripped)
         if m:
@@ -106,12 +114,16 @@ def parse_ledger(text: str) -> Ledger:
                 )
             except InvalidOperation:
                 ledger.errors.append(f"line {lineno}: bad balance amount")
-            current = None
+            current, in_entry = None, True
             continue
         m = _RE_TXN.match(stripped)
         if m and not line.startswith((" ", "\t")):
-            current = Transaction(date=m.group(1), flag=m.group(2), header=m.group(3))
+            flag = "*" if m.group(2) == "txn" else m.group(2)
+            current = Transaction(date=m.group(1), flag=flag, header=m.group(3) or "")
             ledger.transactions.append(current)
+            in_entry = True
+            continue
+        if in_entry and _RE_METADATA.match(line):
             continue
         m = _RE_POSTING.match(line)
         if m and current is not None:
@@ -261,6 +273,12 @@ def _verify_ledgers(
                 structural_problems.append(
                     f"{txn.date}: posting to unopened account {posting.account}"
                 )
+            allowed = final.open_currencies.get(posting.account)
+            if allowed and posting.currency is not None and posting.currency not in allowed:
+                structural_problems.append(
+                    f"{txn.date}: {posting.currency} posting to {posting.account}, "
+                    f"which is open for {', '.join(sorted(allowed))} only"
+                )
     final_balances = compute_balances(final)
     initial_balances = compute_balances(initial)
     for date, account, amount, cur in final.balances_assertions:
@@ -345,14 +363,22 @@ def _verify_ledgers(
 
     # Layer 5: operational integrity.
     integrity_failures: list[str] = []
-    for sig, count in initial_sigs.items():
-        if final_sigs.get(sig, 0) < count:
-            integrity_failures.append(f"initial transaction altered or removed: {sig}")
+    initial_ids = Counter(txn.identity() for txn in initial.transactions)
+    final_ids = Counter(txn.identity() for txn in final.transactions)
+    for identity, count in initial_ids.items():
+        if final_ids.get(identity, 0) < count:
+            integrity_failures.append(f"initial transaction altered or removed: {identity}")
     for account, delta in deltas.items():
         if account in expected_deltas or account in allowed_extra:
             continue
         if not _close(delta, ZERO, tolerance):
             integrity_failures.append(f"unauthorized change to {account}: delta {delta} {currency}")
+    for (account, cur), balance in sorted(final_balances.items()):
+        if cur == currency or account in allowed_extra:
+            continue
+        delta = balance - initial_balances.get((account, cur), ZERO)
+        if delta != ZERO:
+            integrity_failures.append(f"unauthorized change to {account}: delta {delta} {cur}")
     if expected.get("forbid_new_accounts", True):
         for account in sorted(set(final.opens) - set(initial.opens)):
             integrity_failures.append(f"new account opened without authorization: {account}")

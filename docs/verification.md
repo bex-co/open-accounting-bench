@@ -12,7 +12,7 @@ initial ledger where applicable, and `tests/expected.json`. Outputs:
 
 | Layer (`reward.json` key) | Checks |
 |---|---|
-| `structural_validity` | Ledger parses; every posting uses an opened account; every transaction balances per currency (one elided posting is interpolated); `balance` assertions hold |
+| `structural_validity` | Ledger parses; every posting uses an opened account in a currency it was opened for; every transaction balances per currency (one elided posting is interpolated); `balance` assertions hold |
 | `semantic_accuracy` | Actual per-account deltas (final − initial) match `expected_deltas` within tolerance — correct classification, direction, amount. Score = fraction matched |
 | `economic_consistency` | Evidence recorded the expected number of times (`expected_new_transactions`), no duplicated new entries, new entries dated inside `expected_period` |
 | `reconciliation_accuracy` | Ledger-wide sum is zero per currency; `required_final_balances` hold; bank account reconciles to `reconciliation.statement_balance` when given |
@@ -86,13 +86,21 @@ public generator, Harbor packaging, CLI validation, and verifier.
 
 ## Ledger subset
 
-The hermetic grader parses `option`, `open`, `balance`, and `*`/`!`
-transactions with `Account  Amount CCC` postings (amounts may use
-thousands separators; exactly one posting per transaction may elide its
-amount). Anything else is a structural error. This subset is valid
-Beancount syntax; generated ledgers stay inside it. Full Beancount
-features (cost basis, prices, plugins) are out of scope for v0.1
-verifiers — tasks must be gradable without them.
+The hermetic grader parses `option`, `open` (with optional currency
+constraints), `balance`, and `*`/`!`/`txn` transactions with
+`Account  Amount CCC` postings. Amounts may use thousands separators and
+any number of decimals; exactly one posting per transaction may elide
+its amount. Comments, tags, links, and `key: value` metadata lines on
+entries and postings are accepted and ignored. A posting in a currency
+its account was not opened for is a structural error, as in Beancount.
+Anything else is a structural error. This subset is valid Beancount
+syntax; generated ledgers stay inside it. Full Beancount features (cost
+basis, prices, plugins) are out of scope for v0.1 verifiers — tasks
+must be gradable without them.
+
+Append-only integrity compares each initial transaction's date, flag,
+description, and postings, so rewording or re-flagging an existing
+entry fails `operational_integrity` just as changing its amounts does.
 
 ## Answer-file formats
 
