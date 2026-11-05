@@ -112,3 +112,36 @@ def test_generated_manifest_marks_changed_reviewed_task_lapsed(tmp_path: Path):
     assert manifest_review() == "reviewed"
     (task / "instruction.md").write_text("Changed instruction.\n")
     assert manifest_review() == "lapsed"
+
+
+def test_editor_and_cache_files_do_not_lapse_a_review(tmp_path: Path):
+    task = shutil.copytree(
+        TASKS / "classify-operating-expense", tmp_path / "classify-operating-expense"
+    )
+    before = fingerprint(task)
+    (task / "environment" / "app" / ".DS_Store").write_bytes(b"\0finder")
+    (task / "tests" / "__pycache__").mkdir()
+    (task / "tests" / "__pycache__" / "grader.cpython-313.pyc").write_bytes(b"\0")
+    assert fingerprint(task) == before
+
+
+def test_generate_and_fingerprint_cli(tmp_path: Path, capsys):
+    out = tmp_path / "tasks"
+    registry = tmp_path / "reviews.toml"
+    registry.write_text(
+        '[[family]]\nid = "classify-operating-expense"\nstatus = "reviewed"\n'
+        f'reviewer = "R"\ndate = "2026-01-01"\n'
+        f'fingerprint = "{fingerprint(TASKS / "classify-operating-expense")}"\n'
+    )
+    assert main(["generate", "--all", "--out", str(out), "--registry", str(registry)]) == 0
+    capsys.readouterr()
+    manifest = {
+        e["task_id"]: e["review"] for e in json.loads((out / "manifest.json").read_text())["tasks"]
+    }
+    assert manifest["classify-operating-expense"] == "reviewed"
+    assert manifest["ppe-disposal"] == "pending"  # not in this registry
+
+    assert (
+        main(["reviews", "--tasks", str(out), "--fingerprint", "classify-operating-expense"]) == 0
+    )
+    assert capsys.readouterr().out.strip() == fingerprint(out / "classify-operating-expense")
