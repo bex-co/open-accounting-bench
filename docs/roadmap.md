@@ -15,13 +15,16 @@
 ## Days 31–60 — Dynamic evaluation pipeline
 
 - [ ] 8–10 validated generators; generated source documents (CSV/PDF).
-- [ ] Multi-seed reliability runs; verifier false-accept/reject audit.
+- [ ] Multi-seed reliability runs.
+- [x] Verifier false-accept/reject audit (`oab audit`, run in CI; see
+      [verification.md](verification.md#mutation-audit-false-accepts-and-false-rejects)).
 - [ ] Publish dataset to Harbor Hub; versioned leaderboard schema.
 - [ ] Multi-step tasks (e.g. record → reconcile → report).
 
 ## Days 61–90 — Public alpha
 
-- [ ] 12–15 reviewed generators + adversarial set.
+- [ ] 12–15 reviewed generators.
+- [x] Adversarial set (the mutation probes behind `oab audit`).
 - [ ] Baseline results for several models/agents, fully reproducible.
 - [ ] Technical methodology paper/post; external contributor call.
 - [ ] First standards pack scoping (IFRS vs US GAAP deltas).

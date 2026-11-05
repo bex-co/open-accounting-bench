@@ -116,6 +116,50 @@ Multiple-choice accuracy may be negative under the penalized formula.
 `open-text` values are rejected by `oab validate` until a judge design
 lands (see [methodology.md](methodology.md)).
 
+## Mutation audit (false accepts and false rejects)
+
+`oab audit` (`make audit`, also run in CI) measures the grader directly.
+Deterministic operators (`src/oab/audit.py`) mutate every Stable task's
+oracle into probes with a declared verdict, and the hermetic grader
+scores each one:
+
+- **False-accept probes** are wrong answers that must score 0, each
+  naming the layer expected to catch it: the untouched ledger; deleting,
+  re-amounting, rewording, or re-flagging an existing entry; omitting,
+  duplicating, re-scaling, or misclassifying a required entry; an
+  unrelated in-period entry; foreign-currency side postings; dating
+  entries after the period; opening an unauthorized account; an
+  unbalanced entry. For answer files: missing, out-of-tolerance, trap
+  value, NaN, boolean, list-wrapped, wrong option, superset, subset.
+- **False-reject probes** are equivalent correct answers that must score
+  1: elided, reordered, split, or merged entries (when the
+  transaction-count range admits them); post-reverse-rebook; comments,
+  tags, links, metadata, the `txn` keyword; thousands separators and
+  other decimal precisions; tab indentation with CRLF line endings. For
+  answer files: numbers as strings, trailing zeros, the exact tolerance
+  edge, extra keys, reordered multiple-choice options.
+
+Results on 2026-11-05, `GENERATOR_VERSION` 0.9.0, all 291 Stable tasks:
+
+| Probe kind | Probes | Misjudged before 0.9.0 | Misjudged at 0.9.0 |
+|---|---:|---:|---:|
+| False accept (wrong answer passed) | 2,327 | 270 | 0 |
+| False reject (equivalent answer failed) | 1,648 | 281 | 0 |
+
+Every false-accept probe also fails the layer it declares. The 0.9.0
+fixes: append-only integrity now covers an existing entry's flag and
+description (rewording or re-flagging had passed), `open` currency
+constraints are enforced (foreign-currency side postings had passed),
+and metadata lines, the `txn` keyword, and amounts with other than two
+decimals are accepted (each had failed as a structural error).
+
+Known limits: the audit covers the journal-entry and answer-file
+formats; workflow tasks (Dynamic only) are not yet probed. Probes test
+the grader against the expectation, not the expectation against
+accounting truth — that remains the accounting review in
+[TO_REVIEW.md](../TO_REVIEW.md). Beancount features outside the
+[ledger subset](#ledger-subset) remain structural errors by design.
+
 ## Failure handling
 
 If the grader crashes, `tests/test.sh` leaves `reward.txt = -1`
