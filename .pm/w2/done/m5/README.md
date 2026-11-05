@@ -1,6 +1,6 @@
 # w2 · m5 — Machine-readable review registry and reviewed-only reporting
 
-**Worker:** worker2 **Goal:** Each Stable task carries its accounting-review status, review lapses automatically when a generator's semantics change, and reports can be restricted to reviewed tasks. **Status:** todo (t001–t006 done)
+**Worker:** worker2 **Goal:** Each Stable task carries its accounting-review status, review lapses automatically when a generator's semantics change, and reports can be restricted to reviewed tasks. **Status:** done
 
 ## Tasks (in order)
 
@@ -12,7 +12,7 @@
 | t004 | Adoption surface — **DONE** | 20m | t003 |
 | t005 | Simplify — **DONE** | 15m | t004 |
 | t006 | Test coverage — **DONE** | 20m | t004 |
-| t007 | Closeout | 10m | t006 |
+| t007 | Closeout — **DONE** | 10m | t006 |
 
 ## Definition of done
 
