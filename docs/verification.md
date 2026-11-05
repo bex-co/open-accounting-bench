@@ -22,6 +22,16 @@ initial ledger where applicable, and `tests/expected.json`. Outputs:
 score, for diagnosis only — a task is never "completed" on partial
 credit.
 
+`report.json` also carries `details.diagnostics` for every ledger
+grade, an informational classification that never affects reward. Each
+expected account is `correct`, `wrong-amount` (it moved, by a different
+amount), `wrong-account` (it did not move, while an account outside the
+expectation moved by exactly the expected amount — a misposting), or
+`missing`; `extra` lists other unexpected movements. It separates
+choosing the wrong account from computing the wrong amount, and shows
+which error a family's trap actually catches. `oab report` aggregates
+the class counts per family.
+
 The canonical trap (memo §6): debiting an asset instead of an expense
 for a $5,000 cash purchase balances perfectly, so layer 1 passes —
 layers 2 and 5 fail. Covered by `tests/test_verifier.py`.

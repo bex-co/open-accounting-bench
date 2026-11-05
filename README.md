@@ -62,7 +62,8 @@ The verifier writes under `/logs/verifier/`:
 
 ```text
 reward.json   Binary reward + five layer scores + partial
-report.json   Per-layer pass/fail with human-readable failures
+report.json   Per-layer pass/fail with human-readable failures, plus
+              account-vs-amount diagnostics for ledger tasks
 run.log       Raw verifier output
 ```
 
