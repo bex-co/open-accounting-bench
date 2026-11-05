@@ -32,6 +32,26 @@ holdout *results reporting* follows the same metrics as public tracks.
 Public replication of Stable/Dynamic tracks never depends on holdout
 access.
 
+**Seed derivation (threat model and recommendation, 2026-11-05).** A
+holdout instance drawn from a *public* generator is only as secret as
+its seed. Generators are deterministic and seeds are integers, so an
+attacker who enumerates a small seed range regenerates every such
+instance and its expected answers offline; "unpublished seeds" from a
+small range therefore protect nothing. Unpublished *families* are
+protected by not being published, not by their seeds. Recommendation:
+derive each holdout seed for a public generator as a keyed hash, for
+example `int(HMAC-SHA256(key, family || index))` (256 bits), with the
+key held offline by the maintainers and never committed; publish only
+`SHA-256(key)` as a commitment so a later key reveal can prove the
+holdout was not altered after results were reported; rotate the key per
+holdout release. Every current generator accepts 256-bit seeds
+deterministically (checked across all 293 registered families), so no
+generator change is needed. Limits: keyed seeds stop reconstruction by
+enumeration, not solving — each instance remains solvable from its own
+files, which is the point — and a leaked instance reveals only its own
+seed, not the others. Holdout task files must still never enter this
+repository or its history.
+
 ## Contributions & review
 
 New families need: generator + oracle tests, an adversarial case, and
