@@ -1,6 +1,6 @@
 # w2 · m2 — Clean-month negative controls
 
-**Worker:** worker2 **Goal:** The month-end close workflow can generate a month with nothing to fix, where the correct answer is to leave the ledger unchanged, and reports an over-action rate. **Status:** todo (t001, t002 done)
+**Worker:** worker2 **Goal:** The month-end close workflow can generate a month with nothing to fix, where the correct answer is to leave the ledger unchanged, and reports an over-action rate. **Status:** todo (t001–t003 done)
 
 ## Tasks (in order)
 
@@ -8,7 +8,7 @@
 | ---- | ----- | --- | ---------- |
 | t001 | Allow zero-anomaly evidence packs — **DONE** | 45m | — |
 | t002 | Add a clean-month variant to the month-end close workflow — **DONE** | 75m | t001 |
-| t003 | Over-action trap | 45m | t002 |
+| t003 | Over-action trap — **DONE** | 45m | t002 |
 | t004 | Report the over-action rate | 30m | t002 |
 | t005 | Adoption surface | 20m | t003, t004 |
 | t006 | Simplify | 15m | t005 |

@@ -325,3 +325,28 @@ def test_generated_clean_month_task_validates(tmp_path: Path):
     instance = _instance(_clean_seeds()[0])
     write_task(instance, tmp_path, track="dynamic")
     assert validate_tasks(tmp_path) == []
+
+
+def test_clean_month_over_action_fails_non_structural_layers():
+    """Trap: re-posting an adjustment the ledger already holds, or accruing
+    a next-period bill, balances perfectly but must not pass."""
+    instance = _instance(_clean_seeds()[0])
+    allowance_entry = next(
+        block
+        for block in instance.initial_ledger.split("\n\n")
+        if "Record credit-loss allowance" in block
+    )
+    next_period_accrual = (
+        '2026-01-31 * "Supplier" "Accrue February utility invoice"\n'
+        "  Expenses:Utilities  400.00 USD\n"
+        "  Liabilities:AccountsPayable  -400.00 USD\n"
+    )
+    for extra in (allowance_entry.strip() + "\n", next_period_accrual):
+        ledger = instance.initial_ledger + "\n" + extra
+        report = _grade(instance, ledger=ledger)
+        assert report.reward == 0
+        layers = report.layers
+        assert layers["structural_validity"].passed
+        assert not layers["economic_consistency"].passed
+        assert not layers["operational_integrity"].passed
+        assert not layers["workflow_rubric"].passed
