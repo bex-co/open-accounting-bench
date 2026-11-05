@@ -54,7 +54,9 @@ the PR, then:
    [TO_REVIEW.md](TO_REVIEW.md) with what a reviewer should check.
    Merging does not wait for it; a reviewer with accounting background
    later confirms the scenario, policy wording, and oracle, and the
-   entry moves to the file's Reviewed section.
+   entry moves to the file's Reviewed section. A new family starts as
+   `status = "pending"` in [reviews.toml](reviews.toml) (`uv run oab
+   reviews` fails until its row exists); only the reviewer changes it.
 
 Do not hand-edit anything under `tasks/<task-id>/` — it is generated.
 Do not edit `tasks/*/tests/grader.py` — it is a verbatim copy of

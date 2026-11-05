@@ -7,6 +7,15 @@ in batches. Agents add entries; only a reviewer moves one to
 **Reviewed** (with name, date, and outcome). Findings are fixed forward
 like bugs — bump `GENERATOR_VERSION` when expectations change.
 
+[`reviews.toml`](reviews.toml) is the machine-readable mirror: when a
+reviewer signs off a family, they also set its row to
+`status = "reviewed"` with reviewer, date, and the fingerprint from
+`uv run oab reviews --fingerprint <task-id>`, then run `make generate`
+so `tasks/manifest.json` carries the status. A reviewed family whose
+content later changes reads as lapsed until it is reviewed again.
+`oab reviews` (CI) rejects a family marked reviewed that is still
+listed under Pending here.
+
 Crosswalk mappings carry their own `status` (`proposed` / `reviewed`);
 only reviewed links count toward cited coverage
 ([docs/metrics.md](docs/metrics.md#framework-coverage)).

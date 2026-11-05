@@ -76,6 +76,7 @@ filled and the checklist passes. Workflow: [CONTRIBUTING.md](../CONTRIBUTING.md)
   all names and records are original synthetic data
 - [ ] `uv run oab generate --all` leaves no uncommitted diff
 - [ ] `uv run oab audit` reports no false accepts or false rejects
+- [ ] A `status = "pending"` row in `reviews.toml`; `uv run oab reviews` passes
 - [ ] `harbor run -p tasks/<task-id> -a oracle` passes; `-a nop` fails
 - [ ] Coverage matrix row updated in `docs/task-families.md`
 - [ ] `uv run oab crosswalk` passes with the new mappings

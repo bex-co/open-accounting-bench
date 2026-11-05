@@ -153,9 +153,11 @@ src/oab/        Generator + verifier package (stdlib only)
   generate.py   Instance -> Harbor task directory, dataset files
   _verifier_core.py  Deterministic grader; copied verbatim into each task
   audit.py      Mutation probes for the grader's false-accept/reject audit
+  reviews.py    Accounting-review registry checks and content fingerprints
   cli.py        oab generate / verify / validate / audit / report / list
   report.py     Harbor job -> runs.jsonl + stratified leaderboard.md
 tasks/          Stable-track Harbor dataset (+ dataset.toml, manifest, metric.py)
+reviews.toml    Per-family accounting-review status (mirror of TO_REVIEW.md)
 tests/          Repo tests: verifier layers, generator determinism, task health
 docs/           Methodology, verification, metrics, governance, roadmap
 memo.md         Founding strategy proposal

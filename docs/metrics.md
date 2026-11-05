@@ -64,7 +64,7 @@ attempts by task.
   verifier expected or actual values), `answer`, `confidence`,
   `parse_failure`, `over_action` (no-action controls), account-vs-amount
   diagnostic counts (`diagnostics`; class counts only), token counts,
-  `cost_usd`, `wall_seconds`,
+  `cost_usd`, `wall_seconds`, the manifest `review` status,
   `task_checksum`, and job timestamp. This is the auditable run
   registry; archive it with any published result.
   Trials with an exception and no reward (infrastructure failures
@@ -83,8 +83,9 @@ attempts by task.
   verified trial, parse-failure rate, workflow rubric/check means
   and rubric range, issue-cluster means, per-check pass counts,
   mean wall time and mean cost when workflow reports are present, and
-  confidence-bin reward rates, and per-family account-vs-amount
-  diagnostic shares. Costs come from Harbor's `cost_usd` when present, else
+  confidence-bin reward rates, per-family account-vs-amount
+  diagnostic shares, and the share of graded tasks with an accounting
+  review on record (`--reviewed-only` scores only those tasks). Costs come from Harbor's `cost_usd` when present, else
   token counts × an external price table (`--prices`, see
   `prices.example.json`; always cite its `as_of` date).
 

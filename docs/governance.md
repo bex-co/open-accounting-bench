@@ -43,6 +43,11 @@ family, accounting change, and crosswalk mapping is listed in
 finds an error is fixed forward like any bug, with a
 `GENERATOR_VERSION` bump if expectations change. Coverage claims still
 count only reviewed crosswalk links ([metrics.md](metrics.md#framework-coverage)).
+[`reviews.toml`](../reviews.toml) records each Stable family's review
+status and the content fingerprint that was signed off; every manifest
+entry carries the resulting `review` status (`pending`, `reviewed`, or
+`lapsed` once content changes), and `oab report --reviewed-only` scores
+only reviewed tasks. Only a reviewer sets a family to reviewed.
 See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Data policy

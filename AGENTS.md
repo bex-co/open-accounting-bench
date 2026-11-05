@@ -35,7 +35,7 @@ Scoped guides:
 - **Verifier changes start with a failing test**, keep the full suite green, and regenerate tasks in the same commit. They change every score ever reported.
 - **Changing a family's accounting semantics or expectations** means deciding on a `GENERATOR_VERSION` bump ([docs/governance.md](docs/governance.md)) and regenerating Stable tasks in the same commit.
 - **Expectations are accounting state, never exact ledger text.** Every family carries a trap: at least one balanced-but-wrong attempt fails a non-structural layer, with a test in `tests/test_verifier.py`.
-- **Accounting review is deferred, not a gate.** New families and accounting changes merge once their automated gates pass (oracle, trap test, validate); each is listed in [TO_REVIEW.md](TO_REVIEW.md) for a later batch review by a reviewer with accounting background. An agent never marks an item reviewed itself.
+- **Accounting review is deferred, not a gate.** New families and accounting changes merge once their automated gates pass (oracle, trap test, validate); each is listed in [TO_REVIEW.md](TO_REVIEW.md) for a later batch review by a reviewer with accounting background, and gets a `status = "pending"` row in `reviews.toml`. An agent never marks an item reviewed itself — in `TO_REVIEW.md` or `reviews.toml`.
 - **Synthetic data only** ([PROVENANCE.md](PROVENANCE.md)). Never publish Holdout-track families, seeds, or expectations anywhere in this public repo.
 
 ## Checks
@@ -48,12 +48,13 @@ make test        # pytest
 make validate    # oab validate: structure, grader sync, oracle vs nop
 make crosswalk   # oab crosswalk: mapping records valid; prints coverage
 make audit       # oab audit: mutated oracles; wrong answers fail, equivalent ones pass
+make reviews     # oab reviews: reviews.toml covers every Stable family, agrees with TO_REVIEW.md
 make generate    # regenerate tasks/; any diff belongs in the same commit as its source change
 make oracle      # needs Harbor + Docker: every Stable task scores reward 1
 python3 scripts/check-agent-guidance.py   # after instruction, skill, or symlink changes
 ```
 
-CI (`.github/workflows/ci.yml`) runs lint, tests, validation, the verifier mutation audit, crosswalk checks, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
+CI (`.github/workflows/ci.yml`) runs lint, tests, validation, the verifier mutation audit, the review-registry check, crosswalk checks, the agent-guidance check, a generated-tasks drift check (`make check-generated` on the committed tree), and a Docker smoke test of one task.
 
 ## Roadmap board and shipping
 
