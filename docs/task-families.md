@@ -736,6 +736,17 @@ remains **tune and recalibrate**, and the family stays
 Dynamic-only, with no Stable freeze, until a recalibration panel
 produces a promote verdict.
 
+About one seed in five (0.11.0; drawn from its own random stream, so
+other seeds are unchanged) is a **clean-month negative control**: every
+correct close entry is already in the ledger, the close sources report
+each item as recorded, and the correct answer appends nothing. Its
+schedule reports the same adjusted balances with every issue
+disposition `already-recorded`; `expected_new_transactions` is 0, so
+re-posting an adjustment or accruing a next-period bill fails. The
+variant carries a `clean-month` task keyword (metadata, not visible to
+agents) and feeds the over-action rate in `oab report`. This is issue-
+activation tuning under the current tune-and-recalibrate verdict.
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced

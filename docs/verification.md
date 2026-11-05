@@ -63,6 +63,14 @@ per-cluster details; `reward.json` also exposes
 `parse_failure`. Rubric completion is diagnostic only and never makes
 a task "completed" without reward 1.
 
+A workflow may be a **no-action control**: it declares
+`expected_new_transactions: 0` and empty `expected_deltas`, its
+solution ledger equals the initial ledger, and `oab validate` admits it
+only on that declaration. The grader then adds an `over_action`
+diagnostic to `reward.json` (1.0 if anything was appended, else 0.0);
+it never affects reward, which the layers already set to 0 for any
+appended entry.
+
 Workflow families are Dynamic-first: they live in
 `DYNAMIC_FAMILIES` until calibration and review justify promotion to
 `FAMILIES` with a frozen Stable seed. The Dynamic

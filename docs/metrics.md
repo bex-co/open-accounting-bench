@@ -19,6 +19,7 @@ rewards JSONL; missing rewards count as 0.
 | `workflow_rubric` | workflow layer mean when present | How much of the determination rubric was reached? |
 | `rubric_completion` | weighted determination mean | Diagnostic workflow progress; not verified completion |
 | `workflow_check_completion` | raw passed-check fraction | Which individual workflow checks were reached? |
+| `over_action` | no-action controls only | Did the agent change a ledger that needed no change? (`oab report` prints the rate) |
 
 Report alongside every result: track (stable/dynamic/holdout), seeds,
 generator version, model + agent + tool access, attempts (`-k`),
@@ -39,7 +40,8 @@ separately.
   `rewards`, workflow rubric/check completion when present, sanitized
   workflow cluster scores and check IDs/cluster/pass values (never
   verifier expected or actual values), `answer`, `confidence`,
-  `parse_failure`, token counts, `cost_usd`, `wall_seconds`,
+  `parse_failure`, `over_action` (no-action controls), token counts,
+  `cost_usd`, `wall_seconds`,
   `task_checksum`, and job timestamp. This is the auditable run
   registry; archive it with any published result.
   Trials with an exception and no reward (infrastructure failures

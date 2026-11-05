@@ -135,6 +135,8 @@ uv run oab generate --family workflow-conformance-fixture --seed 42 --out /tmp/o
 uv run oab verify --task-dir /tmp/oab-workflow/workflow-conformance-fixture
 uv run oab generate --family month-end-close-workflow --seed 42 --out /tmp/oab-close
 uv run oab verify --task-dir /tmp/oab-close/month-end-close-workflow
+uv run oab generate --family month-end-close-workflow --seed 15 --out /tmp/oab-clean   # clean-month control
+uv run oab verify --task-dir /tmp/oab-clean/month-end-close-workflow
 uv run oab validate --tasks tasks                                     # repo health
 uv run oab audit --tasks tasks                                        # grader false-accept/reject audit
 ```
