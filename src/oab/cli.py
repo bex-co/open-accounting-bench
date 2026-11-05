@@ -8,6 +8,7 @@ oab validate [--tasks tasks]               structure + oracle/nop checks
 oab report --job DIR [--prices FILE]       aggregate a Harbor job
 oab crosswalk [--dir crosswalks]           validate crosswalks + coverage
 oab audit [--tasks tasks] [--out DIR]      verifier false-accept/reject audit
+oab reviews [--registry reviews.toml]      validate the accounting-review registry
 """
 
 from __future__ import annotations
@@ -335,6 +336,26 @@ def _cmd_audit(args) -> int:
     return 1 if summary["false_accepts"] or summary["false_rejects"] else 0
 
 
+def _cmd_reviews(args) -> int:
+    from oab.reviews import fingerprint, load_registry, review_summary, validate_registry
+
+    tasks_root = Path(args.tasks)
+    if args.fingerprint:
+        print(fingerprint(tasks_root / args.fingerprint))
+        return 0
+    rows = load_registry(Path(args.registry))
+    to_review = Path(args.to_review).read_text(encoding="utf-8")
+    failures = validate_registry(rows, set(STABLE_SEEDS), to_review)
+    for failure in failures:
+        print(f"FAIL {failure}")
+    counts = review_summary(rows, tasks_root)
+    print(
+        f"{len(rows)} families: {counts['reviewed']} reviewed, "
+        f"{counts['lapsed']} lapsed (content changed since review), {counts['pending']} pending"
+    )
+    return 1 if failures else 0
+
+
 def _cmd_validate(args) -> int:
     failures = validate_tasks(Path(args.tasks))
     for failure in failures:
@@ -381,6 +402,12 @@ def main(argv: list[str] | None = None) -> int:
     aud.add_argument("--out", help="write audit.json and audit.md to this directory")
     aud.add_argument("--sample", type=int, help="audit every N-th task (deterministic subset)")
     aud.set_defaults(fn=_cmd_audit)
+    revs = sub.add_parser("reviews", help="validate reviews.toml against Stable families")
+    revs.add_argument("--registry", default="reviews.toml")
+    revs.add_argument("--to-review", default="TO_REVIEW.md")
+    revs.add_argument("--tasks", default="tasks")
+    revs.add_argument("--fingerprint", metavar="TASK_ID", help="print a task's review fingerprint")
+    revs.set_defaults(fn=_cmd_reviews)
     val = sub.add_parser("validate")
     val.add_argument("--tasks", default="tasks")
     val.set_defaults(fn=_cmd_validate)

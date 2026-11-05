@@ -23,6 +23,8 @@ jobs:
         run: uv run oab validate --tasks tasks
       - name: Verifier mutation audit (no false accepts or false rejects)
         run: uv run oab audit --tasks tasks
+      - name: Accounting-review registry (reviews.toml vs Stable families and TO_REVIEW.md)
+        run: uv run oab reviews
       - name: Crosswalks (typed mappings to external frameworks)
         run: uv run oab crosswalk --dir crosswalks
       - name: Generated tasks are up to date

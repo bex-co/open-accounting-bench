@@ -1,4 +1,4 @@
-.PHONY: test lint validate crosswalk audit generate check-generated oracle
+.PHONY: test lint validate crosswalk audit reviews generate check-generated oracle
 
 test:
 	uv run pytest
@@ -17,6 +17,10 @@ crosswalk:
 # Mutation audit: wrong answers must fail, equivalent answers must pass.
 audit:
 	uv run oab audit --tasks tasks
+
+# Accounting-review registry matches the Stable families and TO_REVIEW.md.
+reviews:
+	uv run oab reviews
 
 generate:
 	uv run oab generate --all --out tasks

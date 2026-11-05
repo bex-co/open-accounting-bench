@@ -1,12 +1,12 @@
 # w2 · m5 — Machine-readable review registry and reviewed-only reporting
 
-**Worker:** worker2 **Goal:** Each Stable task carries its accounting-review status, review lapses automatically when a generator's semantics change, and reports can be restricted to reviewed tasks. **Status:** todo
+**Worker:** worker2 **Goal:** Each Stable task carries its accounting-review status, review lapses automatically when a generator's semantics change, and reports can be restricted to reviewed tasks. **Status:** todo (t001 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Review registry with CI validation | 60m | — |
+| t001 | Review registry with CI validation — **DONE** | 60m | — |
 | t002 | Carry review status into the manifest | 45m | t001 |
 | t003 | `oab report --reviewed-only` | 45m | t002 |
 | t004 | Adoption surface | 20m | t003 |

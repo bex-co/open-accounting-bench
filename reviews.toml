@@ -1,0 +1,1217 @@
+# Accounting review registry — machine-readable mirror of TO_REVIEW.md.
+#
+# One row per Stable family. Only a reviewer with accounting background
+# sets status = "reviewed" (with reviewer, date, and the fingerprint of the
+# task content they signed off: `oab reviews --fingerprint <task-id>`).
+# A reviewed family whose generated content has since changed reads as
+# "lapsed" until it is reviewed again. `oab reviews` validates this file
+# in CI; tooling never marks anything reviewed.
+
+[[family]]
+id = "abc-overhead-assigned"
+status = "pending"
+
+[[family]]
+id = "absorption-variable-income-difference"
+status = "pending"
+
+[[family]]
+id = "accounting-equation-missing-equity"
+status = "pending"
+
+[[family]]
+id = "accrual-deferral-reversal"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:d4e9012d8848a9882d90877dbdc921ab865afbb97c214cc010efb761497ce058"
+
+[[family]]
+id = "accrued-wages-adjustment"
+status = "pending"
+
+[[family]]
+id = "adjusted-ebitda-computation"
+status = "pending"
+
+[[family]]
+id = "adjusted-profit-from-draft"
+status = "pending"
+
+[[family]]
+id = "adjusted-receivable-balance"
+status = "pending"
+
+[[family]]
+id = "adjusted-wage-expense"
+status = "pending"
+
+[[family]]
+id = "agent-commission-revenue"
+status = "pending"
+
+[[family]]
+id = "agi-above-line-adjustments"
+status = "pending"
+
+[[family]]
+id = "allowance-estimate-reperformance"
+status = "pending"
+
+[[family]]
+id = "allowance-movement-expense"
+status = "pending"
+
+[[family]]
+id = "aro-accretion"
+status = "pending"
+
+[[family]]
+id = "asset-revaluation-surplus"
+status = "pending"
+
+[[family]]
+id = "asset-turnover-ratio"
+status = "pending"
+
+[[family]]
+id = "audit-data-missing-entries"
+status = "pending"
+
+[[family]]
+id = "bad-debt-percent-of-sales"
+status = "pending"
+
+[[family]]
+id = "bank-adjusted-balance"
+status = "pending"
+
+[[family]]
+id = "bank-recon-missing-fee"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:76258b1abbe062bbbf8bbdeb09779bfe49ae50913a9ab72c3a95552329d0d8fe"
+
+[[family]]
+id = "basis-adjustment-754-allocation"
+status = "pending"
+
+[[family]]
+id = "basket-purchase-allocation"
+status = "pending"
+
+[[family]]
+id = "below-market-imputed-interest"
+status = "pending"
+
+[[family]]
+id = "benefit-plan-net-assets"
+status = "pending"
+
+[[family]]
+id = "biological-asset-fair-value"
+status = "pending"
+
+[[family]]
+id = "bond-discount-amortization"
+status = "pending"
+
+[[family]]
+id = "bond-early-retirement"
+status = "pending"
+
+[[family]]
+id = "bond-issue-price"
+status = "pending"
+
+[[family]]
+id = "bond-issued-at-premium"
+status = "pending"
+
+[[family]]
+id = "breakeven-sales-dollars"
+status = "pending"
+
+[[family]]
+id = "budget-vs-actual-net-variance"
+status = "pending"
+
+[[family]]
+id = "builtin-gains-tax-base"
+status = "pending"
+
+[[family]]
+id = "business-combination-acquisition"
+status = "pending"
+
+[[family]]
+id = "c-corporation-taxable-income"
+status = "pending"
+
+[[family]]
+id = "capital-loss-carryforward"
+status = "pending"
+
+[[family]]
+id = "capitalized-cost-bundle"
+status = "pending"
+
+[[family]]
+id = "capm-expected-return"
+status = "pending"
+
+[[family]]
+id = "cash-and-equivalents-total"
+status = "pending"
+
+[[family]]
+id = "cash-collected-from-customers"
+status = "pending"
+
+[[family]]
+id = "cash-collections-budget"
+status = "pending"
+
+[[family]]
+id = "cash-discount-receipt"
+status = "pending"
+
+[[family]]
+id = "cash-dividend-declaration"
+status = "pending"
+
+[[family]]
+id = "cash-flow-hedge-fair-value"
+status = "pending"
+
+[[family]]
+id = "cash-to-accrual-profit"
+status = "pending"
+
+[[family]]
+id = "change-control-deviation-count"
+status = "pending"
+
+[[family]]
+id = "charitable-noncash-deduction"
+status = "pending"
+
+[[family]]
+id = "classify-operating-expense"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:4585bc257fd9efb7352cbc8a6907e6c28deeec814b5464ff00379e5383bf0f3c"
+
+[[family]]
+id = "closing-drawing-account"
+status = "pending"
+
+[[family]]
+id = "closing-entries-income-summary"
+status = "pending"
+
+[[family]]
+id = "compliance-violations-count"
+status = "pending"
+
+[[family]]
+id = "consignment-sale-recognition"
+status = "pending"
+
+[[family]]
+id = "consolidation-intercompany-elimination"
+status = "pending"
+
+[[family]]
+id = "constructive-ownership-percent"
+status = "pending"
+
+[[family]]
+id = "contract-acquisition-cost"
+status = "pending"
+
+[[family]]
+id = "contract-modification-revenue"
+status = "pending"
+
+[[family]]
+id = "control-deviation-rate"
+status = "pending"
+
+[[family]]
+id = "corporate-distribution-dividend"
+status = "pending"
+
+[[family]]
+id = "corporate-formation-gain"
+status = "pending"
+
+[[family]]
+id = "correct-misclassification"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:776d11f0d12ce184e49c88f54a7cbc9ca8d8c165f7a2a4239405123eed1c43cb"
+
+[[family]]
+id = "cost-of-goods-manufactured"
+status = "pending"
+
+[[family]]
+id = "credit-card-sale-fee"
+status = "pending"
+
+[[family]]
+id = "cumulative-preferred-dividend"
+status = "pending"
+
+[[family]]
+id = "current-income-tax-expense"
+status = "pending"
+
+[[family]]
+id = "current-portion-reclass"
+status = "pending"
+
+[[family]]
+id = "current-ratio"
+status = "pending"
+
+[[family]]
+id = "cvp-target-profit-units"
+status = "pending"
+
+[[family]]
+id = "debt-covenant-ratio"
+status = "pending"
+
+[[family]]
+id = "debt-modification-percent-change"
+status = "pending"
+
+[[family]]
+id = "debt-security-credit-loss"
+status = "pending"
+
+[[family]]
+id = "deferred-tax-asset-warranty"
+status = "pending"
+
+[[family]]
+id = "depreciation-recapture-ordinary"
+status = "pending"
+
+[[family]]
+id = "development-cost-capitalization"
+status = "pending"
+
+[[family]]
+id = "diluted-eps"
+status = "pending"
+
+[[family]]
+id = "direct-materials-used"
+status = "pending"
+
+[[family]]
+id = "disallowed-loss-amount"
+status = "pending"
+
+[[family]]
+id = "disposal-of-subsidiary-gain"
+status = "pending"
+
+[[family]]
+id = "duplicate-payments-total"
+status = "pending"
+
+[[family]]
+id = "employer-payroll-taxes"
+status = "pending"
+
+[[family]]
+id = "ending-retained-earnings"
+status = "pending"
+
+[[family]]
+id = "equity-issue-above-par"
+status = "pending"
+
+[[family]]
+id = "equity-method-carrying-amount"
+status = "pending"
+
+[[family]]
+id = "estimated-tax-installment"
+status = "pending"
+
+[[family]]
+id = "exit-obligation-january-amount"
+status = "pending"
+
+[[family]]
+id = "expected-profit-choice"
+status = "pending"
+
+[[family]]
+id = "factoring-secured-borrowing"
+status = "pending"
+
+[[family]]
+id = "fixed-overhead-volume-variance"
+status = "pending"
+
+[[family]]
+id = "flexible-budget-total-cost"
+status = "pending"
+
+[[family]]
+id = "free-cash-flow"
+status = "pending"
+
+[[family]]
+id = "fsa-tax-saving"
+status = "pending"
+
+[[family]]
+id = "fvoci-fair-value-adjustment"
+status = "pending"
+
+[[family]]
+id = "fx-payable-remeasurement"
+status = "pending"
+
+[[family]]
+id = "fx-translation-adjustment"
+status = "pending"
+
+[[family]]
+id = "gift-card-breakage-revenue"
+status = "pending"
+
+[[family]]
+id = "goodwill-impairment"
+status = "pending"
+
+[[family]]
+id = "government-grant-release"
+status = "pending"
+
+[[family]]
+id = "governmental-encumbrance-entry"
+status = "pending"
+
+[[family]]
+id = "govt-capitalized-costs-total"
+status = "pending"
+
+[[family]]
+id = "govt-conversion-net-position"
+status = "pending"
+
+[[family]]
+id = "govt-expenditures-december"
+status = "pending"
+
+[[family]]
+id = "govt-long-term-debt-total"
+status = "pending"
+
+[[family]]
+id = "govt-net-investment-capital"
+status = "pending"
+
+[[family]]
+id = "gross-profit-from-trial-balance"
+status = "pending"
+
+[[family]]
+id = "held-for-sale-measurement"
+status = "pending"
+
+[[family]]
+id = "high-low-variable-cost"
+status = "pending"
+
+[[family]]
+id = "htm-premium-amortization"
+status = "pending"
+
+[[family]]
+id = "ifrs-capitalize-borrowing-costs"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:7b91888b4da0d000869fea91a17ca410f939a20e913609692e961e36e952a510"
+
+[[family]]
+id = "incident-response-deviation-count"
+status = "pending"
+
+[[family]]
+id = "income-shifting-pv-saving"
+status = "pending"
+
+[[family]]
+id = "individual-gross-income-total"
+status = "pending"
+
+[[family]]
+id = "individual-tax-with-niit"
+status = "pending"
+
+[[family]]
+id = "installment-sale-gain-year"
+status = "pending"
+
+[[family]]
+id = "interim-income-tax-expense"
+status = "pending"
+
+[[family]]
+id = "internal-use-software-costs"
+status = "pending"
+
+[[family]]
+id = "inventory-cost-inclusions"
+status = "pending"
+
+[[family]]
+id = "inventory-costing-nrv"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:50e9654ba75366bd866f4a246b488063ac483b98125d56fcc5f55797ddd6d1fa"
+
+[[family]]
+id = "inventory-count-adjusted-balance"
+status = "pending"
+
+[[family]]
+id = "inventory-days-on-hand"
+status = "pending"
+
+[[family]]
+id = "inventory-error-correction"
+status = "pending"
+
+[[family]]
+id = "inventory-error-income-effect"
+status = "pending"
+
+[[family]]
+id = "inventory-lcm-value"
+status = "pending"
+
+[[family]]
+id = "inventory-method-profit-difference"
+status = "pending"
+
+[[family]]
+id = "inventory-shrinkage-adjustment"
+status = "pending"
+
+[[family]]
+id = "investment-property-fair-value"
+status = "pending"
+
+[[family]]
+id = "irr-from-annuity-factor"
+status = "pending"
+
+[[family]]
+id = "job-overhead-applied"
+status = "pending"
+
+[[family]]
+id = "known-misstatement-from-sample"
+status = "pending"
+
+[[family]]
+id = "labor-efficiency-variance"
+status = "pending"
+
+[[family]]
+id = "lease-component-allocation"
+status = "pending"
+
+[[family]]
+id = "lease-initial-recognition"
+status = "pending"
+
+[[family]]
+id = "lease-liability-present-value"
+status = "pending"
+
+[[family]]
+id = "ledger-account-balance-carried-down"
+status = "pending"
+
+[[family]]
+id = "lessor-sales-type-lease"
+status = "pending"
+
+[[family]]
+id = "lifo-ending-inventory"
+status = "pending"
+
+[[family]]
+id = "likekind-exchange-gain"
+status = "pending"
+
+[[family]]
+id = "liquidation-shareholder-gain"
+status = "pending"
+
+[[family]]
+id = "loan-effective-interest"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:926c8773f09a5f98762a24f19c555801d1a1ddc5fe3775688fd162475164e165"
+
+[[family]]
+id = "long-lived-asset-impairment"
+status = "pending"
+
+[[family]]
+id = "loss-contingency-accrual"
+status = "pending"
+
+[[family]]
+id = "make-or-buy-advantage"
+status = "pending"
+
+[[family]]
+id = "materials-price-variance"
+status = "pending"
+
+[[family]]
+id = "materials-quantity-variance"
+status = "pending"
+
+[[family]]
+id = "mc-capitalization-treatment"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:ea777e465549137a55adf8e13f75e0253edab762fd870c667fdbd34756db02c8"
+
+[[family]]
+id = "mc-normal-balances"
+status = "pending"
+
+[[family]]
+id = "mc-reportable-segments"
+status = "pending"
+
+[[family]]
+id = "mc-temporary-accounts"
+status = "pending"
+
+[[family]]
+id = "mgmt-break-even-units"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:1e0311694179ccc9f5b504610e268ca35a47431f92ffbaaee835b8f82f445e4f"
+
+[[family]]
+id = "minimum-transfer-price"
+status = "pending"
+
+[[family]]
+id = "multiproduct-breakeven-units"
+status = "pending"
+
+[[family]]
+id = "narrative-multi-transactions"
+status = "pending"
+
+[[family]]
+id = "natural-resource-depletion"
+status = "pending"
+
+[[family]]
+id = "nfp-conditional-vs-unconditional"
+status = "pending"
+
+[[family]]
+id = "nfp-operating-cash-flow"
+status = "pending"
+
+[[family]]
+id = "nfp-program-expense-allocation"
+status = "pending"
+
+[[family]]
+id = "nfp-restricted-net-assets"
+status = "pending"
+
+[[family]]
+id = "nonexchange-revenue-recognized"
+status = "pending"
+
+[[family]]
+id = "note-dishonored"
+status = "pending"
+
+[[family]]
+id = "note-interest-accrual"
+status = "pending"
+
+[[family]]
+id = "notes-figures-difference"
+status = "pending"
+
+[[family]]
+id = "npv-project-evaluation"
+status = "pending"
+
+[[family]]
+id = "operating-cash-flow-indirect"
+status = "pending"
+
+[[family]]
+id = "overhead-variance-disposition"
+status = "pending"
+
+[[family]]
+id = "owner-ordinary-from-k1"
+status = "pending"
+
+[[family]]
+id = "partnership-admission-bonus"
+status = "pending"
+
+[[family]]
+id = "partnership-contribution-gain"
+status = "pending"
+
+[[family]]
+id = "partnership-distribution-gain"
+status = "pending"
+
+[[family]]
+id = "partnership-formation-capital"
+status = "pending"
+
+[[family]]
+id = "partnership-income-allocation"
+status = "pending"
+
+[[family]]
+id = "partnership-liquidation-distribution"
+status = "pending"
+
+[[family]]
+id = "partnership-outside-basis"
+status = "pending"
+
+[[family]]
+id = "partnership-retirement-settlement"
+status = "pending"
+
+[[family]]
+id = "passthrough-loss-limitation"
+status = "pending"
+
+[[family]]
+id = "passthrough-ordinary-income"
+status = "pending"
+
+[[family]]
+id = "patent-amortization"
+status = "pending"
+
+[[family]]
+id = "payables-control-balance"
+status = "pending"
+
+[[family]]
+id = "payables-statement-recon"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:e37f9d43e1b4b82ec6fa144af1113142f6f062802c7f036bade5d2dd8d3359fe"
+
+[[family]]
+id = "payback-period-years"
+status = "pending"
+
+[[family]]
+id = "payroll-withholdings"
+status = "pending"
+
+[[family]]
+id = "pension-expense-and-contribution"
+status = "pending"
+
+[[family]]
+id = "percent-of-sales-afn"
+status = "pending"
+
+[[family]]
+id = "performance-materiality"
+status = "pending"
+
+[[family]]
+id = "periodic-purchase-with-freight"
+status = "pending"
+
+[[family]]
+id = "perpetual-sale-with-cost"
+status = "pending"
+
+[[family]]
+id = "petty-cash-replenishment"
+status = "pending"
+
+[[family]]
+id = "post-closing-debit-total"
+status = "pending"
+
+[[family]]
+id = "ppe-additions-inferred"
+status = "pending"
+
+[[family]]
+id = "ppe-disposal"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:40335696e4c3e599b5f3a1f86b7d2db5fc41d508cea472b4900d7abdde791098"
+
+[[family]]
+id = "predetermined-overhead-applied"
+status = "pending"
+
+[[family]]
+id = "prepaid-insurance-adjustment"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:d7c415a3c37cc35c2988a46a6c628711fe196c5561ee94e7bd241da232caf77e"
+
+[[family]]
+id = "present-value-lump-sum"
+status = "pending"
+
+[[family]]
+id = "process-costing-equivalent-units"
+status = "pending"
+
+[[family]]
+id = "production-budget-units"
+status = "pending"
+
+[[family]]
+id = "profit-from-capital-movements"
+status = "pending"
+
+[[family]]
+id = "provision-rollforward-topup"
+status = "pending"
+
+[[family]]
+id = "purchase-return-perpetual"
+status = "pending"
+
+[[family]]
+id = "qbi-deduction-amount"
+status = "pending"
+
+[[family]]
+id = "receivable-allowance-trueup"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:6d408cb7869e3d72d350be25632f260ed5e1d1eaadec5ffd88580dcf4da718f9"
+
+[[family]]
+id = "receivables-control-balance"
+status = "pending"
+
+[[family]]
+id = "receivables-payables-contra"
+status = "pending"
+
+[[family]]
+id = "related-party-resale-gain"
+status = "pending"
+
+[[family]]
+id = "residual-income"
+status = "pending"
+
+[[family]]
+id = "restructuring-provision-amount"
+status = "pending"
+
+[[family]]
+id = "revenue-bundle-allocation"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:352485d54ed5e5947e4609ccc583bd6d753f629568c4d415c418310d22e14f18"
+
+[[family]]
+id = "s-corporation-aaa-ending"
+status = "pending"
+
+[[family]]
+id = "sale-and-leaseback-entry"
+status = "pending"
+
+[[family]]
+id = "sales-from-markup-reconstruction"
+status = "pending"
+
+[[family]]
+id = "sales-mix-variance"
+status = "pending"
+
+[[family]]
+id = "sales-return-restock"
+status = "pending"
+
+[[family]]
+id = "sales-tax-collection"
+status = "pending"
+
+[[family]]
+id = "sample-misstatement-projection"
+status = "pending"
+
+[[family]]
+id = "sc-audit-opinion-type"
+status = "pending"
+
+[[family]]
+id = "sc-audit-procedure-selection"
+status = "pending"
+
+[[family]]
+id = "sc-backup-recovery-selection"
+status = "pending"
+
+[[family]]
+id = "sc-business-vs-asset-acquisition"
+status = "pending"
+
+[[family]]
+id = "sc-capital-gain-classification"
+status = "pending"
+
+[[family]]
+id = "sc-cash-flow-classification"
+status = "pending"
+
+[[family]]
+id = "sc-component-unit-presentation"
+status = "pending"
+
+[[family]]
+id = "sc-confirmation-response-classification"
+status = "pending"
+
+[[family]]
+id = "sc-control-assessment"
+status = "pending"
+
+[[family]]
+id = "sc-control-deficiency-severity"
+status = "pending"
+
+[[family]]
+id = "sc-control-design-gap"
+status = "pending"
+
+[[family]]
+id = "sc-database-integrity-gap"
+status = "pending"
+
+[[family]]
+id = "sc-debt-equity-classification"
+status = "pending"
+
+[[family]]
+id = "sc-derecognition-assessment"
+status = "pending"
+
+[[family]]
+id = "sc-engagement-acceptance"
+status = "pending"
+
+[[family]]
+id = "sc-ethics-threat-classification"
+status = "pending"
+
+[[family]]
+id = "sc-evidence-reliability-choice"
+status = "pending"
+
+[[family]]
+id = "sc-fair-value-hierarchy"
+status = "pending"
+
+[[family]]
+id = "sc-filing-status"
+status = "pending"
+
+[[family]]
+id = "sc-fraud-triangle-classification"
+status = "pending"
+
+[[family]]
+id = "sc-fund-balance-classification"
+status = "pending"
+
+[[family]]
+id = "sc-governmental-fund-assignment"
+status = "pending"
+
+[[family]]
+id = "sc-income-sourcing"
+status = "pending"
+
+[[family]]
+id = "sc-independence-prohibited-service"
+status = "pending"
+
+[[family]]
+id = "sc-interfund-activity-type"
+status = "pending"
+
+[[family]]
+id = "sc-investment-classification"
+status = "pending"
+
+[[family]]
+id = "sc-job-vs-process-costing"
+status = "pending"
+
+[[family]]
+id = "sc-measurement-basis"
+status = "pending"
+
+[[family]]
+id = "sc-offsetting-assessment"
+status = "pending"
+
+[[family]]
+id = "sc-option-value-sensitivity"
+status = "pending"
+
+[[family]]
+id = "sc-professional-conduct"
+status = "pending"
+
+[[family]]
+id = "sc-related-party-identification"
+status = "pending"
+
+[[family]]
+id = "sc-s-corp-eligibility"
+status = "pending"
+
+[[family]]
+id = "sc-service-organization-reliance"
+status = "pending"
+
+[[family]]
+id = "sc-soc-opinion-modification"
+status = "pending"
+
+[[family]]
+id = "sc-special-journal-routing"
+status = "pending"
+
+[[family]]
+id = "sc-subsequent-event-classification"
+status = "pending"
+
+[[family]]
+id = "sc-suspense-account-cause"
+status = "pending"
+
+[[family]]
+id = "sc-system-description-gap"
+status = "pending"
+
+[[family]]
+id = "sc-tax-authority-disclosure"
+status = "pending"
+
+[[family]]
+id = "sc-tax-practice-ethics"
+status = "pending"
+
+[[family]]
+id = "sc-transaction-statement-impact"
+status = "pending"
+
+[[family]]
+id = "schedule-recalculation-difference"
+status = "pending"
+
+[[family]]
+id = "section1231-capital-amount"
+status = "pending"
+
+[[family]]
+id = "section704c-contributor-gain"
+status = "pending"
+
+[[family]]
+id = "securities-revaluation-misstatement"
+status = "pending"
+
+[[family]]
+id = "segment-margin"
+status = "pending"
+
+[[family]]
+id = "separate-statements-investment"
+status = "pending"
+
+[[family]]
+id = "share-based-compensation-monthly"
+status = "pending"
+
+[[family]]
+id = "short-term-note-payment"
+status = "pending"
+
+[[family]]
+id = "single-audit-type-a-count"
+status = "pending"
+
+[[family]]
+id = "small-stock-dividend"
+status = "pending"
+
+[[family]]
+id = "sql-join-excluded-count"
+status = "pending"
+
+[[family]]
+id = "standard-cost-per-unit"
+status = "pending"
+
+[[family]]
+id = "state-apportionment-income"
+status = "pending"
+
+[[family]]
+id = "step-acquisition-remeasurement-gain"
+status = "pending"
+
+[[family]]
+id = "straight-line-depreciation"
+status = "pending"
+
+[[family]]
+id = "substantive-analytic-difference"
+status = "pending"
+
+[[family]]
+id = "supplies-adjustment"
+status = "pending"
+
+[[family]]
+id = "suspense-clearance"
+status = "reviewed"
+reviewer = "Tian Pan (maintainer)"
+date = "2026-10-25"
+fingerprint = "sha256:61adeccbf7a1aff2f17a01c27da62d62bc6e28ef8bbf00862ce01213d8d3798a"
+
+[[family]]
+id = "tax-basis-net-income"
+status = "pending"
+
+[[family]]
+id = "tax-cost-recovery-deduction"
+status = "pending"
+
+[[family]]
+id = "tax-equivalent-yield"
+status = "pending"
+
+[[family]]
+id = "tax-penalty-combined"
+status = "pending"
+
+[[family]]
+id = "tax-return-crossfoot-difference"
+status = "pending"
+
+[[family]]
+id = "taxable-gifts-total"
+status = "pending"
+
+[[family]]
+id = "three-way-match-exceptions"
+status = "pending"
+
+[[family]]
+id = "total-current-liabilities"
+status = "pending"
+
+[[family]]
+id = "trading-securities-fair-value"
+status = "pending"
+
+[[family]]
+id = "treasury-stock-reissuance"
+status = "pending"
+
+[[family]]
+id = "treasury-stock-repurchase"
+status = "pending"
+
+[[family]]
+id = "trial-balance-debit-total"
+status = "pending"
+
+[[family]]
+id = "trust-accounting-income"
+status = "pending"
+
+[[family]]
+id = "trust-dni-computation"
+status = "pending"
+
+[[family]]
+id = "uncorrected-misstatement-total"
+status = "pending"
+
+[[family]]
+id = "unearned-revenue-release"
+status = "pending"
+
+[[family]]
+id = "units-of-production-depreciation"
+status = "pending"
+
+[[family]]
+id = "varying-interest-allocation"
+status = "pending"
+
+[[family]]
+id = "warranty-provision-and-claims"
+status = "pending"
+
+[[family]]
+id = "weighted-average-cost-of-capital"
+status = "pending"
+
+[[family]]
+id = "weighted-average-ending-inventory"
+status = "pending"
+
+[[family]]
+id = "written-off-receivable-recovery"
+status = "pending"
