@@ -366,3 +366,28 @@ def test_over_action_diagnostic_only_on_no_action_tasks():
     assert over.to_reward_json()["over_action"] == 1.0
     adjustments = _adjusting_instance(8)
     assert "over_action" not in _grade(adjustments).to_reward_json()
+
+
+def test_is_no_action_accepts_both_encodings_of_zero():
+    from oab.verify import is_no_action
+
+    assert is_no_action({"expected_new_transactions": 0})
+    assert is_no_action({"expected_new_transactions": [0, 0]})
+    assert not is_no_action({"expected_new_transactions": [0, 1]})
+    assert not is_no_action({"expected_new_transactions": [1, 40]})
+    assert not is_no_action({})
+
+
+def test_validate_relaxes_only_no_action_controls(tmp_path: Path):
+    """An adjustment task whose solution equals its initial ledger, or whose
+    deltas are empty, is still rejected; only a declared no-action passes."""
+    instance = _adjusting_instance(8)
+    task_dir = write_task(instance, tmp_path, track="dynamic")
+    (task_dir / "solution" / "ledger.beancount").write_text(instance.initial_ledger)
+    expected_path = task_dir / "tests" / "expected.json"
+    expected = json.loads(expected_path.read_text())
+    expected["expected_deltas"] = {}
+    expected_path.write_text(json.dumps(expected))
+    failures = "\n".join(validate_tasks(tmp_path))
+    assert "workflow expected_deltas must be non-empty" in failures
+    assert "solution ledger must differ from initial" in failures
