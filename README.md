@@ -122,7 +122,7 @@ harbor run -p tasks/classify-operating-expense -a oracle
 # Evaluate an agent on the Stable track (3 attempts per task), then aggregate
 export ANTHROPIC_API_KEY=...
 harbor run -p tasks -a "<agent>" -m "anthropic/<model>" -k 3 -o jobs --job-name eval-1
-uv run oab report --job jobs/eval-1   # writes runs.jsonl + leaderboard.md
+uv run oab report --job jobs/eval-1   # runs.jsonl + leaderboard.md, incl. pass@3 / pass^3
 ```
 
 Generate fresh Dynamic-track instances and grade locally without Harbor:

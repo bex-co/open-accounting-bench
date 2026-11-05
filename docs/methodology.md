@@ -100,7 +100,7 @@ penalized choice scoring, an LLM judge for entries and open text, and
 stratified reporting with cost and confidence analysis. OAB replicates
 that measurement structure — five-axis taxonomy (category, framework,
 level, format, skill), multi-attempt aggregation (`oab report`, majority
-vote for choice formats), interpretation bands, cost and confidence
+vote for choice formats, plus pass@k and pass^k reliability), interpretation bands, cost and confidence
 reporting — with four deliberate deviations:
 
 1. **Generated instances, not curated exam items**: seed-parameterized
