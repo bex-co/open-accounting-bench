@@ -548,6 +548,24 @@ crosswalk mappings.
   `reclassify-current-portion` remain disclosed but are no longer
   graded as dispositions (those issues are graded on ledger state) —
   decide whether the policy should drop them.
+- 2026-11-07 — deeper evidence and volume in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.15.0–0.16.0).
+  Five decisive facts moved to secondary raw sources (carrier ship date
+  in the shipping log, FOB terms in the supplier's shipping advice,
+  utility service dates in service reports, the bankruptcy in a customer
+  notice, the February settlement in customer receipts); the policy now
+  defines the evidence cutoff as documents dated through 2026-02-15; each
+  seed adds ~40 plausible documents that need no January entry. Confirm:
+  (1) each moved fact is still findable and decisive, and the 2026-02-15
+  cutoff is a sensible close-evidence window; (2) none of the
+  distractors — vendor statements, unreceived February purchase orders,
+  paystubs, minutes, prior-period memos and bank reconciliations, lease
+  and loan extracts, copies of earlier delivery notes, remittances, and
+  supplier bills — could reasonably be read as requiring a January
+  entry; (3) the traps (no reversal without the carrier date, no
+  goods-in-transit without the FOB terms, no accrual without the service
+  date, ordinary rate for the bankrupt customer, a rate on the settled
+  row, accruing an unreceived PO) are plausible mistakes.
 
 
 ## Reviewed
