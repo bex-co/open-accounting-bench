@@ -1,6 +1,6 @@
 # w2 · m8 — "Insufficient evidence" determinations
 
-**Worker:** worker2 **Goal:** Some issues lack decisive evidence by construction; the correct answer is to flag them and post nothing. **Status:** todo (t001–t007 done)
+**Worker:** worker2 **Goal:** Some issues lack decisive evidence by construction; the correct answer is to flag them and post nothing. **Status:** done
 
 ## Tasks (in order)
 
@@ -13,7 +13,7 @@
 | t005 | Simplify — **DONE** | 15m | t004 |
 | t006 | Test coverage — **DONE** | 20m | t004 |
 | t007 | Accounting review — **DONE** | 15m | t006 |
-| t008 | Closeout | 10m | t007 |
+| t008 | Closeout — **DONE** | 10m | t007 |
 
 ## Definition of done
 
