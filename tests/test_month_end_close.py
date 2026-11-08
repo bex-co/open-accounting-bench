@@ -603,3 +603,43 @@ def test_decisive_facts_live_only_in_secondary_sources():
             report = _grade(instance, ledger=ledger)
             assert report.reward == 0, seed
             assert report.layers["structural_validity"].passed, seed
+
+
+def test_close_volume_and_distractors_are_consistent():
+    from oab.workflow_families import MAX_CLOSE_APP_BYTES, MAX_CLOSE_APP_FILES
+
+    for seed in range(40):
+        files = _instance(seed).app_files
+        assert 65 <= len(files) <= MAX_CLOSE_APP_FILES, (seed, len(files))
+        assert sum(len(text.encode()) for text in files.values()) <= MAX_CLOSE_APP_BYTES, seed
+    instance = _adjusting_instance(8)
+    files = instance.app_files
+    payables = list(csv.DictReader(io.StringIO(files["subledgers/accounts_payable.csv"])))
+    for path, text in files.items():
+        if not path.startswith("documents/vendor_statements/"):
+            continue
+        rows = list(csv.DictReader(io.StringIO(text)))
+        statement = {
+            row["bill_id"]: row["open_amount"] for row in rows if row["bill_id"] != "balance"
+        }
+        # A vendor statement agrees with the payables subledger: no entry.
+        for bill_id, amount in statement.items():
+            book = next(r for r in payables if r["record_id"] == bill_id)
+            assert Decimal(amount) == -Decimal(book["amount"]), (path, bill_id)
+
+
+def test_accruing_an_unreceived_purchase_order_fails():
+    instance = _adjusting_instance(8)
+    po = next(
+        t for p, t in instance.app_files.items() if p.startswith("documents/purchase_orders/")
+    )
+    quantity, unit_cost = re.search(r"\| (\d+) \| ([\d.]+) \|", po).groups()
+    amount = Decimal(quantity) * Decimal(unit_cost)
+    accrual = (
+        '2026-01-31 * "Supplier" "Accrue open purchase order"\n'
+        f"  Assets:Inventory  {amount:.2f} USD\n"
+        f"  Liabilities:AccountsPayable  {-amount:.2f} USD\n"
+    )
+    report = _grade(instance, ledger=instance.solution_ledger + "\n" + accrual)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed

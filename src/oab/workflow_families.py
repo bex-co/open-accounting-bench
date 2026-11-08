@@ -11,6 +11,8 @@ verifier contract end to end.
 
 from __future__ import annotations
 
+import csv
+import io
 import json
 import random
 from datetime import date
@@ -765,6 +767,113 @@ def _close_loss_rate(days_past_due: int, bankrupt: bool = False) -> Decimal:
     return Decimal("0.05") if days_past_due <= 30 else Decimal("0.20")
 
 
+# Close-task app files may exceed the evidence-pack file budget: the pack
+# stays within MAX_EVIDENCE_FILES, and the close adds its register,
+# schedules, and plausible-but-irrelevant documents on top.
+MAX_CLOSE_APP_FILES = 80
+MAX_CLOSE_APP_BYTES = 400_000
+
+
+def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_principal_open, rate):
+    """Plausible documents that need no January entry.
+
+    Each is consistent with the books (statements that agree with the
+    subledgers, paystubs that agree with the register, contracts that agree
+    with the schedules) or is clearly outside the close (February purchase
+    orders not yet received, prior-period memos). An entry based on any of
+    them changes an account the expectations do not move.
+    """
+    rng = random.Random(seed ^ 0xD157)
+    current = pack.periods[-1]
+    files: dict[str, str] = {}
+    open_ap = [r for r in pack.subledgers["accounts_payable"] if r.status != "closed" and r.amount]
+    for supplier in pack.master.suppliers:
+        rows = [["bill_id", "due_date", "open_amount"]]
+        rows += [[r.id, r.due_date, money(-r.amount)] for r in open_ap if r.party_id == supplier.id]
+        rows.append(
+            [
+                "balance",
+                "",
+                money(sum((-r.amount for r in open_ap if r.party_id == supplier.id), ZERO)),
+            ]
+        )
+        files[f"documents/vendor_statements/{supplier.id}.csv"] = _csv(rows)
+    for number in range(1, 7):
+        supplier = rng.choice(pack.master.suppliers)
+        item = rng.choice(pack.master.items)
+        quantity = rng.randrange(5, 40)
+        delivery = f"2026-02-{rng.randrange(9, 27):02d}"
+        files[f"documents/purchase_orders/PO-2026-{number:03d}.md"] = (
+            f"# Purchase order PO-2026-{number:03d}\n\n"
+            f"Supplier: {supplier.name} ({supplier.id})\n"
+            f"Issued: {current.label}-{rng.randrange(5, 28):02d}\n"
+            f"Requested delivery: {delivery}\n\n"
+            f"| Item | Quantity | Unit cost |\n|---|---:|---:|\n"
+            f"| {item.name} ({item.id}) | {quantity} | {money(item.unit_cost)} |\n\n"
+            "Status: open; nothing received or invoiced.\n"
+        )
+    register = list(csv.DictReader(io.StringIO(pack.files["documents/payroll_register.csv"])))
+    employees = {e.name: e for e in pack.master.employees}
+    for row in register:
+        if row["period"] != current.label or row["description"] not in employees:
+            continue
+        employee = employees[row["description"]]
+        files[f"documents/paystubs/{current.label}/{employee.id}.md"] = (
+            f"# Paystub {current.label}: {employee.name}\n\n"
+            f"Pay date: {row['date']}\n"
+            f"Regular salary: {row['line_amount']}\n"
+            "Paid in this cycle: regular salary only.\n"
+        )
+    files[f"documents/board_minutes_{current.label}.md"] = (
+        f"# Board minutes, {current.label}\n\n"
+        "- Approved the 2026 operating budget.\n"
+        "- Noted the office lease renewal (see contracts/lease_agreement.md).\n"
+        "- No other resolutions.\n"
+    )
+    for period in pack.periods[:-1]:
+        bank = pack.trial_balances[period.label].get(BANK, ZERO)
+        files[f"documents/memos/close-{period.label}.md"] = (
+            f"# Close memo {period.label}\n\n"
+            f"The {period.label} close was completed and approved; accruals,\n"
+            "depreciation, and reconciliations for that period are in the ledger.\n"
+        )
+        files[f"documents/bank_reconciliations/{period.label}.md"] = (
+            f"# Bank reconciliation {period.end}\n\n"
+            f"Balance per bank: {money(bank)}\n"
+            f"Balance per books: {money(bank)}\n"
+            "Reconciling items: none.\n"
+        )
+    # Copies of documents the books already reflect: one delivery note per
+    # earlier shipment and one remittance advice per earlier receipt.
+    for path, folder, title in (
+        ("documents/shipping_log.csv", "delivery_notes", "Delivery note"),
+        ("documents/customer_receipts.csv", "remittance_advices", "Remittance advice"),
+        ("documents/supplier_documents.csv", "supplier_bill_copies", "Supplier bill"),
+    ):
+        for row in csv.DictReader(io.StringIO(pack.files[path])):
+            if row["period"] == current.label and folder == "remittance_advices":
+                continue
+            files[f"documents/{folder}/{row['document_id']}.md"] = (
+                f"# {title} {row['document_id']}\n\n"
+                f"Date: {row['date']}\nParty: {row['party_id']}\n"
+                f"Details: {row['description']}, quantity {row['quantity']}, "
+                f"amount {row['document_total']}\nReference: {row['source_refs']}\n"
+            )
+    files["documents/contracts/lease_agreement.md"] = (
+        "# Office lease (extract)\n\n"
+        f"Term: 6 months from {lease_start}.\n"
+        f"Rent: {money(lease_total)} payable in advance for the term "
+        f"({money(lease_total / 6)} per month).\n"
+    )
+    files["documents/contracts/loan_agreement.md"] = (
+        "# Term loan agreement (extract)\n\n"
+        f"Principal outstanding at {pack.periods[-2].end}: {money(note_principal_open)}\n"
+        f"Interest: {money(rate * 100)}% per year, accrued monthly.\n"
+        "Principal repayments follow the lender's schedule.\n"
+    )
+    return files
+
+
 def month_end_close_workflow(seed: int) -> TaskInstance:
     """Professional month-end close over a three-period synthetic company."""
 
@@ -1418,6 +1527,16 @@ Documents that need no entry sit in the same files as those that do.
     }
     for path, rows in secondary.items():
         app_files[path] = pack.files[path] + _csv(rows)
+    app_files.update(
+        _close_distractors(
+            pack,
+            seed,
+            lease_total=prepaid_total,
+            lease_start=f"{current.label}-16",
+            note_principal_open=opening_note_principal,
+            rate=annual_rate,
+        )
+    )
     app_files.update(
         {
             "ledger.beancount": initial_ledger,
