@@ -679,12 +679,15 @@ CLOSE_POLICY = """# Month-end close policy
   evidenced in the close documents, even if it is below USD 100. The
   USD 100 recording threshold applies only to unlisted differences;
   amounts below USD 25 are clearly trivial.
-- Evidence precedence: signed carrier/shipping logs prevail over sales
-  orders for shipment; signed physical counts prevail over unsigned
-  count copies; current policy and revised statements prevail over
-  stale or superseded copies; itemized reconciliations prevail over
-  unexplained statement totals. A duplicate document does not create a
-  second asset, liability, revenue, or expense.
+- Evidence precedence: a third-party document (lender, bank, carrier)
+  prevails over a client-prepared copy of the same information; between
+  documents from the same source, the later-dated one prevails; signed
+  carrier/shipping logs prevail over sales orders for shipment; signed
+  physical counts prevail over unsigned count copies; itemized
+  reconciliations prevail over unexplained statement totals. A
+  superseded schedule is dispositioned `use-revised-schedule`. A
+  duplicate document does not create a second asset, liability,
+  revenue, or expense.
 - Workflow evidence is keyed by source document: create one
   `/app/workflow.json` evidence entry for every distinct `document_id`
   in the `documents/close_*.csv` source files. The starter evidence
@@ -1166,9 +1169,10 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "item_id",
             "item",
             "book_quantity",
-            "signed_count_quantity",
+            "count_quantity",
             "unit_cost",
             "nrv_per_unit",
+            "signed_by",
             "document_id",
         ]
     ]
@@ -1186,6 +1190,21 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             count_quantity, item_nrv = record.quantity or Decimal("0"), secondary_nrv
         else:
             count_quantity, item_nrv = record.quantity or Decimal("0"), item.unit_cost
+        if record.id == inventory_record.id:
+            # An unsigned count copy that a careless close would rely on:
+            # it shows no shortage. The signed count below prevails.
+            inventory_rows.append(
+                [
+                    item.id,
+                    item.name,
+                    money(book_quantity),
+                    money(counted_units + shortage_units),
+                    money(item.unit_cost),
+                    money(item_nrv),
+                    "",
+                    "doc-count-sheet",
+                ]
+            )
         inventory_rows.append(
             [
                 item.id,
@@ -1194,6 +1213,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 money(count_quantity),
                 money(item.unit_cost),
                 money(item_nrv),
+                "Warehouse manager",
                 "doc-count-sheet",
             ]
         )
@@ -1439,7 +1459,8 @@ Documents that need no entry sit in the same files as those that do.
                 [
                     [
                         "schedule_id",
-                        "status",
+                        "prepared_by",
+                        "prepared_on",
                         "opening_principal",
                         "principal_paid_jan_15",
                         "ending_principal",
@@ -1450,7 +1471,8 @@ Documents that need no entry sit in the same files as those that do.
                     ],
                     [
                         "close-loan-sch-01",
-                        "stale",
+                        "Client (draft)",
+                        "2025-12-20",
                         money(opening_note_principal),
                         "0.00",
                         money(opening_note_principal),
@@ -1461,7 +1483,8 @@ Documents that need no entry sit in the same files as those that do.
                     ],
                     [
                         "close-loan-sch-02",
-                        "revised",
+                        "Lender",
+                        current.end,
                         money(opening_note_principal),
                         money(principal_payment),
                         money(note_principal),

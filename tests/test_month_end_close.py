@@ -439,3 +439,66 @@ def test_close_sources_do_not_name_issues():
         )
         assert all(key in sources for key in workflow["evidence"]), seed
     assert leaked == []
+
+
+def _replace_block_amounts(ledger: str, narration: str, new_amount: Decimal) -> str:
+    """Rewrite a two-posting oracle block to a new (balanced) amount."""
+    blocks = ledger.split("\n\n")
+    for index, block in enumerate(blocks):
+        if narration in block:
+            lines = block.splitlines()
+            header, debit, credit = lines[0], lines[1], lines[2]
+            debit_account = debit.split()[0]
+            credit_account = credit.split()[0]
+            blocks[index] = (
+                f"{header}\n  {debit_account}  {new_amount:.2f} USD\n"
+                f"  {credit_account}  {-new_amount:.2f} USD"
+            )
+            return "\n\n".join(blocks)
+    raise AssertionError(narration)
+
+
+def test_precedence_traps_fail_without_source_labels():
+    """Relying on the client's superseded loan schedule, or on the unsigned
+    count copy, balances but fails non-structural layers."""
+    for seed in (3, 8, 11):
+        instance = _adjusting_instance(seed)
+        schedules = list(
+            csv.DictReader(io.StringIO(instance.app_files["documents/close_debt_schedules.csv"]))
+        )
+        draft = next(row for row in schedules if row["prepared_by"].startswith("Client"))
+        stale_interest = (
+            Decimal(draft["opening_principal"]) * Decimal(draft["annual_rate_percent"]) / 1200
+        ).quantize(Decimal("0.01"))
+        stale = _replace_block_amounts(
+            instance.solution_ledger, "Accrue January note interest", stale_interest
+        )
+        report = _grade(instance, ledger=stale)
+        assert report.reward == 0, seed
+        assert report.layers["structural_validity"].passed
+
+        counts = list(
+            csv.DictReader(io.StringIO(instance.app_files["documents/close_inventory_count.csv"]))
+        )
+        unsigned = next(row for row in counts if not row["signed_by"])
+        signed = next(
+            row for row in counts if row["item_id"] == unsigned["item_id"] and row["signed_by"]
+        )
+        shortage_cost = (
+            Decimal(unsigned["count_quantity"]) - Decimal(signed["count_quantity"])
+        ) * Decimal(signed["unit_cost"])
+        assert shortage_cost > 0
+        oracle_write_down = next(
+            Decimal(line.split()[1])
+            for block in instance.solution_ledger.split("\n\n")
+            if "Record inventory write-down" in block
+            for line in block.splitlines()[1:2]
+        )
+        unsigned_ledger = _replace_block_amounts(
+            instance.solution_ledger,
+            "Record inventory write-down",
+            oracle_write_down - shortage_cost,
+        )
+        report = _grade(instance, ledger=unsigned_ledger)
+        assert report.reward == 0, seed
+        assert report.layers["structural_validity"].passed
