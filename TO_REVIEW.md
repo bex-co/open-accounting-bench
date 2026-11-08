@@ -579,6 +579,17 @@ crosswalk mappings.
   second-hand evidence, post nothing, flag it — reads correctly; (3) the
   remaining evidence (receiving report dated February, an invoice dated
   February) is genuinely tempting, so estimating is a plausible mistake.
+- 2026-11-07 — graded dependency chains in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.18.0). Five
+  chains fail the dependent determination when only the first link is
+  applied; the new graded piece is that expensing the routine repair must
+  also reverse its January depreciation (a depreciation-expense check in
+  `fixed-asset-treatment`). Confirm the accounting of each chain: the
+  reversed premature receivable leaves the allowance base; the reinstated
+  returned check is reserved at 20% as over 30 days past due; interest on
+  the average of opening and ending principal after a mid-month payment;
+  and reversing the depreciation recorded on a repair that should not have
+  been capitalized.
 
 
 ## Reviewed
