@@ -527,6 +527,27 @@ crosswalk mappings.
   rule and code `already-recorded` read correctly; (3) the over-action
   trap — re-posting the recorded allowance or accruing the February
   utility invoice in January — is a plausible mistake that must fail.
+- 2026-11-07 — de-labelled evidence in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.12.0–0.14.0;
+  see docs/task-families.md). The close sources no longer name issues:
+  evidence is keyed by neutral document ids, the per-issue files are one
+  January document register, the aging schedule carries due dates and a
+  factual credit note instead of buckets and rates, and precedence
+  between the client's draft loan schedule and the lender's, and
+  between an unsigned count copy and the signed count, follows the
+  policy's stated rules. Confirm: (1) each of the 15 issues is still
+  decidable from the register, schedules, ledger, subledgers, and policy
+  alone (for example the premature sale from the signed carrier date,
+  the duplicate invoice by matching the original, the impairment by
+  comparing recoverable amount with carrying amount); (2) the new
+  policy wording — rates by days past due, bankruptcy from the credit
+  note, the general precedence rule, `no-adjustment` — is correct and
+  unambiguous; (3) the precedence traps (interest from the client
+  draft schedule, write-down from the unsigned copy) are plausible
+  mistakes; (4) `reverse-premature-cost` and
+  `reclassify-current-portion` remain disclosed but are no longer
+  graded as dispositions (those issues are graded on ledger state) —
+  decide whether the policy should drop them.
 
 
 ## Reviewed
