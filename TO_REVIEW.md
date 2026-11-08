@@ -603,6 +603,27 @@ crosswalk mappings.
   particular that a January utility service invoiced on 2026-02-03 is
   properly accounts payable rather than an accrued liability under this
   chart; (2) each near-miss posting is a plausible mistake.
+- 2026-11-07 — cross-period issues in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.21.0). Three
+  issues are rooted in earlier periods: an estimated December cleaning
+  accrual (Dr cleaning expense / Cr accrued liabilities) that January's
+  supplier invoice for the same December service duplicates, reversed in
+  January (Dr accrued liabilities / Cr cleaning expense); a 12-month
+  software subscription prepaid for 2025-10-01 to 2026-09-30, opened with
+  11 months unexpired and amortized for November and December, whose
+  January month is recorded (Dr subscriptions / Cr prepaid expenses); and
+  a December supplier credit note for overbilled office supplies, absent
+  from the books but on the supplier's statement, recorded in January
+  (Dr accounts payable / Cr office supplies) because closed periods are
+  not reopened. Confirm: (1) reversing the accrual, rather than the
+  invoice, is the expected treatment and the policy wording ("reversed in
+  the period the supplier's invoice for it is recorded") is clear; (2)
+  recording a prior-period credit in the current period, with no
+  restatement, is acceptable for an immaterial item under the stated
+  policy; (3) the subscription roll-forward (opening balance, monthly
+  amount, chart purpose of prepaid expenses) is right; (4) the
+  near-miss rent trap now uses prepaid insurance, since prepaid expenses
+  is a real destination.
 
 
 ## Reviewed
