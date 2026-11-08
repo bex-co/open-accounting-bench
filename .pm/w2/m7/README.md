@@ -1,12 +1,12 @@
 # w2 · m7 — Deeper evidence and realistic noise volume
 
-**Worker:** worker2 **Goal:** Decisive facts sit in secondary sources among many plausible but irrelevant files, at APEX/FinancialAuditBench-like volume. **Status:** todo
+**Worker:** worker2 **Goal:** Decisive facts sit in secondary sources among many plausible but irrelevant files, at APEX/FinancialAuditBench-like volume. **Status:** todo (t001 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Bury decisive facts in secondary sources | 60m | — |
+| t001 | Bury decisive facts in secondary sources — **DONE** | 60m | — |
 | t002 | Irrelevant-but-plausible files and volume | 60m | t001 |
 | t003 | Version bump and regeneration | 20m | t002 |
 | t004 | Adoption surface | 20m | t003 |

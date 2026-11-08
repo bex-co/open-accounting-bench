@@ -698,13 +698,15 @@ CLOSE_POLICY = """# Month-end close policy
   recognized when the stated milestone is complete.
 - Expected credit losses use the aging schedule, by each row's days
   past due at period-end: 1% if not yet due, 5% at 1–30 days past due,
-  20% over 30 days past due, and 100% only for a row whose
-  `credit_note` records a customer bankruptcy. Other rows for the same
-  customer use their own row rate. Include a returned-check row when it
-  is listed in the aging schedule, exclude any receivable that is
-  reversed because the related sale was not earned, and apply 0% to a
-  row paid in full by a receipt in `close_subsequent_receipts.csv` by
-  the February evidence cutoff.
+  20% over 30 days past due, and 100% only for a receivable whose
+  customer has filed for bankruptcy. Other rows for the same customer
+  use their own row rate. Include a returned-check row when it is
+  listed in the aging schedule, exclude any receivable that is reversed
+  because the related sale was not earned, and apply 0% to a row paid
+  in full by a customer receipt dated by the evidence cutoff.
+- Evidence cutoff: documents dated through 2026-02-15 are available
+  close evidence; source documents of every kind (shipping logs,
+  supplier documents, receipts, notices, service reports) count.
 - Inventory is carried at the lower of cost and net realizable value.
   A signed count shortage is written down in the close period. Goods
   shipped FOB shipping point on or before period-end are recorded in
@@ -924,7 +926,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 record.party_id,
                 money(record.amount),
                 record.due_date,
-                "customer filed for bankruptcy" if record.id == specific.id else "",
+                "",
                 "doc-ar-aging",
             ]
         )
@@ -1225,7 +1227,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         "2026-02-03",
         "Utility supplier",
         money(supplier_amount),
-        f"Utility service on {current.label}-29",
+        "Utility service",
     ]
 
     close_evidence = f"""# Current-period close evidence
@@ -1302,7 +1304,6 @@ Documents that need no entry sit in the same files as those that do.
         "close-equip-inv-02": "keep-capitalized",
         "close-loan-sch-01": "use-revised-schedule",
         "close-ms-01": "already-recognized",
-        "doc-feb-receipts": "no-adjustment",
     }
     solution_workflow = {
         "evidence": dict(evidence_for.values()) | integrity_dispositions,
@@ -1325,6 +1326,98 @@ Documents that need no entry sit in the same files as those that do.
     }
 
     app_files = dict(pack.files)
+
+    def raw_document(document_id, kind, day, party, description, quantity, unit, refs):
+        total = money(quantity * unit)
+        return [
+            document_id,
+            kind,
+            day,
+            day[:7],
+            party,
+            "current",
+            description,
+            money(quantity),
+            money(unit),
+            total,
+            total,
+            refs,
+        ]
+
+    # Decisive facts live in secondary sources, not in the close register:
+    # an agent that reads only the register misses them.
+    secondary = {
+        "documents/shipping_log.csv": [
+            raw_document(
+                "syn-shipment-close-001",
+                "shipping_log",
+                "2026-02-02",
+                revenue_customer.id,
+                f"{inventory_item.name}; signed by carrier",
+                order_quantity,
+                ZERO,
+                "close-order-001",
+            )
+        ],
+        "documents/supplier_documents.csv": [
+            raw_document(
+                "syn-shipadvice-close-001",
+                "supplier_shipping_advice",
+                f"{current.label}-30",
+                git_supplier.id,
+                "Shipped FOB shipping point",
+                git_quantity,
+                git_item.unit_cost,
+                "close-ship-001",
+            )
+        ],
+        "documents/other_documents.csv": [
+            raw_document(
+                "syn-service-close-001",
+                "service_report",
+                f"{current.label}-29",
+                "Utility supplier",
+                "Utility service performed",
+                Decimal(1),
+                supplier_amount,
+                "close-inv-1001",
+            ),
+            raw_document(
+                "syn-service-close-002",
+                "service_report",
+                "2026-02-10",
+                "Utility supplier",
+                "Utility service performed",
+                Decimal(1),
+                february_utility_amount,
+                "close-inv-1003",
+            ),
+            raw_document(
+                "syn-notice-close-001",
+                "customer_notice",
+                f"{current.label}-20",
+                specific.party_id,
+                f"Notice of bankruptcy filing; receivable {specific.id} is not expected to be paid",
+                Decimal(1),
+                specific.amount,
+                specific.id,
+            ),
+        ],
+        "documents/customer_receipts.csv": [
+            raw_document(
+                "syn-receipt-close-001",
+                "customer_receipt",
+                "2026-02-05",
+                settled_record.party_id,
+                "Customer payment",
+                Decimal(1),
+                settled_record.amount,
+                settled_record.id,
+            )
+        ],
+    }
+    for path, rows in secondary.items():
+        app_files[path] = pack.files[path] + _csv(rows)
     app_files.update(
         {
             "ledger.beancount": initial_ledger,
@@ -1344,7 +1437,7 @@ Documents that need no entry sit in the same files as those that do.
                         money(revenue_amount),
                         f"{money(order_quantity)} x {inventory_item.id} at "
                         f"{money(inventory_item.unit_price)} (unit cost "
-                        f"{money(inventory_item.unit_cost)}); signed carrier ship date 2026-02-02",
+                        f"{money(inventory_item.unit_cost)})",
                     ],
                     utility_invoice,
                     ["close-inv-1002", *utility_invoice[1:]],  # identical duplicate copy
@@ -1354,7 +1447,7 @@ Documents that need no entry sit in the same files as those that do.
                         "2026-02-11",
                         "Utility supplier",
                         money(february_utility_amount),
-                        "Utility service on 2026-02-10",
+                        "Utility service",
                     ],
                     [
                         "close-inv-1004",
@@ -1425,12 +1518,12 @@ Documents that need no entry sit in the same files as those that do.
                     ],
                     [
                         "close-ship-001",
-                        "shipment_notice",
-                        f"{current.label}-30",
+                        "receiving_report",
+                        "2026-02-02",
                         git_supplier.id,
                         money(git_amount),
                         f"{money(git_quantity)} x {git_item.id} at {money(git_item.unit_cost)}; "
-                        f"FOB shipping point; shipped {current.label}-30; received 2026-02-02",
+                        "received 2026-02-02",
                     ],
                 ]
             ),
@@ -1474,24 +1567,6 @@ Documents that need no entry sit in the same files as those that do.
                     ],
                 ]
             ),
-            "documents/close_subsequent_receipts.csv": _csv(
-                [
-                    [
-                        "record_id",
-                        "customer_id",
-                        "amount",
-                        "receipt_date",
-                        "document_id",
-                    ],
-                    [
-                        settled_record.id,
-                        settled_record.party_id,
-                        money(settled_record.amount),
-                        "2026-02-05",
-                        "doc-feb-receipts",
-                    ],
-                ]
-            ),
             "documents/close_timesheets.csv": _csv(payroll_rows),
             "documents/close_fixed_asset_review.csv": _csv(
                 [
@@ -1531,7 +1606,7 @@ Documents that need no entry sit in the same files as those that do.
             "revenue-cutoff",
             "revenue-cutoff",
             "Correct premature revenue cutoff",
-            ["documents/close_documents.csv"],
+            ["documents/close_documents.csv", "documents/shipping_log.csv"],
             PRODUCT_REVENUE,
             revenue_amount,
             AR,
@@ -1560,7 +1635,8 @@ Documents that need no entry sit in the same files as those that do.
             "Measure expected credit losses after subsequent receipts",
             [
                 "documents/close_ar_aging.csv",
-                "documents/close_subsequent_receipts.csv",
+                "documents/customer_receipts.csv",
+                "documents/other_documents.csv",
                 "subledgers/accounts_receivable.csv",
             ],
             CREDIT_LOSS_EXPENSE,
@@ -1580,7 +1656,11 @@ Documents that need no entry sit in the same files as those that do.
             "inventory-goods-in-transit",
             "inventory-valuation",
             "Record FOB shipping-point goods in transit",
-            ["documents/close_documents.csv", "subledgers/inventory.csv"],
+            [
+                "documents/close_documents.csv",
+                "documents/supplier_documents.csv",
+                "subledgers/inventory.csv",
+            ],
             GOODS_IN_TRANSIT,
             git_amount,
             AP,
@@ -1589,7 +1669,11 @@ Documents that need no entry sit in the same files as those that do.
             "unrecorded-payables",
             "unrecorded-payables",
             "Accrue the unrecorded supplier service",
-            ["documents/close_documents.csv", "subledgers/accounts_payable.csv"],
+            [
+                "documents/close_documents.csv",
+                "documents/other_documents.csv",
+                "subledgers/accounts_payable.csv",
+            ],
             UTILITIES_EXPENSE,
             supplier_amount,
             AP,

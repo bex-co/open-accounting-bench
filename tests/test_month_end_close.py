@@ -135,7 +135,6 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
         for path in (
             "documents/close_documents.csv",
             "documents/close_debt_schedules.csv",
-            "documents/close_subsequent_receipts.csv",
             "documents/close_timesheets.csv",
             "documents/close_fixed_asset_review.csv",
         ):
@@ -146,22 +145,29 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
             csv.DictReader(io.StringIO(instance.app_files["documents/close_ar_aging.csv"]))
         )
         assert any(row["record_id"] == "close-ar-9002" for row in aging)
-        subsequent = list(
-            csv.DictReader(
-                io.StringIO(instance.app_files["documents/close_subsequent_receipts.csv"])
-            )
-        )
+
+        def raw(path, files=instance.app_files):
+            return list(csv.DictReader(io.StringIO(files[f"documents/{path}"])))
+
         aging_amounts = {row["record_id"]: row["amount"] for row in aging}
+        # Settlements and bankruptcies live only in the raw source documents.
         settled_ids = {
-            row["record_id"]
-            for row in subsequent
-            if aging_amounts.get(row["record_id"]) == row["amount"]
+            row["source_refs"]
+            for row in raw("customer_receipts.csv")
+            if row["date"] <= "2026-02-15"
+            and aging_amounts.get(row["source_refs"]) == row["document_total"]
         }
         assert settled_ids
+        bankrupt_ids = {
+            row["source_refs"]
+            for row in raw("other_documents.csv")
+            if row["kind"] == "customer_notice" and "bankruptcy" in row["description"]
+        }
+        assert bankrupt_ids
 
-        def policy_rate(row) -> Decimal:
+        def policy_rate(row, bankrupt_ids=bankrupt_ids) -> Decimal:
             # The stated policy alone determines the rate (no source labels).
-            if "bankruptcy" in row["credit_note"]:
+            if row["record_id"] in bankrupt_ids:
                 return Decimal("1.00")
             days = (date(2026, 1, 31) - date.fromisoformat(row["due_date"])).days
             if days <= 0:
@@ -190,7 +196,6 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
         assert workflow["evidence"]["close-inv-1002"] == "ignore-duplicate-copy"
         assert workflow["evidence"]["close-equip-inv-02"] == "keep-capitalized"
         assert workflow["evidence"]["close-loan-sch-01"] == "use-revised-schedule"
-        assert workflow["evidence"]["doc-feb-receipts"] == "no-adjustment"
         # Draft entries are posted with neutral bookkeeping narrations.
         assert "Cost of sales close-order-001" in instance.initial_ledger
         assert "Milestone billing close-ms-02" in instance.initial_ledger
@@ -532,3 +537,69 @@ def test_accruing_the_duplicate_invoice_copy_fails():
     assert report.reward == 0
     assert report.layers["structural_validity"].passed
     assert not report.layers["semantic_accuracy"].passed
+
+
+def _without_block(ledger: str, narration: str) -> str:
+    return "\n\n".join(block for block in ledger.split("\n\n") if narration not in block)
+
+
+def test_decisive_facts_live_only_in_secondary_sources():
+    """Five issues need a secondary source (m7); reading only the close
+    register and schedules gives an answer that balances but fails."""
+    for seed in [s for s in range(40) if s not in _clean_seeds()][:6]:
+        instance = _adjusting_instance(seed)
+        files = instance.app_files
+        register = files["documents/close_documents.csv"]
+        aging = files["documents/close_ar_aging.csv"]
+        # The decisive facts are absent from the primary close sources ...
+        assert "ship date" not in register and "FOB" not in register
+        assert "-29" not in "".join(
+            line for line in register.splitlines() if line.startswith("close-inv-")
+        )
+        assert "bankruptcy" not in aging
+        assert "documents/close_subsequent_receipts.csv" not in files
+        # ... and present in the secondary ones.
+        assert "close-order-001" in files["documents/shipping_log.csv"]
+        assert "FOB shipping point" in files["documents/supplier_documents.csv"]
+        assert "close-inv-1001" in files["documents/other_documents.csv"]
+        assert "bankruptcy" in files["documents/other_documents.csv"]
+        assert "syn-receipt-close-001" in files["documents/customer_receipts.csv"]
+
+        oracle = instance.solution_ledger
+        primary_only = [
+            _without_block(
+                _without_block(oracle, "Reverse premature product sale"),
+                "Reverse cost of premature product sale",
+            ),
+            _without_block(oracle, "Record goods in transit"),
+            _without_block(oracle, "Accrue unrecorded supplier service"),
+        ]
+        rows = {row["record_id"]: row for row in csv.DictReader(io.StringIO(aging))}
+        notice = next(
+            row
+            for row in csv.DictReader(io.StringIO(files["documents/other_documents.csv"]))
+            if row["kind"] == "customer_notice"
+        )
+        receipt = next(
+            row
+            for row in csv.DictReader(io.StringIO(files["documents/customer_receipts.csv"]))
+            if row["document_id"] == "syn-receipt-close-001"
+        )
+        allowance = _block_amount(oracle, "Record credit-loss allowance")
+        bankrupt = Decimal(rows[notice["source_refs"]]["amount"])
+        settled = Decimal(receipt["document_total"])
+        # Bankrupt row at the ordinary 20% instead of 100%; settled row at 1%.
+        primary_only.append(
+            _replace_block_amounts(
+                oracle, "Record credit-loss allowance", allowance - bankrupt * Decimal("0.80")
+            )
+        )
+        primary_only.append(
+            _replace_block_amounts(
+                oracle, "Record credit-loss allowance", allowance + settled * Decimal("0.01")
+            )
+        )
+        for ledger in primary_only:
+            report = _grade(instance, ledger=ledger)
+            assert report.reward == 0, seed
+            assert report.layers["structural_validity"].passed, seed
