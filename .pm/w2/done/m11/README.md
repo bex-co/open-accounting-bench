@@ -1,6 +1,6 @@
 # w2 · m11 — Cross-period schedules and accruals
 
-**Worker:** worker2 **Goal:** Close issues span the three generated periods: unreversed prior accruals, multi-period amortization roll-forwards, and prior-period errors corrected now. **Status:** todo (t001–t006 done)
+**Worker:** worker2 **Goal:** Close issues span the three generated periods: unreversed prior accruals, multi-period amortization roll-forwards, and prior-period errors corrected now. **Status:** done
 
 ## Tasks (in order)
 
@@ -12,7 +12,7 @@
 | t004 | Simplify — **DONE** | 15m | t003 |
 | t005 | Test coverage — **DONE** | 20m | t003 |
 | t006 | Accounting review — **DONE** | 15m | t005 |
-| t007 | Closeout | 10m | t006 |
+| t007 | Closeout — **DONE** | 10m | t006 |
 
 ## Definition of done
 
