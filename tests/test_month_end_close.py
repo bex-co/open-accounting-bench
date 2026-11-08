@@ -859,3 +859,21 @@ def test_first_link_only_mutants_fail_their_downstream_determination():
             report = _grade(instance, ledger=ledger, workflow=schedule)
             assert report.reward == 0, (seed, label)
             assert not _determination_passed(report, determination), (seed, label)
+
+
+def test_chained_depreciation_check_expectations():
+    def chained(instance):
+        return next(
+            check
+            for check in instance.expected["workflow"]["checks"]
+            if check["id"] == "fixed-asset-treatment-chained-delta"
+        )
+
+    full = _adjusting_instance(_full_seeds()[0])
+    check = chained(full)
+    assert check["account"] == "Expenses:Depreciation"
+    draft_depreciation = _block_amount(full.initial_ledger, "Depreciation on January additions")
+    assert Decimal(check["expected"]) == -draft_depreciation
+    clean = _instance(_clean_seeds()[0])
+    assert Decimal(chained(clean)["expected"]) == 0
+    assert _grade(clean).reward == 1
