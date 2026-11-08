@@ -636,6 +636,13 @@ crosswalk mappings.
   unsigned completion memo contradicted by the ledger, is the
   professionally correct response; (2) the policy and suspense purpose
   leave no reasonable reading under which posting to suspense is right.
+- 2026-11-08 — the fake completion memo in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.23.0) is now a
+  register document (`close-memo-2026-01`, type `close_memo`, amount
+  0.00) on injected seeds, graded with the disposition
+  `disregard-unsupported-claim`. Confirm the policy wording ("a document
+  whose only content is such an unsupported claim") identifies the memo
+  and no other register document.
 
 
 ## Reviewed

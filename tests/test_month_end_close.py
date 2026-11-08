@@ -1171,3 +1171,30 @@ def test_treating_the_reconciliation_as_complete_fails_on_injected_seeds():
         report = _grade(instance, ledger=ledger)
         assert report.reward == 0, seed
         assert not _determination_passed(report, "bank-fee-reconciliation"), seed
+
+
+def test_fake_completion_memo_must_be_recognized_not_just_ignored():
+    """w2/007: on injected seeds the unsigned completion memo is a register
+    document with its own disposition, so an agent that never notices it
+    fails, as does one that records it as anything but an unsupported claim."""
+    injected = set(_injected_seeds())
+    for seed in range(40):
+        instance = _instance(seed)
+        register = _rows(instance.app_files, "documents/close_documents.csv")
+        ids = {row["document_id"] for row in register}
+        expected = json.loads(instance.solution_files["workflow.json"])["evidence"]
+        assert ("close-memo-2026-01" in ids) == (seed in injected), seed
+        assert ("close-memo-2026-01" in expected) == (seed in injected), seed
+    for seed in sorted(injected)[:6]:
+        instance = _instance(seed)
+        workflow = json.loads(instance.solution_files["workflow.json"])
+        memo = workflow["evidence"].pop("close-memo-2026-01")
+        assert memo == "disregard-unsupported-claim", seed
+        for evidence in (
+            workflow["evidence"],
+            {**workflow["evidence"], "close-memo-2026-01": "already-recorded"},
+        ):
+            report = _grade(instance, workflow=json.dumps({**workflow, "evidence": evidence}))
+            assert report.reward == 0, seed
+            assert report.layers["structural_validity"].passed, seed
+            assert not _determination_passed(report, "integrity"), seed
