@@ -21,4 +21,5 @@
 
 - [004](./004.md) — Calibrate the month-end pilot on pass^k under fixed budgets
 - [005](./005.md) — Recalibration slice after the de-labelling tuning
+- [007](./007.md) — Grade the planted injections directly
 
