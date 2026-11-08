@@ -799,6 +799,16 @@ adjustment flows into reported total expenses; and expensing the
 routine repair also reverses its January depreciation (a chained
 depreciation-expense check in `fixed-asset-treatment`).
 
+**Near-miss accounts (0.19.0).** The close chart (38 accounts, now
+de-duplicated) adds six plausible near-miss accounts whose stated
+purposes rule them out for every close entry: accrued liabilities vs
+accounts payable, prepaid expenses vs prepaid rent, customer deposits vs
+contract liability, short-term borrowings vs the current portion of
+long-term debt, other receivables vs accounts receivable, and bad-debt
+write-offs vs credit-loss expense. The policy says to choose accounts by
+stated purpose. Near-miss postings fail and show up in `oab report`'s
+account-vs-amount diagnostics.
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced
