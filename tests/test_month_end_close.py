@@ -199,7 +199,7 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
 
 
 def test_close_oracle_noop_and_seed_sweep():
-    for seed in range(25):
+    for seed in range(40):
         instance = _instance(seed)
         oracle = _grade(instance)
         assert oracle.reward == 1, (seed, oracle.to_report_json())
@@ -502,3 +502,32 @@ def test_precedence_traps_fail_without_source_labels():
         report = _grade(instance, ledger=unsigned_ledger)
         assert report.reward == 0, seed
         assert report.layers["structural_validity"].passed
+
+
+def test_close_loss_rate_ladder_matches_policy():
+    from decimal import Decimal as D
+
+    from oab.workflow_families import _close_loss_rate
+
+    assert _close_loss_rate(-5) == D("0.01")
+    assert _close_loss_rate(0) == D("0.01")  # due on period-end: not yet past due
+    assert _close_loss_rate(1) == D("0.05")
+    assert _close_loss_rate(30) == D("0.05")
+    assert _close_loss_rate(31) == D("0.20")
+    assert _close_loss_rate(2, bankrupt=True) == D("1.00")
+
+
+def test_accruing_the_duplicate_invoice_copy_fails():
+    """Without a duplicate flag, the copy is recognised only by matching the
+    original; accruing it as a second liability balances but fails."""
+    instance = _adjusting_instance(8)
+    amount = _block_amount(instance.solution_ledger, "Accrue unrecorded supplier service")
+    second = (
+        '2026-01-31 * "Supplier" "Accrue supplier invoice close-inv-1002"\n'
+        f"  Expenses:Utilities  {amount:.2f} USD\n"
+        f"  Liabilities:AccountsPayable  {-amount:.2f} USD\n"
+    )
+    report = _grade(instance, ledger=instance.solution_ledger + "\n" + second)
+    assert report.reward == 0
+    assert report.layers["structural_validity"].passed
+    assert not report.layers["semantic_accuracy"].passed
