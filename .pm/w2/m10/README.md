@@ -1,12 +1,12 @@
 # w2 · m10 — Larger chart of accounts with near-miss accounts
 
-**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo
+**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo (t001 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Add near-miss accounts and their policy | 45m | — |
+| t001 | Add near-miss accounts and their policy — **DONE** | 45m | — |
 | t002 | Near-miss traps | 45m | t001 |
 | t003 | Version bump and regeneration | 20m | t002 |
 | t004 | Adoption surface | 20m | t003 |

@@ -661,7 +661,40 @@ CLOSE_EXTRA_ACCOUNTS = [
     (ACCRUED_WAGES, "Wages earned but not yet paid"),
     (WAGES_EXPENSE, "Employee wages"),
     (IMPAIRMENT_LOSS, "Fixed-asset impairment loss"),
+    # Near-miss accounts: plausible destinations whose stated purposes rule
+    # them out for every close entry, so account choice is graded.
+    (
+        "Liabilities:AccruedLiabilities",
+        "Accrued expenses with no supplier invoice in the close evidence (for example "
+        "estimated taxes); supplier-invoiced services go to accounts payable",
+    ),
+    ("Assets:PrepaidExpenses", "Prepayments other than rent and insurance"),
+    (
+        "Liabilities:CustomerDeposits",
+        "Refundable customer deposits not tied to a performance obligation",
+    ),
+    ("Liabilities:ShortTermBorrowings", "Borrowings with an original term of one year or less"),
+    ("Assets:OtherReceivables", "Amounts due from parties other than customers"),
+    (
+        "Expenses:BadDebtWriteOffs",
+        "Direct write-off of a specific receivable (not the expected-credit-loss allowance)",
+    ),
 ]
+
+# Purposes the close chart states more precisely than the evidence pack.
+CLOSE_ACCOUNT_PURPOSES = {
+    AP: "Supplier payables, including services received in the period whose supplier "
+    "invoice is in the close evidence",
+}
+
+
+def _close_chart() -> str:
+    """Close chart: pack and close accounts, once each, with close purposes."""
+    seen: dict[str, str] = {}
+    for account, purpose in [*EVIDENCE_EXTRA_ACCOUNTS, *CLOSE_EXTRA_ACCOUNTS]:
+        seen.setdefault(account, CLOSE_ACCOUNT_PURPOSES.get(account, purpose))
+    return _chart_md(list(seen.items()))
+
 
 CLOSE_CLUSTERS = [
     "revenue-cutoff",
@@ -677,6 +710,9 @@ CLOSE_CLUSTERS = [
 
 CLOSE_POLICY = """# Month-end close policy
 
+- Account selection: post each amount to the account whose purpose in
+  `chart_of_accounts.md` fits it; similarly named accounts have
+  different purposes.
 - Close period: the final period in `trial_balances.csv`. The ledger is
   append-only: add balanced entries dated in the close period; never
   edit or delete an existing transaction.
@@ -1596,7 +1632,7 @@ Documents that need no entry sit in the same files as those that do.
     app_files.update(
         {
             "ledger.beancount": initial_ledger,
-            "chart_of_accounts.md": _chart_md([*EVIDENCE_EXTRA_ACCOUNTS, *CLOSE_EXTRA_ACCOUNTS]),
+            "chart_of_accounts.md": _close_chart(),
             "policy.md": CLOSE_POLICY,
             "documents/close_evidence.md": close_evidence,
             "documents/close_ar_aging.csv": _csv(aging_rows),
