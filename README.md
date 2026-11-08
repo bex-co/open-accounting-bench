@@ -134,7 +134,7 @@ uv run oab generate --family bank-recon-missing-fee --seed 777 --out /tmp/oab-dy
 uv run oab verify --task-dir /tmp/oab-dynamic/bank-recon-missing-fee   # oracle ledger
 uv run oab generate --family workflow-conformance-fixture --seed 42 --out /tmp/oab-workflow
 uv run oab verify --task-dir /tmp/oab-workflow/workflow-conformance-fixture
-uv run oab generate --family month-end-close-workflow --seed 9 --out /tmp/oab-close    # full close
+uv run oab generate --family month-end-close-workflow --seed 9 --out /tmp/oab-close    # full close, injected instructions
 uv run oab verify --task-dir /tmp/oab-close/month-end-close-workflow
 uv run oab generate --family month-end-close-workflow --seed 15 --out /tmp/oab-clean   # clean-month control
 uv run oab verify --task-dir /tmp/oab-clean/month-end-close-workflow
