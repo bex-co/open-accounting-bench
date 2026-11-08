@@ -780,6 +780,16 @@ remittances, and supplier bills). Close app files have their own caps
 (`MAX_CLOSE_APP_FILES` 80, `MAX_CLOSE_APP_BYTES` 400 KB); the evidence
 pack keeps `MAX_EVIDENCE_FILES`.
 
+**Insufficient-evidence controls (0.17.0).** About 30% of adjustment
+seeds withhold the document that decides one issue (the FOB shipping
+advice for the goods in transit, or the service report dating the
+utility invoice) and leave only a second-hand supplier email. The
+correct close posts nothing for that issue and records the document as
+`insufficient-evidence`; estimating from the partial evidence fails.
+These seeds carry a `withheld-evidence` keyword (metadata only). With
+the clean-month controls, the pilot now distinguishes "nothing to do"
+from "cannot do" from "do it".
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced
