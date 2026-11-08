@@ -151,7 +151,7 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
         aging = list(
             csv.DictReader(io.StringIO(instance.app_files["documents/close_ar_aging.csv"]))
         )
-        assert any(row["record_id"] == "close-nsf-check" for row in aging)
+        assert any(row["record_id"] == "close-ar-9002" for row in aging)
         subsequent = list(
             csv.DictReader(
                 io.StringIO(instance.app_files["documents/close_subsequent_receipts.csv"])
@@ -169,21 +169,23 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
             -expected_allowance
         )
         assert Decimal(workflow["trial_balance"]["goods_in_transit"]) > 0
-        assert workflow["evidence"]["revenue-cost-reversal"] == "reverse-premature-cost"
-        assert workflow["evidence"]["service-revenue-milestone"] == "defer-unearned-milestone"
-        assert workflow["evidence"]["inventory-goods-in-transit"] == "record-goods-in-transit"
-        assert workflow["evidence"]["payroll-cutoff"] == "accrue-earned-wages"
-        assert workflow["evidence"]["fixed-asset-impairment"] == "recognize-impairment-loss"
-        assert workflow["evidence"]["debt-interest-accrual"] == "accrue-interest"
-        assert workflow["evidence"]["bank-fee-reconciliation"] == "record-bank-fee"
-        assert workflow["evidence"]["close-utility-002"] == "exclude-next-period"
-        assert workflow["evidence"]["close-utility-001-copy"] == "ignore-duplicate-copy"
-        assert workflow["evidence"]["close-equipment-improvement"] == "keep-capitalized"
-        assert workflow["evidence"]["close-debt-stale"] == "use-revised-schedule"
-        assert "Cost of premature product sale" in instance.initial_ledger
-        assert "service milestone released early" in instance.initial_ledger.lower()
-        assert "Capital improvement" in instance.initial_ledger
-        assert "Depreciation on capitalized" in instance.initial_ledger
+        # Evidence is keyed by neutral source-document ids.
+        assert workflow["evidence"]["close-ms-02"] == "defer-unearned-milestone"
+        assert workflow["evidence"]["close-ship-001"] == "record-goods-in-transit"
+        assert workflow["evidence"]["doc-overtime-register"] == "accrue-earned-wages"
+        assert workflow["evidence"]["doc-asset-review"] == "recognize-impairment-loss"
+        assert workflow["evidence"]["close-loan-sch-02"] == "accrue-interest"
+        assert workflow["evidence"]["close-bank-adv-02"] == "record-bank-fee"
+        assert workflow["evidence"]["close-inv-1003"] == "exclude-next-period"
+        assert workflow["evidence"]["close-inv-1002"] == "ignore-duplicate-copy"
+        assert workflow["evidence"]["close-equip-inv-02"] == "keep-capitalized"
+        assert workflow["evidence"]["close-loan-sch-01"] == "use-revised-schedule"
+        assert workflow["evidence"]["doc-feb-receipts"] == "no-adjustment"
+        # Draft entries are posted with neutral bookkeeping narrations.
+        assert "Cost of sales close-order-001" in instance.initial_ledger
+        assert "Milestone billing close-ms-02" in instance.initial_ledger
+        assert "Supplier invoice close-equip-inv-02" in instance.initial_ledger
+        assert "Depreciation on January additions" in instance.initial_ledger
 
 
 def test_close_oracle_noop_and_seed_sweep():
@@ -321,8 +323,16 @@ def test_clean_month_noop_is_the_oracle():
         report = _grade(instance)
         assert report.reward == 1, (seed, report.to_report_json())
         workflow = json.loads(instance.solution_files["workflow.json"])
-        for determination_id in ISSUE_DETERMINATIONS:
-            assert workflow["evidence"][determination_id] == "already-recorded"
+        issue_evidence = [
+            check
+            for check in instance.expected["workflow"]["checks"]
+            if check["type"] == "evidence_disposition"
+            and check["determination"] in ISSUE_DETERMINATIONS
+        ]
+        assert issue_evidence
+        for check in issue_evidence:
+            assert check["expected"] == "already-recorded"
+            assert workflow["evidence"][check["key"]] == "already-recorded"
         # The close is already complete: the adjustments sit in the ledger.
         assert "Record credit-loss allowance" in instance.initial_ledger
 
@@ -400,3 +410,22 @@ def test_workflow_report_carries_ledger_diagnostics():
     assert set(details["diagnostics"]["expected"].values()) == {"correct"}
     nop = _grade(instance, ledger=instance.initial_ledger).to_report_json()["details"]
     assert "missing" in set(nop["diagnostics"]["expected"].values())
+
+
+def test_close_sources_do_not_name_issues():
+    """De-labelled evidence (w2/m6): no app file except the policy names a
+    determination, and evidence is keyed by source-document ids."""
+    leaked = []
+    for seed in range(40):
+        instance = _instance(seed)
+        issue_ids = ISSUE_DETERMINATIONS
+        for path, text in instance.app_files.items():
+            if path == "policy.md":
+                continue
+            leaked += [(seed, path, issue) for issue in issue_ids if issue in text]
+        workflow = json.loads(instance.solution_files["workflow.json"])
+        sources = "".join(
+            text for path, text in instance.app_files.items() if path.startswith("documents/close_")
+        )
+        assert all(key in sources for key in workflow["evidence"]), seed
+    assert leaked == []

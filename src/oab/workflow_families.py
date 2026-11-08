@@ -685,11 +685,12 @@ CLOSE_POLICY = """# Month-end close policy
   stale or superseded copies; itemized reconciliations prevail over
   unexplained statement totals. A duplicate document does not create a
   second asset, liability, revenue, or expense.
-- Workflow evidence keys are discovery-based: create one
-  `/app/workflow.json` evidence entry for every nonblank
-  `evidence_key` value and every value in an `evidence_keys` list in
-  the `documents/close_*.csv` source files. The starter evidence
-  object is intentionally empty.
+- Workflow evidence is keyed by source document: create one
+  `/app/workflow.json` evidence entry for every distinct `document_id`
+  in the `documents/close_*.csv` source files. The starter evidence
+  object is intentionally empty. Use the most specific code that
+  applies; `no-adjustment` is for a reviewed document that needs no
+  close-period entry and fits no other code.
 - Product revenue is recognized when goods ship. Service revenue is
   recognized when the stated milestone is complete.
 - Expected credit losses use the aging schedule. Apply each aging
@@ -740,7 +741,8 @@ CLOSE_POLICY = """# Month-end close policy
   `recognize-impairment-loss`, `accrue-interest`,
   `reclassify-current-portion`, `record-nsf`, `record-bank-fee`,
   `exclude-next-period`, `ignore-duplicate-copy`, `keep-capitalized`,
-  `already-recognized`, `use-revised-schedule`, and `already-recorded`.
+  `already-recognized`, `use-revised-schedule`, `already-recorded`, and
+  `no-adjustment`.
 """
 
 
@@ -758,25 +760,6 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     # entry is already in the ledger, so the correct close appends
     # nothing. Drawn from its own stream so other seeds are unchanged.
     clean = random.Random(seed ^ 0xC1EA4).random() < 0.2
-    # Source-file status per evidence item: (adjustment variant, clean).
-    # Items not listed carry no draft-treatment status in their source.
-    status = {
-        key: pair[clean]
-        for key, pair in {
-            "unrecorded-payables": ("original-unrecorded", "accrued-in-ledger"),
-            "prepayment-cutoff": (
-                "full-payment-expensed",
-                "expensed-then-unexpired-portion-deferred",
-            ),
-            "fixed-asset-treatment": ("capitalized", "capitalized-then-reclassified-to-repairs"),
-            "bank-fee-reconciliation": (
-                "revised-bank-fee-not-in-draft-ledger",
-                "revised-bank-fee-recorded",
-            ),
-            "service-revenue-milestone": ("draft-released-early", "released-early-then-deferred"),
-            "inventory-goods-in-transit": ("in-transit-not-in-draft-ledger", "in-transit-recorded"),
-        }.items()
-    }
     current = pack.periods[-1]
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
@@ -801,7 +784,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-30",
             revenue_customer.name,
-            "Draft product sale",
+            "Sales invoice close-order-001",
             [(AR, revenue_amount), (PRODUCT_REVENUE, -revenue_amount)],
         )
     )
@@ -809,7 +792,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-30",
             "Warehouse",
-            "Cost of premature product sale",
+            "Cost of sales close-order-001",
             [(COGS, revenue_cost), (INVENTORY, -revenue_cost)],
         )
     )
@@ -822,7 +805,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-02",
             "Landlord",
-            "Draft six-month rent payment expensed",
+            "Landlord payment",
             [(RENT_EXPENSE, prepaid_total), (BANK, -prepaid_total)],
         )
     )
@@ -834,7 +817,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-12",
             "Supplier",
-            "Draft equipment repair capitalized",
+            "Supplier invoice close-equip-inv-01",
             [(EQUIPMENT, repair_amount), (AP, -repair_amount)],
         )
     )
@@ -842,7 +825,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-20",
             "Supplier",
-            "Capital improvement extending equipment life",
+            "Supplier invoice close-equip-inv-02",
             [(EQUIPMENT, capital_improvement_amount), (AP, -capital_improvement_amount)],
         )
     )
@@ -850,7 +833,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             current.end,
             "Fixed assets",
-            "Depreciation on capitalized routine tune-up",
+            "Depreciation on January additions",
             [
                 (DEPRECIATION_EXPENSE, repair_depreciation),
                 (ACCUMULATED_DEPRECIATION, -repair_depreciation),
@@ -869,7 +852,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         (
             f"{current.label}-29",
             service_customer.name,
-            "Draft February service milestone released early",
+            "Milestone billing close-ms-02",
             [(CONTRACT, service_milestone_amount), (SERVICE_REVENUE, -service_milestone_amount)],
         )
     )
@@ -906,7 +889,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "bucket",
             "loss_rate",
             "specific_risk",
-            "evidence_key",
+            "document_id",
         ]
     ]
     period_end = date.fromisoformat(current.end)
@@ -941,19 +924,19 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 bucket,
                 str(rate),
                 risk,
-                "receivables-allowance",
+                "doc-ar-aging",
             ]
         )
     aging_rows.append(
         [
-            "close-premature-sale",
+            "close-ar-9001",
             revenue_customer.id,
             money(revenue_amount),
             "2026-02-14",
             "unshipped",
             "0",
             "not-shipped",
-            "revenue-cutoff",
+            "doc-ar-aging",
         ]
     )
     shortage_units = Decimal(rng.randrange(2, 7))
@@ -986,14 +969,14 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     allowance += (nsf_amount * nsf_loss_rate).quantize(CENT)
     aging_rows.append(
         [
-            "close-nsf-check",
+            "close-ar-9002",
             nsf_customer.id,
             money(nsf_amount),
             nsf_due_date,
             "over-30",
             str(nsf_loss_rate),
             "returned-check",
-            "receivables-allowance",
+            "doc-ar-aging",
         ]
     )
     february_utility_amount = supplier_amount + Decimal("25.00")
@@ -1009,7 +992,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     git_amount = git_quantity * git_item.unit_cost
 
     payroll_rows: list[list[object]] = [
-        ["employee_id", "employee", "work_dates", "hours", "hourly_rate", "amount", "evidence_key"]
+        ["employee_id", "employee", "work_dates", "hours", "hourly_rate", "amount", "document_id"]
     ]
     payroll_amount = ZERO
     for employee in pack.master.employees[:3]:
@@ -1025,7 +1008,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 str(hours),
                 money(hourly_rate),
                 money(amount),
-                "payroll-cutoff",
+                "doc-overtime-register",
             ]
         )
 
@@ -1193,7 +1176,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "signed_count_quantity",
             "unit_cost",
             "nrv_per_unit",
-            "evidence_key",
+            "document_id",
         ]
     ]
     for record in pack.subledgers["inventory"]:
@@ -1218,7 +1201,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 money(count_quantity),
                 money(item.unit_cost),
                 money(item_nrv),
-                "inventory-valuation",
+                "doc-count-sheet",
             ]
         )
 
@@ -1232,12 +1215,10 @@ January from the ledger, every pack subledger and document, and the
 current-period source files matching `documents/close_*.csv`.
 
 This index intentionally does not enumerate the accounting issues.
-Inspect every row in those source files, use each nonblank
-`evidence_key` (and each semicolon-separated value in
-`evidence_keys`) as a workflow evidence key, and determine from the
-row status, dates, terms, and linked subledgers whether a close
-entry is required. False alarms and stale/duplicate sources are in
-the same files as actionable items.
+Record one workflow evidence entry for every distinct `document_id`
+in those source files, and determine from dates, terms, amounts, the
+ledger, and the linked subledgers whether a close entry is required.
+Documents that need no entry sit in the same files as those that do.
 """
 
     ledger_lines = pack.files["ledger.beancount"].splitlines()
@@ -1272,6 +1253,25 @@ the same files as actionable items.
     }
     if clean:
         dispositions = dict.fromkeys(dispositions, "already-recorded")
+    # The source document each determination's disposition is recorded
+    # against. Evidence is keyed by neutral document ids so the sources do
+    # not name the issue; two determinations share a document with their
+    # primary issue and are graded on ledger state alone.
+    document_for = {
+        "revenue-cutoff": "close-order-001",
+        "service-revenue-milestone": "close-ms-02",
+        "receivables-allowance": "doc-ar-aging",
+        "inventory-valuation": "doc-count-sheet",
+        "inventory-goods-in-transit": "close-ship-001",
+        "unrecorded-payables": "close-inv-1001",
+        "prepayment-cutoff": "doc-lease-2026-01",
+        "payroll-cutoff": "doc-overtime-register",
+        "fixed-asset-treatment": "close-equip-inv-01",
+        "fixed-asset-impairment": "doc-asset-review",
+        "debt-interest-accrual": "close-loan-sch-02",
+        "bank-reconciliation": "close-bank-adv-01",
+        "bank-fee-reconciliation": "close-bank-adv-02",
+    }
     trial_fields = {
         "bank": BANK,
         "accounts_receivable": AR,
@@ -1289,15 +1289,16 @@ the same files as actionable items.
         "interest_payable": INTEREST_PAYABLE,
     }
     integrity_dispositions = {
-        "close-utility-002": "exclude-next-period",
-        "close-utility-001-copy": "ignore-duplicate-copy",
-        "close-equipment-improvement": "keep-capitalized",
-        "close-debt-stale": "use-revised-schedule",
-        "close-service-jan": "already-recognized",
+        "close-inv-1003": "exclude-next-period",
+        "close-inv-1004": "exclude-next-period",
+        "close-inv-1002": "ignore-duplicate-copy",
+        "close-equip-inv-02": "keep-capitalized",
+        "close-loan-sch-01": "use-revised-schedule",
+        "close-ms-01": "already-recognized",
+        "doc-feb-receipts": "no-adjustment",
     }
     solution_workflow = {
-        "evidence": dispositions
-        | {"close-march-quote": "exclude-next-period"}
+        "evidence": {document_for[d]: dispositions[d] for d in document_for}
         | integrity_dispositions,
         "trial_balance": {
             field: money(final_bal(account)) for field, account in trial_fields.items()
@@ -1339,7 +1340,7 @@ the same files as actionable items.
                         "cost_amount",
                         "order_date",
                         "signed_ship_date",
-                        "evidence_keys",
+                        "document_id",
                     ],
                     [
                         "close-order-001",
@@ -1352,7 +1353,7 @@ the same files as actionable items.
                         money(revenue_cost),
                         f"{current.label}-30",
                         "2026-02-02",
-                        "revenue-cutoff;revenue-cost-reversal",
+                        "close-order-001",
                     ],
                 ]
             ),
@@ -1364,104 +1365,71 @@ the same files as actionable items.
                         "service_date",
                         "invoice_date",
                         "amount",
-                        "status",
-                        "duplicate_of",
-                        "evidence_key",
+                        "document_id",
                     ],
                     [
-                        "close-utility-001",
+                        "close-inv-1001",
                         "Utility service",
                         f"{current.label}-29",
                         "2026-02-03",
                         money(supplier_amount),
-                        status["unrecorded-payables"],
-                        "",
-                        "unrecorded-payables",
+                        "close-inv-1001",
                     ],
                     [
-                        "close-utility-001-copy",
+                        "close-inv-1002",
                         "Utility service",
                         f"{current.label}-29",
                         "2026-02-03",
                         money(supplier_amount),
-                        "duplicate-copy",
-                        "close-utility-001",
-                        "close-utility-001-copy",
+                        "close-inv-1002",
                     ],
                     [
-                        "close-utility-002",
+                        "close-inv-1003",
                         "Utility service",
                         "2026-02-10",
                         "2026-02-11",
                         money(february_utility_amount),
-                        "original-unrecorded",
-                        "",
-                        "close-utility-002",
+                        "close-inv-1003",
                     ],
                     [
-                        "close-march-quote",
+                        "close-inv-1004",
                         "Supplier quote for possible February work",
                         "2026-03-01",
                         "2026-02-20",
                         money(supplier_amount + Decimal("100.00")),
-                        "quote-no-service-received",
-                        "",
-                        "close-march-quote",
+                        "close-inv-1004",
                     ],
                 ]
             ),
             "documents/close_rent_agreement.csv": _csv(
                 [
-                    [
-                        "payment_date",
-                        "amount",
-                        "term_start",
-                        "term_months",
-                        "draft_treatment",
-                        "evidence_key",
-                    ],
+                    ["payment_date", "amount", "term_start", "term_months", "document_id"],
                     [
                         f"{current.label}-02",
                         money(prepaid_total),
                         f"{current.label}-16",
                         "6",
-                        status["prepayment-cutoff"],
-                        "prepayment-cutoff",
+                        "doc-lease-2026-01",
                     ],
                 ]
             ),
             "documents/close_equipment_invoices.csv": _csv(
                 [
+                    ["invoice_id", "date", "description", "amount", "document_id"],
                     [
-                        "invoice_id",
-                        "date",
-                        "description",
-                        "amount",
-                        "draft_treatment",
-                        "life_or_capacity_effect",
-                        "january_depreciation_recorded",
-                        "evidence_key",
-                    ],
-                    [
-                        "close-equipment-repair",
+                        "close-equip-inv-01",
                         f"{current.label}-12",
                         "Routine tune-up and replacement of worn belts",
                         money(repair_amount),
-                        status["fixed-asset-treatment"],
-                        "none",
-                        money(repair_depreciation),
-                        "fixed-asset-treatment",
+                        "close-equip-inv-01",
                     ],
                     [
-                        "close-equipment-improvement",
+                        "close-equip-inv-02",
                         f"{current.label}-20",
                         "Capital improvement: new motor extending useful life; "
                         "placed in service 2026-02-01",
                         money(capital_improvement_amount),
-                        "capitalized",
-                        "extends-life",
-                        "0.00",
-                        "close-equipment-improvement",
+                        "close-equip-inv-02",
                     ],
                 ]
             ),
@@ -1476,10 +1444,10 @@ the same files as actionable items.
                         "annual_rate_percent",
                         "principal_due_within_12_months",
                         "principal_due_after_12_months",
-                        "evidence_keys",
+                        "document_id",
                     ],
                     [
-                        "close-debt-stale",
+                        "close-loan-sch-01",
                         "stale",
                         money(opening_note_principal),
                         "0.00",
@@ -1487,10 +1455,10 @@ the same files as actionable items.
                         money(stale_annual_rate * Decimal(100)),
                         money(stale_current_portion),
                         money(opening_note_principal - stale_current_portion),
-                        "close-debt-stale",
+                        "close-loan-sch-01",
                     ],
                     [
-                        "close-debt-revised",
+                        "close-loan-sch-02",
                         "revised",
                         money(opening_note_principal),
                         money(principal_payment),
@@ -1498,7 +1466,7 @@ the same files as actionable items.
                         money(annual_rate * Decimal(100)),
                         money(current_portion),
                         money(note_principal - current_portion),
-                        "debt-interest-accrual;debt-current-classification",
+                        "close-loan-sch-02",
                     ],
                 ]
             ),
@@ -1512,27 +1480,27 @@ the same files as actionable items.
                         "returned_date",
                         "original_receivable_due_date",
                         "reason",
-                        "evidence_key",
+                        "document_id",
                     ],
                     [
-                        "close-nsf-advice",
+                        "close-bank-adv-01",
                         nsf_customer.id,
                         nsf_customer.name,
                         money(nsf_amount),
                         current.end,
                         nsf_due_date,
                         "insufficient-funds",
-                        "bank-reconciliation",
+                        "close-bank-adv-01",
                     ],
                     [
-                        "close-bank-fee-advice",
+                        "close-bank-adv-02",
                         "",
                         "Bank service fee (revised advice)",
                         money(bank_fee_amount),
                         current.end,
                         "",
-                        status["bank-fee-reconciliation"],
-                        "bank-fee-reconciliation",
+                        "service-fee",
+                        "close-bank-adv-02",
                     ],
                 ]
             ),
@@ -1544,26 +1512,23 @@ the same files as actionable items.
                         "customer_id",
                         "amount",
                         "completion_date",
-                        "status",
-                        "evidence_key",
+                        "document_id",
                     ],
                     [
-                        "close-service-jan",
+                        "close-ms-01",
                         service_contract.id,
                         service_customer.id,
                         "250.00",
                         f"{current.label}-28",
-                        "completed-recognized-in-draft-pack",
-                        "close-service-jan",
+                        "close-ms-01",
                     ],
                     [
-                        "close-service-feb",
+                        "close-ms-02",
                         service_contract.id,
                         service_customer.id,
                         money(service_milestone_amount),
                         "2026-02-15",
-                        status["service-revenue-milestone"],
-                        "service-revenue-milestone",
+                        "close-ms-02",
                     ],
                 ]
             ),
@@ -1575,7 +1540,7 @@ the same files as actionable items.
                         "amount",
                         "receipt_date",
                         "status",
-                        "evidence_key",
+                        "document_id",
                     ],
                     [
                         settled_record.id,
@@ -1583,7 +1548,7 @@ the same files as actionable items.
                         money(settled_record.amount),
                         "2026-02-05",
                         "settled-in-full",
-                        "receivables-allowance",
+                        "doc-feb-receipts",
                     ],
                 ]
             ),
@@ -1599,11 +1564,10 @@ the same files as actionable items.
                         "ship_date",
                         "terms",
                         "received_date",
-                        "status",
-                        "evidence_key",
+                        "document_id",
                     ],
                     [
-                        "close-git-001",
+                        "close-ship-001",
                         git_supplier.id,
                         git_item.id,
                         money(git_quantity),
@@ -1612,8 +1576,7 @@ the same files as actionable items.
                         f"{current.label}-30",
                         "FOB shipping point",
                         "2026-02-02",
-                        status["inventory-goods-in-transit"],
-                        "inventory-goods-in-transit",
+                        "close-ship-001",
                     ],
                 ]
             ),
@@ -1626,8 +1589,7 @@ the same files as actionable items.
                         "cost",
                         "accumulated_depreciation",
                         "recoverable_amount",
-                        "review_status",
-                        "evidence_key",
+                        "document_id",
                     ],
                     *[
                         [
@@ -1640,12 +1602,7 @@ the same files as actionable items.
                                 if asset.id == impairment_asset.id
                                 else asset.cost - asset.accumulated_depreciation
                             ),
-                            (
-                                "recoverable-below-carrying"
-                                if asset.id == impairment_asset.id
-                                else "no-impairment-indicated"
-                            ),
-                            ("fixed-asset-impairment" if asset.id == impairment_asset.id else ""),
+                            "doc-asset-review",
                         ]
                         for asset in pack.master.assets
                     ],
@@ -1846,16 +1803,19 @@ the same files as actionable items.
                     account=downstream_account,
                     expected=money(final_bal(downstream_account)),
                 ),
+            ]
+        )
+        if determination_id in document_for:
+            issue_checks.append(
                 workflow_check(
                     f"{determination_id}-evidence",
                     "evidence_disposition",
                     determination_id,
                     path="evidence",
-                    key=determination_id,
+                    key=document_for[determination_id],
                     expected=dispositions[determination_id],
-                ),
-            ]
-        )
+                )
+            )
         checks.extend(issue_checks)
 
     determinations.extend(
@@ -1925,14 +1885,6 @@ the same files as actionable items.
                 "integrity",
                 period=[f"{next_period}-01", f"{next_period}-28"],
             ),
-            workflow_check(
-                "integrity-march-quote",
-                "evidence_disposition",
-                "integrity",
-                path="evidence",
-                key="close-march-quote",
-                expected="exclude-next-period",
-            ),
         ]
     )
     checks.extend(
@@ -1959,7 +1911,7 @@ the same files as actionable items.
             "history and trial balances, every subledger, and every document, "
             "including all `/app/documents/close_*.csv` source files named by "
             "`/app/documents/close_evidence.md`. Build the workflow evidence "
-            "object from the source files' `evidence_key`/`evidence_keys` "
+            "object from the source files' `document_id` "
             "values. Append balanced "
             f"entries dated no later than {current.end}; never edit existing "
             "transactions. Complete every evidence disposition, adjusted "
