@@ -1,6 +1,6 @@
 # w2 · m10 — Larger chart of accounts with near-miss accounts
 
-**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo (t001–t006, t009 done)
+**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo (t001–t007, t009 done)
 
 ## Tasks (in order)
 
@@ -13,7 +13,7 @@
 | t005 | Simplify — **DONE** | 15m | t004 |
 | t009 | Remove duplicate open directives from close ledgers — **DONE** | 30m | t001 |
 | t006 | Test coverage — **DONE** | 20m | t004, t009 |
-| t007 | Accounting review | 15m | t006 |
+| t007 | Accounting review — **DONE** | 15m | t006 |
 | t008 | Closeout | 10m | t007 |
 
 ## Definition of done

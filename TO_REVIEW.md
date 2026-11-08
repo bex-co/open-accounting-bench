@@ -590,6 +590,19 @@ crosswalk mappings.
   the average of opening and ending principal after a mid-month payment;
   and reversing the depreciation recorded on a repair that should not have
   been capitalized.
+- 2026-11-07 — near-miss accounts in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.19.0–0.20.0).
+  The close chart adds six near-miss accounts whose stated purposes rule
+  them out for every close entry (accrued liabilities, prepaid expenses,
+  customer deposits, short-term borrowings, other receivables, bad-debt
+  write-offs); accounts payable now reads "including services received in
+  the period whose supplier invoice is in the close evidence"; the policy
+  says to choose accounts by stated purpose; duplicate `open` lines were
+  removed. Confirm: (1) each purpose is accurate and, together with the
+  policy, leaves exactly one right account for every close entry — in
+  particular that a January utility service invoiced on 2026-02-03 is
+  properly accounts payable rather than an accrued liability under this
+  chart; (2) each near-miss posting is a plausible mistake.
 
 
 ## Reviewed
