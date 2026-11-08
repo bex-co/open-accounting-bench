@@ -751,3 +751,23 @@ def test_insufficient_evidence_controls_flag_and_post_nothing():
         assert report.reward == 0, seed
         assert report.layers["structural_validity"].passed, seed
     assert covered == {"goods-in-transit", "unrecorded-payables"}
+
+
+def test_withheld_entry_must_match_an_oracle_narration(monkeypatch):
+    """If an omitted entry's narration drifts, generation fails loudly
+    instead of silently posting the withheld entry."""
+    import pytest
+
+    import oab.workflow_families as workflow_families
+
+    seed = _seeds("withheld")[0]
+    renamed = dict.fromkeys(workflow_families.WITHHELD_ENTRY, "No such narration")
+    monkeypatch.setattr(workflow_families, "WITHHELD_ENTRY", renamed)
+    with pytest.raises(AssertionError):
+        workflow_families.month_end_close_workflow(seed)
+
+
+def test_close_variants_are_exclusive():
+    for seed in range(40):
+        instance = _instance(seed)
+        assert not (_is_clean(instance) and _is_withheld(instance)), seed
