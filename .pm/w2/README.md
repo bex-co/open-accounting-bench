@@ -10,7 +10,7 @@
 - [x] **m4** — [Account-vs-amount failure diagnostics](./done/m4/README.md) (8 tasks) ← from brainstorm 2026-11-04
 - [x] **m5** — [Machine-readable review registry and reviewed-only reporting](./done/m5/README.md) (7 tasks) ← from brainstorm 2026-11-04
 - [x] **m6** — [De-label the month-end close evidence](./done/m6/README.md) (10 tasks) ← from difficulty study 2026-11-06
-- [ ] **m7** — [Deeper evidence and realistic noise volume](./m7/README.md) (8 tasks) ← from difficulty study 2026-11-06
+- [x] **m7** — [Deeper evidence and realistic noise volume](./done/m7/README.md) (8 tasks) ← from difficulty study 2026-11-06
 - [ ] **m8** — ["Insufficient evidence" determinations](./m8/README.md) (8 tasks) ← from difficulty study 2026-11-06
 - [ ] **m9** — [Longer downstream dependency chains](./m9/README.md) (8 tasks) ← from difficulty study 2026-11-06
 - [ ] **m10** — [Larger chart of accounts with near-miss accounts](./m10/README.md) (8 tasks) ← from difficulty study 2026-11-06
