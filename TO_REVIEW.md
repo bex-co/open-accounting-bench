@@ -566,6 +566,19 @@ crosswalk mappings.
   goods-in-transit without the FOB terms, no accrual without the service
   date, ordinary rate for the bankrupt customer, a rate on the settled
   row, accruing an unreceived PO) are plausible mistakes.
+- 2026-11-07 — insufficient-evidence controls in the Dynamic
+  `month-end-close-workflow` pilot (`GENERATOR_VERSION` 0.17.0; about 30%
+  of adjustment seeds). One issue's deciding document is withheld — the
+  supplier's FOB shipping advice for the goods in transit, or the service
+  report dating the utility invoice — leaving a second-hand supplier email.
+  The oracle posts nothing for that issue and records
+  `insufficient-evidence`. Confirm: (1) without the withheld document a
+  careful accountant could not determine the treatment, so not recording
+  is right for this exercise (rather than, say, an estimate with
+  disclosure); (2) the policy rule — do not estimate from partial or
+  second-hand evidence, post nothing, flag it — reads correctly; (3) the
+  remaining evidence (receiving report dated February, an invoice dated
+  February) is genuinely tempting, so estimating is a plausible mistake.
 
 
 ## Reviewed
