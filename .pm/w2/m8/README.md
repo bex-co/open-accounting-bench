@@ -1,13 +1,13 @@
 # w2 · m8 — "Insufficient evidence" determinations
 
-**Worker:** worker2 **Goal:** Some issues lack decisive evidence by construction; the correct answer is to flag them and post nothing. **Status:** todo
+**Worker:** worker2 **Goal:** Some issues lack decisive evidence by construction; the correct answer is to flag them and post nothing. **Status:** todo (t001, t002 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Disclose an insufficient-evidence disposition | 30m | — |
-| t002 | Generate items with missing decisive evidence | 60m | t001 |
+| t001 | Disclose an insufficient-evidence disposition — **DONE** | 30m | — |
+| t002 | Generate items with missing decisive evidence — **DONE** | 60m | t001 |
 | t003 | Version bump and regeneration | 20m | t002 |
 | t004 | Adoption surface | 20m | t003 |
 | t005 | Simplify | 15m | t004 |

@@ -742,6 +742,12 @@ CLOSE_POLICY = """# Month-end close policy
 - An evidence item whose correct close entry is already in the ledger
   needs no further entry; record it as `already-recorded`. Never
   re-post an adjustment the ledger already contains.
+- When the document that decides an item is missing from the
+  evidence (for example the shipping terms or the service date), do
+  not estimate: post nothing for it, leave its accounts untouched, and
+  record it as `insufficient-evidence`. Partial or second-hand evidence
+  (an email that defers to an agreement not provided) does not decide
+  an item.
 - In `/app/workflow.json`, each `evidence` value must be exactly one of
   these disposition codes, with no prose: `reverse-premature-sale`,
   `reverse-premature-cost`, `defer-unearned-milestone`,
@@ -751,8 +757,8 @@ CLOSE_POLICY = """# Month-end close policy
   `recognize-impairment-loss`, `accrue-interest`,
   `reclassify-current-portion`, `record-nsf`, `record-bank-fee`,
   `exclude-next-period`, `ignore-duplicate-copy`, `keep-capitalized`,
-  `already-recognized`, `use-revised-schedule`, `already-recorded`, and
-  `no-adjustment`.
+  `already-recognized`, `use-revised-schedule`, `already-recorded`,
+  `no-adjustment`, and `insufficient-evidence`.
 """
 
 
@@ -889,6 +895,14 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     # entry is already in the ledger, so the correct close appends
     # nothing. Drawn from its own stream so other seeds are unchanged.
     clean = random.Random(seed ^ 0xC1EA4).random() < 0.2
+    # Insufficient-evidence control (about 30% of adjustment seeds): the
+    # decisive document for one issue is withheld, leaving only tempting
+    # partial evidence; the correct close flags it and posts nothing for it.
+    withheld = None
+    if not clean:
+        withhold_rng = random.Random(seed ^ 0x1E55)
+        if withhold_rng.random() < 0.3:
+            withheld = withhold_rng.choice(["inventory-goods-in-transit", "unrecorded-payables"])
     current = pack.periods[-1]
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
@@ -1244,6 +1258,13 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         ]
     )
 
+    withheld_entry = {
+        "inventory-goods-in-transit": "Record goods in transit",
+        "unrecorded-payables": "Accrue unrecorded supplier service",
+    }
+    if withheld:
+        oracle_entries = [e for e in oracle_entries if e[2] != withheld_entry[withheld]]
+
     final_balances = dict(draft_balances)
     for _date, _payee, _narration, postings in oracle_entries:
         _apply_postings(final_balances, postings)
@@ -1396,6 +1417,8 @@ Documents that need no entry sit in the same files as those that do.
     }
     if clean:
         evidence_for = {d: (doc, "already-recorded") for d, (doc, _code) in evidence_for.items()}
+    if withheld:
+        evidence_for[withheld] = (evidence_for[withheld][0], "insufficient-evidence")
     trial_fields = {
         "bank": BANK,
         "accounts_receivable": AR,
@@ -1519,6 +1542,39 @@ Documents that need no entry sit in the same files as those that do.
             )
         ],
     }
+    if withheld == "inventory-goods-in-transit":
+        # No shipping advice with terms: only an email that defers to a
+        # contract the evidence does not contain.
+        secondary["documents/supplier_documents.csv"] = [
+            raw_document(
+                "syn-supplier-email-close-001",
+                "supplier_email",
+                f"{current.label}-31",
+                git_supplier.id,
+                "Your order shipped in late January; delivery terms as per our agreement",
+                git_quantity,
+                git_item.unit_cost,
+                "close-ship-001",
+            )
+        ]
+    elif withheld == "unrecorded-payables":
+        # No service report for the invoice: only a vague supplier email.
+        secondary["documents/other_documents.csv"] = [
+            doc
+            for doc in secondary["documents/other_documents.csv"]
+            if doc.id != "syn-service-close-001"
+        ] + [
+            raw_document(
+                "syn-supplier-email-close-002",
+                "supplier_email",
+                "2026-02-03",
+                "Utility supplier",
+                "Invoice close-inv-1001 covers recent utility service",
+                Decimal(1),
+                supplier_amount,
+                "close-inv-1001",
+            )
+        ]
     for path, documents in secondary.items():
         app_files[path] = pack.files[path] + document_csv_rows(documents)
     app_files.update(
@@ -1900,7 +1956,9 @@ Documents that need no entry sit in the same files as those that do.
                     "account_delta",
                     determination_id,
                     account=primary_account,
-                    expected=money(ZERO if clean else primary_amount),
+                    expected=money(
+                        ZERO if clean or determination_id == withheld else primary_amount
+                    ),
                 )
             )
         issue_checks.append(
@@ -2055,6 +2113,7 @@ Documents that need no entry sit in the same files as those that do.
             "accruals",
             "professional",
             *(["clean-month"] if clean else []),
+            *(["withheld-evidence"] if withheld else []),
         ],
         level="professional",
         format=WORKFLOW_FORMAT,
