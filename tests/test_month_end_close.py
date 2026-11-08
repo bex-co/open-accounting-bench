@@ -428,17 +428,22 @@ def test_close_sources_do_not_name_issues():
     leaked = []
     for seed in range(40):
         instance = _instance(seed)
-        issue_ids = ISSUE_DETERMINATIONS
         for path, text in instance.app_files.items():
             if path == "policy.md":
                 continue
-            leaked += [(seed, path, issue) for issue in issue_ids if issue in text]
+            leaked += [(seed, path, issue) for issue in ISSUE_DETERMINATIONS if issue in text]
         workflow = json.loads(instance.solution_files["workflow.json"])
         sources = "".join(
             text for path, text in instance.app_files.items() if path.startswith("documents/close_")
         )
         assert all(key in sources for key in workflow["evidence"]), seed
     assert leaked == []
+
+
+def _block_amount(ledger: str, narration: str) -> Decimal:
+    """Debit amount of the two-posting block with this narration."""
+    block = next(b for b in ledger.split("\n\n") if narration in b)
+    return Decimal(block.splitlines()[1].split()[1])
 
 
 def _replace_block_amounts(ledger: str, narration: str, new_amount: Decimal) -> str:
@@ -488,12 +493,7 @@ def test_precedence_traps_fail_without_source_labels():
             Decimal(unsigned["count_quantity"]) - Decimal(signed["count_quantity"])
         ) * Decimal(signed["unit_cost"])
         assert shortage_cost > 0
-        oracle_write_down = next(
-            Decimal(line.split()[1])
-            for block in instance.solution_ledger.split("\n\n")
-            if "Record inventory write-down" in block
-            for line in block.splitlines()[1:2]
-        )
+        oracle_write_down = _block_amount(instance.solution_ledger, "Record inventory write-down")
         unsigned_ledger = _replace_block_amounts(
             instance.solution_ledger,
             "Record inventory write-down",

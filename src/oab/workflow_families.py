@@ -754,6 +754,15 @@ def _apply_postings(balances: dict[str, Decimal], postings: list[tuple[str, Deci
         balances[account] = balances.get(account, ZERO) + amount
 
 
+def _close_loss_rate(days_past_due: int, bankrupt: bool = False) -> Decimal:
+    """Expected-credit-loss rate the close policy states, by days past due."""
+    if bankrupt:
+        return Decimal("1.00")
+    if days_past_due <= 0:
+        return Decimal("0.01")
+    return Decimal("0.05") if days_past_due <= 30 else Decimal("0.20")
+
+
 def month_end_close_workflow(seed: int) -> TaskInstance:
     """Professional month-end close over a three-period synthetic company."""
 
@@ -906,15 +915,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     for record in open_ar:
         due = date.fromisoformat(record.due_date or current.end)
         overdue = (period_end - due).days
-        # Policy rates by days past due; the sources no longer state them.
-        if record.id == specific.id:
-            rate = Decimal("1.00")
-        elif overdue <= 0:
-            rate = Decimal("0.01")
-        elif overdue <= 30:
-            rate = Decimal("0.05")
-        else:
-            rate = Decimal("0.20")
+        rate = _close_loss_rate(overdue, bankrupt=record.id == specific.id)
         effective_rate = ZERO if record.id == settled_record.id else rate
         allowance += (record.amount * effective_rate).quantize(CENT)
         aging_rows.append(
@@ -963,8 +964,8 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     nsf_amount = Decimal(rng.randrange(300, 801, 25))
     nsf_customer = rng.choice(pack.master.customers)
     nsf_due_date = f"{pack.periods[-2].label}-23"
-    nsf_loss_rate = Decimal("0.20")
-    allowance += (nsf_amount * nsf_loss_rate).quantize(CENT)
+    nsf_rate = _close_loss_rate((period_end - date.fromisoformat(nsf_due_date)).days)
+    allowance += (nsf_amount * nsf_rate).quantize(CENT)
     aging_rows.append(
         [
             "close-ar-9002",
@@ -1218,6 +1219,15 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             ]
         )
 
+    utility_invoice = [
+        "close-inv-1001",
+        "supplier_invoice",
+        "2026-02-03",
+        "Utility supplier",
+        money(supplier_amount),
+        f"Utility service on {current.label}-29",
+    ]
+
     close_evidence = f"""# Current-period close evidence
 
 Current period ends {current.end}. Amounts are USD.
@@ -1247,44 +1257,28 @@ Documents that need no entry sit in the same files as those that do.
         initial_ledger += oracle_text
     solution_ledger = initial_ledger if clean else initial_ledger + oracle_text
 
-    dispositions = {
-        "revenue-cutoff": "reverse-premature-sale",
-        "revenue-cost-reversal": "reverse-premature-cost",
-        "service-revenue-milestone": "defer-unearned-milestone",
-        "receivables-allowance": "record-allowance",
-        "inventory-valuation": "write-down-to-count-nrv",
-        "inventory-goods-in-transit": "record-goods-in-transit",
-        "unrecorded-payables": "accrue-current-period",
-        "prepayment-cutoff": "defer-unexpired",
-        "payroll-cutoff": "accrue-earned-wages",
-        "fixed-asset-treatment": "expense-routine-repair",
-        "fixed-asset-impairment": "recognize-impairment-loss",
-        "debt-interest-accrual": "accrue-interest",
-        "debt-current-classification": "reclassify-current-portion",
-        "bank-reconciliation": "record-nsf",
-        "bank-fee-reconciliation": "record-bank-fee",
+    # Each issue's disposition is recorded against the source document it
+    # rests on. Evidence is keyed by neutral document ids so the sources do
+    # not name the issue; the cost reversal and the current-portion
+    # reclassification share a document with their primary issue and are
+    # graded on ledger state alone.
+    evidence_for = {
+        "revenue-cutoff": ("close-order-001", "reverse-premature-sale"),
+        "service-revenue-milestone": ("close-ms-02", "defer-unearned-milestone"),
+        "receivables-allowance": ("doc-ar-aging", "record-allowance"),
+        "inventory-valuation": ("doc-count-sheet", "write-down-to-count-nrv"),
+        "inventory-goods-in-transit": ("close-ship-001", "record-goods-in-transit"),
+        "unrecorded-payables": ("close-inv-1001", "accrue-current-period"),
+        "prepayment-cutoff": ("doc-lease-2026-01", "defer-unexpired"),
+        "payroll-cutoff": ("doc-timesheets", "accrue-earned-wages"),
+        "fixed-asset-treatment": ("close-equip-inv-01", "expense-routine-repair"),
+        "fixed-asset-impairment": ("doc-asset-review", "recognize-impairment-loss"),
+        "debt-interest-accrual": ("close-loan-sch-02", "accrue-interest"),
+        "bank-reconciliation": ("close-bank-adv-01", "record-nsf"),
+        "bank-fee-reconciliation": ("close-bank-adv-02", "record-bank-fee"),
     }
     if clean:
-        dispositions = dict.fromkeys(dispositions, "already-recorded")
-    # The source document each determination's disposition is recorded
-    # against. Evidence is keyed by neutral document ids so the sources do
-    # not name the issue; two determinations share a document with their
-    # primary issue and are graded on ledger state alone.
-    document_for = {
-        "revenue-cutoff": "close-order-001",
-        "service-revenue-milestone": "close-ms-02",
-        "receivables-allowance": "doc-ar-aging",
-        "inventory-valuation": "doc-count-sheet",
-        "inventory-goods-in-transit": "close-ship-001",
-        "unrecorded-payables": "close-inv-1001",
-        "prepayment-cutoff": "doc-lease-2026-01",
-        "payroll-cutoff": "doc-timesheets",
-        "fixed-asset-treatment": "close-equip-inv-01",
-        "fixed-asset-impairment": "doc-asset-review",
-        "debt-interest-accrual": "close-loan-sch-02",
-        "bank-reconciliation": "close-bank-adv-01",
-        "bank-fee-reconciliation": "close-bank-adv-02",
-    }
+        evidence_for = {d: (doc, "already-recorded") for d, (doc, _code) in evidence_for.items()}
     trial_fields = {
         "bank": BANK,
         "accounts_receivable": AR,
@@ -1311,8 +1305,7 @@ Documents that need no entry sit in the same files as those that do.
         "doc-feb-receipts": "no-adjustment",
     }
     solution_workflow = {
-        "evidence": {document_for[d]: dispositions[d] for d in document_for}
-        | integrity_dispositions,
+        "evidence": dict(evidence_for.values()) | integrity_dispositions,
         "trial_balance": {
             field: money(final_bal(account)) for field, account in trial_fields.items()
         },
@@ -1353,22 +1346,8 @@ Documents that need no entry sit in the same files as those that do.
                         f"{money(inventory_item.unit_price)} (unit cost "
                         f"{money(inventory_item.unit_cost)}); signed carrier ship date 2026-02-02",
                     ],
-                    [
-                        "close-inv-1001",
-                        "supplier_invoice",
-                        "2026-02-03",
-                        "Utility supplier",
-                        money(supplier_amount),
-                        f"Utility service on {current.label}-29",
-                    ],
-                    [
-                        "close-inv-1002",
-                        "supplier_invoice",
-                        "2026-02-03",
-                        "Utility supplier",
-                        money(supplier_amount),
-                        f"Utility service on {current.label}-29",
-                    ],
+                    utility_invoice,
+                    ["close-inv-1002", *utility_invoice[1:]],  # identical duplicate copy
                     [
                         "close-inv-1003",
                         "supplier_invoice",
@@ -1727,26 +1706,25 @@ Documents that need no entry sit in the same files as those that do.
                     expected=money(ZERO if clean else primary_amount),
                 )
             )
-        issue_checks.extend(
-            [
-                workflow_check(
-                    f"{determination_id}-downstream-final-balance",
-                    "final_balance",
-                    determination_id,
-                    account=downstream_account,
-                    expected=money(final_bal(downstream_account)),
-                ),
-            ]
+        issue_checks.append(
+            workflow_check(
+                f"{determination_id}-downstream-final-balance",
+                "final_balance",
+                determination_id,
+                account=downstream_account,
+                expected=money(final_bal(downstream_account)),
+            )
         )
-        if determination_id in document_for:
+        if determination_id in evidence_for:
+            document_id, code = evidence_for[determination_id]
             issue_checks.append(
                 workflow_check(
                     f"{determination_id}-evidence",
                     "evidence_disposition",
                     determination_id,
                     path="evidence",
-                    key=document_for[determination_id],
-                    expected=dispositions[determination_id],
+                    key=document_id,
+                    expected=code,
                 )
             )
         checks.extend(issue_checks)
