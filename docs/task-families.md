@@ -801,13 +801,26 @@ depreciation-expense check in `fixed-asset-treatment`).
 
 **Near-miss accounts (0.19.0).** The close chart (38 accounts, now
 de-duplicated) adds six plausible near-miss accounts whose stated
-purposes rule them out for every close entry: accrued liabilities vs
+purposes rule them out for the entries they resemble: accrued liabilities vs
 accounts payable, prepaid expenses vs prepaid rent, customer deposits vs
 contract liability, short-term borrowings vs the current portion of
 long-term debt, other receivables vs accounts receivable, and bad-debt
 write-offs vs credit-loss expense. The policy says to choose accounts by
 stated purpose. Near-miss postings fail and show up in `oab report`'s
 account-vs-amount diagnostics.
+
+**Cross-period issues (0.21.0).** Three issues are rooted in earlier
+periods and visible only through prior-period records (ledger, trial
+balances, account history, supplier documents): an estimated December
+cleaning accrual that January's supplier invoice duplicates, so it must
+be reversed (`reverse-prior-accrual`); a prepaid software subscription
+amortized monthly since opening, whose January month must be rolled
+forward (`amortize-prepaid`); and a December supplier credit omitted
+from the books but on the supplier's statement, recorded in January
+because closed periods are not reopened (`record-omitted-credit`).
+Leaving the accrual in place, reversing both the accrual and the
+invoice, writing off the whole prepaid, ignoring the credit, and
+dating it in December all fail.
 
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
