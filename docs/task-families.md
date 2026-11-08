@@ -764,6 +764,22 @@ conflict and policy-sparsity tuning; the next calibration slice
 (board note w2/005) decides whether it moves strong tiers into the
 target band.
 
+**Deeper evidence and volume (0.15.0–0.16.0).** Five decisive facts now
+live only in secondary raw sources — the signed carrier date in the
+shipping log, the FOB terms in the supplier's shipping advice, utility
+service dates in service reports, the customer bankruptcy in a notice,
+and the February settlement in the customer receipts — so reading only
+the close register gives a balanced but wrong close. The policy defines
+the evidence cutoff (documents through 2026-02-15). Each seed carries
+73–74 app files (~70 KB): the evidence pack plus the close register and
+schedules plus plausible documents that need no January entry (vendor
+statements matching the payables subledger, unreceived February
+purchase orders, paystubs, minutes, prior-period memos and bank
+reconciliations, contract extracts, copies of earlier delivery notes,
+remittances, and supplier bills). Close app files have their own caps
+(`MAX_CLOSE_APP_FILES` 80, `MAX_CLOSE_APP_BYTES` 400 KB); the evidence
+pack keeps `MAX_EVIDENCE_FILES`.
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced
