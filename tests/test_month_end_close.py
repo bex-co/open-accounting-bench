@@ -959,3 +959,17 @@ def test_close_ledgers_open_each_account_once():
             if len(line.split()) > 2 and line.split()[1] == "open"
         )
         assert [a for a, n in opened.items() if n > 1] == [], seed
+
+
+def test_close_chart_lists_near_miss_accounts_once_with_purposes():
+    instance = _adjusting_instance(_full_seeds()[0])
+    chart = instance.app_files["chart_of_accounts.md"]
+    accounts = re.findall(r"^- `([^`]+)` — (.+)$", chart, flags=re.MULTILINE)
+    names = [name for name, _ in accounts]
+    assert len(names) == len(set(names)), "chart lists an account twice"
+    purposes = dict(accounts)
+    for _narration, right, near_miss, _diagnosis in NEAR_MISS_TRAPS:
+        assert right in purposes and near_miss in purposes, near_miss
+        assert purposes[near_miss].strip(), near_miss
+    assert "supplier invoice is in the close evidence" in purposes["Liabilities:AccountsPayable"]
+    assert "account whose purpose" in " ".join(instance.app_files["policy.md"].split())
