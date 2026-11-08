@@ -647,3 +647,29 @@ def test_accruing_an_unreceived_purchase_order_fails():
     report = _grade(instance, ledger=instance.solution_ledger + "\n" + accrual)
     assert report.reward == 0
     assert report.layers["structural_validity"].passed
+
+
+def test_close_generation_enforces_its_file_budget(monkeypatch):
+    import pytest
+
+    import oab.workflow_families as workflow_families
+
+    monkeypatch.setattr(workflow_families, "MAX_CLOSE_APP_FILES", 10)
+    with pytest.raises(ValueError, match="close app files file count"):
+        workflow_families.month_end_close_workflow(8)
+
+
+def test_paystubs_agree_with_the_payroll_register():
+    instance = _adjusting_instance(8)
+    files = instance.app_files
+    register = {
+        row["description"]: row["line_amount"]
+        for row in _rows(files, "documents/payroll_register.csv")
+        if row["period"] == "2026-01"
+    }
+    stubs = [text for path, text in files.items() if path.startswith("documents/paystubs/")]
+    assert stubs
+    for text in stubs:
+        name = text.splitlines()[0].split(": ", 1)[1]
+        salary = re.search(r"Regular salary: ([\d.]+)", text).group(1)
+        assert register[name] == salary, name
