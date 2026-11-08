@@ -767,6 +767,14 @@ def _apply_postings(balances: dict[str, Decimal], postings: list[tuple[str, Deci
         balances[account] = balances.get(account, ZERO) + amount
 
 
+# Issues an insufficient-evidence control can withhold, and the narration
+# of the oracle entry the correct close then omits.
+WITHHELD_ENTRY = {
+    "inventory-goods-in-transit": "Record goods in transit",
+    "unrecorded-payables": "Accrue unrecorded supplier service",
+}
+
+
 def _close_loss_rate(days_past_due: int, bankrupt: bool = False) -> Decimal:
     """Expected-credit-loss rate the close policy states, by days past due."""
     if bankrupt:
@@ -902,7 +910,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     if not clean:
         withhold_rng = random.Random(seed ^ 0x1E55)
         if withhold_rng.random() < 0.3:
-            withheld = withhold_rng.choice(["inventory-goods-in-transit", "unrecorded-payables"])
+            withheld = withhold_rng.choice(list(WITHHELD_ENTRY))
     current = pack.periods[-1]
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
@@ -1258,12 +1266,10 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
         ]
     )
 
-    withheld_entry = {
-        "inventory-goods-in-transit": "Record goods in transit",
-        "unrecorded-payables": "Accrue unrecorded supplier service",
-    }
     if withheld:
-        oracle_entries = [e for e in oracle_entries if e[2] != withheld_entry[withheld]]
+        kept = [e for e in oracle_entries if e[2] != WITHHELD_ENTRY[withheld]]
+        assert len(kept) == len(oracle_entries) - 1, withheld  # narration must match one entry
+        oracle_entries = kept
 
     final_balances = dict(draft_balances)
     for _date, _payee, _narration, postings in oracle_entries:

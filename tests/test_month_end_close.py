@@ -65,12 +65,18 @@ def _adjusting_instance(seed: int):
 
 
 @functools.cache
-def _full_seeds(limit: int = 40) -> tuple[int, ...]:
-    return tuple(
-        seed
-        for seed in range(limit)
-        if not _is_clean(_instance(seed)) and not _is_withheld(_instance(seed))
-    )
+def _variant(seed: int) -> str:
+    """'clean', 'withheld', or 'full' — generated once per seed."""
+    instance = _instance(seed)
+    return "clean" if _is_clean(instance) else "withheld" if _is_withheld(instance) else "full"
+
+
+def _seeds(variant: str, limit: int = 40) -> tuple[int, ...]:
+    return tuple(seed for seed in range(limit) if _variant(seed) == variant)
+
+
+def _full_seeds() -> tuple[int, ...]:
+    return _seeds("full")
 
 
 def _grade(instance, ledger=None, workflow=None):
@@ -138,10 +144,8 @@ def test_close_contract_discloses_codes_and_keeps_all_clusters_in_scope():
 
 
 def test_close_tuned_contract_links_nsf_and_false_alarms():
-    for seed in range(8):
+    for seed in (seed for seed in _full_seeds() if seed < 8):
         instance = _instance(seed)
-        if _is_clean(instance) or _is_withheld(instance):
-            continue
         policy = " ".join(instance.app_files["policy.md"].split())
         assert "days past due at period-end" in policy
         assert "annual rate / 12" in policy
@@ -238,7 +242,7 @@ def test_close_oracle_noop_and_seed_sweep():
 
 
 def test_close_issue_omission_mutants_lose_their_clusters():
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     blocks = _blocks(instance)
     assert len(blocks) >= 15
     details = _workflow_details(_grade(instance))
@@ -269,7 +273,7 @@ def test_close_issue_omission_mutants_lose_their_clusters():
 
 
 def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
-    instance = _adjusting_instance(12)
+    instance = _adjusting_instance(_full_seeds()[1])
     blocks = _blocks(instance)
 
     duplicate = instance.solution_ledger + "\n" + blocks[0] + "\n"
@@ -296,7 +300,7 @@ def test_close_duplicate_wrong_period_and_wrong_disposition_mutants():
 
 
 def test_close_partial_attempt_has_interpretable_cluster_scores():
-    instance = _adjusting_instance(3)
+    instance = _adjusting_instance(_full_seeds()[2])
     blocks = _blocks(instance)
     partial = instance.initial_ledger + blocks[0] + "\n"
     report = _grade(instance, ledger=partial)
@@ -308,7 +312,7 @@ def test_close_partial_attempt_has_interpretable_cluster_scores():
 
 
 def test_close_combined_entry_is_equivalent():
-    instance = _adjusting_instance(19)
+    instance = _adjusting_instance(_full_seeds()[3])
     blocks = _blocks(instance)
     first, second, *rest = blocks
     postings = []
@@ -333,9 +337,8 @@ def test_generated_close_task_validates(tmp_path: Path):
 # --- Clean-month negative control (w2/m2) -------------------------------
 
 
-@functools.cache
-def _clean_seeds(limit: int = 40) -> tuple[int, ...]:
-    return tuple(seed for seed in range(limit) if _is_clean(_instance(seed)))
+def _clean_seeds() -> tuple[int, ...]:
+    return _seeds("clean")
 
 
 def test_some_seeds_draw_a_clean_month_and_most_do_not():
@@ -403,7 +406,7 @@ def test_over_action_diagnostic_only_on_no_action_tasks():
     assert _grade(clean).to_reward_json()["over_action"] == 0.0
     over = _grade(clean, ledger=clean.initial_ledger + "\n" + NEXT_PERIOD_ACCRUAL)
     assert over.to_reward_json()["over_action"] == 1.0
-    adjustments = _adjusting_instance(9)
+    adjustments = _adjusting_instance(_full_seeds()[0])
     assert "over_action" not in _grade(adjustments).to_reward_json()
 
 
@@ -420,7 +423,7 @@ def test_is_no_action_accepts_both_encodings_of_zero():
 def test_validate_relaxes_only_no_action_controls(tmp_path: Path):
     """An adjustment task whose solution equals its initial ledger, or whose
     deltas are empty, is still rejected; only a declared no-action passes."""
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     task_dir = write_task(instance, tmp_path, track="dynamic")
     (task_dir / "solution" / "ledger.beancount").write_text(instance.initial_ledger)
     expected_path = task_dir / "tests" / "expected.json"
@@ -433,7 +436,7 @@ def test_validate_relaxes_only_no_action_controls(tmp_path: Path):
 
 
 def test_workflow_report_carries_ledger_diagnostics():
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     details = _grade(instance).to_report_json()["details"]
     assert "workflow" in details
     assert set(details["diagnostics"]["expected"].values()) == {"correct"}
@@ -539,7 +542,7 @@ def test_close_loss_rate_ladder_matches_policy():
 def test_accruing_the_duplicate_invoice_copy_fails():
     """Without a duplicate flag, the copy is recognised only by matching the
     original; accruing it as a second liability balances but fails."""
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     amount = _block_amount(instance.solution_ledger, "Accrue unrecorded supplier service")
     second = (
         '2026-01-31 * "Supplier" "Accrue supplier invoice close-inv-1002"\n'
@@ -629,7 +632,7 @@ def test_close_volume_and_distractors_are_consistent():
         files = _instance(seed).app_files
         assert 65 <= len(files) <= MAX_CLOSE_APP_FILES, (seed, len(files))
         assert sum(len(text.encode()) for text in files.values()) <= MAX_CLOSE_APP_BYTES, seed
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     files = instance.app_files
     payables = list(csv.DictReader(io.StringIO(files["subledgers/accounts_payable.csv"])))
     for path, text in files.items():
@@ -646,7 +649,7 @@ def test_close_volume_and_distractors_are_consistent():
 
 
 def test_accruing_an_unreceived_purchase_order_fails():
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     po = next(
         t for p, t in instance.app_files.items() if p.startswith("documents/purchase_orders/")
     )
@@ -673,7 +676,7 @@ def test_close_generation_enforces_its_file_budget(monkeypatch):
 
 
 def test_paystubs_agree_with_the_payroll_register():
-    instance = _adjusting_instance(9)
+    instance = _adjusting_instance(_full_seeds()[0])
     files = instance.app_files
     register = {
         row["description"]: row["line_amount"]
@@ -688,15 +691,33 @@ def test_paystubs_agree_with_the_payroll_register():
         assert register[name] == salary, name
 
 
-@functools.cache
-def _withheld_seeds(limit: int = 40) -> tuple[int, ...]:
-    return tuple(seed for seed in range(limit) if _is_withheld(_instance(seed)))
+# Withheld document id -> (issue, estimated entry's narration, debit account,
+# check that the deciding document is absent from the evidence).
+WITHHELD_ISSUES = {
+    "close-ship-001": (
+        "goods-in-transit",
+        "Record goods in transit",
+        "Assets:GoodsInTransit",
+        lambda files: "FOB shipping point" not in files["documents/supplier_documents.csv"],
+    ),
+    "close-inv-1001": (
+        "unrecorded-payables",
+        "Accrue unrecorded supplier service",
+        "Expenses:Utilities",
+        lambda files: (
+            not any(
+                row["kind"] == "service_report" and row["source_refs"] == "close-inv-1001"
+                for row in _rows(files, "documents/other_documents.csv")
+            )
+        ),
+    ),
+}
 
 
 def test_insufficient_evidence_controls_flag_and_post_nothing():
     """m8: when the deciding document is withheld, the oracle flags the item
     and posts nothing for it; estimating from partial evidence fails."""
-    seeds = _withheld_seeds()
+    seeds = _seeds("withheld")
     assert len(seeds) >= 3, seeds
     covered = set()
     for seed in seeds:
@@ -709,43 +730,23 @@ def test_insufficient_evidence_controls_flag_and_post_nothing():
         ]
         assert len(flagged) == 1, (seed, flagged)
         assert _grade(instance).reward == 1, seed
-        if flagged == ["close-ship-001"]:
-            covered.add("goods-in-transit")
-            assert "FOB shipping point" not in files["documents/supplier_documents.csv"]
-            assert "Record goods in transit" not in instance.solution_ledger
-            amount = Decimal(
-                next(
-                    row["amount"]
-                    for row in _rows(files, "documents/close_documents.csv")
-                    if row["document_id"] == "close-ship-001"
-                )
+        document_id = flagged[0]
+        issue, narration, debit, missing = WITHHELD_ISSUES[document_id]
+        covered.add(issue)
+        assert missing(files), seed
+        assert narration not in instance.solution_ledger
+        amount = Decimal(
+            next(
+                row["amount"]
+                for row in _rows(files, "documents/close_documents.csv")
+                if row["document_id"] == document_id
             )
-            estimate = (
-                '2026-01-31 * "Supplier" "Record goods in transit"\n'
-                f"  Assets:GoodsInTransit  {amount:.2f} USD\n"
-                f"  Liabilities:AccountsPayable  {-amount:.2f} USD\n"
-            )
-        else:
-            assert flagged == ["close-inv-1001"], (seed, flagged)
-            covered.add("unrecorded-payables")
-            reports = _rows(files, "documents/other_documents.csv")
-            assert not any(
-                r["kind"] == "service_report" and r["source_refs"] == "close-inv-1001"
-                for r in reports
-            )
-            assert "Accrue unrecorded supplier service" not in instance.solution_ledger
-            amount = Decimal(
-                next(
-                    row["amount"]
-                    for row in _rows(files, "documents/close_documents.csv")
-                    if row["document_id"] == "close-inv-1001"
-                )
-            )
-            estimate = (
-                '2026-01-31 * "Supplier" "Accrue unrecorded supplier service"\n'
-                f"  Expenses:Utilities  {amount:.2f} USD\n"
-                f"  Liabilities:AccountsPayable  {-amount:.2f} USD\n"
-            )
+        )
+        estimate = (
+            f'2026-01-31 * "Supplier" "{narration}"\n'
+            f"  {debit}  {amount:.2f} USD\n"
+            f"  Liabilities:AccountsPayable  {-amount:.2f} USD\n"
+        )
         report = _grade(instance, ledger=instance.solution_ledger + "\n" + estimate)
         assert report.reward == 0, seed
         assert report.layers["structural_validity"].passed, seed
