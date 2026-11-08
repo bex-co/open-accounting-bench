@@ -19,6 +19,6 @@
 
 ## Inbox
 
-- [005](./005.md) — Recalibration slice after the de-labelling tuning
+- [005](./blocked/005.md) — Recalibration slice after the de-labelling tuning — **blocked:** needs maintainer-supplied model credentials and a budget decision
 - [007](./007.md) — Grade the planted injections directly
 
