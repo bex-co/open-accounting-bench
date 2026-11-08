@@ -52,8 +52,15 @@ def actionable(workstream: str) -> tuple[list[str], list[str]]:
     root = project_dir() / ".pm" / workstream
     if not root.is_dir():
         return [], []
-    milestones = sorted(p.name for p in root.glob("m*") if p.is_dir())
-    notes = sorted(p.name for p in root.glob("*.md") if p.name.lower() != "readme.md")
+    # Numeric order, as the skill picks: m6 before m10, 004.md before 010.md.
+    milestones = sorted(
+        (p.name for p in root.glob("m*") if p.is_dir() and p.name[1:].isdigit()),
+        key=lambda name: int(name[1:]),
+    )
+    notes = sorted(
+        (p.name for p in root.glob("*.md") if p.stem.isdigit()),
+        key=lambda name: int(name.split(".", 1)[0]),
+    )
     return milestones, notes
 
 

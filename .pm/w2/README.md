@@ -21,5 +21,4 @@
 
 - [004](./004.md) — Calibrate the month-end pilot on pass^k under fixed budgets
 - [005](./005.md) — Recalibration slice after the de-labelling tuning
-- [006](./006.md) — loopx guard picks milestones in string order
 
