@@ -1,13 +1,13 @@
 # w2 · m9 — Longer downstream dependency chains
 
-**Worker:** worker2 **Goal:** More close issues change a later computation, so dropping or contradicting an intermediate result fails downstream checks. **Status:** todo (t001 done)
+**Worker:** worker2 **Goal:** More close issues change a later computation, so dropping or contradicting an intermediate result fails downstream checks. **Status:** todo (t001, t002 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
 | t001 | Design dependency chains — **DONE** | 45m | — |
-| t002 | Implement the chains | 75m | t001 |
+| t002 | Implement the chains — **DONE** | 75m | t001 |
 | t003 | Version bump and regeneration | 20m | t002 |
 | t004 | Adoption surface | 20m | t003 |
 | t005 | Simplify | 15m | t004 |

@@ -771,3 +771,73 @@ def test_close_variants_are_exclusive():
     for seed in range(40):
         instance = _instance(seed)
         assert not (_is_clean(instance) and _is_withheld(instance)), seed
+
+
+def _determination_passed(report, determination_id: str) -> bool:
+    return _workflow_details(report)["determinations"][determination_id]["passed"]
+
+
+def test_first_link_only_mutants_fail_their_downstream_determination():
+    """m9: for each dependency chain, a close that applies only the first
+    link fails the determination of the dependent computation."""
+    for seed in _full_seeds()[:6]:
+        instance = _adjusting_instance(seed)
+        files, oracle = instance.app_files, instance.solution_ledger
+        allowance = _block_amount(oracle, "Record credit-loss allowance")
+        order = next(
+            row
+            for row in _rows(files, "documents/close_documents.csv")
+            if row["document_id"] == "close-order-001"
+        )
+        returned = next(
+            row
+            for row in _rows(files, "documents/close_ar_aging.csv")
+            if row["record_id"] == "close-ar-9002"
+        )
+        lender = next(
+            row
+            for row in _rows(files, "documents/close_debt_schedules.csv")
+            if row["prepared_by"] == "Lender"
+        )
+        opening_interest = (
+            Decimal(lender["opening_principal"]) * Decimal(lender["annual_rate_percent"]) / 1200
+        ).quantize(Decimal("0.01"))
+        repair = next(b for b in oracle.split("\n\n") if "Expense routine equipment repair" in b)
+        repair_amount = Decimal(repair.splitlines()[1].split()[1])
+        repair_kept_depreciation = (
+            f"{repair.splitlines()[0]}\n"
+            f"  Expenses:Repairs  {repair_amount:.2f} USD\n"
+            f"  Assets:Equipment  {-repair_amount:.2f} USD"
+        )
+        mutants = {
+            # 1. Sale reversed, premature receivable still reserved (1%).
+            "receivables-allowance": _replace_block_amounts(
+                oracle,
+                "Record credit-loss allowance",
+                allowance + (Decimal(order["amount"]) * Decimal("0.01")).quantize(Decimal("0.01")),
+            ),
+            # 3. Interest on opening principal, ignoring the Jan-15 payment.
+            "debt-interest-accrual": _replace_block_amounts(
+                oracle, "Accrue January note interest", opening_interest
+            ),
+            # 5. Repair expensed but its January depreciation kept.
+            "fixed-asset-treatment": oracle.replace(repair, repair_kept_depreciation),
+        }
+        # 2. Returned check recorded but left out of the allowance (20%).
+        mutants["receivables-allowance (returned check)"] = _replace_block_amounts(
+            oracle,
+            "Record credit-loss allowance",
+            allowance - (Decimal(returned["amount"]) * Decimal("0.20")).quantize(Decimal("0.01")),
+        )
+        for name, ledger in mutants.items():
+            determination = name.split(" ")[0]
+            report = _grade(instance, ledger=ledger)
+            assert report.reward == 0, (seed, name)
+            assert not _determination_passed(report, determination), (seed, name)
+        # 4. Every adjustment posted, but draft totals reported.
+        workflow = json.loads(instance.solution_files["workflow.json"])
+        statement = workflow["income_statement"]
+        statement["total_expenses"] = str(Decimal(statement["total_expenses"]) - allowance)
+        report = _grade(instance, workflow=json.dumps(workflow))
+        assert report.reward == 0, seed
+        assert not _determination_passed(report, "reporting"), seed

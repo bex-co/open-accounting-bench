@@ -1926,6 +1926,9 @@ Documents that need no entry sit in the same files as those that do.
             BANK,
         ),
     ]
+    # Dependent movements that belong to an issue's determination: expensing
+    # the routine repair also reverses its January depreciation.
+    chained_deltas = {"fixed-asset-treatment": (DEPRECIATION_EXPENSE, -repair_depreciation)}
     current_period = [current.start, current.end]
     for (
         determination_id,
@@ -1976,6 +1979,19 @@ Documents that need no entry sit in the same files as those that do.
                 expected=money(final_bal(downstream_account)),
             )
         )
+        if determination_id in chained_deltas:
+            # Second link of a dependency chain, graded in the same
+            # determination so applying only the first link fails it.
+            account, amount = chained_deltas[determination_id]
+            issue_checks.append(
+                workflow_check(
+                    f"{determination_id}-chained-delta",
+                    "account_delta",
+                    determination_id,
+                    account=account,
+                    expected=money(ZERO if clean else amount),
+                )
+            )
         if determination_id in evidence_for:
             document_id, code = evidence_for[determination_id]
             issue_checks.append(
