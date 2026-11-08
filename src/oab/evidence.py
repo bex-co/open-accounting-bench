@@ -1288,6 +1288,26 @@ def _csv(rows: Iterable[Iterable[object]]) -> str:
     return output.getvalue()
 
 
+# Raw source-document files and the document kinds each one renders.
+DOCUMENT_FILE_GROUPS: dict[str, set[str]] = {
+    "documents/sales_invoices.csv": {"sales_invoice"},
+    "documents/customer_receipts.csv": {"customer_receipt"},
+    "documents/bank_statements.csv": {"bank_statement"},
+    "documents/shipping_log.csv": {
+        "shipping_log",
+        "receiving_log",
+        "delivery_confirmation",
+    },
+    "documents/inventory_counts.csv": {"inventory_count"},
+    "documents/payroll_register.csv": {"payroll_register"},
+}
+
+
+def document_csv_rows(documents: Iterable[Document]) -> str:
+    """CSV rows (no header) in the raw document layout, for appending."""
+    return _csv(_document_rows(documents)[1:])
+
+
 def _document_rows(documents: Iterable[Document]) -> list[list[object]]:
     rows: list[list[object]] = [
         [
@@ -1461,20 +1481,8 @@ def _render_files(builder: _PackBuilder, opening_balances: dict[str, Decimal]) -
     for key in builder.subledgers:
         files[f"subledgers/{key}.csv"] = subledger_csv(key)
 
-    document_groups: dict[str, set[str]] = {
-        "documents/sales_invoices.csv": {"sales_invoice"},
-        "documents/customer_receipts.csv": {"customer_receipt"},
-        "documents/bank_statements.csv": {"bank_statement"},
-        "documents/shipping_log.csv": {
-            "shipping_log",
-            "receiving_log",
-            "delivery_confirmation",
-        },
-        "documents/inventory_counts.csv": {"inventory_count"},
-        "documents/payroll_register.csv": {"payroll_register"},
-    }
-    grouped_kinds = set().union(*document_groups.values())
-    for path, kinds in document_groups.items():
+    grouped_kinds = set().union(*DOCUMENT_FILE_GROUPS.values())
+    for path, kinds in DOCUMENT_FILE_GROUPS.items():
         files[path] = _csv(_document_rows(doc for doc in documents if doc.kind in kinds))
     files["documents/supplier_documents.csv"] = _csv(
         _document_rows(doc for doc in documents if doc.kind.startswith("supplier_"))
@@ -1539,31 +1547,41 @@ def dirty_example_pack(seed: int) -> EvidencePack:
     return generate_company_history(seed, anomalies=None)
 
 
-def validate_evidence_budgets(pack: EvidencePack) -> list[str]:
+def validate_file_budgets(
+    files: dict[str, str],
+    *,
+    label: str,
+    max_files: int,
+    max_total_bytes: int,
+    max_file_bytes: int = MAX_EVIDENCE_FILE_BYTES,
+    max_total_lines: int = MAX_EVIDENCE_TOTAL_LINES,
+) -> list[str]:
+    """File-count, byte, and line budgets for a set of rendered files."""
     failures: list[str] = []
-    if len(pack.files) > MAX_EVIDENCE_FILES:
-        failures.append(
-            f"evidence pack file count {len(pack.files)} exceeds file budget {MAX_EVIDENCE_FILES}"
-        )
+    if len(files) > max_files:
+        failures.append(f"{label} file count {len(files)} exceeds file budget {max_files}")
     total_bytes = 0
     total_lines = 0
-    for path, content in pack.files.items():
+    for path, content in files.items():
         size = len(content.encode("utf-8"))
         total_bytes += size
         total_lines += content.count("\n") + (1 if content and not content.endswith("\n") else 0)
-        if size > MAX_EVIDENCE_FILE_BYTES:
-            failures.append(
-                f"{path}: size {size} exceeds per-file byte budget {MAX_EVIDENCE_FILE_BYTES}"
-            )
-    if total_bytes > MAX_EVIDENCE_TOTAL_BYTES:
-        failures.append(
-            f"evidence pack size {total_bytes} exceeds total byte budget {MAX_EVIDENCE_TOTAL_BYTES}"
-        )
-    if total_lines > MAX_EVIDENCE_TOTAL_LINES:
-        failures.append(
-            f"evidence pack lines {total_lines} exceeds line budget {MAX_EVIDENCE_TOTAL_LINES}"
-        )
+        if size > max_file_bytes:
+            failures.append(f"{path}: size {size} exceeds per-file byte budget {max_file_bytes}")
+    if total_bytes > max_total_bytes:
+        failures.append(f"{label} size {total_bytes} exceeds total byte budget {max_total_bytes}")
+    if total_lines > max_total_lines:
+        failures.append(f"{label} lines {total_lines} exceeds line budget {max_total_lines}")
     return failures
+
+
+def validate_evidence_budgets(pack: EvidencePack) -> list[str]:
+    return validate_file_budgets(
+        pack.files,
+        label="evidence pack",
+        max_files=MAX_EVIDENCE_FILES,
+        max_total_bytes=MAX_EVIDENCE_TOTAL_BYTES,
+    )
 
 
 def _duplicates(values: Iterable[str]) -> set[str]:

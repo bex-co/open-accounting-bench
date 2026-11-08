@@ -11,8 +11,6 @@ verifier contract end to end.
 
 from __future__ import annotations
 
-import csv
-import io
 import json
 import random
 from datetime import date
@@ -20,10 +18,15 @@ from decimal import Decimal
 
 from oab.evidence import (
     ACCUMULATED_DEPRECIATION,
+    DOCUMENT_FILE_GROUPS,
     NOTES_PAYABLE,
     ZERO,
+    Document,
+    DocumentLine,
     _csv,
+    document_csv_rows,
     generate_company_history,
+    validate_file_budgets,
 )
 from oab.evidence import EXTRA_ACCOUNTS as EVIDENCE_EXTRA_ACCOUNTS
 from oab.families import (
@@ -772,6 +775,7 @@ def _close_loss_rate(days_past_due: int, bankrupt: bool = False) -> Decimal:
 # schedules, and plausible-but-irrelevant documents on top.
 MAX_CLOSE_APP_FILES = 80
 MAX_CLOSE_APP_BYTES = 400_000
+MAX_CLOSE_APP_LINES = 8_000
 
 
 def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_principal_open, rate):
@@ -788,15 +792,10 @@ def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_princi
     files: dict[str, str] = {}
     open_ap = [r for r in pack.subledgers["accounts_payable"] if r.status != "closed" and r.amount]
     for supplier in pack.master.suppliers:
+        bills = [r for r in open_ap if r.party_id == supplier.id]
         rows = [["bill_id", "due_date", "open_amount"]]
-        rows += [[r.id, r.due_date, money(-r.amount)] for r in open_ap if r.party_id == supplier.id]
-        rows.append(
-            [
-                "balance",
-                "",
-                money(sum((-r.amount for r in open_ap if r.party_id == supplier.id), ZERO)),
-            ]
-        )
+        rows += [[r.id, r.due_date, money(-r.amount)] for r in bills]
+        rows.append(["balance", "", money(sum((-r.amount for r in bills), ZERO))])
         files[f"documents/vendor_statements/{supplier.id}.csv"] = _csv(rows)
     for number in range(1, 7):
         supplier = rng.choice(pack.master.suppliers)
@@ -812,18 +811,20 @@ def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_princi
             f"| {item.name} ({item.id}) | {quantity} | {money(item.unit_cost)} |\n\n"
             "Status: open; nothing received or invoiced.\n"
         )
-    register = list(csv.DictReader(io.StringIO(pack.files["documents/payroll_register.csv"])))
     employees = {e.name: e for e in pack.master.employees}
-    for row in register:
-        if row["period"] != current.label or row["description"] not in employees:
+    for document in pack.documents:
+        if document.kind != "payroll_register" or document.period != current.label:
             continue
-        employee = employees[row["description"]]
-        files[f"documents/paystubs/{current.label}/{employee.id}.md"] = (
-            f"# Paystub {current.label}: {employee.name}\n\n"
-            f"Pay date: {row['date']}\n"
-            f"Regular salary: {row['line_amount']}\n"
-            "Paid in this cycle: regular salary only.\n"
-        )
+        for line in document.lines:
+            if line.description not in employees:
+                continue
+            employee = employees[line.description]
+            files[f"documents/paystubs/{current.label}/{employee.id}.md"] = (
+                f"# Paystub {current.label}: {employee.name}\n\n"
+                f"Pay date: {document.date}\n"
+                f"Regular salary: {money(line.amount)}\n"
+                "Paid in this cycle: regular salary only.\n"
+            )
     files[f"documents/board_minutes_{current.label}.md"] = (
         f"# Board minutes, {current.label}\n\n"
         "- Approved the 2026 operating budget.\n"
@@ -845,19 +846,24 @@ def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_princi
         )
     # Copies of documents the books already reflect: one delivery note per
     # earlier shipment and one remittance advice per earlier receipt.
-    for path, folder, title in (
-        ("documents/shipping_log.csv", "delivery_notes", "Delivery note"),
-        ("documents/customer_receipts.csv", "remittance_advices", "Remittance advice"),
-        ("documents/supplier_documents.csv", "supplier_bill_copies", "Supplier bill"),
-    ):
-        for row in csv.DictReader(io.StringIO(pack.files[path])):
-            if row["period"] == current.label and folder == "remittance_advices":
+    shipping_kinds = DOCUMENT_FILE_GROUPS["documents/shipping_log.csv"]
+    copies = (
+        ("delivery_notes", "Delivery note", lambda kind: kind in shipping_kinds, True),
+        ("remittance_advices", "Remittance advice", lambda kind: kind == "customer_receipt", False),
+        ("supplier_bill_copies", "Supplier bill", lambda kind: kind.startswith("supplier_"), True),
+    )
+    for folder, title, include, include_current in copies:
+        for document in pack.documents:
+            if not include(document.kind):
                 continue
-            files[f"documents/{folder}/{row['document_id']}.md"] = (
-                f"# {title} {row['document_id']}\n\n"
-                f"Date: {row['date']}\nParty: {row['party_id']}\n"
-                f"Details: {row['description']}, quantity {row['quantity']}, "
-                f"amount {row['document_total']}\nReference: {row['source_refs']}\n"
+            if document.period == current.label and not include_current:
+                continue
+            line = document.lines[-1]
+            files[f"documents/{folder}/{document.id}.md"] = (
+                f"# {title} {document.id}\n\n"
+                f"Date: {document.date}\nParty: {document.party_id or ''}\n"
+                f"Details: {line.description}, quantity {money(line.quantity)}, "
+                f"amount {money(document.total)}\nReference: {';'.join(document.source_refs)}\n"
             )
     files["documents/contracts/lease_agreement.md"] = (
         "# Office lease (extract)\n\n"
@@ -1437,21 +1443,9 @@ Documents that need no entry sit in the same files as those that do.
     app_files = dict(pack.files)
 
     def raw_document(document_id, kind, day, party, description, quantity, unit, refs):
-        total = money(quantity * unit)
-        return [
-            document_id,
-            kind,
-            day,
-            day[:7],
-            party,
-            "current",
-            description,
-            money(quantity),
-            money(unit),
-            total,
-            total,
-            refs,
-        ]
+        amount = quantity * unit
+        line = DocumentLine(description, quantity, unit, amount)
+        return Document(document_id, kind, day, day[:7], party, [line], amount, source_refs=[refs])
 
     # Decisive facts live in secondary sources, not in the close register:
     # an agent that reads only the register misses them.
@@ -1525,8 +1519,8 @@ Documents that need no entry sit in the same files as those that do.
             )
         ],
     }
-    for path, rows in secondary.items():
-        app_files[path] = pack.files[path] + _csv(rows)
+    for path, documents in secondary.items():
+        app_files[path] = pack.files[path] + document_csv_rows(documents)
     app_files.update(
         _close_distractors(
             pack,
@@ -2012,6 +2006,15 @@ Documents that need no entry sit in the same files as those that do.
     )
 
     required_final = {account: money(final_bal(account)) for account in trial_fields.values()}
+    budget_failures = validate_file_budgets(
+        app_files,
+        label="close app files",
+        max_files=MAX_CLOSE_APP_FILES,
+        max_total_bytes=MAX_CLOSE_APP_BYTES,
+        max_total_lines=MAX_CLOSE_APP_LINES,
+    )
+    if budget_failures:
+        raise ValueError("month-end close exceeds its budgets: " + "; ".join(budget_failures))
     return TaskInstance(
         task_id="month-end-close-workflow",
         family="month-end-close",

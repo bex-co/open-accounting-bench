@@ -539,8 +539,14 @@ def test_accruing_the_duplicate_invoice_copy_fails():
     assert not report.layers["semantic_accuracy"].passed
 
 
-def _without_block(ledger: str, narration: str) -> str:
-    return "\n\n".join(block for block in ledger.split("\n\n") if narration not in block)
+def _without_block(ledger: str, *narrations: str) -> str:
+    return "\n\n".join(
+        block for block in ledger.split("\n\n") if not any(n in block for n in narrations)
+    )
+
+
+def _rows(files: dict, path: str) -> list[dict]:
+    return list(csv.DictReader(io.StringIO(files[path])))
 
 
 def test_decisive_facts_live_only_in_secondary_sources():
@@ -557,7 +563,6 @@ def test_decisive_facts_live_only_in_secondary_sources():
             line for line in register.splitlines() if line.startswith("close-inv-")
         )
         assert "bankruptcy" not in aging
-        assert "documents/close_subsequent_receipts.csv" not in files
         # ... and present in the secondary ones.
         assert "close-order-001" in files["documents/shipping_log.csv"]
         assert "FOB shipping point" in files["documents/supplier_documents.csv"]
@@ -568,21 +573,20 @@ def test_decisive_facts_live_only_in_secondary_sources():
         oracle = instance.solution_ledger
         primary_only = [
             _without_block(
-                _without_block(oracle, "Reverse premature product sale"),
-                "Reverse cost of premature product sale",
+                oracle, "Reverse premature product sale", "Reverse cost of premature product sale"
             ),
             _without_block(oracle, "Record goods in transit"),
             _without_block(oracle, "Accrue unrecorded supplier service"),
         ]
-        rows = {row["record_id"]: row for row in csv.DictReader(io.StringIO(aging))}
+        rows = {row["record_id"]: row for row in _rows(files, "documents/close_ar_aging.csv")}
         notice = next(
             row
-            for row in csv.DictReader(io.StringIO(files["documents/other_documents.csv"]))
+            for row in _rows(files, "documents/other_documents.csv")
             if row["kind"] == "customer_notice"
         )
         receipt = next(
             row
-            for row in csv.DictReader(io.StringIO(files["documents/customer_receipts.csv"]))
+            for row in _rows(files, "documents/customer_receipts.csv")
             if row["document_id"] == "syn-receipt-close-001"
         )
         allowance = _block_amount(oracle, "Record credit-loss allowance")
