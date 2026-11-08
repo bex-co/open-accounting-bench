@@ -466,7 +466,8 @@ def _replace_block_amounts(ledger: str, narration: str, new_amount: Decimal) -> 
 def test_precedence_traps_fail_without_source_labels():
     """Relying on the client's superseded loan schedule, or on the unsigned
     count copy, balances but fails non-structural layers."""
-    for seed in (3, 8, 11):
+    adjusting = [seed for seed in range(40) if seed not in _clean_seeds()]
+    for seed in adjusting:
         instance = _adjusting_instance(seed)
         schedules = list(
             csv.DictReader(io.StringIO(instance.app_files["documents/close_debt_schedules.csv"]))
