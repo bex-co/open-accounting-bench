@@ -877,3 +877,68 @@ def test_chained_depreciation_check_expectations():
     clean = _instance(_clean_seeds()[0])
     assert Decimal(chained(clean)["expected"]) == 0
     assert _grade(clean).reward == 1
+
+
+def _retarget(ledger: str, narration: str, account: str, near_miss: str) -> str:
+    """Move one posting of the block with this narration to a near-miss account."""
+    block = next(b for b in ledger.split("\n\n") if narration in b)
+    assert f"  {account}  " in block, (narration, account)
+    return ledger.replace(block, block.replace(f"  {account}  ", f"  {near_miss}  "))
+
+
+NEAR_MISS_TRAPS = [
+    # (oracle narration, right account, near-miss account, diagnosed as)
+    (
+        "Defer unexpired prepaid rent",
+        "Assets:PrepaidRent",
+        "Assets:PrepaidExpenses",
+        "wrong-account",
+    ),
+    (
+        "Defer unearned February service milestone",
+        "Liabilities:ContractLiability",
+        "Liabilities:CustomerDeposits",
+        "wrong-account",
+    ),
+    (
+        "Reclassify current portion of note",
+        "Liabilities:CurrentPortionOfLongTermDebt",
+        "Liabilities:ShortTermBorrowings",
+        "wrong-account",
+    ),
+    (
+        "Record credit-loss allowance",
+        "Expenses:CreditLoss",
+        "Expenses:BadDebtWriteOffs",
+        "wrong-account",
+    ),
+    # Payables and receivables move through several entries, so a misposting
+    # leaves them moved by the wrong amount rather than not at all.
+    (
+        "Accrue unrecorded supplier service",
+        "Liabilities:AccountsPayable",
+        "Liabilities:AccruedLiabilities",
+        "wrong-amount",
+    ),
+    (
+        "Record returned customer check",
+        "Assets:AccountsReceivable",
+        "Assets:OtherReceivables",
+        "wrong-amount",
+    ),
+]
+
+
+def test_near_miss_account_traps_fail_and_are_diagnosed():
+    for seed in _full_seeds()[:4]:
+        instance = _adjusting_instance(seed)
+        for narration, account, near_miss, diagnosis in NEAR_MISS_TRAPS:
+            ledger = _retarget(instance.solution_ledger, narration, account, near_miss)
+            report = _grade(instance, ledger=ledger)
+            assert report.reward == 0, (seed, narration)
+            assert report.layers["structural_validity"].passed, (seed, narration)
+            details = report.to_report_json()["details"]["diagnostics"]
+            assert details["expected"][account] == diagnosis, (seed, narration, details)
+            # A wrong-account diagnosis explains the near-miss movement; otherwise
+            # it is reported as an unexplained extra movement.
+            assert (near_miss in details["extra"]) == (diagnosis != "wrong-account"), seed
