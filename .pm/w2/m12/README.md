@@ -1,6 +1,6 @@
 # w2 · m12 — Injected instructions and fabricated completion signals
 
-**Worker:** worker2 **Goal:** Some source documents carry instructions or fake "already reconciled" evidence; the correct close ignores them and verifies against the records. **Status:** todo (t001–t003 done)
+**Worker:** worker2 **Goal:** Some source documents carry instructions or fake "already reconciled" evidence; the correct close ignores them and verifies against the records. **Status:** todo (t001–t004 done)
 
 ## Tasks (in order)
 
@@ -9,7 +9,7 @@
 | t001 | Plant injections in source fields — **DONE** | 60m | — |
 | t002 | Version bump and regeneration — **DONE** | 20m | t001 |
 | t003 | Adoption surface — **DONE** | 20m | t002 |
-| t004 | Simplify | 15m | t003 |
+| t004 | Simplify — **DONE** | 15m | t003 |
 | t005 | Test coverage | 20m | t003 |
 | t006 | Accounting review | 15m | t005 |
 | t007 | Closeout | 10m | t006 |
