@@ -712,7 +712,7 @@ professional difficulty or curriculum coverage.
 
 `month-end-close-workflow` is the first Dynamic professional pilot.
 It starts from a validated three-period evidence pack, leaves the
-current month in draft, and activates 15 issue determinations across
+current month in draft, and activates 18 issue determinations across
 nine linked close clusters per seed: revenue cutoff, receivables
 allowance, inventory valuation, unrecorded payables, prepayment
 cutoff, payroll cutoff, fixed-asset treatment, debt
@@ -722,7 +722,7 @@ supporting schedules (aging, count sheet, timesheets, subsequent
 receipts, loan schedules, fixed-asset review); the starter workflow
 evidence object is empty, and agents record one disposition per
 source `document_id`. The agent submits an adjusted ledger and
-structured close schedule; 69 typed checks cover issue dispositions, primary state deltas, downstream
+structured close schedule; 78 typed checks cover issue dispositions, primary state deltas, downstream
 final balances, trial-balance reporting, current-period performance,
 and cutoff integrity. Its seven-dimension scores in rubric order
 are P/P/P/U/P/U/P, deriving `professional`. This is a design label,
