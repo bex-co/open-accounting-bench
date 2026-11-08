@@ -56,6 +56,17 @@ grouping, followed by oracle/mutant/seed sweeps and a confirmation
 slice. No Stable freeze follows from length, bulk, ambiguity, or a
 design label alone; a freeze is a separate versioned release step.
 
+**Calibration target (from 2026-11-07).** A panel's preregistered
+target band is stated on **pass^k** of full-completion reward
+(`oab report --k`, [metrics.md](metrics.md#reliability-passk-and-passk)),
+not on mean rubric completion, which stays a diagnostic: comparable
+close and audit benchmarks drop sharply from single-run to every-run
+success, and the 0.8.0 strong tiers sat at 97–99% rubric while
+missing full completion. Each panel fixes one per-trial budget tier
+(turn, token, or cost limit), applies it to every model tier, and
+records it with the panel, because budget alone can move scores by
+tens of points; panels at different budgets are not compared.
+
 ## Coverage layers
 
 Scores are reported per capability and regulatory context, never as one

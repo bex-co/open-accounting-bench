@@ -120,6 +120,11 @@ release decision is explicitly **promote**, **tune and recalibrate**,
 or **reject**, and it must state whether later workflow families may
 proceed and whether any Stable freeze is authorized.
 
+The preregistered target band is stated on pass^k of full-completion
+reward at one fixed per-trial budget tier, recorded with the panel;
+rubric completion is reported as a diagnostic, not as the target
+([methodology.md](methodology.md#professional-workflow-lifecycle)).
+
 ## Framework coverage
 
 `oab crosswalk` reports, per crosswalk edition and section, how many
