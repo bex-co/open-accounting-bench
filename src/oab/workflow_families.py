@@ -1989,7 +1989,7 @@ Documents that need no entry sit in the same files as those that do.
                     "account_delta",
                     determination_id,
                     account=account,
-                    expected=money(ZERO if clean else amount),
+                    expected=money(ZERO if clean or determination_id == withheld else amount),
                 )
             )
         if determination_id in evidence_for:

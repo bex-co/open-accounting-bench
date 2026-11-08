@@ -803,41 +803,59 @@ def test_first_link_only_mutants_fail_their_downstream_determination():
             Decimal(lender["opening_principal"]) * Decimal(lender["annual_rate_percent"]) / 1200
         ).quantize(Decimal("0.01"))
         repair = next(b for b in oracle.split("\n\n") if "Expense routine equipment repair" in b)
-        repair_amount = Decimal(repair.splitlines()[1].split()[1])
+        repair_amount = _block_amount(oracle, "Expense routine equipment repair")
         repair_kept_depreciation = (
             f"{repair.splitlines()[0]}\n"
             f"  Expenses:Repairs  {repair_amount:.2f} USD\n"
             f"  Assets:Equipment  {-repair_amount:.2f} USD"
         )
-        mutants = {
-            # 1. Sale reversed, premature receivable still reserved (1%).
-            "receivables-allowance": _replace_block_amounts(
-                oracle,
-                "Record credit-loss allowance",
-                allowance + (Decimal(order["amount"]) * Decimal("0.01")).quantize(Decimal("0.01")),
-            ),
-            # 3. Interest on opening principal, ignoring the Jan-15 payment.
-            "debt-interest-accrual": _replace_block_amounts(
-                oracle, "Accrue January note interest", opening_interest
-            ),
-            # 5. Repair expensed but its January depreciation kept.
-            "fixed-asset-treatment": oracle.replace(repair, repair_kept_depreciation),
-        }
-        # 2. Returned check recorded but left out of the allowance (20%).
-        mutants["receivables-allowance (returned check)"] = _replace_block_amounts(
-            oracle,
-            "Record credit-loss allowance",
-            allowance - (Decimal(returned["amount"]) * Decimal("0.20")).quantize(Decimal("0.01")),
-        )
-        for name, ledger in mutants.items():
-            determination = name.split(" ")[0]
-            report = _grade(instance, ledger=ledger)
-            assert report.reward == 0, (seed, name)
-            assert not _determination_passed(report, determination), (seed, name)
-        # 4. Every adjustment posted, but draft totals reported.
         workflow = json.loads(instance.solution_files["workflow.json"])
         statement = workflow["income_statement"]
         statement["total_expenses"] = str(Decimal(statement["total_expenses"]) - allowance)
-        report = _grade(instance, workflow=json.dumps(workflow))
-        assert report.reward == 0, seed
-        assert not _determination_passed(report, "reporting"), seed
+        # (determination that must fail, label, mutant ledger, mutant schedule)
+        cases = [
+            (
+                "receivables-allowance",
+                "1: sale reversed, premature receivable still reserved (1%)",
+                _replace_block_amounts(
+                    oracle,
+                    "Record credit-loss allowance",
+                    allowance
+                    + (Decimal(order["amount"]) * Decimal("0.01")).quantize(Decimal("0.01")),
+                ),
+                None,
+            ),
+            (
+                "receivables-allowance",
+                "2: returned check recorded but left out of the allowance (20%)",
+                _replace_block_amounts(
+                    oracle,
+                    "Record credit-loss allowance",
+                    allowance
+                    - (Decimal(returned["amount"]) * Decimal("0.20")).quantize(Decimal("0.01")),
+                ),
+                None,
+            ),
+            (
+                "debt-interest-accrual",
+                "3: interest on opening principal, ignoring the Jan-15 payment",
+                _replace_block_amounts(oracle, "Accrue January note interest", opening_interest),
+                None,
+            ),
+            (
+                "reporting",
+                "4: every adjustment posted, draft total expenses reported",
+                None,
+                json.dumps(workflow),
+            ),
+            (
+                "fixed-asset-treatment",
+                "5: repair expensed but its January depreciation kept",
+                oracle.replace(repair, repair_kept_depreciation),
+                None,
+            ),
+        ]
+        for determination, label, ledger, schedule in cases:
+            report = _grade(instance, ledger=ledger, workflow=schedule)
+            assert report.reward == 0, (seed, label)
+            assert not _determination_passed(report, determination), (seed, label)
