@@ -34,6 +34,9 @@ ISSUE_DETERMINATIONS = {
     "debt-current-classification",
     "bank-reconciliation",
     "bank-fee-reconciliation",
+    "prior-accrual-reversal",
+    "prepaid-subscription-amortization",
+    "omitted-supplier-credit",
 }
 
 
@@ -107,7 +110,7 @@ def test_close_pilot_shape_and_level():
     assert instance.task_id == FAMILY
     spec = instance.expected["workflow"]
     assert validate_workflow_spec(spec) == []
-    assert 40 <= len(spec["checks"]) <= 72
+    assert 40 <= len(spec["checks"]) <= 84
     clusters = {item["cluster"] for item in spec["determinations"]}
     assert len(clusters & CLUSTERS) >= 9
     assert ISSUE_DETERMINATIONS <= {item["id"] for item in spec["determinations"]}
@@ -646,7 +649,9 @@ def test_close_volume_and_distractors_are_consistent():
         statement = {
             row["bill_id"]: row["open_amount"] for row in rows if row["bill_id"] != "balance"
         }
-        # A vendor statement agrees with the payables subledger: no entry.
+        # A vendor statement agrees with the payables subledger, except for the
+        # omitted credit the close must record: no other entry.
+        statement.pop("close-cn-001", None)
         for bill_id, amount in statement.items():
             book = next(r for r in payables if r["record_id"] == bill_id)
             assert Decimal(amount) == -Decimal(book["amount"]), (path, bill_id)
@@ -895,7 +900,7 @@ NEAR_MISS_TRAPS = [
     (
         "Defer unexpired prepaid rent",
         "Assets:PrepaidRent",
-        "Assets:PrepaidExpenses",
+        "Assets:PrepaidInsurance",
         "wrong-account",
     ),
     (
@@ -944,8 +949,9 @@ def test_near_miss_account_traps_fail_and_are_diagnosed():
             details = report.to_report_json()["details"]["diagnostics"]
             assert details["expected"][account] == diagnosis, (seed, narration, details)
             # A wrong-account diagnosis explains the near-miss movement; otherwise
-            # it is reported as an unexplained extra movement.
-            assert (near_miss in details["extra"]) == (diagnosis != "wrong-account"), seed
+            # it is an unexplained extra movement, unless the close also moves it.
+            unexplained = diagnosis != "wrong-account" and near_miss not in details["expected"]
+            assert (near_miss in details["extra"]) == unexplained, seed
 
 
 def test_close_ledgers_open_each_account_once():
@@ -973,3 +979,118 @@ def test_close_chart_lists_near_miss_accounts_once_with_purposes():
         assert purposes[near_miss].strip(), near_miss
     assert "supplier invoice is in the close evidence" in purposes["Liabilities:AccountsPayable"]
     assert "account whose purpose" in " ".join(instance.app_files["policy.md"].split())
+
+
+CROSS_PERIOD = {
+    # determination: (oracle narration, primary account)
+    "prior-accrual-reversal": (
+        "Reverse 2025-12 cleaning accrual",
+        "Liabilities:AccruedLiabilities",
+    ),
+    "prepaid-subscription-amortization": (
+        "Amortize January software subscription",
+        "Expenses:Subscriptions",
+    ),
+    "omitted-supplier-credit": (
+        "Record omitted 2025-12 supplier credit",
+        "Expenses:OfficeSupplies",
+    ),
+}
+
+
+def _trial(files: dict) -> dict[tuple[str, str], Decimal]:
+    return {
+        (row["period"], row["account"]): Decimal(row["balance"])
+        for row in _rows(files, "trial_balances.csv")
+    }
+
+
+def test_cross_period_issues_carry_prior_period_evidence():
+    """m11: each cross-period issue is visible only through prior-period
+    records — the ledger, trial balances, account history, and the
+    supplier's own documents agree on what December left behind."""
+    for seed in _full_seeds()[:6]:
+        instance = _adjusting_instance(seed)
+        files, ledger = instance.app_files, instance.initial_ledger
+        accrual = _block_amount(ledger, "Accrue 2025-12 cleaning service (estimate)")
+        invoice = _block_amount(ledger, "Supplier invoice close-inv-1005")
+        assert accrual == invoice > 0, seed
+        trial = _trial(files)
+        assert trial[("2025-12", "Liabilities:AccruedLiabilities")] == -accrual, seed
+        assert ("2025-11", "Liabilities:AccruedLiabilities") not in trial, seed
+        month = _block_amount(ledger, "Software subscription expired")
+        assert trial[("opening", "Assets:PrepaidExpenses")] == 11 * month, seed
+        assert trial[("2025-12", "Assets:PrepaidExpenses")] == 9 * month, seed
+        history = _rows(files, "account_history.csv")
+        assert {r["period"] for r in history if r["account"] == "Expenses:Subscriptions"} == {
+            "2025-11",
+            "2025-12",
+        }, seed
+        assert any(r["account"] == "Expenses:Cleaning" for r in history), seed
+        register = {r["document_id"]: r for r in _rows(files, "documents/close_documents.csv")}
+        credit = Decimal(register["close-cn-001"]["amount"])
+        assert register["close-cn-001"]["date"].startswith("2025-12"), seed
+        supplier = register["close-cn-001"]["counterparty"]
+        statement = _rows(files, f"documents/vendor_statements/{supplier}.csv")
+        assert {r["bill_id"]: r["open_amount"] for r in statement}["close-cn-001"] == (
+            f"{-credit:.2f}"
+        )
+        assert "syn-credit-close-001" in files["documents/supplier_documents.csv"], seed
+
+
+def test_cross_period_traps_fail_their_determination():
+    """m11: current-period-only (no reversal), double reversal, writing off
+    the whole prepaid, ignoring the December credit, and reopening December
+    each fail reward; all but reopening fail the determination too."""
+    for seed in _full_seeds()[:6]:
+        instance = _adjusting_instance(seed)
+        oracle = instance.solution_ledger
+        reversal, _ = CROSS_PERIOD["prior-accrual-reversal"]
+        amount = _block_amount(oracle, reversal)
+        double = (
+            f'2026-01-31 * "Cleaning contractor" "Reverse cleaning invoice"\n'
+            f"  Liabilities:AccountsPayable  {amount:.2f} USD\n"
+            f"  Expenses:Cleaning  {-amount:.2f} USD\n"
+        )
+        amortize, _ = CROSS_PERIOD["prepaid-subscription-amortization"]
+        month = _block_amount(oracle, amortize)
+        credit_narration, _ = CROSS_PERIOD["omitted-supplier-credit"]
+        credit_block = _block(oracle, credit_narration)
+        traps = {
+            "prior-accrual-reversal": [
+                _without_block(oracle, reversal),
+                oracle.rstrip("\n") + "\n\n" + double,
+            ],
+            "prepaid-subscription-amortization": [
+                _without_block(oracle, amortize),
+                _replace_block_amounts(oracle, amortize, month * 9),
+            ],
+            "omitted-supplier-credit": [
+                _without_block(oracle, credit_narration),
+                oracle.replace(credit_block, credit_block.replace("2026-01-31", "2025-12-31")),
+            ],
+        }
+        for determination, ledgers in traps.items():
+            for index, ledger in enumerate(ledgers):
+                report = _grade(instance, ledger=ledger)
+                assert report.reward == 0, (seed, determination, index)
+                assert report.layers["structural_validity"].passed, (seed, determination, index)
+                if determination == "omitted-supplier-credit" and index:
+                    # Reopening December moves the right accounts outside the
+                    # close period, which the baseline period check rejects.
+                    assert not report.layers["economic_consistency"].passed, seed
+                else:
+                    assert not _determination_passed(report, determination), (
+                        seed,
+                        determination,
+                        index,
+                    )
+
+
+def test_cross_period_codes_and_rules_are_disclosed():
+    instance = _adjusting_instance(_full_seeds()[0])
+    policy = " ".join(instance.app_files["policy.md"].split())
+    for code in ("reverse-prior-accrual", "amortize-prepaid", "record-omitted-credit"):
+        assert f"`{code}`" in policy, code
+    assert "closed periods are not reopened" in policy
+    assert "is not counted twice" in policy

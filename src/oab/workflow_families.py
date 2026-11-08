@@ -64,6 +64,11 @@ EQUIPMENT = "Assets:Equipment"
 BANK_FEES = "Expenses:BankFees"
 INSURANCE_EXPENSE = "Expenses:Insurance"
 UTILITIES_EXPENSE = "Expenses:Utilities"
+CLEANING_EXPENSE = "Expenses:Cleaning"
+SUBSCRIPTIONS_EXPENSE = "Expenses:Subscriptions"
+OFFICE_SUPPLIES = "Expenses:OfficeSupplies"
+ACCRUED_LIABILITIES = "Liabilities:AccruedLiabilities"
+PREPAID_EXPENSES = "Assets:PrepaidExpenses"
 REPAIRS_EXPENSE = "Expenses:Repairs"
 MONTHLY_INSURANCE = Decimal("100.00")
 SUSPENSE_UTILITIES = Decimal("180.00")
@@ -659,14 +664,16 @@ CLOSE_EXTRA_ACCOUNTS = [
     (INVENTORY_WRITE_DOWN, "Inventory count shortage and NRV write-down"),
     (GOODS_IN_TRANSIT, "Inventory shipped FOB shipping point but not yet received"),
     (IMPAIRMENT_LOSS, "Fixed-asset impairment loss"),
+    (CLEANING_EXPENSE, "Office cleaning service"),
+    (SUBSCRIPTIONS_EXPENSE, "Software subscription expense"),
     # Near-miss accounts: plausible destinations whose stated purposes rule
-    # them out for every close entry, so account choice is graded.
+    # them out for the entries they resemble, so account choice is graded.
     (
-        "Liabilities:AccruedLiabilities",
+        ACCRUED_LIABILITIES,
         "Accrued expenses with no supplier invoice in the close evidence (for example "
         "estimated taxes); supplier-invoiced services go to accounts payable",
     ),
-    ("Assets:PrepaidExpenses", "Prepayments other than rent and insurance"),
+    (PREPAID_EXPENSES, "Prepayments other than rent and insurance"),
     (
         "Liabilities:CustomerDeposits",
         "Refundable customer deposits not tied to a performance obligation",
@@ -760,6 +767,12 @@ CLOSE_POLICY = """# Month-end close policy
   period even when the supplier invoice arrives afterward. Wages
   earned through period-end are accrued from the approved overtime
   register.
+- An accrual booked at a prior month-end from an estimate is reversed
+  in the period the supplier's invoice for it is recorded, so the
+  expense is not counted twice.
+- A document that belongs to a closed period but is missing from its
+  books is recorded in the close period; closed periods are not
+  reopened.
 - Prepayments expire straight-line over their stated service term.
   A term beginning mid-month expires one-half month in the first and
   last calendar months.
@@ -797,7 +810,8 @@ CLOSE_POLICY = """# Month-end close policy
   `reclassify-current-portion`, `record-nsf`, `record-bank-fee`,
   `exclude-next-period`, `ignore-duplicate-copy`, `keep-capitalized`,
   `already-recognized`, `use-revised-schedule`, `already-recorded`,
-  `no-adjustment`, and `insufficient-evidence`.
+  `no-adjustment`, `insufficient-evidence`, `reverse-prior-accrual`,
+  `amortize-prepaid`, and `record-omitted-credit`.
 """
 
 
@@ -954,6 +968,51 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     next_period = "2026-02"
     balances = dict(pack.trial_balances[current.label])
 
+    # Cross-period facts (own stream): an estimated December accrual the
+    # January invoice duplicates, a prepaid subscription amortized monthly
+    # since opening, and a December supplier credit omitted from the books.
+    cross_rng = random.Random(seed ^ 0xC0055)
+    prior_accrual = Decimal(cross_rng.randrange(240, 601, 20))
+    subscription_fee = Decimal(cross_rng.choice([1800, 2400, 3600]))
+    subscription_month = (subscription_fee / 12).quantize(CENT)
+    credit_supplier = cross_rng.choice(pack.master.suppliers)
+    credit_amount = Decimal(cross_rng.randrange(60, 181, 10))
+    first, prior = pack.periods[0], pack.periods[-2]
+    prior_entries = [
+        (
+            "opening",
+            first.start,
+            "Opening",
+            "Opening prepaid software subscription",
+            [
+                (PREPAID_EXPENSES, subscription_month * 11),
+                ("Equity:Opening-Balances", -subscription_month * 11),
+            ],
+        ),
+        *[
+            (
+                period.label,
+                f"{period.label}-28",
+                "Software vendor",
+                "Software subscription expired",
+                [
+                    (SUBSCRIPTIONS_EXPENSE, subscription_month),
+                    (PREPAID_EXPENSES, -subscription_month),
+                ],
+            )
+            for period in pack.periods[:-1]
+        ],
+        (
+            prior.label,
+            prior.end,
+            "Cleaning contractor",
+            f"Accrue {prior.label} cleaning service (estimate)",
+            [(CLEANING_EXPENSE, prior_accrual), (ACCRUED_LIABILITIES, -prior_accrual)],
+        ),
+    ]
+    for _label, _day, _payee, _narration, postings in prior_entries:
+        _apply_postings(balances, postings)
+
     draft_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
     oracle_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
     draft_balances = dict(balances)
@@ -1055,6 +1114,14 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "Lender",
             "January note principal payment",
             [(NOTES_PAYABLE, principal_payment), (BANK, -principal_payment)],
+        )
+    )
+    draft_entries.append(
+        (
+            f"{current.label}-08",
+            "Cleaning contractor",
+            "Supplier invoice close-inv-1005",
+            [(CLEANING_EXPENSE, prior_accrual), (AP, -prior_accrual)],
         )
     )
 
@@ -1302,6 +1369,27 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 "Accrue revised bank fee",
                 [(BANK_FEES, bank_fee_amount), (BANK, -bank_fee_amount)],
             ),
+            (
+                current.end,
+                "Cleaning contractor",
+                f"Reverse {prior.label} cleaning accrual",
+                [(ACCRUED_LIABILITIES, prior_accrual), (CLEANING_EXPENSE, -prior_accrual)],
+            ),
+            (
+                current.end,
+                "Software vendor",
+                "Amortize January software subscription",
+                [
+                    (SUBSCRIPTIONS_EXPENSE, subscription_month),
+                    (PREPAID_EXPENSES, -subscription_month),
+                ],
+            ),
+            (
+                current.end,
+                credit_supplier.name,
+                f"Record omitted {prior.label} supplier credit",
+                [(AP, credit_amount), (OFFICE_SUPPLIES, -credit_amount)],
+            ),
         ]
     )
 
@@ -1433,6 +1521,8 @@ Documents that need no entry sit in the same files as those that do.
         for account, _description in CLOSE_EXTRA_ACCOUNTS
     ]
     initial_ledger = "\n".join([ledger_lines[0], *opens, *ledger_lines[1:]]) + "\n"
+    for _label, day, payee, narration, postings in prior_entries:
+        initial_ledger += _txn(day, payee, narration, postings)
     for entry_date, payee, narration, postings in draft_entries:
         initial_ledger += _txn(entry_date, payee, narration, postings)
     oracle_text = "".join(_txn(*entry) for entry in oracle_entries)
@@ -1459,6 +1549,9 @@ Documents that need no entry sit in the same files as those that do.
         "debt-interest-accrual": ("close-loan-sch-02", "accrue-interest"),
         "bank-reconciliation": ("close-bank-adv-01", "record-nsf"),
         "bank-fee-reconciliation": ("close-bank-adv-02", "record-bank-fee"),
+        "prior-accrual-reversal": ("close-inv-1005", "reverse-prior-accrual"),
+        "prepaid-subscription-amortization": ("doc-subscription-2025", "amortize-prepaid"),
+        "omitted-supplier-credit": ("close-cn-001", "record-omitted-credit"),
     }
     if clean:
         evidence_for = {d: (doc, "already-recorded") for d, (doc, _code) in evidence_for.items()}
@@ -1509,6 +1602,31 @@ Documents that need no entry sit in the same files as those that do.
     }
 
     app_files = dict(pack.files)
+    # Carry the prior-period entries into the trial balances and history.
+    labels = ["opening", *(period.label for period in pack.periods)]
+    trial = {label: dict(pack.trial_balances.get(label, {})) for label in labels}
+    history = pack.files["account_history.csv"].rstrip("\n").split("\n")
+    for number, (label, day, _payee, _narration, postings) in enumerate(prior_entries, 1):
+        for later in labels[labels.index(label) :]:
+            _apply_postings(trial[later], postings)
+        if label != "opening":
+            source = "doc-subscription-2025" if SUBSCRIPTIONS_EXPENSE in dict(postings) else ""
+            history += [
+                f"syn-txn-prior-{number:02d},{day},{label},{account},{money(amount)},{source}"
+                for account, amount in postings
+            ]
+    app_files["trial_balances.csv"] = _csv(
+        [
+            ["period", "account", "balance"],
+            *(
+                [label, account, money(amount)]
+                for label in labels
+                for account, amount in sorted(trial[label].items())
+                if amount != ZERO
+            ),
+        ]
+    )
+    app_files["account_history.csv"] = "\n".join(history) + "\n"
 
     def raw_document(document_id, kind, day, party, description, quantity, unit, refs):
         amount = quantity * unit
@@ -1620,6 +1738,18 @@ Documents that need no entry sit in the same files as those that do.
                 "close-inv-1001",
             )
         ]
+    secondary["documents/supplier_documents.csv"].append(
+        raw_document(
+            "syn-credit-close-001",
+            "supplier_credit_note",
+            f"{prior.label}-20",
+            credit_supplier.id,
+            "Credit for office supplies overbilled",
+            Decimal(1),
+            -credit_amount,
+            "close-cn-001",
+        )
+    )
     for path, documents in secondary.items():
         app_files[path] = pack.files[path] + document_csv_rows(documents)
     app_files.update(
@@ -1631,6 +1761,20 @@ Documents that need no entry sit in the same files as those that do.
             note_principal_open=opening_note_principal,
             rate=annual_rate,
         )
+    )
+    # The supplier's statement already carries the credit the books omit.
+    statement_path = f"documents/vendor_statements/{credit_supplier.id}.csv"
+    statement = app_files[statement_path].rstrip("\n").split("\n")
+    balance = Decimal(statement[-1].rsplit(",", 1)[1]) - credit_amount
+    app_files[statement_path] = (
+        "\n".join(
+            [
+                *statement[:-1],
+                f"close-cn-001,,{money(-credit_amount)}",
+                f"balance,,{money(balance)}",
+            ]
+        )
+        + "\n"
     )
     app_files.update(
         {
@@ -1738,6 +1882,31 @@ Documents that need no entry sit in the same files as those that do.
                         money(git_amount),
                         f"{money(git_quantity)} x {git_item.id} at {money(git_item.unit_cost)}; "
                         "received 2026-02-02",
+                    ],
+                    [
+                        "close-inv-1005",
+                        "supplier_invoice",
+                        f"{current.label}-08",
+                        "Cleaning contractor",
+                        money(prior_accrual),
+                        f"Office cleaning service for {prior.label}",
+                    ],
+                    [
+                        "doc-subscription-2025",
+                        "subscription_agreement",
+                        "2025-10-01",
+                        "Software vendor",
+                        money(subscription_fee),
+                        "Annual software subscription billed in advance; term 2025-10-01 to "
+                        "2026-09-30",
+                    ],
+                    [
+                        "close-cn-001",
+                        "supplier_credit_note",
+                        f"{prior.label}-20",
+                        credit_supplier.id,
+                        money(credit_amount),
+                        "Credit for office supplies overbilled on an earlier bill",
                     ],
                 ]
             ),
@@ -1963,6 +2132,33 @@ Documents that need no entry sit in the same files as those that do.
             BANK_FEES,
             bank_fee_amount,
             BANK,
+        ),
+        (
+            "prior-accrual-reversal",
+            "unrecorded-payables",
+            "Reverse the prior-month estimated accrual once invoiced",
+            ["documents/close_documents.csv", "account_history.csv"],
+            ACCRUED_LIABILITIES,
+            prior_accrual,
+            CLEANING_EXPENSE,
+        ),
+        (
+            "prepaid-subscription-amortization",
+            "prepayment-cutoff",
+            "Amortize the prepaid software subscription for the close period",
+            ["documents/close_documents.csv", "account_history.csv"],
+            SUBSCRIPTIONS_EXPENSE,
+            subscription_month,
+            PREPAID_EXPENSES,
+        ),
+        (
+            "omitted-supplier-credit",
+            "unrecorded-payables",
+            "Record the supplier credit omitted from the closed period",
+            ["documents/close_documents.csv", "documents/supplier_documents.csv"],
+            OFFICE_SUPPLIES,
+            -credit_amount,
+            AP,
         ),
     ]
     # Dependent movements that belong to an issue's determination: expensing

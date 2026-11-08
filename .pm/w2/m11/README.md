@@ -1,12 +1,12 @@
 # w2 · m11 — Cross-period schedules and accruals
 
-**Worker:** worker2 **Goal:** Close issues span the three generated periods: unreversed prior accruals, multi-period amortization roll-forwards, and prior-period errors corrected now. **Status:** todo
+**Worker:** worker2 **Goal:** Close issues span the three generated periods: unreversed prior accruals, multi-period amortization roll-forwards, and prior-period errors corrected now. **Status:** todo (t001 done)
 
 ## Tasks (in order)
 
 | id   | title | est | depends_on |
 | ---- | ----- | --- | ---------- |
-| t001 | Prior-period issues in the pack | 75m | — |
+| t001 | Prior-period issues in the pack — **DONE** | 75m | — |
 | t002 | Version bump and regeneration | 20m | t001 |
 | t003 | Adoption surface | 20m | t002 |
 | t004 | Simplify | 15m | t003 |
