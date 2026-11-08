@@ -790,6 +790,15 @@ These seeds carry a `withheld-evidence` keyword (metadata only). With
 the clean-month controls, the pilot now distinguishes "nothing to do"
 from "cannot do" from "do it".
 
+**Dependency chains (0.18.0).** Five chains are graded so that applying
+only the first link fails the dependent determination: the cutoff
+reversal removes the receivable from the allowance base; a returned
+check reinstates a receivable that enters the aging at 20%; the
+mid-month principal payment sets interest on average principal; each
+adjustment flows into reported total expenses; and expensing the
+routine repair also reverses its January depreciation (a chained
+depreciation-expense check in `fixed-asset-treatment`).
+
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
 returns a validated `EvidencePack`: synthetic master data, balanced
