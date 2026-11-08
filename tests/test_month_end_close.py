@@ -1090,3 +1090,27 @@ def test_cross_period_codes_and_rules_are_disclosed():
         assert f"`{code}`" in policy, code
     assert "closed periods are not reopened" in policy
     assert "is not counted twice" in policy
+
+
+def test_trial_balances_roll_forward_through_history_on_every_seed():
+    """m11: prior-period entries enter the trial balances and the account
+    history together, so each period's balance is the prior balance plus
+    that period's history, and every seed carries the cross-period issues."""
+    for seed in range(40):
+        instance = _instance(seed)
+        files = instance.app_files
+        trial = _trial(files)
+        movement: dict[tuple[str, str], Decimal] = {}
+        for row in _rows(files, "account_history.csv"):
+            key = (row["period"], row["account"])
+            movement[key] = movement.get(key, Decimal(0)) + Decimal(row["amount"])
+        labels = ["opening", "2025-11", "2025-12", "2026-01"]
+        accounts = {account for _, account in trial} | {account for _, account in movement}
+        for before, label in zip(labels, labels[1:], strict=False):
+            for account in accounts:
+                expected = trial.get((before, account), Decimal(0)) + movement.get(
+                    (label, account), Decimal(0)
+                )
+                assert trial.get((label, account), Decimal(0)) == expected, (seed, label, account)
+        determinations = {d["id"] for d in instance.expected["workflow"]["determinations"]}
+        assert set(CROSS_PERIOD) <= determinations, seed
