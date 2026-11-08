@@ -658,8 +658,6 @@ CLOSE_EXTRA_ACCOUNTS = [
     (CREDIT_LOSS_EXPENSE, "Expected credit-loss expense"),
     (INVENTORY_WRITE_DOWN, "Inventory count shortage and NRV write-down"),
     (GOODS_IN_TRANSIT, "Inventory shipped FOB shipping point but not yet received"),
-    (ACCRUED_WAGES, "Wages earned but not yet paid"),
-    (WAGES_EXPENSE, "Employee wages"),
     (IMPAIRMENT_LOSS, "Fixed-asset impairment loss"),
     # Near-miss accounts: plausible destinations whose stated purposes rule
     # them out for every close entry, so account choice is graded.
@@ -680,6 +678,10 @@ CLOSE_EXTRA_ACCOUNTS = [
         "Direct write-off of a specific receivable (not the expected-credit-loss allowance)",
     ),
 ]
+
+# The close ledger opens CLOSE_EXTRA_ACCOUNTS on top of the pack's accounts,
+# so the two lists must not overlap (an account opened twice is invalid).
+assert not {a for a, _ in EVIDENCE_EXTRA_ACCOUNTS} & {a for a, _ in CLOSE_EXTRA_ACCOUNTS}
 
 # Purposes the close chart states more precisely than the evidence pack.
 CLOSE_ACCOUNT_PURPOSES = {

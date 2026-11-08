@@ -946,3 +946,16 @@ def test_near_miss_account_traps_fail_and_are_diagnosed():
             # A wrong-account diagnosis explains the near-miss movement; otherwise
             # it is reported as an unexplained extra movement.
             assert (near_miss in details["extra"]) == (diagnosis != "wrong-account"), seed
+
+
+def test_close_ledgers_open_each_account_once():
+    from collections import Counter
+
+    for seed in range(40):
+        ledger = _instance(seed).initial_ledger
+        opened = Counter(
+            line.split()[2]
+            for line in ledger.splitlines()
+            if len(line.split()) > 2 and line.split()[1] == "open"
+        )
+        assert [a for a, n in opened.items() if n > 1] == [], seed
