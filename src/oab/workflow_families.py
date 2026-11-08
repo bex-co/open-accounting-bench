@@ -690,10 +690,11 @@ CLOSE_ACCOUNT_PURPOSES = {
 
 def _close_chart() -> str:
     """Close chart: pack and close accounts, once each, with close purposes."""
-    seen: dict[str, str] = {}
-    for account, purpose in [*EVIDENCE_EXTRA_ACCOUNTS, *CLOSE_EXTRA_ACCOUNTS]:
-        seen.setdefault(account, CLOSE_ACCOUNT_PURPOSES.get(account, purpose))
-    return _chart_md(list(seen.items()))
+    chart = dict(EVIDENCE_EXTRA_ACCOUNTS)
+    for account, purpose in CLOSE_EXTRA_ACCOUNTS:
+        chart.setdefault(account, purpose)
+    chart.update(CLOSE_ACCOUNT_PURPOSES)
+    return _chart_md(list(chart.items()))
 
 
 CLOSE_CLUSTERS = [

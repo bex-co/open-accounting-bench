@@ -462,10 +462,14 @@ def test_close_sources_do_not_name_issues():
     assert leaked == []
 
 
+def _block(ledger: str, narration: str) -> str:
+    """The ledger entry block with this narration."""
+    return next(b for b in ledger.split("\n\n") if narration in b)
+
+
 def _block_amount(ledger: str, narration: str) -> Decimal:
     """Debit amount of the two-posting block with this narration."""
-    block = next(b for b in ledger.split("\n\n") if narration in b)
-    return Decimal(block.splitlines()[1].split()[1])
+    return Decimal(_block(ledger, narration).splitlines()[1].split()[1])
 
 
 def _replace_block_amounts(ledger: str, narration: str, new_amount: Decimal) -> str:
@@ -802,7 +806,7 @@ def test_first_link_only_mutants_fail_their_downstream_determination():
         opening_interest = (
             Decimal(lender["opening_principal"]) * Decimal(lender["annual_rate_percent"]) / 1200
         ).quantize(Decimal("0.01"))
-        repair = next(b for b in oracle.split("\n\n") if "Expense routine equipment repair" in b)
+        repair = _block(oracle, "Expense routine equipment repair")
         repair_amount = _block_amount(oracle, "Expense routine equipment repair")
         repair_kept_depreciation = (
             f"{repair.splitlines()[0]}\n"
@@ -881,7 +885,7 @@ def test_chained_depreciation_check_expectations():
 
 def _retarget(ledger: str, narration: str, account: str, near_miss: str) -> str:
     """Move one posting of the block with this narration to a near-miss account."""
-    block = next(b for b in ledger.split("\n\n") if narration in b)
+    block = _block(ledger, narration)
     assert f"  {account}  " in block, (narration, account)
     return ledger.replace(block, block.replace(f"  {account}  ", f"  {near_miss}  "))
 

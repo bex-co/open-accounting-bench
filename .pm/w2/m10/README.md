@@ -1,6 +1,6 @@
 # w2 · m10 — Larger chart of accounts with near-miss accounts
 
-**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo (t001–t004 done)
+**Worker:** worker2 **Goal:** The close chart includes plausible near-miss accounts with stated purposes, so choosing the right account becomes a measured skill. **Status:** todo (t001–t005 done)
 
 ## Tasks (in order)
 
@@ -10,7 +10,7 @@
 | t002 | Near-miss traps — **DONE** | 45m | t001 |
 | t003 | Version bump and regeneration — **DONE** | 20m | t002 |
 | t004 | Adoption surface — **DONE** | 20m | t003 |
-| t005 | Simplify | 15m | t004 |
+| t005 | Simplify — **DONE** | 15m | t004 |
 | t006 | Test coverage | 20m | t004 |
 | t007 | Accounting review | 15m | t006 |
 | t008 | Closeout | 10m | t007 |
