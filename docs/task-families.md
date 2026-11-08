@@ -716,12 +716,13 @@ current month in draft, and activates 15 issue determinations across
 nine linked close clusters per seed: revenue cutoff, receivables
 allowance, inventory valuation, unrecorded payables, prepayment
 cutoff, payroll cutoff, fixed-asset treatment, debt
-interest/classification, and bank reconciliation. Close facts are
-distributed across dedicated `documents/close_*.csv` sources; the
-starter workflow evidence object is empty, so agents discover
-`evidence_key`/`evidence_keys` from those sources. The agent
-submits an adjusted ledger and structured close schedule; 70 typed
-checks cover issue dispositions, primary state deltas, downstream
+interest/classification, and bank reconciliation. Close facts sit
+in a January document register (`documents/close_documents.csv`) and
+supporting schedules (aging, count sheet, timesheets, subsequent
+receipts, loan schedules, fixed-asset review); the starter workflow
+evidence object is empty, and agents record one disposition per
+source `document_id`. The agent submits an adjusted ledger and
+structured close schedule; 69 typed checks cover issue dispositions, primary state deltas, downstream
 final balances, trial-balance reporting, current-period performance,
 and cutoff integrity. Its seven-dimension scores in rubric order
 are P/P/P/U/P/U/P, deriving `professional`. This is a design label,
@@ -746,6 +747,22 @@ re-posting an adjustment or accruing a next-period bill fails. The
 variant carries a `clean-month` task keyword (metadata, not visible to
 agents) and feeds the over-action rate in `oab report`. This is issue-
 activation tuning under the current tune-and-recalibrate verdict.
+
+**De-labelled evidence (0.12.0–0.14.0).** Inspection after the 0.8.0
+panel showed the sources named each issue: evidence keys equal to
+determination ids, status columns stating the error
+(`original-unrecorded`, `draft-released-early`, `stale`/`revised`, …),
+one file per issue, pre-computed aging rates, and draft narrations
+that labelled the mistake. Those are gone. Evidence is keyed by
+neutral document ids, the per-issue files are one document register,
+the aging schedule carries due dates and a factual credit note (rates
+come from policy), and precedence between conflicting sources follows
+the stated rules (third-party over client-prepared, later over
+earlier, signed over unsigned) rather than labels. Every graded
+disposition code remains disclosed in the policy. This is evidence-
+conflict and policy-sparsity tuning; the next calibration slice
+(board note w2/005) decides whether it moves strong tiers into the
+target band.
 
 Workflow evidence should be built with `src/oab/evidence.py` rather
 than hand-written around a generator. `generate_company_history(seed)`
