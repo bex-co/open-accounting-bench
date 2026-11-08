@@ -1,6 +1,6 @@
 # w2 · m6 — De-label the month-end close evidence
 
-**Worker:** worker2 **Goal:** Close sources stop naming the problem: agents must find each issue by comparing raw documents and apply source precedence themselves. **Status:** todo (t001–t005 done)
+**Worker:** worker2 **Goal:** Close sources stop naming the problem: agents must find each issue by comparing raw documents and apply source precedence themselves. **Status:** todo (t001–t006 done)
 
 ## Tasks (in order)
 
@@ -11,7 +11,7 @@
 | t003 | Derive issues from raw documents — **DONE** | 75m | t002 |
 | t004 | Source-reliability precedence without labels — **DONE** | 45m | t003 |
 | t005 | Version bump and regeneration — **DONE** | 20m | t004 |
-| t006 | Adoption surface | 20m | t005 |
+| t006 | Adoption surface — **DONE** | 20m | t005 |
 | t007 | Simplify | 15m | t006 |
 | t008 | Test coverage | 20m | t006 |
 | t009 | Accounting review | 15m | t008 |
