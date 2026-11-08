@@ -693,15 +693,15 @@ CLOSE_POLICY = """# Month-end close policy
   close-period entry and fits no other code.
 - Product revenue is recognized when goods ship. Service revenue is
   recognized when the stated milestone is complete.
-- Expected credit losses use the aging schedule. Apply each aging
-  row's `loss_rate` to that row: 1% current, 5% at 1–30 days overdue,
-  20% over 30 days overdue, and 100% only for a receivable row whose
-  `specific_risk` is `bankrupt`. Other rows for the same customer use
-  their own row rate. Include a returned-check row when it is listed
-  in the aging schedule, exclude any receivable that is reversed
-  because the related sale was not earned, and apply 0% to a row
-  listed as settled in full in `close_subsequent_receipts.csv` by the
-  February evidence cutoff.
+- Expected credit losses use the aging schedule, by each row's days
+  past due at period-end: 1% if not yet due, 5% at 1–30 days past due,
+  20% over 30 days past due, and 100% only for a row whose
+  `credit_note` records a customer bankruptcy. Other rows for the same
+  customer use their own row rate. Include a returned-check row when it
+  is listed in the aging schedule, exclude any receivable that is
+  reversed because the related sale was not earned, and apply 0% to a
+  row paid in full by a receipt in `close_subsequent_receipts.csv` by
+  the February evidence cutoff.
 - Inventory is carried at the lower of cost and net realizable value.
   A signed count shortage is written down in the close period. Goods
   shipped FOB shipping point on or before period-end are recorded in
@@ -886,9 +886,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "customer_id",
             "amount",
             "due_date",
-            "bucket",
-            "loss_rate",
-            "specific_risk",
+            "credit_note",
             "document_id",
         ]
     ]
@@ -905,14 +903,15 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     for record in open_ar:
         due = date.fromisoformat(record.due_date or current.end)
         overdue = (period_end - due).days
+        # Policy rates by days past due; the sources no longer state them.
         if record.id == specific.id:
-            bucket, rate, risk = "specific", Decimal("1.00"), "bankrupt"
+            rate = Decimal("1.00")
         elif overdue <= 0:
-            bucket, rate, risk = "current", Decimal("0.01"), ""
+            rate = Decimal("0.01")
         elif overdue <= 30:
-            bucket, rate, risk = "1-30", Decimal("0.05"), ""
+            rate = Decimal("0.05")
         else:
-            bucket, rate, risk = "over-30", Decimal("0.20"), ""
+            rate = Decimal("0.20")
         effective_rate = ZERO if record.id == settled_record.id else rate
         allowance += (record.amount * effective_rate).quantize(CENT)
         aging_rows.append(
@@ -921,9 +920,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 record.party_id,
                 money(record.amount),
                 record.due_date,
-                bucket,
-                str(rate),
-                risk,
+                "customer filed for bankruptcy" if record.id == specific.id else "",
                 "doc-ar-aging",
             ]
         )
@@ -933,9 +930,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             revenue_customer.id,
             money(revenue_amount),
             "2026-02-14",
-            "unshipped",
-            "0",
-            "not-shipped",
+            "",
             "doc-ar-aging",
         ]
     )
@@ -973,9 +968,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             nsf_customer.id,
             money(nsf_amount),
             nsf_due_date,
-            "over-30",
-            str(nsf_loss_rate),
-            "returned-check",
+            "check returned unpaid",
             "doc-ar-aging",
         ]
     )
@@ -1008,7 +1001,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 str(hours),
                 money(hourly_rate),
                 money(amount),
-                "doc-overtime-register",
+                "doc-timesheets",
             ]
         )
 
@@ -1265,7 +1258,7 @@ Documents that need no entry sit in the same files as those that do.
         "inventory-goods-in-transit": "close-ship-001",
         "unrecorded-payables": "close-inv-1001",
         "prepayment-cutoff": "doc-lease-2026-01",
-        "payroll-cutoff": "doc-overtime-register",
+        "payroll-cutoff": "doc-timesheets",
         "fixed-asset-treatment": "close-equip-inv-01",
         "fixed-asset-impairment": "doc-asset-review",
         "debt-interest-accrual": "close-loan-sch-02",
@@ -1327,109 +1320,118 @@ Documents that need no entry sit in the same files as those that do.
             "documents/close_evidence.md": close_evidence,
             "documents/close_ar_aging.csv": _csv(aging_rows),
             "documents/close_inventory_count.csv": _csv(inventory_rows),
-            "documents/close_revenue_cutoff.csv": _csv(
+            "documents/close_documents.csv": _csv(
                 [
-                    [
-                        "order_id",
-                        "customer_id",
-                        "item_id",
-                        "quantity",
-                        "unit_price",
-                        "unit_cost",
-                        "amount",
-                        "cost_amount",
-                        "order_date",
-                        "signed_ship_date",
-                        "document_id",
-                    ],
+                    ["document_id", "document_type", "date", "counterparty", "amount", "details"],
                     [
                         "close-order-001",
-                        revenue_customer.id,
-                        inventory_item.id,
-                        money(order_quantity),
-                        money(inventory_item.unit_price),
-                        money(inventory_item.unit_cost),
-                        money(revenue_amount),
-                        money(revenue_cost),
+                        "sales_order",
                         f"{current.label}-30",
-                        "2026-02-02",
-                        "close-order-001",
-                    ],
-                ]
-            ),
-            "documents/close_supplier_invoices.csv": _csv(
-                [
-                    [
-                        "invoice_id",
-                        "service",
-                        "service_date",
-                        "invoice_date",
-                        "amount",
-                        "document_id",
+                        revenue_customer.id,
+                        money(revenue_amount),
+                        f"{money(order_quantity)} x {inventory_item.id} at "
+                        f"{money(inventory_item.unit_price)} (unit cost "
+                        f"{money(inventory_item.unit_cost)}); signed carrier ship date 2026-02-02",
                     ],
                     [
                         "close-inv-1001",
-                        "Utility service",
-                        f"{current.label}-29",
+                        "supplier_invoice",
                         "2026-02-03",
+                        "Utility supplier",
                         money(supplier_amount),
-                        "close-inv-1001",
+                        f"Utility service on {current.label}-29",
                     ],
                     [
                         "close-inv-1002",
-                        "Utility service",
-                        f"{current.label}-29",
+                        "supplier_invoice",
                         "2026-02-03",
+                        "Utility supplier",
                         money(supplier_amount),
-                        "close-inv-1002",
+                        f"Utility service on {current.label}-29",
                     ],
                     [
                         "close-inv-1003",
-                        "Utility service",
-                        "2026-02-10",
+                        "supplier_invoice",
                         "2026-02-11",
+                        "Utility supplier",
                         money(february_utility_amount),
-                        "close-inv-1003",
+                        "Utility service on 2026-02-10",
                     ],
                     [
                         "close-inv-1004",
-                        "Supplier quote for possible February work",
-                        "2026-03-01",
+                        "supplier_quote",
                         "2026-02-20",
+                        "Maintenance contractor",
                         money(supplier_amount + Decimal("100.00")),
-                        "close-inv-1004",
+                        "Quote for possible February work; proposed service date 2026-03-01",
                     ],
-                ]
-            ),
-            "documents/close_rent_agreement.csv": _csv(
-                [
-                    ["payment_date", "amount", "term_start", "term_months", "document_id"],
                     [
-                        f"{current.label}-02",
-                        money(prepaid_total),
-                        f"{current.label}-16",
-                        "6",
                         "doc-lease-2026-01",
+                        "lease_payment",
+                        f"{current.label}-02",
+                        "Landlord",
+                        money(prepaid_total),
+                        "Office lease paid in advance for 6 months; term starts "
+                        f"{current.label}-16",
                     ],
-                ]
-            ),
-            "documents/close_equipment_invoices.csv": _csv(
-                [
-                    ["invoice_id", "date", "description", "amount", "document_id"],
                     [
                         "close-equip-inv-01",
+                        "supplier_invoice",
                         f"{current.label}-12",
-                        "Routine tune-up and replacement of worn belts",
+                        "Equipment supplier",
                         money(repair_amount),
-                        "close-equip-inv-01",
+                        "Routine tune-up and replacement of worn belts",
                     ],
                     [
                         "close-equip-inv-02",
+                        "supplier_invoice",
                         f"{current.label}-20",
+                        "Equipment supplier",
+                        money(capital_improvement_amount),
                         "Capital improvement: new motor extending useful life; "
                         "placed in service 2026-02-01",
-                        money(capital_improvement_amount),
-                        "close-equip-inv-02",
+                    ],
+                    [
+                        "close-bank-adv-01",
+                        "bank_advice",
+                        current.end,
+                        nsf_customer.name,
+                        money(nsf_amount),
+                        "Customer check returned unpaid (insufficient funds); customer "
+                        f"{nsf_customer.id}; original receivable due {nsf_due_date}",
+                    ],
+                    [
+                        "close-bank-adv-02",
+                        "bank_advice",
+                        current.end,
+                        "Bank",
+                        money(bank_fee_amount),
+                        "Service fee (revised advice)",
+                    ],
+                    [
+                        "close-ms-01",
+                        "milestone_confirmation",
+                        f"{current.label}-28",
+                        service_customer.id,
+                        "250.00",
+                        f"Contract {service_contract.id} milestone completed {current.label}-28",
+                    ],
+                    [
+                        "close-ms-02",
+                        "milestone_confirmation",
+                        "2026-02-15",
+                        service_customer.id,
+                        money(service_milestone_amount),
+                        f"Contract {service_contract.id} milestone completed 2026-02-15",
+                    ],
+                    [
+                        "close-ship-001",
+                        "shipment_notice",
+                        f"{current.label}-30",
+                        git_supplier.id,
+                        money(git_amount),
+                        f"{money(git_quantity)} x {git_item.id} at {money(git_item.unit_cost)}; "
+                        f"FOB shipping point; shipped {current.label}-30; received 2026-02-02",
                     ],
                 ]
             ),
@@ -1470,68 +1472,6 @@ Documents that need no entry sit in the same files as those that do.
                     ],
                 ]
             ),
-            "documents/close_bank_advice.csv": _csv(
-                [
-                    [
-                        "advice_id",
-                        "customer_id",
-                        "customer_name",
-                        "amount",
-                        "returned_date",
-                        "original_receivable_due_date",
-                        "reason",
-                        "document_id",
-                    ],
-                    [
-                        "close-bank-adv-01",
-                        nsf_customer.id,
-                        nsf_customer.name,
-                        money(nsf_amount),
-                        current.end,
-                        nsf_due_date,
-                        "insufficient-funds",
-                        "close-bank-adv-01",
-                    ],
-                    [
-                        "close-bank-adv-02",
-                        "",
-                        "Bank service fee (revised advice)",
-                        money(bank_fee_amount),
-                        current.end,
-                        "",
-                        "service-fee",
-                        "close-bank-adv-02",
-                    ],
-                ]
-            ),
-            "documents/close_service_milestones.csv": _csv(
-                [
-                    [
-                        "milestone_id",
-                        "contract_id",
-                        "customer_id",
-                        "amount",
-                        "completion_date",
-                        "document_id",
-                    ],
-                    [
-                        "close-ms-01",
-                        service_contract.id,
-                        service_customer.id,
-                        "250.00",
-                        f"{current.label}-28",
-                        "close-ms-01",
-                    ],
-                    [
-                        "close-ms-02",
-                        service_contract.id,
-                        service_customer.id,
-                        money(service_milestone_amount),
-                        "2026-02-15",
-                        "close-ms-02",
-                    ],
-                ]
-            ),
             "documents/close_subsequent_receipts.csv": _csv(
                 [
                     [
@@ -1539,7 +1479,6 @@ Documents that need no entry sit in the same files as those that do.
                         "customer_id",
                         "amount",
                         "receipt_date",
-                        "status",
                         "document_id",
                     ],
                     [
@@ -1547,40 +1486,11 @@ Documents that need no entry sit in the same files as those that do.
                         settled_record.party_id,
                         money(settled_record.amount),
                         "2026-02-05",
-                        "settled-in-full",
                         "doc-feb-receipts",
                     ],
                 ]
             ),
-            "documents/close_goods_in_transit.csv": _csv(
-                [
-                    [
-                        "shipment_id",
-                        "supplier_id",
-                        "item_id",
-                        "quantity",
-                        "unit_cost",
-                        "amount",
-                        "ship_date",
-                        "terms",
-                        "received_date",
-                        "document_id",
-                    ],
-                    [
-                        "close-ship-001",
-                        git_supplier.id,
-                        git_item.id,
-                        money(git_quantity),
-                        money(git_item.unit_cost),
-                        money(git_amount),
-                        f"{current.label}-30",
-                        "FOB shipping point",
-                        "2026-02-02",
-                        "close-ship-001",
-                    ],
-                ]
-            ),
-            "documents/close_payroll_overtime.csv": _csv(payroll_rows),
+            "documents/close_timesheets.csv": _csv(payroll_rows),
             "documents/close_fixed_asset_review.csv": _csv(
                 [
                     [
@@ -1619,7 +1529,7 @@ Documents that need no entry sit in the same files as those that do.
             "revenue-cutoff",
             "revenue-cutoff",
             "Correct premature revenue cutoff",
-            ["documents/close_revenue_cutoff.csv"],
+            ["documents/close_documents.csv"],
             PRODUCT_REVENUE,
             revenue_amount,
             AR,
@@ -1628,7 +1538,7 @@ Documents that need no entry sit in the same files as those that do.
             "revenue-cost-reversal",
             "revenue-cutoff",
             "Reverse cost of the premature sale",
-            ["documents/close_revenue_cutoff.csv", "documents/close_inventory_count.csv"],
+            ["documents/close_documents.csv", "documents/close_inventory_count.csv"],
             COGS,
             -revenue_cost,
             INVENTORY,
@@ -1637,7 +1547,7 @@ Documents that need no entry sit in the same files as those that do.
             "service-revenue-milestone",
             "revenue-cutoff",
             "Defer the unearned February service milestone",
-            ["documents/close_service_milestones.csv", "subledgers/contracts.csv"],
+            ["documents/close_documents.csv", "subledgers/contracts.csv"],
             SERVICE_REVENUE,
             service_milestone_amount,
             CONTRACT,
@@ -1668,7 +1578,7 @@ Documents that need no entry sit in the same files as those that do.
             "inventory-goods-in-transit",
             "inventory-valuation",
             "Record FOB shipping-point goods in transit",
-            ["documents/close_goods_in_transit.csv", "subledgers/inventory.csv"],
+            ["documents/close_documents.csv", "subledgers/inventory.csv"],
             GOODS_IN_TRANSIT,
             git_amount,
             AP,
@@ -1677,7 +1587,7 @@ Documents that need no entry sit in the same files as those that do.
             "unrecorded-payables",
             "unrecorded-payables",
             "Accrue the unrecorded supplier service",
-            ["documents/close_supplier_invoices.csv", "subledgers/accounts_payable.csv"],
+            ["documents/close_documents.csv", "subledgers/accounts_payable.csv"],
             UTILITIES_EXPENSE,
             supplier_amount,
             AP,
@@ -1686,7 +1596,7 @@ Documents that need no entry sit in the same files as those that do.
             "prepayment-cutoff",
             "prepayment-cutoff",
             "Defer unexpired prepaid rent",
-            ["documents/close_rent_agreement.csv"],
+            ["documents/close_documents.csv"],
             PREPAID_RENT,
             prepaid_defer,
             RENT_EXPENSE,
@@ -1695,7 +1605,7 @@ Documents that need no entry sit in the same files as those that do.
             "payroll-cutoff",
             "payroll-cutoff",
             "Accrue earned overtime wages",
-            ["documents/close_payroll_overtime.csv", "subledgers/payroll.csv"],
+            ["documents/close_timesheets.csv", "subledgers/payroll.csv"],
             WAGES_EXPENSE,
             payroll_amount,
             ACCRUED_WAGES,
@@ -1704,7 +1614,7 @@ Documents that need no entry sit in the same files as those that do.
             "fixed-asset-treatment",
             "fixed-asset-treatment",
             "Expense routine equipment maintenance and reverse its depreciation",
-            ["documents/close_equipment_invoices.csv", "subledgers/fixed_assets.csv"],
+            ["documents/close_documents.csv", "subledgers/fixed_assets.csv"],
             REPAIRS_EXPENSE,
             repair_amount,
             EQUIPMENT,
@@ -1740,7 +1650,7 @@ Documents that need no entry sit in the same files as those that do.
             "bank-reconciliation",
             "bank-reconciliation",
             "Record the returned customer check",
-            ["documents/close_bank_advice.csv", "documents/bank_statements.csv"],
+            ["documents/close_documents.csv", "documents/bank_statements.csv"],
             None,
             None,
             BANK,
@@ -1749,7 +1659,7 @@ Documents that need no entry sit in the same files as those that do.
             "bank-fee-reconciliation",
             "bank-reconciliation",
             "Accrue the revised bank fee",
-            ["documents/close_bank_advice.csv", "documents/bank_statements.csv"],
+            ["documents/close_documents.csv", "documents/bank_statements.csv"],
             BANK_FEES,
             bank_fee_amount,
             BANK,
@@ -1832,10 +1742,8 @@ Documents that need no entry sit in the same files as those that do.
                 "Respect period cutoff and leave unrelated balances untouched",
                 evidence=[
                     "documents/close_evidence.md",
-                    "documents/close_supplier_invoices.csv",
-                    "documents/close_equipment_invoices.csv",
+                    "documents/close_documents.csv",
                     "documents/close_debt_schedules.csv",
-                    "documents/close_service_milestones.csv",
                 ],
             ),
         ]

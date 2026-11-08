@@ -5,6 +5,7 @@ import functools
 import io
 import json
 import re
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
@@ -119,9 +120,7 @@ def test_close_contract_discloses_codes_and_keeps_all_clusters_in_scope():
             check["expected"] for check in spec["checks"] if check["type"] == "evidence_disposition"
         }
         assert expected_codes <= set(re.findall(r"`([^`]+)`", policy)), seed
-        assert (
-            "utility service" in instance.app_files["documents/close_supplier_invoices.csv"].lower()
-        )
+        assert "utility service" in instance.app_files["documents/close_documents.csv"].lower()
 
 
 def test_close_tuned_contract_links_nsf_and_false_alarms():
@@ -130,19 +129,14 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
         if _is_clean(instance):
             continue
         policy = " ".join(instance.app_files["policy.md"].split())
-        assert "each aging row's `loss_rate`" in policy
+        assert "days past due at period-end" in policy
         assert "annual rate / 12" in policy
         assert "even if it is below USD 100" in policy
         for path in (
-            "documents/close_supplier_invoices.csv",
+            "documents/close_documents.csv",
             "documents/close_debt_schedules.csv",
-            "documents/close_equipment_invoices.csv",
-            "documents/close_rent_agreement.csv",
-            "documents/close_bank_advice.csv",
-            "documents/close_service_milestones.csv",
             "documents/close_subsequent_receipts.csv",
-            "documents/close_goods_in_transit.csv",
-            "documents/close_payroll_overtime.csv",
+            "documents/close_timesheets.csv",
             "documents/close_fixed_asset_review.csv",
         ):
             assert path in instance.app_files, (seed, path)
@@ -157,12 +151,28 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
                 io.StringIO(instance.app_files["documents/close_subsequent_receipts.csv"])
             )
         )
-        settled_ids = {row["record_id"] for row in subsequent if row["status"] == "settled-in-full"}
+        aging_amounts = {row["record_id"]: row["amount"] for row in aging}
+        settled_ids = {
+            row["record_id"]
+            for row in subsequent
+            if aging_amounts.get(row["record_id"]) == row["amount"]
+        }
         assert settled_ids
+
+        def policy_rate(row) -> Decimal:
+            # The stated policy alone determines the rate (no source labels).
+            if "bankruptcy" in row["credit_note"]:
+                return Decimal("1.00")
+            days = (date(2026, 1, 31) - date.fromisoformat(row["due_date"])).days
+            if days <= 0:
+                return Decimal("0.01")
+            return Decimal("0.05") if days <= 30 else Decimal("0.20")
+
         expected_allowance = sum(
-            (Decimal(row["amount"]) * Decimal(row["loss_rate"])).quantize(Decimal("0.01"))
+            (Decimal(row["amount"]) * policy_rate(row)).quantize(Decimal("0.01"))
             for row in aging
-            if row["bucket"] != "unshipped" and row["record_id"] not in settled_ids
+            # close-ar-9001 is the premature sale reversed by revenue cutoff.
+            if row["record_id"] != "close-ar-9001" and row["record_id"] not in settled_ids
         )
         workflow = json.loads(instance.solution_files["workflow.json"])
         assert Decimal(workflow["trial_balance"]["allowance_for_credit_losses"]) == (
@@ -172,7 +182,7 @@ def test_close_tuned_contract_links_nsf_and_false_alarms():
         # Evidence is keyed by neutral source-document ids.
         assert workflow["evidence"]["close-ms-02"] == "defer-unearned-milestone"
         assert workflow["evidence"]["close-ship-001"] == "record-goods-in-transit"
-        assert workflow["evidence"]["doc-overtime-register"] == "accrue-earned-wages"
+        assert workflow["evidence"]["doc-timesheets"] == "accrue-earned-wages"
         assert workflow["evidence"]["doc-asset-review"] == "recognize-impairment-loss"
         assert workflow["evidence"]["close-loan-sch-02"] == "accrue-interest"
         assert workflow["evidence"]["close-bank-adv-02"] == "record-bank-fee"
