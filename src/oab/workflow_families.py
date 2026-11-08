@@ -845,7 +845,9 @@ MAX_CLOSE_APP_BYTES = 400_000
 MAX_CLOSE_APP_LINES = 8_000
 
 
-def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_principal_open, rate):
+def _close_distractors(
+    pack, seed: int, *, lease_total, lease_start, note_principal_open, rate, statement_credits
+):
     """Plausible documents that need no January entry.
 
     Each is consistent with the books (statements that agree with the
@@ -862,7 +864,13 @@ def _close_distractors(pack, seed: int, *, lease_total, lease_start, note_princi
         bills = [r for r in open_ap if r.party_id == supplier.id]
         rows = [["bill_id", "due_date", "open_amount"]]
         rows += [[r.id, r.due_date, money(-r.amount)] for r in bills]
-        rows.append(["balance", "", money(sum((-r.amount for r in bills), ZERO))])
+        balance = sum((-r.amount for r in bills), ZERO)
+        if supplier.id in statement_credits:
+            # The supplier's statement carries a credit the books omit.
+            credit_id, credit = statement_credits[supplier.id]
+            rows.append([credit_id, "", money(-credit)])
+            balance -= credit
+        rows.append(["balance", "", money(balance)])
         files[f"documents/vendor_statements/{supplier.id}.csv"] = _csv(rows)
     for number in range(1, 7):
         supplier = rng.choice(pack.master.suppliers)
@@ -966,7 +974,6 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             withheld = withhold_rng.choice(list(WITHHELD_ENTRY))
     current = pack.periods[-1]
     next_period = "2026-02"
-    balances = dict(pack.trial_balances[current.label])
 
     # Cross-period facts (own stream): an estimated December accrual the
     # January invoice duplicates, a prepaid subscription amortized monthly
@@ -977,7 +984,12 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
     subscription_month = (subscription_fee / 12).quantize(CENT)
     credit_supplier = cross_rng.choice(pack.master.suppliers)
     credit_amount = Decimal(cross_rng.randrange(60, 181, 10))
+    amortize = [
+        (SUBSCRIPTIONS_EXPENSE, subscription_month),
+        (PREPAID_EXPENSES, -subscription_month),
+    ]
     first, prior = pack.periods[0], pack.periods[-2]
+    # (period label, date, payee, narration, postings, history source_ref)
     prior_entries = [
         (
             "opening",
@@ -988,6 +1000,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 (PREPAID_EXPENSES, subscription_month * 11),
                 ("Equity:Opening-Balances", -subscription_month * 11),
             ],
+            "",
         ),
         *[
             (
@@ -995,10 +1008,8 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 f"{period.label}-28",
                 "Software vendor",
                 "Software subscription expired",
-                [
-                    (SUBSCRIPTIONS_EXPENSE, subscription_month),
-                    (PREPAID_EXPENSES, -subscription_month),
-                ],
+                amortize,
+                "doc-subscription-2025",
             )
             for period in pack.periods[:-1]
         ],
@@ -1008,10 +1019,22 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
             "Cleaning contractor",
             f"Accrue {prior.label} cleaning service (estimate)",
             [(CLEANING_EXPENSE, prior_accrual), (ACCRUED_LIABILITIES, -prior_accrual)],
+            "",
         ),
     ]
-    for _label, _day, _payee, _narration, postings in prior_entries:
-        _apply_postings(balances, postings)
+    # Carry them into the trial balances (from their period on) and history.
+    labels = ["opening", *(period.label for period in pack.periods)]
+    trial = {label: dict(pack.trial_balances.get(label, {})) for label in labels}
+    prior_history = []
+    for number, (label, day, _payee, _narration, postings, source) in enumerate(prior_entries, 1):
+        for later in labels[labels.index(label) :]:
+            _apply_postings(trial[later], postings)
+        if label != "opening":
+            prior_history += [
+                [f"syn-txn-prior-{number:02d}", day, label, account, money(amount), source]
+                for account, amount in postings
+            ]
+    balances = dict(trial[current.label])
 
     draft_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
     oracle_entries: list[tuple[str, str, str, list[tuple[str, Decimal]]]] = []
@@ -1379,10 +1402,7 @@ def month_end_close_workflow(seed: int) -> TaskInstance:
                 current.end,
                 "Software vendor",
                 "Amortize January software subscription",
-                [
-                    (SUBSCRIPTIONS_EXPENSE, subscription_month),
-                    (PREPAID_EXPENSES, -subscription_month),
-                ],
+                amortize,
             ),
             (
                 current.end,
@@ -1521,7 +1541,7 @@ Documents that need no entry sit in the same files as those that do.
         for account, _description in CLOSE_EXTRA_ACCOUNTS
     ]
     initial_ledger = "\n".join([ledger_lines[0], *opens, *ledger_lines[1:]]) + "\n"
-    for _label, day, payee, narration, postings in prior_entries:
+    for _label, day, payee, narration, postings, _source in prior_entries:
         initial_ledger += _txn(day, payee, narration, postings)
     for entry_date, payee, narration, postings in draft_entries:
         initial_ledger += _txn(entry_date, payee, narration, postings)
@@ -1602,19 +1622,6 @@ Documents that need no entry sit in the same files as those that do.
     }
 
     app_files = dict(pack.files)
-    # Carry the prior-period entries into the trial balances and history.
-    labels = ["opening", *(period.label for period in pack.periods)]
-    trial = {label: dict(pack.trial_balances.get(label, {})) for label in labels}
-    history = pack.files["account_history.csv"].rstrip("\n").split("\n")
-    for number, (label, day, _payee, _narration, postings) in enumerate(prior_entries, 1):
-        for later in labels[labels.index(label) :]:
-            _apply_postings(trial[later], postings)
-        if label != "opening":
-            source = "doc-subscription-2025" if SUBSCRIPTIONS_EXPENSE in dict(postings) else ""
-            history += [
-                f"syn-txn-prior-{number:02d},{day},{label},{account},{money(amount)},{source}"
-                for account, amount in postings
-            ]
     app_files["trial_balances.csv"] = _csv(
         [
             ["period", "account", "balance"],
@@ -1626,7 +1633,7 @@ Documents that need no entry sit in the same files as those that do.
             ),
         ]
     )
-    app_files["account_history.csv"] = "\n".join(history) + "\n"
+    app_files["account_history.csv"] = pack.files["account_history.csv"] + _csv(prior_history)
 
     def raw_document(document_id, kind, day, party, description, quantity, unit, refs):
         amount = quantity * unit
@@ -1760,21 +1767,8 @@ Documents that need no entry sit in the same files as those that do.
             lease_start=f"{current.label}-16",
             note_principal_open=opening_note_principal,
             rate=annual_rate,
+            statement_credits={credit_supplier.id: ("close-cn-001", credit_amount)},
         )
-    )
-    # The supplier's statement already carries the credit the books omit.
-    statement_path = f"documents/vendor_statements/{credit_supplier.id}.csv"
-    statement = app_files[statement_path].rstrip("\n").split("\n")
-    balance = Decimal(statement[-1].rsplit(",", 1)[1]) - credit_amount
-    app_files[statement_path] = (
-        "\n".join(
-            [
-                *statement[:-1],
-                f"close-cn-001,,{money(-credit_amount)}",
-                f"balance,,{money(balance)}",
-            ]
-        )
-        + "\n"
     )
     app_files.update(
         {

@@ -10,6 +10,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from oab.cli import validate_tasks
+from oab.families import _txn
 from oab.generate import write_task
 from oab.verify import grade_workflow
 from oab.workflow import DEFAULT_WORKFLOW_ARTIFACT, validate_workflow_spec
@@ -642,6 +643,7 @@ def test_close_volume_and_distractors_are_consistent():
     instance = _adjusting_instance(_full_seeds()[0])
     files = instance.app_files
     payables = list(csv.DictReader(io.StringIO(files["subledgers/accounts_payable.csv"])))
+    register = {r["document_id"]: r for r in _rows(files, "documents/close_documents.csv")}
     for path, text in files.items():
         if not path.startswith("documents/vendor_statements/"):
             continue
@@ -649,9 +651,11 @@ def test_close_volume_and_distractors_are_consistent():
         statement = {
             row["bill_id"]: row["open_amount"] for row in rows if row["bill_id"] != "balance"
         }
-        # A vendor statement agrees with the payables subledger, except for the
+        # A vendor statement agrees with the payables subledger plus the
         # omitted credit the close must record: no other entry.
-        statement.pop("close-cn-001", None)
+        credit = statement.pop("close-cn-001", None)
+        if credit is not None:
+            assert Decimal(credit) == -Decimal(register["close-cn-001"]["amount"]), path
         for bill_id, amount in statement.items():
             book = next(r for r in payables if r["record_id"] == bill_id)
             assert Decimal(amount) == -Decimal(book["amount"]), (path, bill_id)
@@ -982,19 +986,10 @@ def test_close_chart_lists_near_miss_accounts_once_with_purposes():
 
 
 CROSS_PERIOD = {
-    # determination: (oracle narration, primary account)
-    "prior-accrual-reversal": (
-        "Reverse 2025-12 cleaning accrual",
-        "Liabilities:AccruedLiabilities",
-    ),
-    "prepaid-subscription-amortization": (
-        "Amortize January software subscription",
-        "Expenses:Subscriptions",
-    ),
-    "omitted-supplier-credit": (
-        "Record omitted 2025-12 supplier credit",
-        "Expenses:OfficeSupplies",
-    ),
+    # determination: oracle narration
+    "prior-accrual-reversal": "Reverse 2025-12 cleaning accrual",
+    "prepaid-subscription-amortization": "Amortize January software subscription",
+    "omitted-supplier-credit": "Record omitted 2025-12 supplier credit",
 }
 
 
@@ -1045,16 +1040,17 @@ def test_cross_period_traps_fail_their_determination():
     for seed in _full_seeds()[:6]:
         instance = _adjusting_instance(seed)
         oracle = instance.solution_ledger
-        reversal, _ = CROSS_PERIOD["prior-accrual-reversal"]
+        reversal = CROSS_PERIOD["prior-accrual-reversal"]
         amount = _block_amount(oracle, reversal)
-        double = (
-            f'2026-01-31 * "Cleaning contractor" "Reverse cleaning invoice"\n'
-            f"  Liabilities:AccountsPayable  {amount:.2f} USD\n"
-            f"  Expenses:Cleaning  {-amount:.2f} USD\n"
+        double = _txn(
+            "2026-01-31",
+            "Cleaning contractor",
+            "Reverse cleaning invoice",
+            [("Liabilities:AccountsPayable", amount), ("Expenses:Cleaning", -amount)],
         )
-        amortize, _ = CROSS_PERIOD["prepaid-subscription-amortization"]
+        amortize = CROSS_PERIOD["prepaid-subscription-amortization"]
         month = _block_amount(oracle, amortize)
-        credit_narration, _ = CROSS_PERIOD["omitted-supplier-credit"]
+        credit_narration = CROSS_PERIOD["omitted-supplier-credit"]
         credit_block = _block(oracle, credit_narration)
         traps = {
             "prior-accrual-reversal": [
