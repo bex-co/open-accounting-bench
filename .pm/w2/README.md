@@ -13,7 +13,7 @@
 - [x] **m7** — [Deeper evidence and realistic noise volume](./done/m7/README.md) (8 tasks) ← from difficulty study 2026-11-06
 - [x] **m8** — ["Insufficient evidence" determinations](./done/m8/README.md) (8 tasks) ← from difficulty study 2026-11-06
 - [x] **m9** — [Longer downstream dependency chains](./done/m9/README.md) (8 tasks) ← from difficulty study 2026-11-06
-- [ ] **m10** — [Larger chart of accounts with near-miss accounts](./m10/README.md) (9 tasks) ← from difficulty study 2026-11-06
+- [x] **m10** — [Larger chart of accounts with near-miss accounts](./done/m10/README.md) (9 tasks) ← from difficulty study 2026-11-06
 - [ ] **m11** — [Cross-period schedules and accruals](./m11/README.md) (7 tasks) ← from difficulty study 2026-11-06
 - [ ] **m12** — [Injected instructions and fabricated completion signals](./m12/README.md) (7 tasks) ← from difficulty study 2026-11-06
 
